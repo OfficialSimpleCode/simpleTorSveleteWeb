@@ -1,5 +1,7 @@
 <script lang="ts">
     import { base } from "$app/paths";
+    import { pushState } from "$app/navigation";
+    import { page } from "$app/stores";
     import { Icon, Share, MapPin } from "svelte-hero-icons";
 
     import Navbar from "./components/Navbar.svelte";
@@ -38,17 +40,29 @@
 
     function openImageDisplayDialog(index: number) {
         selectedImageIndex = index;
-        imageDisplayDialog.showModal();
+        pushState("", {
+            showModal: true,
+        });
+        setTimeout(() => imageDisplayDialog.showModal(), 100);
+    }
+
+    function openShareDialog() {
+        pushState("", {
+            showModal: true,
+        });
+        setTimeout(() => shareDialog.showModal(), 100);
     }
 </script>
 
 <!-- Dialogs -->
-<ShareDialog bind:dialog={shareDialog} {name} {geo} />
-<ImageDisplayDialog
-    bind:dialog={imageDisplayDialog}
-    bind:index={selectedImageIndex}
-    {displayImages}
-/>
+{#if $page.state.showModal}
+    <ShareDialog bind:dialog={shareDialog} {name} {geo} />
+    <ImageDisplayDialog
+        bind:dialog={imageDisplayDialog}
+        bind:index={selectedImageIndex}
+        {displayImages}
+    />
+{/if}
 
 <main class="w-full h-full">
     <Navbar {notifications}>
@@ -82,10 +96,7 @@
                     <button class="btn btn-primary" on:click={orderNow}>
                         Order Now
                     </button>
-                    <button
-                        class="btn btn-primary"
-                        on:click={() => shareDialog.showModal()}
-                    >
+                    <button class="btn btn-primary" on:click={openShareDialog}>
                         <Icon src={Share} size="26px" />
                     </button>
                 </div>

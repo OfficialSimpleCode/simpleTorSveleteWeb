@@ -20,7 +20,11 @@
     }
 </script>
 
-<dialog bind:this={dialog} class="modal modal-bottom sm:modal-middle">
+<dialog
+    bind:this={dialog}
+    class="modal modal-bottom sm:modal-middle"
+    on:close={() => history.back()}
+>
     <div class="modal-box bg-base-200">
         <div class="flex justify-between items-center mb-[4rem]">
             <button

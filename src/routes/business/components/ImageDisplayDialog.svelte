@@ -11,7 +11,11 @@
     }
 </script>
 
-<dialog bind:this={dialog} class="modal modal-bottom sm:modal-middle">
+<dialog
+    bind:this={dialog}
+    class="modal modal-bottom sm:modal-middle"
+    on:close={() => history.back()}
+>
     <div
         class="modal-box bg-base-200 p-0 h-[700px] sm:w-[520px] overflow-hidden"
     >

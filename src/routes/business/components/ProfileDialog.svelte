@@ -27,7 +27,11 @@
     }
 </script>
 
-<dialog bind:this={dialog} class="modal modal-bottom sm:modal-middle">
+<dialog
+    bind:this={dialog}
+    class="modal modal-bottom sm:modal-middle"
+    on:close={() => history.back()}
+>
     <div class="modal-box bg-base-200 pb-10">
         <div class="flex justify-between items-center mb-[1rem]">
             <button
@@ -70,7 +74,7 @@
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={Phone} size="26px" />
-                        Phone Number
+                        Phone
                     </div>
                     <div class="flex items-center text-gray-500">
                         {profile.phoneNumber}
