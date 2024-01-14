@@ -1,0 +1,77 @@
+<script lang="ts">
+    import {
+        Icon,
+        Link,
+        XCircle,
+        CheckCircle,
+        Clipboard,
+    } from "svelte-hero-icons";
+    import Avatar from "./Avatar.svelte";
+    export let dialog: HTMLDialogElement;
+    export let name: string;
+    export let geo: Record<string, string>;
+
+    let copied: Boolean = false;
+
+    function copy() {
+        copied = true;
+        // TODO: copy to clipboard
+        setTimeout(() => (copied = false), 1500);
+    }
+</script>
+
+<dialog bind:this={dialog} class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box bg-base-200">
+        <div class="flex justify-between items-center mb-[4rem]">
+            <button
+                class="btn btn-ghost"
+                class:text-success={copied}
+                on:click={copy}
+            >
+                <Icon src={copied ? CheckCircle : Link} size="24px" />
+            </button>
+            <h3 class="font-bold text-lg">Share</h3>
+            <button class="btn btn-ghost" on:click={() => dialog.close()}>
+                <Icon src={XCircle} size="24px" />
+            </button>
+        </div>
+
+        <!-- QR card -->
+        <div class="h-[60%] w-[80%] bg-base-100 rounded-lg mx-auto">
+            <div class="relative left-[calc(50%-2.5rem)] top-[-2.5rem] w-min">
+                <Avatar small={true} ring={false} />
+                <h3 class="w-max text-center text-lg font-semibold">{name}</h3>
+                <a
+                    href={geo.link}
+                    class="block w-full text-center link link-neutral text-gray-500"
+                >
+                    {geo.title}
+                </a>
+            </div>
+            <img
+                class="w-[80%] mx-auto pb-12"
+                src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpngimg.com%2Fuploads%2Fqr_code%2Fqr_code_PNG4.png&f=1&nofb=1&ipt=2976bf9cd3f598cf1f8ef49eabca13fcc580abd4bcdd11fc1436bb8c9a2c0db9&ipo=images"
+                alt="qr"
+            />
+        </div>
+
+        <p class="text-gray-500 mt-4 text-sm text-center">
+            When a client clicks on this link, they will be directed to your
+            business page within the app. If the client doesn't have the app
+            installed, they will be automatically redirected to your business
+            page on our website.
+        </p>
+
+        <button
+            class="btn btn-primary flex items-center gap-2 mx-auto mt-8"
+            on:click={copy}
+        >
+            {copied ? "Copied" : "Copy Link"}
+            <Icon src={copied ? CheckCircle : Clipboard} size="28px" />
+        </button>
+    </div>
+
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>

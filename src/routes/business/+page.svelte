@@ -1,0 +1,130 @@
+<script lang="ts">
+    import { base } from "$app/paths";
+    import { Icon, Share, MapPin } from "svelte-hero-icons";
+
+    import Navbar from "./components/Navbar.svelte";
+    import LoggedInProfile from "./components/LoggedInProfile.svelte";
+    import GuestProfile from "./components/GuestProfile.svelte";
+    import Avatar from "./components/Avatar.svelte";
+    import ShareDialog from "./components/ShareDialog.svelte";
+    import ImageDisplayDialog from "./components/ImageDisplayDialog.svelte";
+    import SocialLinks from "./components/SocialLinks.svelte";
+    import { goto } from "$app/navigation";
+
+    /** @type {import('./$types').PageData} */
+    export let data;
+
+    let loggedIn: Boolean = true;
+    let profile: Record<string, string> = data.profile;
+    let name: string = data.name;
+    let geo: Record<string, string> = data.geo;
+    let socialLinks: Object = data.socialLinks;
+    let displayImages: Array<Record<string, any>> = data.displayImages;
+    let notifications: Array<Record<string, any>> = data.notifications;
+
+    // Dialogs
+    let shareDialog: HTMLDialogElement;
+    let imageDisplayDialog: HTMLDialogElement;
+
+    let selectedImageIndex: number = 0;
+
+    function orderNow() {
+        if (!loggedIn) {
+            goto(`${base}/login`);
+        }
+
+        goto(`${base}/business/order`);
+    }
+
+    function openImageDisplayDialog(index: number) {
+        selectedImageIndex = index;
+        imageDisplayDialog.showModal();
+    }
+</script>
+
+<!-- Dialogs -->
+<ShareDialog bind:dialog={shareDialog} {name} {geo} />
+<ImageDisplayDialog
+    bind:dialog={imageDisplayDialog}
+    bind:index={selectedImageIndex}
+    {displayImages}
+/>
+
+<main class="w-full h-full">
+    <Navbar {notifications}>
+        <div slot="profile">
+            {#if loggedIn}
+                <LoggedInProfile {profile} />
+            {:else}
+                <GuestProfile />
+            {/if}
+        </div>
+    </Navbar>
+
+    <!-- background image -->
+    <img
+        class="h-1/2 w-full object-cover"
+        src="https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?cs=srgb&dl=action-athlete-barbell-841130.jpg&fm=jpg"
+        alt="backgroud"
+    />
+
+    <!-- content -->
+    <div class="bg-base-100 min-h-1/2 w-full z-10">
+        <div class="relative top-[-3rem] mx-8 sm:mx-16">
+            <div
+                id="profile-row"
+                class="flex justify-between items-center gap-10"
+            >
+                <Avatar />
+
+                <!-- Order now and Share buttons -->
+                <div class="flex gap-5 items-center">
+                    <button class="btn btn-primary" on:click={orderNow}>
+                        Order Now
+                    </button>
+                    <button
+                        class="btn btn-primary"
+                        on:click={() => shareDialog.showModal()}
+                    >
+                        <Icon src={Share} size="26px" />
+                    </button>
+                </div>
+            </div>
+
+            <!-- Name Geo and Social Links -->
+            <div
+                id="content"
+                class="mt-4 flex flex-col items-start justify-start gap-3"
+            >
+                <!-- Name and Geo -->
+                <div>
+                    <h1 class="text-4xl">{name}</h1>
+                    <a
+                        href={geo.link}
+                        class="flex items-center gap-2 link link-neutral"
+                    >
+                        <h4 class="text-lg">{geo.title}</h4>
+                        <Icon src={MapPin} size="20px" />
+                    </a>
+                </div>
+
+                <SocialLinks {socialLinks} />
+
+                <!-- Display images -->
+                <div
+                    class="w-full self-center mt-10 flex items-center justify-center gap-6 gap-y-6 flex-wrap"
+                >
+                    {#each displayImages as image, index}
+                        <button on:click={() => openImageDisplayDialog(index)}>
+                            <img
+                                class="object-cover h-[500px] w-[300px] rounded-xl hover:scale-[1.01]"
+                                src={image.link}
+                                alt="gym"
+                            />
+                        </button>
+                    {/each}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
