@@ -17,7 +17,7 @@
     <ul class="w-[%70] h-full flex flex-wrap items-center justify-center gap-7">
         {#each employees as employee}
             <button
-                class="bg-base-200 rounded-xl min-w-[380px] w-[40%] h-32 flex items-center px-6 box-border gap-5 border"
+                class="bg-base-200 rounded-xl sm:min-w-[380px] sm:w-[40%] h-28 sm:h-32 flex items-center px-6 box-border gap-5 border"
                 class:border-black={selectedEmployee == employee}
                 on:click={() => employeeChosen(employee)}
             >

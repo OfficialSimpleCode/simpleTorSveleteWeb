@@ -1,4 +1,5 @@
 <script lang="ts">
+    import ChooseDateAndTime from "./steps/ChooseDateAndTime.svelte";
     import ChooseService from "./steps/ChooseService.svelte";
     import ChooseEmployee from "./steps/ChooseEmployee.svelte";
     import { ShowToast } from "$lib/stores/ToastManager";
@@ -27,6 +28,7 @@
         },
     ];
     let selectedEmployee: Record<string, string>;
+    let selectedDateAndTime: Record<string, string>;
 
     let services: Array<Record<string, string>> = [
         { name: "Nails", price: "150", duration: "1h 20m" },
@@ -40,7 +42,15 @@
             return;
         }
 
-        if (stepNumber > currentStep) {
+        if (stepNumber == 2 && !selectedEmployee) {
+            ShowToast({
+                text: "Finish the current step first",
+                status: "warning",
+            });
+            return;
+        }
+
+        if (stepNumber == 3 && !selectedService) {
             ShowToast({
                 text: "Finish the current step first",
                 status: "warning",
@@ -60,10 +70,15 @@
         selectedService = service;
         currentStep += 1;
     }
+
+    function dateAndTimeSelected(dateAndTime: Record<string, string>) {
+        selectedDateAndTime = dateAndTime;
+        currentStep += 1;
+    }
 </script>
 
-<main class="h-screen w-screen flex flex-col items-center gap-14 bg-base-100">
-    <ul class="steps w-[60%] mt-5">
+<main class="h-screen w-screen flex flex-col items-center gap-8 bg-base-100">
+    <ul class="steps min-h-20 w-[90%] sm:w-[60%] mt-5">
         {#each steps as step, i}
             <button
                 class="step"
@@ -88,5 +103,11 @@
             bind:selectedService
             on:service={(event) => serviceSelected(event.detail)}
         />
-    {:else if currentStep == 3}{/if}
+    {:else if currentStep == 3}
+        <ChooseDateAndTime
+            bind:selectedDateAndTime
+            duration={selectedService.duration}
+            on:dateAndTime={(event) => dateAndTimeSelected(event.detail)}
+        />
+    {/if}
 </main>
