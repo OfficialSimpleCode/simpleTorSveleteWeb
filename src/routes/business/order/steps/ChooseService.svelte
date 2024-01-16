@@ -17,7 +17,7 @@
     <ul class="w-[%70] h-full flex flex-wrap items-center justify-center gap-7">
         {#each services as service}
             <button
-                class="bg-base-200 rounded-xl min-w-[380px] w-[40%] h-28 flex items-center px-6 box-border gap-5 border justify-between"
+                class="bg-base-200 rounded-xl min-w-[280px] sm:min-w-[380px] sm:w-[40%] h-24 sm:h-28 flex items-center px-6 box-border gap-5 border justify-between"
                 class:border-black={selectedService == service}
                 on:click={() => serviceChosen(service)}
             >

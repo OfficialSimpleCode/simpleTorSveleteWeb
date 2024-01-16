@@ -16,8 +16,8 @@
         Moon,
         Plus,
     } from "svelte-hero-icons";
+    import InfoCircle from "$lib/components/InfoCircle.svelte";
     import Avatar from "./Avatar.svelte";
-    import InfoCircle from "./InfoCircle.svelte";
 
     export let dialog: HTMLDialogElement;
     export let profile: Record<string, string>;
