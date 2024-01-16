@@ -27,6 +27,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@syncfusion/ej2-schedule": "^24.1.41",
 		"svelte-hero-icons": "^5.0.0"
 	}
 }
