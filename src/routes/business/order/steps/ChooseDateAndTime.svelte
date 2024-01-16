@@ -14,11 +14,11 @@
     export let duration: string;
 
     let availableHours: Record<string, Array<string>> = {
-        "15-01-2024": ["15:00", "17:00", "20:30"],
-        "16-01-2024": ["10:00", "15:00", "17:00", "20:30"],
-        "17-01-2024": ["15:00", "17:00", "20:30"],
-        "18-01-2024": ["15:00", "17:00", "20:30"],
-        "19-01-2024": [
+        "01-15-2024": ["15:00", "17:00", "20:30"],
+        "01-16-2024": ["10:00", "15:00", "17:00", "20:30"],
+        "01-17-2024": ["15:00", "17:00", "20:30"],
+        "01-18-2024": ["15:00", "17:00", "20:30"],
+        "01-19-2024": [
             "10:25",
             "12:45",
             "13: 30",
@@ -29,7 +29,7 @@
             "22:12",
             "23:35",
         ],
-        "20-01-2024": ["15:00", "17:00", "20:30"],
+        "01-20-2024": ["15:00", "17:00", "20:30"],
     };
 
     let longestDayLength: number = Object.values(availableHours).reduce(
@@ -42,7 +42,7 @@
         return result;
     }
 
-    function formatDateToDDMMYY(date: Date): string {
+    function formatDateToMMDDYY(date: Date): string {
         let day: any = date.getDate();
         let month: any = date.getMonth() + 1; // Adding 1 because getMonth() returns values from 0 to 11
         let year: any = date.getFullYear();
@@ -51,18 +51,18 @@
         day = day < 10 ? "0" + day : day;
         month = month < 10 ? "0" + month : month;
 
-        return day + "-" + month + "-" + year;
+        return month + "-" + day + "-" + year;
     }
 
     function haveHours(date: Date): boolean {
-        let dateFormat: string = formatDateToDDMMYY(date);
+        let dateFormat: string = formatDateToMMDDYY(date);
         return (
             availableHours[dateFormat] && availableHours[dateFormat].length > 0
         );
     }
 
     function getAvailableHourForDate(date: Date): string {
-        let dateFormat: string = formatDateToDDMMYY(date);
+        let dateFormat: string = formatDateToMMDDYY(date);
         let hour: string = availableHours[dateFormat][0];
         availableHours[dateFormat].splice(0, 1);
         return hour;
@@ -124,7 +124,7 @@
                                     {#if haveHours(addDays(now, i))}
                                         <DateButton
                                             bind:selectedDateAndTime
-                                            date={formatDateToDDMMYY(
+                                            date={formatDateToMMDDYY(
                                                 addDays(now, i),
                                             )}
                                             time={getAvailableHourForDate(

@@ -1,8 +1,11 @@
 <script lang="ts">
-    import ChooseDateAndTime from "./steps/ChooseDateAndTime.svelte";
-    import ChooseService from "./steps/ChooseService.svelte";
-    import ChooseEmployee from "./steps/ChooseEmployee.svelte";
     import { ShowToast } from "$lib/stores/ToastManager";
+
+    import ChooseEmployee from "./steps/ChooseEmployee.svelte";
+    import ChooseService from "./steps/ChooseService.svelte";
+    import ChooseDateAndTime from "./steps/ChooseDateAndTime.svelte";
+    import VerifyDetails from "./steps/VerifyDetails.svelte";
+    // import SyncfusionSchedualer from "./components/SyncfusionSchedualer.svelte";
 
     let steps: string[] = ["Employee", "Service", "Date and Time"];
     let currentStep: number = 1;
@@ -35,7 +38,7 @@
         { name: "Build", price: "340", duration: "2h 10m" },
         { name: "Hair", price: "230", duration: "1h" },
     ];
-    let selectedService: Record<string, string>;
+    let selectedService: Record<string, any>;
 
     function clickedOnStep(stepNumber: number) {
         if (stepNumber == currentStep) {
@@ -108,6 +111,14 @@
             bind:selectedDateAndTime
             duration={selectedService.duration}
             on:dateAndTime={(event) => dateAndTimeSelected(event.detail)}
+        />
+        <!-- <SyncfusionSchedualer /> -->
+    {:else if currentStep == 4}
+        <VerifyDetails
+            bind:employee={selectedEmployee}
+            bind:service={selectedService}
+            bind:dateAndTime={selectedDateAndTime}
+            on:edit-services={() => (currentStep = 2)}
         />
     {/if}
 </main>
