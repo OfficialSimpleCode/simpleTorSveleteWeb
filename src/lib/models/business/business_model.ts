@@ -6,8 +6,11 @@ import {
   BusinessesTypes,
   businessTypeFromStr,
 } from "$lib/consts/business_types";
+import { hypPathFromStr, type HypPaths } from "$lib/consts/hyp_pathes";
 import { BusinessData } from "./business_data";
 import { BusinessDesign } from "./business_design";
+import { ProductModel } from "./product_model";
+import { Update } from "./update_model";
 
 export default class BusinessModel {
   businesseType: BusinessesTypes = BusinessesTypes.Other;
