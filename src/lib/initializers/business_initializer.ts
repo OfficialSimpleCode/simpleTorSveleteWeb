@@ -184,6 +184,7 @@ export default class BusinessInitializer {
         return false;
       }
       console.log("rrrrrrrrrrrrrrrrrrrrrrrr");
+
       this.business = BusinessModel.fromJson(doc.data()!, businessId);
 
       //   // Cache the changing images
