@@ -33,12 +33,41 @@ export default class IconData {
     
   }
 
+  static fromJson(json: { [key: string]: string } ): IconData {
+    const instance = new IconData();
+    instance.id = json.I || "";
+    instance.token = json.T || "";
+    return instance;
+  }
+
   static fromJsonStr(jsonStr:string ): IconData {
     const json = JSON.parse(jsonStr) as { I?: string; T?: string };
     const instance = new IconData();
     instance.id = json.I || "";
     instance.token = json.T || "";
     return instance;
+  }
+
+  get isEmpty(): boolean {
+    return this.token === "" || this.id === "";
+  }
+
+  get isNotEmpty(): boolean {
+    return this.token !== "" && this.id !== "";
+  }
+
+  isEqual(other:IconData):boolean {
+    return other.id == this.id && other.token == this.token;
+  }
+
+
+  getShopIconPath(businessId: string): string {
+    if (this.token === "" || this.id === "") {
+      return "";
+    }
+
+    const env = envKey.replace("enviroments/", "");
+    return `https://firebasestorage.googleapis.com/v0/b/managementsystemapp-c1fda.appspot.com/o/enviroments%2F${env}%2F${businessId}%2Fimages%2Flogos%2FSHOPICON${this.id}?alt=media&token=${this.token}`;
   }
 
   
@@ -49,6 +78,14 @@ export default class IconData {
     };
 
     return JSON.stringify(data);
+  }
+
+  toJson():  { [key: string]: string } {
+    const data = {
+      I: this.id, T: this.token
+    };
+
+    return data;
   }
 }
 

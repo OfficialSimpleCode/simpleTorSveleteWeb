@@ -57,7 +57,7 @@ const freqRecurrenceToDuration: { [key in FreqRecurrence]: { days: number } } = 
   [FreqRecurrence.days]: { days: 1 }
 };
 
-class RecurrenceEvent {
+export default class RecurrenceEvent {
   //-------------------- start ---------------------------
   start?: Date;
   //---------------------end vars ------------------------

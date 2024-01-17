@@ -16,16 +16,16 @@ enum NumericCommands {
 
 export default class RealTimeDatabase {
   
-  envKey: string;
+  
   _db: Database;
-  constructor( envKey: string) {
+  constructor() {
     this._db = getDatabase();
-    this.envKey = `enviroments/${envKey}`;
+  
   }
 
   async getChild({ childPath }: { childPath: string }): Promise<DataSnapshot> {
     try {
-      const childRef = ref(this._db,`${this.envKey}/${childPath}`);
+      const childRef = ref(this._db,`${envKey}/${childPath}`);
       return await get(childRef);
     } catch (e) {
       //AppErrors().addError({ error: Errors.serverError, details: e.toString() });
@@ -35,7 +35,7 @@ export default class RealTimeDatabase {
 
   async updateChild({ childPath, data }: { childPath: string; data: any }): Promise<boolean> {
     try {
-      const childRef = ref(this._db,`${this.envKey}/${childPath}`);
+      const childRef = ref(this._db,`${envKey}/${childPath}`);
       await update(childRef,data);
       return true;
     } catch (e) {
@@ -47,7 +47,7 @@ export default class RealTimeDatabase {
 
   async removeChild({ childPath }: { childPath: string }): Promise<boolean> {
     try {
-      const childRef = ref(this._db,`${this.envKey}/${childPath}`);
+      const childRef = ref(this._db,`${envKey}/${childPath}`);
       await remove(childRef);
       return true;
     } catch (e) {
@@ -73,7 +73,7 @@ export default class RealTimeDatabase {
         delta = -delta;
       }
       const data = { [valueId]: increment(delta)};
-      const childRef = ref(this._db,`${this.envKey}/${childPath}`);
+      const childRef = ref(this._db,`${envKey}/${childPath}`);
 
       await update(childRef,data);
       return true;
@@ -96,7 +96,7 @@ export default class RealTimeDatabase {
       for (const [key, value] of Object.entries(data)) {
         fixedData[key] = increment(value);
       }
-      const childRef = ref(this._db,`${this.envKey}/${childPath}`);
+      const childRef = ref(this._db,`${envKey}/${childPath}`);
       await update(childRef,fixedData);
       return true;
     } catch (e) {
@@ -107,13 +107,13 @@ export default class RealTimeDatabase {
   }
 
   listenToChild({ childPath,callback }: { childPath: string ,callback: (snapshot: DataSnapshot) => unknown}): Unsubscribe {
-    const childRef = ref(this._db,`${this.envKey}/${childPath}`);
+    const childRef = ref(this._db,`${envKey}/${childPath}`);
     return onValue(childRef,callback);
   }
 
   async setChild({ childPath, data }: { childPath: string; data: any }): Promise<boolean> {
     try {
-      const childRef = ref(this._db,`${this.envKey}/${childPath}`);
+      const childRef = ref(this._db,`${envKey}/${childPath}`);
       await  set(childRef, data);
       return true;
     } catch (e) {

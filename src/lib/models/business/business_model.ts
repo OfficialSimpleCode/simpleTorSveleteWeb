@@ -2,7 +2,7 @@ import BusinessPayloadData from "../notifications/business_data_payload";
 import { BusinessDesign } from "./business_design";
 
 
-class BusinessModel {
+export default class BusinessModel {
   businesseType: BusinessesTypes = BusinessesTypes.Other;
   currency: CurrencyModel = defaultCurrency;
   notifyOnNewCustomer: boolean = true;

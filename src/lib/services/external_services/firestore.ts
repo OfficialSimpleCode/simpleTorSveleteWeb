@@ -20,12 +20,11 @@ enum NumericCommands {
 
 
 export default class FirestoreDataBase extends RealTimeDatabase {
-  envKey: string;
+  
   _firestore: Firestore;
-  constructor( envKey: string) {
-    super(envKey);
+  constructor() {
+    super();
     this._firestore = getFirestore();
-    this.envKey = `enviroments/${envKey}`;
   }
 
   get getBatch():WriteBatch  {
@@ -58,7 +57,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
 
   async transactionGet(transaction: Transaction , path: string , docId: string ):Promise<DocumentSnapshot<DocumentData>> {
     try {
-      const collectionRef = collection(this._firestore,`${this.envKey}/${path}`);
+      const collectionRef = collection(this._firestore,`${envKey}/${path}`);
       const docRef = doc(collectionRef,docId);
       const snapshot = await transaction.get(docRef);
       return snapshot;
@@ -72,7 +71,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
 
   async transactionUpdateAsMap(transaction:Transaction , path: string, docId: string , fieldName: string , value: any):Promise<any> {
     try {
-      const collectionRef = collection(this._firestore,`${this.envKey}/${path}`);
+      const collectionRef = collection(this._firestore,`${envKey}/${path}`);
       const docRef = doc(collectionRef,docId);
       const updateData = {[fieldName]: value ? value : deleteField()};
       transaction.update(docRef, updateData);
@@ -84,7 +83,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
 
   async transactionUpdateMultipleFieldsAsMap(transaction:Transaction, path:string, docId: string, data: Record<string, any>,insideEnvironments:boolean = true) {
     try {
-      const collectionRef = collection(this._firestore,insideEnvironments ? `${this.envKey}/${path}` : path);
+      const collectionRef = collection(this._firestore,insideEnvironments ? `${envKey}/${path}` : path);
       const docRef = doc(collectionRef,docId);
       const updateData = this.organizeData(data);
       transaction.update(docRef, updateData);
@@ -96,7 +95,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
 
   async transactionCreateDoc(transaction:Transaction, path:string , docId: string , value: Record<string, any>):Promise<any> {
     try {
-      const collectionRef = collection(this._firestore,`${this.envKey}/${path}`);
+      const collectionRef = collection(this._firestore,`${envKey}/${path}`);
       const docRef = doc(collectionRef,docId);
       transaction.set(docRef, value);
     } catch (e) {
@@ -107,7 +106,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
 
   async transactionSetAsMap(transaction:Transaction , path: string, docId: string , data: Record<string, any>):Promise<any> {
     try {
-      const collectionRef = collection(this._firestore,`${this.envKey}/${path}`);
+      const collectionRef = collection(this._firestore,`${envKey}/${path}`);
       const docRef = doc(collectionRef,docId);
       const setData = this.organizeData(data);
       transaction.set(docRef, setData, {merge: true});
@@ -121,7 +120,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
 
   async updateMultipleFieldsInsideDocAsMap(batch:WriteBatch ,path:string ,docId:string ,data:any,insideEnvironments:boolean = true) {
     try {
-      const collectionRef = collection(this._firestore,insideEnvironments ? `${this.envKey}/${path}` : path)
+      const collectionRef = collection(this._firestore,insideEnvironments ? `${envKey}/${path}` : path)
       const docRef = doc(collectionRef,docId);
       batch.update(docRef, this.organizeData(data));
     } catch (e) {
