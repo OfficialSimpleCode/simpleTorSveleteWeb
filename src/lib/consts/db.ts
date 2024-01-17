@@ -1,90 +1,93 @@
-/// This file is saving the const firebase db
+/// This file is saving the export const firebase db
 /// Example: save the endpoints of collections, docs , env
 
 // envs
-const productionKey = 'production';
-const devKey = 'dev';
-const shiloDevKey = 'shilo_dev';
-const envKey = `enviroments/${productionKey}`;
+export const productionKey = "production";
+export const devKey = "dev";
+export const shiloDevKey = "shilo_dev";
+export const envKey = `enviroments/${productionKey}`;
 
 // fireStore collections
-const usersCollection = "Users";
-const notLogedInUsersCollection = "NotLogedInUsers";
+export const usersCollection = "Users";
+export const notLogedInUsersCollection = "NotLogedInUsers";
 
-const bookingsObjectsCollection = "BookingsObjects";
+export const bookingsObjectsCollection = "BookingsObjects";
 
-const notifcationsCollection = "Notifications";
-const errorsCollection = "Errors";
-const helpersCollection = "Helpers";
-const waitingListCollection = "WaitingLists";
-const dataCollection = "PublicData";
-const workersCollection = "Workers";
-const invoicesCollection = "Invoices";
-const paymentRequestColletion = "PaymentRequests";
-const paymentsCollection = "Payments";
-const bookingsCollection = "Bookings";
-const onlinePaymentsCollection = "OnlinePayments";
-const phonesCollection = "Phones";
-const phoneDataCollections = "collections";
+export const notifcationsCollection = "Notifications";
+export const errorsCollection = "Errors";
+export const helpersCollection = "Helpers";
+export const waitingListCollection = "WaitingLists";
+export const dataCollection = "PublicData";
+export const workersCollection = "Workers";
+export const invoicesCollection = "Invoices";
+export const paymentRequestColletion = "PaymentRequests";
+export const paymentsCollection = "Payments";
+export const bookingsCollection = "Bookings";
+export const onlinePaymentsCollection = "OnlinePayments";
+export const phonesCollection = "Phones";
+export const phoneDataCollections = "collections";
 
-const secretsCollection = "Secrets";
-const bookingsCyollection = "Bookings";
-const buisnessCollection = "Businesses";
-const paymentsRequestsPreviewsCollection = "PaymentsRequestsPreviews";
+export const secretsCollection = "Secrets";
+export const bookingsCyollection = "Bookings";
+export const buisnessCollection = "Businesses";
+export const paymentsRequestsPreviewsCollection = "PaymentsRequestsPreviews";
 
-const hypBusinessesCollection = "HypBusinesses";
+export const hypBusinessesCollection = "HypBusinesses";
 
-const reportsCollection = "Reports";
+export const reportsCollection = "Reports";
 
 // fireStore docs
-const customersDataDoc = 'customersData';
-const publicCustomersDataDoc = 'publicCustomersData';
-const invoicesDataDoc = "invoicesData";
+export const customersDataDoc = "customersData";
+export const publicCustomersDataDoc = "publicCustomersData";
+export const invoicesDataDoc = "invoicesData";
 
-const clientsByPhoneDoc = "clients";
-const dataDoc = "publicData";
-const scheduleNotificationDoc = "scheduleNotifications";
-const recurrenceEventsDoc = "recurrenceEvents";
-const recurrenceBookingsDoc = "recurrenceBookings";
-const multiEventsTimesDoc = "multiEventsTimes";
-const hypSecretsDoc = "hyp";
-const writeOnlyDoc = "writeOnly";
-const bookingsEventsDoc = "bookingsEvents";
-const bookingsEventsCollection = "BookingsEvents";
-const generalSettingsCollection = "generalSettings";
-const englishPurchasesDoc = "englishPurchases";
-const hebrewPurchasesDoc = "hebrewPurchases";
-const previewDoc = "preview";
-const pendingDoc = "pending";
+export const clientsByPhoneDoc = "clients";
+export const dataDoc = "publicData";
+export const scheduleNotificationDoc = "scheduleNotifications";
+export const recurrenceEventsDoc = "recurrenceEvents";
+export const recurrenceBookingsDoc = "recurrenceBookings";
+export const multiEventsTimesDoc = "multiEventsTimes";
+export const hypSecretsDoc = "hyp";
+export const writeOnlyDoc = "writeOnly";
+export const bookingsEventsDoc = "bookingsEvents";
+export const bookingsEventsCollection = "BookingsEvents";
+export const generalSettingsCollection = "generalSettings";
+export const englishPurchasesDoc = "englishPurchases";
+export const hebrewPurchasesDoc = "hebrewPurchases";
+export const previewDoc = "preview";
+export const pendingDoc = "pending";
 
 // realTime db endpoints
-const likesCollection = "LikesCollection";
-const businessDataCollection = "BusinessData";
-const countersCollection = "Counters";
+export const likesCollection = "LikesCollection";
+export const businessDataCollection = "BusinessData";
+export const countersCollection = "Counters";
 
 //encryption
-const passwordOnPhoneCollection = "sasimple";
-const addedKeyOnPhoneHash = "phone";
+export const passwordOnPhoneCollection = "sasimple";
+export const addedKeyOnPhoneHash = "phone";
 
 // storage endpoints
-const profilePhotosPath = "images/profiles";
-const changingImagesPath = "images/changingImages";
-const storyImagesPath = "images/stories";
-const productsImagesPath = "images/productsImages";
-const shopeIconsPath = "images/logos";
-const illegalFildsForDbFieldName = ['~*/[].'];
-const strToReplaceSlash = '^&8@^';
-const strToReplaceAsterisk = '^&9@^';
+export const profilePhotosPath = "images/profiles";
+export const changingImagesPath = "images/changingImages";
+export const storyImagesPath = "images/stories";
+export const productsImagesPath = "images/productsImages";
+export const shopeIconsPath = "images/logos";
+export const illegalFildsForDbFieldName = ["~*/[]."];
+export const strToReplaceSlash = "^&8@^";
+export const strToReplaceAsterisk = "^&9@^";
 
 //--------------------------- db commands -------------------------------
-enum ArrayCommands {
+export enum ArrayCommands {
   add,
   remove,
 }
 
-enum NumericCommands { increment, decrement }
+export enum NumericCommands {
+  increment,
+  decrement,
+}
 
-enum QueryCommands {
+export enum QueryCommands {
   isEqualTo,
   isNotEqualTo,
   isLessThan,

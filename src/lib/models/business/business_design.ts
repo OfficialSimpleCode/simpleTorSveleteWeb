@@ -1,4 +1,13 @@
+import {
+  Arrangement,
+  arrangementFromStr,
+  arrangementToStr,
+  defaultThemes,
+} from "$lib/consts/business_design";
 import IconData from "../general/icon_data";
+import { BusinessTheme } from "./business_theme";
+import { ProductModel } from "./product_model";
+import { Update } from "./update_model";
 
 export class BusinessDesign {
   storyView: Arrangement = Arrangement.Grid;
@@ -20,10 +29,14 @@ export class BusinessDesign {
   isPrivateTheme: boolean = false;
 
   constructor({
+    storyView = Arrangement.Grid,
+    productView = Arrangement.Grid,
     changingImagesSwapSeconds = 6,
     shopIconUrl = "",
     pickedThemeKey = "darkIos",
   }: {
+    storyView?: Arrangement;
+    productView?: Arrangement;
     changingImagesSwapSeconds?: number;
     shopIconUrl?: string;
     pickedThemeKey?: string;

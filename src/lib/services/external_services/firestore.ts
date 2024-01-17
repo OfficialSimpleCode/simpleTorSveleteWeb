@@ -5,6 +5,7 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable max-len */
 
+import { envKey } from "$lib/consts/db";
 import {
   DocumentSnapshot,
   Firestore,

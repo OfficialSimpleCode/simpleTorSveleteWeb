@@ -1,9 +1,12 @@
-import { BusinessDesign } from "$lib/models/business/business_design";
+import BusinessInitializer from "$lib/initializers/business_initializer.js";
 import BusinessModel from "$lib/models/business/business_model";
 
 /** @type {import('./$types').PageLoad} */
-export function load({ params }) {
-  const business = getBusinessById(params.slug);
+export async function load({ params }) {
+  const business = await getBusinessById(
+    "972-525656377--857e6680-b863-11ed-89a5-05ff99923d7e"
+  );
+  console.log(business.toJson());
   return {
     businessData: business,
     profile: {
@@ -54,17 +57,8 @@ export function load({ params }) {
   };
 }
 
-function getBusinessById(id: string): any {
-  return new BusinessModel({
-    shopName: "ShiloSaadon shop",
-    businessId: id,
-    productId: "",
-    adress: "",
-    dynamicLink: "",
-    revenueCatId: "",
-    ownersName: "",
-    instagramAccount: "",
-    shopPhone: "",
-    design: new BusinessDesign(),
-  });
+async function getBusinessById(id: string): Promise<BusinessModel> {
+  await BusinessInitializer.GI().loadBusiness(id, "");
+  const business = BusinessInitializer.GI().business;
+  return business;
 }
