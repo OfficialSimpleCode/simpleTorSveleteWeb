@@ -1,10 +1,15 @@
 <script lang="ts">
     import { base } from "$app/paths";
     import NotificationsBoard from "./NotificationsBoard.svelte";
+    import LoggedInProfile from "./LoggedInProfile.svelte";
+    import GuestProfile from "./GuestProfile.svelte";
 
     export let notifications: Array<Record<string, any>>;
     let unreadNotifications: Boolean = false;
     $: unreadNotifications = notifications.filter((n) => !n.viewed).length > 0;
+
+    export let loggedIn: boolean;
+    export let profile: Record<string, string> = {};
 
     function markAsRead(notification: Record<string, any>) {
         let selectedNotification = notifications.filter(
@@ -68,6 +73,10 @@
                 </div>
             </div>
         </a>
-        <slot name="profile" />
+        {#if loggedIn}
+            <LoggedInProfile {profile} />
+        {:else}
+            <GuestProfile />
+        {/if}
     </div>
 </div>

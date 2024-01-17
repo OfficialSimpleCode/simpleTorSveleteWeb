@@ -6,7 +6,7 @@
         CheckCircle,
         Clipboard,
     } from "svelte-hero-icons";
-    import Avatar from "./Avatar.svelte";
+    import Avatar from "$lib/components/Avatar.svelte";
     export let dialog: HTMLDialogElement;
     export let name: string;
     export let geo: Record<string, string>;
