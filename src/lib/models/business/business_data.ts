@@ -3,21 +3,21 @@ import {
   paymentRequsetForNewBusiness,
 } from "$lib/consts/limitation";
 
-export const messagesLimits: { [key: string]: number } = {
+const messagesLimits: { [key: string]: number } = {
   simpletor_golden_business_month_1: 1000,
   simpletor_advanced_business_month_1: 200,
   simpletor_basic_business_month_1: 0,
   simpletor_landing_business_month_1: 0,
 };
 
-export const paymentRequestLimit: { [key: string]: number } = {
+const paymentRequestLimit: { [key: string]: number } = {
   simpletor_golden_business_month_1: 100,
   simpletor_advanced_business_month_1: 20,
   simpletor_basic_business_month_1: 10,
   simpletor_landing_business_month_1: 10,
 };
 
-export class BusinessData {
+class BusinessData {
   messagesCounter: number = 0;
   paymentRequestCounter: number = 0;
 
