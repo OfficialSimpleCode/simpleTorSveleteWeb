@@ -1,4 +1,4 @@
-enum BusinessesTypes {
+export enum BusinessesTypes {
     Barber,
     Polish,
     Beautician,
@@ -51,7 +51,7 @@ enum BusinessesTypes {
     Other,
   }
   
-  const businessTypeToStr: { [key in BusinessesTypes]: string } = {
+  export const businessTypeToStr: { [key in BusinessesTypes]: string } = {
     [BusinessesTypes.Barber]: 'barber',
     [BusinessesTypes.Polish]: 'polish',
     [BusinessesTypes.CleaningSofas]: 'cleaningSofas',
@@ -104,7 +104,7 @@ enum BusinessesTypes {
     [BusinessesTypes.Washer]: 'washer',
   };
   
-  const businessTypesToIcon: { [key in BusinessesTypes]: string } = {
+  export const businessTypesToIcon: { [key in BusinessesTypes]: string } = {
     [BusinessesTypes.Barber]: 'assets/icons/barber.webp',
     [BusinessesTypes.Polish]: 'assets/icons/nail-polish.webp',
     [BusinessesTypes.Other]: 'assets/icons/more-information.webp',
@@ -157,7 +157,7 @@ enum BusinessesTypes {
     [BusinessesTypes.CleaningSofas]: 'assets/icons/sofa.webp',
   };
   
-  const businessTypeFromStr: { [key: string]: BusinessesTypes } = {
+  export const businessTypeFromStr: { [key: string]: BusinessesTypes } = {
     'barber': BusinessesTypes.Barber,
     'cleaningSofas': BusinessesTypes.CleaningSofas,
     'polish': BusinessesTypes.Polish,

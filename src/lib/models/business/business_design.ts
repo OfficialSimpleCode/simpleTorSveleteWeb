@@ -1,4 +1,6 @@
 import IconData from "../general/icon_data";
+import {Arrangement, arrangementFromStr, arrangementToStr, defaultThemes} from "$lib/consts/business_design";
+import { BusinessTheme } from "$lib/models/business/business_theme";
 
 export class BusinessDesign {
   storyView: Arrangement = Arrangement.Grid;

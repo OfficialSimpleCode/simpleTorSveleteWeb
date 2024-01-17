@@ -1,4 +1,4 @@
-class BusinessTheme {
+export class BusinessTheme {
     background: number = 0;
     primary: number = 0;
     surface: number = 0;

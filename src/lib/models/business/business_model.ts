@@ -1,7 +1,9 @@
 import { Timestamp } from "firebase/firestore";
 import BusinessPayloadData from "../notifications/business_data_payload";
 import { BusinessDesign } from "./business_design";
-
+import { BusinessesTypes, businessTypeFromStr } from "$lib/consts/business_types";
+import { CurrencyModel, defaultCurrency } from "$lib/models/general/currency_model";
+import { BusinessData } from "$lib/models/business/business_data";
 
 export default class BusinessModel {
   businesseType: BusinessesTypes = BusinessesTypes.Other;
@@ -80,9 +82,9 @@ export default class BusinessModel {
 
   get businessPayLoadData(): BusinessPayloadData {
     return new BusinessPayloadData({
-        businessId: this.businessId,
-        businessName: this.shopName,
-        shopIcon: this.design.shopIconData,
+      businessId: this.businessId,
+      businessName: this.shopName,
+      shopIcon: this.design.shopIconData,
     });
   }
 
@@ -95,7 +97,7 @@ export default class BusinessModel {
     return instance;
   }
 
-  
+
   setData(json: Record<string, any>, newBusinessId: string): void {
     this.businessId = newBusinessId;
 
@@ -142,7 +144,7 @@ export default class BusinessModel {
 
     this.notifyOnNewCustomer = json["notifyOnNewCustomer"] ?? true;
 
-    
+
     // json["workersPermissions"] ??= {};
     // this.workersPermissions = WorkersPermissions.fromJson(json["workersPermissions"]);
 
@@ -202,7 +204,7 @@ export default class BusinessModel {
     if (json["createdAt"] instanceof Timestamp) {
       this.createdAt = (json["createdAt"] as Timestamp).toDate();
     } else if (typeof json["createdAt"] === "string") {
-      this.createdAt =  new Date(json['createdAt']) || new Date();
+      this.createdAt = new Date(json['createdAt']) || new Date();
     }
 
     if (json["lastTimeConnected"] != null) {
@@ -252,8 +254,8 @@ export default class BusinessModel {
     data.workersIds = this.workersIds;
     data.createdAt = this.createdAt;
     data.lastTimeConnected = this.lastTimeConnected;
-    
-   
+
+
     if (Object.keys(data.workersPermissions).length === 0) {
       delete data.workersPermissions;
     }
