@@ -86,17 +86,17 @@
 
     <!-- content -->
     <div class="bg-base-100 min-h-1/2 w-full z-10">
-        <div class="relative top-[-3rem] mx-8 sm:mx-16">
+        <div class="relative top-[-3rem] mx-6 sm:mx-16">
             <div
                 id="profile-row"
-                class="flex justify-between items-center gap-10"
+                class="flex justify-between items-center gap-5 sm:gap-10"
             >
                 <Avatar img={$business.design.shopIconUrl} />
 
                 <!-- Order now and Share buttons -->
                 <div class="flex gap-5 items-center">
                     <button class="btn btn-primary" on:click={orderNow}>
-                        Make an Appointment
+                        Appointment
                     </button>
                     <button class="btn btn-primary" on:click={openShareDialog}>
                         <Icon src={Share} size="26px" />

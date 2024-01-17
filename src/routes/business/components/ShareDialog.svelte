@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { business } from "$lib/stores/Business.js";
     import {
         Icon,
         Link,
@@ -43,7 +44,11 @@
         <!-- QR card -->
         <div class="h-[60%] w-[80%] bg-base-100 rounded-lg mx-auto">
             <div class="relative left-[calc(50%-2.5rem)] top-[-2.5rem] w-min">
-                <Avatar small={true} ring={false} />
+                <Avatar
+                    small={true}
+                    ring={false}
+                    img={$business.design.shopIconUrl}
+                />
                 <h3 class="w-max text-center text-lg font-semibold">{name}</h3>
                 <a
                     href={geo.link}
