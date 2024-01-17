@@ -2,12 +2,19 @@
     import { Icon, MapPin, Phone, DocumentText } from "svelte-hero-icons";
     import type { IconSource } from "svelte-hero-icons";
     import { ShowToast } from "$lib/stores/ToastManager";
+    import { business } from "$lib/stores/Business";
 
     // Assets
     import WhatsappLogo from "$lib/images/whatsapp.svg";
     import InsagramLogo from "$lib/images/instagram.svg";
 
-    export let socialLinks: Object;
+    let socialLinks: Object = {
+        call: $business.shopPhone,
+        instagram: $business.instagramAccount,
+        whatsapp: `whatsapp://send?phone=${$business.shopPhone}`,
+        maps: `https://www.google.com/maps/search/?api=1&query=${$business.adress}`,
+        policy: $business.previewDoc,
+    };
 
     let socialIcons: { [key: string]: string } = {
         whatsapp: WhatsappLogo,

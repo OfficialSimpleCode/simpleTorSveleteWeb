@@ -1,5 +1,6 @@
 <script lang="ts">
     import { base } from "$app/paths";
+    import { business } from "$lib/stores/Business.js";
     import NotificationsBoard from "./NotificationsBoard.svelte";
     import LoggedInProfile from "./LoggedInProfile.svelte";
     import GuestProfile from "./GuestProfile.svelte";
@@ -22,7 +23,10 @@
 
 <div class="navbar bg-base-100 fixed z-20 gap-8 justify-between">
     <div>
-        <a href="{base}/" class="btn btn-ghost text-xl">SimpleTor</a>
+        <a
+            href="{base}/business?BusinessId={$business.businessId}"
+            class="btn btn-ghost text-xl">SimpleTor</a
+        >
     </div>
     <div>
         <div class="dropdown dropdown-left dropdown-bottom">

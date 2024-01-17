@@ -10,14 +10,17 @@
     import { page } from "$app/stores";
 
     async function loadBusiness() {
-        let businessID = $page.url.searchParams.get("BusinessId");
+        let businessID = $page.data.businessID;
+        console.log(businessID);
         if (businessID == null) {
             return;
         }
 
         const firebaseApp = initializeApp(firebaseConfig);
         await BusinessInitializer.GI().loadBusiness(businessID, "");
-        business.set(BusinessInitializer.GI().business);
+        const b = BusinessInitializer.GI().business;
+        console.log(b);
+        business.set(b);
     }
 
     let businessLoading = loadBusiness();

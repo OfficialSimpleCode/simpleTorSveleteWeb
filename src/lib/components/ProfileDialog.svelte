@@ -49,7 +49,11 @@
         <div class="flex flex-col justify-start items-center gap-6">
             <!-- Avatar -->
             <section class="flex flex-col items-center">
-                <Avatar small={true} ring={false} />
+                <Avatar
+                    small={true}
+                    ring={false}
+                    img="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                />
                 <h1 class="text-xl">{profile.name}</h1>
                 <h5 class="text-sm text-gray-500">sains: {profile.joinDate}</h5>
             </section>

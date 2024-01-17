@@ -1,17 +1,6 @@
-import { firebaseConfig } from "$lib/firebase_config";
-import BusinessInitializer from "$lib/initializers/business_initializer.js";
-import BusinessModel from "$lib/models/business/business_model";
-import { initializeApp } from "firebase/app";
-
-import { business } from "$lib/stores/Business.js";
 
 /** @type {import('./$types').PageLoad} */
 export async function load({ params }) {
-  const b = await getBusinessById(
-    "972-525656377--857e6680-b863-11ed-89a5-05ff99923d7e"
-  );
-  console.log(b.toJson());
-  business.set(b);
   return {
     profile: {
       name: "Amit Nails",
@@ -48,11 +37,4 @@ export async function load({ params }) {
       },
     ],
   };
-}
-
-async function getBusinessById(id: string): Promise<BusinessModel> {
-  const firebaseApp = initializeApp(firebaseConfig);
-  await BusinessInitializer.GI().loadBusiness(id, "");
-  const business = BusinessInitializer.GI().business;
-  return business;
 }
