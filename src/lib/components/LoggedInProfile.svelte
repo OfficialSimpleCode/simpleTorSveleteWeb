@@ -41,6 +41,6 @@
                 <span class="badge">New</span>
             </a>
         </li>
-        <li><a href="orders">My Orders</a></li>
+        <li><a href="appointments">My Appointments</a></li>
     </ul>
 </div>

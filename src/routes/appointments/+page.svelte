@@ -43,7 +43,7 @@
 <main>
     <Navbar {notifications} {loggedIn} {profile} />
     <div class="pt-20 flex flex-col gap-8 items-center">
-        <h1 class="text-3xl mx-10">Pending Appointments</h1>
+        <h1 class="text-3xl mx-10">Appointments</h1>
         <div class="overflow-x-auto w-full hidden md:block min-h-[400px] mx-10">
             <table class="table">
                 <thead>

@@ -57,7 +57,7 @@
                 on:notification-opend={(e) => markAsRead(e.detail)}
             />
         </div>
-        <a href="orders">
+        <a href="appointments">
             <div role="button" class="btn btn-ghost btn-circle">
                 <div class="indicator">
                     <svg

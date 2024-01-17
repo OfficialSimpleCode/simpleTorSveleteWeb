@@ -42,4 +42,7 @@
         </li>
         <div class="divider h-2 last:hidden"></div>
     {/each}
+    {#if notifications.length == 0}
+        <div class="font-bold text-center">No Notifications</div>
+    {/if}
 </ul>
