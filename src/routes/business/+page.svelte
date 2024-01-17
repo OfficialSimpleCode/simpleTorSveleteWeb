@@ -1,13 +1,10 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import { pushState } from "$app/navigation";
     import { base } from "$app/paths";
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
 
     import { Icon, MapPin, Share } from "svelte-hero-icons";
-
-    import type BusinessModel from "$lib/models/business/business_model";
 
     import Navbar from "$lib/components/Navbar.svelte";
     import Avatar from "../../lib/components/Avatar.svelte";
