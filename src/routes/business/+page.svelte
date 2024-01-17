@@ -1,17 +1,17 @@
 <script lang="ts">
-    import { base } from "$app/paths";
     import { pushState } from "$app/navigation";
+    import { base } from "$app/paths";
     import { page } from "$app/stores";
-    import { Icon, Share, MapPin } from "svelte-hero-icons";
+    import { Icon, MapPin, Share } from "svelte-hero-icons";
 
-    import Navbar from "./components/Navbar.svelte";
-    import LoggedInProfile from "./components/LoggedInProfile.svelte";
-    import GuestProfile from "./components/GuestProfile.svelte";
-    import Avatar from "./components/Avatar.svelte";
-    import ShareDialog from "./components/ShareDialog.svelte";
-    import ImageDisplayDialog from "./components/ImageDisplayDialog.svelte";
-    import SocialLinks from "./components/SocialLinks.svelte";
     import { goto } from "$app/navigation";
+    import Avatar from "./components/Avatar.svelte";
+    import GuestProfile from "./components/GuestProfile.svelte";
+    import ImageDisplayDialog from "./components/ImageDisplayDialog.svelte";
+    import LoggedInProfile from "./components/LoggedInProfile.svelte";
+    import Navbar from "./components/Navbar.svelte";
+    import ShareDialog from "./components/ShareDialog.svelte";
+    import SocialLinks from "./components/SocialLinks.svelte";
 
     /** @type {import('./$types').PageData} */
     export let data;
