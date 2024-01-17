@@ -103,7 +103,6 @@ export default class BusinessInitializer {
     // UserInitializer.getInstance().currentBusiness = "";
 
     try {
-      console.log("Eeeeeeeeeeeeeeeeeeeee");
       // Initialize settings
       const resp = await this.initSettings(businessId, {
         fromLoading,
@@ -183,7 +182,6 @@ export default class BusinessInitializer {
         AppErrorsHelper.GI().error = Errors.notFoundBusiness;
         return false;
       }
-      console.log("rrrrrrrrrrrrrrrrrrrrrrrr");
 
       this.business = BusinessModel.fromJson(doc.data()!, businessId);
 

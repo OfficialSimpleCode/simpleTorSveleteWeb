@@ -7,6 +7,10 @@ export default class GeneralRepo
   extends FirestoreDataBase
   implements GeneralApi
 {
+  private constructor() {
+    super();
+  }
+
   private static instance: GeneralRepo;
 
   public static GI(): GeneralRepo {

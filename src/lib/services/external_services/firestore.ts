@@ -16,11 +16,12 @@ import {
   deleteField,
   doc,
   getDoc,
+  getFirestore,
+  increment,
   runTransaction,
   writeBatch,
   type DocumentData,
 } from "firebase/firestore";
-import { getFirestore, increment } from "firebase/firestore/lite";
 import RealTimeDatabase from "./real_time_data_base";
 
 enum NumericCommands {
@@ -57,6 +58,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       return await getDoc(docRef);
     } catch (e) {
       if (e instanceof Error) {
+        console.log(e.message);
         AppErrorsHelper.GI().addError({
           error: Errors.serverError,
           details: e.message,

@@ -9,7 +9,7 @@ import {
 import { hypPathFromStr, type HypPaths } from "$lib/consts/hyp_pathes";
 import { BusinessData } from "./business_data";
 import { BusinessDesign } from "./business_design";
-import { ProductModel } from "./product_model";
+import { ProductModel } from "./ProductModel";
 import { Update } from "./update_model";
 
 export default class BusinessModel {
@@ -119,12 +119,14 @@ export default class BusinessModel {
     } else {
       const theme = json["theme"]; // themeFromStr[json['theme']] ?? Themes.dark;
       this.design.pickedThemeKey = theme;
-      Object.entries(json["products"]).forEach(([productId, product]) => {
-        this.design.products[productId] = ProductModel.fromJson(
-          product,
-          productId
-        );
-      });
+      Object.entries<Record<string, any>>(json["products"]).forEach(
+        ([productId, productJson]) => {
+          this.design.products[productId] = ProductModel.fromJson(
+            productJson,
+            productId
+          );
+        }
+      );
 
       if (json["changingImages"] != null) {
         this.design.changingImages = json["changingImages"].map(
@@ -275,9 +277,9 @@ export default class BusinessModel {
     data.createdAt = this.createdAt;
     data.lastTimeConnected = this.lastTimeConnected;
 
-    if (Object.keys(data.workersPermissions).length === 0) {
-      delete data.workersPermissions;
-    }
+    // if (Object.keys(data.workersPermissions).length === 0) {
+    //   delete data.workersPermissions;
+    // }
 
     if (this.isLandingPageMode) {
       data.isLandingPageMode = this.isLandingPageMode;

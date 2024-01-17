@@ -6,7 +6,7 @@ import {
 } from "$lib/consts/business_design";
 import IconData from "../general/icon_data";
 import { BusinessTheme } from "./business_theme";
-import { ProductModel } from "./product_model";
+import { ProductModel } from "./ProductModel";
 import { Update } from "./update_model";
 
 export class BusinessDesign {
@@ -48,9 +48,12 @@ export class BusinessDesign {
 
   static fromJson(json: Record<string, any>): BusinessDesign {
     const newObj = new BusinessDesign();
-    json.products.forEach((productId: string, product: any) => {
-      newObj.products[productId] = ProductModel.fromJson(product, productId);
-    });
+
+    Object.entries(json.products).forEach(
+      ([productId, product]: [string, any]) => {
+        newObj.products[productId] = ProductModel.fromJson(product, productId);
+      }
+    );
 
     if (json.changingImages) {
       newObj.changingImages = json.changingImages.map((item: string) => item);
