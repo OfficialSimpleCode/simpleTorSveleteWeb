@@ -2,7 +2,6 @@ import { Timestamp } from "firebase/firestore";
 import BusinessPayloadData from "../notifications/business_data_payload";
 import { BusinessDesign } from "./business_design";
 
-
 export default class BusinessModel {
   businesseType: BusinessesTypes = BusinessesTypes.Other;
   currency: CurrencyModel = defaultCurrency;
@@ -14,22 +13,22 @@ export default class BusinessModel {
   workersIds: Record<string, string> = {};
   hypPath?: HypPaths;
   expiredDate: Date = new Date();
-  shopPhone: string = '';
-  ownersName: string = '';
-  companyNumber: string = '';
-  ownersPhone: string = '';
-  masofNumber: string = '';
-  previewDoc: string = '';
-  instagramAccount: string = '';
-  revenueCatId: string = '';
-  pendingWorkersProductsId: string = '';
-  adress: string = '';
-  workersProductsId: string = '';
-  pendingProductId: string = '';
-  dynamicLink: string = '';
-  shopName: string = '';
-  productId: string = '';
-  businessId: string = '';
+  shopPhone: string = "";
+  ownersName: string = "";
+  companyNumber: string = "";
+  ownersPhone: string = "";
+  masofNumber: string = "";
+  previewDoc: string = "";
+  instagramAccount: string = "";
+  revenueCatId: string = "";
+  pendingWorkersProductsId: string = "";
+  adress: string = "";
+  workersProductsId: string = "";
+  pendingProductId: string = "";
+  dynamicLink: string = "";
+  shopName: string = "";
+  productId: string = "";
+  businessId: string = "";
   createdAt: Date = new Date();
   blockedUsersTemp: Record<string, string> = {};
   lastTimeConnected: Date = new Date();
@@ -37,15 +36,15 @@ export default class BusinessModel {
   design: BusinessDesign = new BusinessDesign();
 
   constructor({
-    shopName = '',
+    shopName = "",
     businessId,
-    productId = '',
-    adress = '',
-    dynamicLink = '',
-    revenueCatId = '',
-    ownersName = '',
-    instagramAccount = '',
-    shopPhone = '',
+    productId = "",
+    adress = "",
+    dynamicLink = "",
+    revenueCatId = "",
+    ownersName = "",
+    instagramAccount = "",
+    shopPhone = "",
     design,
   }: {
     shopName?: string;
@@ -74,19 +73,22 @@ export default class BusinessModel {
   static empty(): BusinessModel {
     return new BusinessModel({
       design: new BusinessDesign(),
-      businessId: '',
+      businessId: "",
     });
   }
 
   get businessPayLoadData(): BusinessPayloadData {
     return new BusinessPayloadData({
-        businessId: this.businessId,
-        businessName: this.shopName,
-        shopIcon: this.design.shopIconData,
+      businessId: this.businessId,
+      businessName: this.shopName,
+      shopIcon: this.design.shopIconData,
     });
   }
 
-  static fromJson(json: Record<string, any>, businessId: string): BusinessModel {
+  static fromJson(
+    json: Record<string, any>,
+    businessId: string
+  ): BusinessModel {
     const instance = new BusinessModel({
       businessId,
       design: new BusinessDesign(),
@@ -95,7 +97,6 @@ export default class BusinessModel {
     return instance;
   }
 
-  
   setData(json: Record<string, any>, newBusinessId: string): void {
     this.businessId = newBusinessId;
 
@@ -106,31 +107,39 @@ export default class BusinessModel {
     if (json["design"] != null) {
       this.design = BusinessDesign.fromJson(json["design"]);
     } else {
-      const theme = json['theme']; // themeFromStr[json['theme']] ?? Themes.dark;
+      const theme = json["theme"]; // themeFromStr[json['theme']] ?? Themes.dark;
       this.design.pickedThemeKey = theme;
       Object.entries(json["products"]).forEach(([productId, product]) => {
-        this.design.products[productId] = ProductModel.fromJson(product, productId);
+        this.design.products[productId] = ProductModel.fromJson(
+          product,
+          productId
+        );
       });
 
       if (json["changingImages"] != null) {
-        this.design.changingImages = json["changingImages"]
-          .map((item: string) => item);
+        this.design.changingImages = json["changingImages"].map(
+          (item: string) => item
+        );
       }
 
       if (json["updates"] != null) {
         (json["updates"] as Record<string, any>[]).forEach((update, index) => {
-          this.design.updates[index.toString()] = Update.fromJson(update, index.toString());
+          this.design.updates[index.toString()] = Update.fromJson(
+            update,
+            index.toString()
+          );
         });
       }
 
-      this.design.bottomIcons = json['bottomIcons'] ?? false;
+      this.design.bottomIcons = json["bottomIcons"] ?? false;
       this.design.storyTitle = json["storyTitle"] ?? "";
-      this.design.changingImagesSwapSeconds = json['changingImagesSwapSeconds'] ?? 6;
+      this.design.changingImagesSwapSeconds =
+        json["changingImagesSwapSeconds"] ?? 6;
       this.design.shopIconUrl = json["shopIcon"] ?? "";
     }
 
-    this.previewDoc = json['previewDoc'] ?? "";
-    this.workersProductsId = json['workersProductsId'] ?? "";
+    this.previewDoc = json["previewDoc"] ?? "";
+    this.workersProductsId = json["workersProductsId"] ?? "";
     this.pendingWorkersProductsId = json["pendingWorkersProductsId"] ?? "";
     this.shopName = json["shopName"] ?? "";
     this.isLandingPageMode = json["isLandingPageMode"] ?? false;
@@ -142,7 +151,6 @@ export default class BusinessModel {
 
     this.notifyOnNewCustomer = json["notifyOnNewCustomer"] ?? true;
 
-    
     // json["workersPermissions"] ??= {};
     // this.workersPermissions = WorkersPermissions.fromJson(json["workersPermissions"]);
 
@@ -154,9 +162,11 @@ export default class BusinessModel {
 
     this.allWorkersIds = {};
     if (json["allWorkersIds"] != null) {
-      Object.entries<string>(json["allWorkersIds"]).forEach(([workerId, details]) => {
-        this.allWorkersIds[workerId] = details;
-      });
+      Object.entries<string>(json["allWorkersIds"]).forEach(
+        ([workerId, details]) => {
+          this.allWorkersIds[workerId] = details;
+        }
+      );
     }
 
     const ownerPhone = this.businessId.split("--")[0];
@@ -166,9 +176,11 @@ export default class BusinessModel {
 
     this.workersIds = {};
     if (json["workersIds"] != null) {
-      Object.entries<string>(json["workersIds"]).forEach(([workerId, details]) => {
-        this.workersIds[workerId] = details;
-      });
+      Object.entries<string>(json["workersIds"]).forEach(
+        ([workerId, details]) => {
+          this.workersIds[workerId] = details;
+        }
+      );
     }
 
     if (!this.workersIds.hasOwnProperty(ownerPhone)) {
@@ -178,12 +190,13 @@ export default class BusinessModel {
     this.dynamicLink = json["dynamicLink"] ?? "";
     this.masofNumber = json["masofNumber"] ?? "";
 
-    this.ownersName = json['ownersName'] ?? "";
-    this.revenueCatId = json['revenueCatId'] ?? "";
-    this.productId = json['productId'] ?? "";
+    this.ownersName = json["ownersName"] ?? "";
+    this.revenueCatId = json["revenueCatId"] ?? "";
+    this.productId = json["productId"] ?? "";
     this.pendingProductId = json["pendingProductId"] ?? "";
 
-    this.businesseType = businessTypeFromStr[json['businesseType']] ?? BusinessesTypes.Other;
+    this.businesseType =
+      businessTypeFromStr[json["businesseType"]] ?? BusinessesTypes.Other;
 
     this.instagramAccount = json["instagramAccount"] ?? "";
     this.adress = json["adress"] ?? "";
@@ -202,15 +215,14 @@ export default class BusinessModel {
     if (json["createdAt"] instanceof Timestamp) {
       this.createdAt = (json["createdAt"] as Timestamp).toDate();
     } else if (typeof json["createdAt"] === "string") {
-      this.createdAt =  new Date(json['createdAt']) || new Date();
+      this.createdAt = new Date(json["createdAt"]) || new Date();
     }
 
     if (json["lastTimeConnected"] != null) {
-      this.lastTimeConnected = new Date(json['lastTimeConnected']) || new Date();
+      this.lastTimeConnected =
+        new Date(json["lastTimeConnected"]) || new Date();
     }
   }
-
-
 
   toJson(): Record<string, any> {
     const data: Record<string, any> = {};
@@ -252,8 +264,7 @@ export default class BusinessModel {
     data.workersIds = this.workersIds;
     data.createdAt = this.createdAt;
     data.lastTimeConnected = this.lastTimeConnected;
-    
-   
+
     if (Object.keys(data.workersPermissions).length === 0) {
       delete data.workersPermissions;
     }
