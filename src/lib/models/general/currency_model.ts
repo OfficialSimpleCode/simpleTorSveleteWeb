@@ -1,7 +1,3 @@
-
-
-
-
 export class CurrencyModel {
   ///The currency code
   code: string = "";
@@ -28,17 +24,17 @@ export class CurrencyModel {
 
   static fromJson(json: { [key: string]: any }): CurrencyModel {
     return new CurrencyModel({
-      code: json['code'] || '',
-      name: json['name'] || '',
-      symbol: json['symbol'] || '',
+      code: json["code"] || "",
+      name: json["name"] || "",
+      symbol: json["symbol"] || "",
     });
   }
 
   toJson(): { [key: string]: any } {
     return {
-      'code': this.code,
-      'name': this.name,
-      'symbol': this.symbol,
+      code: this.code,
+      name: this.name,
+      symbol: this.symbol,
     };
   }
 
@@ -75,13 +71,8 @@ export class CurrencyModel {
   }
 }
 
-
-
-
-
 export const defaultCurrency = new CurrencyModel({
-  code: 'USD',
-  name: 'US Dollar',
-  symbol: '$',
+  code: "USD",
+  name: "US Dollar",
+  symbol: "$",
 });
-

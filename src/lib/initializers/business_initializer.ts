@@ -1,4 +1,6 @@
+import { buisnessCollection } from "$lib/consts/db";
 import GeneralRepo from "$lib/helpers/general/general_repo";
+import { GeneralData } from "$lib/helpers/general_data";
 import { BusinessDesign } from "$lib/models/business/business_design";
 import BusinessModel from "$lib/models/business/business_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
@@ -102,7 +104,7 @@ export default class BusinessInitializer {
 
     try {
       // Initialize settings
-      const resp = await BusinessInitializer.GI().initSettings(businessId, {
+      const resp = await this.initSettings(businessId, {
         fromLoading,
       });
 

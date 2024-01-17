@@ -1,15 +1,20 @@
-const messagesLimits: { [key: string]: number } = {
-  "simpletor_golden_business_month_1": 1000,
-  "simpletor_advanced_business_month_1": 200,
-  "simpletor_basic_business_month_1": 0,
-  "simpletor_landing_business_month_1": 0
+import {
+  messagesForNewBusiness,
+  paymentRequsetForNewBusiness,
+} from "$lib/consts/limitation";
+
+export const messagesLimits: { [key: string]: number } = {
+  simpletor_golden_business_month_1: 1000,
+  simpletor_advanced_business_month_1: 200,
+  simpletor_basic_business_month_1: 0,
+  simpletor_landing_business_month_1: 0,
 };
 
-const paymentRequestLimit: { [key: string]: number } = {
-  "simpletor_golden_business_month_1": 100,
-  "simpletor_advanced_business_month_1": 20,
-  "simpletor_basic_business_month_1": 10,
-  "simpletor_landing_business_month_1": 10
+export const paymentRequestLimit: { [key: string]: number } = {
+  simpletor_golden_business_month_1: 100,
+  simpletor_advanced_business_month_1: 20,
+  simpletor_basic_business_month_1: 10,
+  simpletor_landing_business_month_1: 10,
 };
 
 export class BusinessData {
@@ -22,7 +27,10 @@ export class BusinessData {
   }
 
   static forNewBusiness(): BusinessData {
-    return new BusinessData(messagesForNewBusiness, paymentRequsetForNewBusiness);
+    return new BusinessData(
+      messagesForNewBusiness,
+      paymentRequsetForNewBusiness
+    );
   }
 
   static fromProductId(productId: string): BusinessData {
@@ -33,8 +41,10 @@ export class BusinessData {
   }
 
   setBusinessData(ref: DataSnapshot): void {
-    this.messagesCounter = parseInt(ref.child("messagesCounter").value.toString()) || 0;
-    this.paymentRequestCounter = parseInt(ref.child("paymentRequestCounter").value.toString()) || 0;
+    this.messagesCounter =
+      parseInt(ref.child("messagesCounter").value.toString()) || 0;
+    this.paymentRequestCounter =
+      parseInt(ref.child("paymentRequestCounter").value.toString()) || 0;
   }
 
   toJson(): any {

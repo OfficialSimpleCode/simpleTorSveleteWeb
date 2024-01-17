@@ -1,6 +1,13 @@
+import {
+  Arrangement,
+  arrangementFromStr,
+  arrangementToStr,
+  defaultThemes,
+} from "$lib/consts/business_design";
 import IconData from "../general/icon_data";
-import {Arrangement, arrangementFromStr, arrangementToStr, defaultThemes} from "$lib/consts/business_design";
-import { BusinessTheme } from "$lib/models/business/business_theme";
+import { BusinessTheme } from "./business_theme";
+import { ProductModel } from "./ProductModel";
+import { Update } from "./update_model";
 
 export class BusinessDesign {
   storyView: Arrangement = Arrangement.Grid;
@@ -22,10 +29,14 @@ export class BusinessDesign {
   isPrivateTheme: boolean = false;
 
   constructor({
+    storyView = Arrangement.Grid,
+    productView = Arrangement.Grid,
     changingImagesSwapSeconds = 6,
     shopIconUrl = "",
     pickedThemeKey = "darkIos",
   }: {
+    storyView?: Arrangement;
+    productView?: Arrangement;
     changingImagesSwapSeconds?: number;
     shopIconUrl?: string;
     pickedThemeKey?: string;
@@ -37,9 +48,12 @@ export class BusinessDesign {
 
   static fromJson(json: Record<string, any>): BusinessDesign {
     const newObj = new BusinessDesign();
-    json.products.forEach((productId: string, product: any) => {
-      newObj.products[productId] = ProductModel.fromJson(product, productId);
-    });
+
+    Object.entries(json.products).forEach(
+      ([productId, product]: [string, any]) => {
+        newObj.products[productId] = ProductModel.fromJson(product, productId);
+      }
+    );
 
     if (json.changingImages) {
       newObj.changingImages = json.changingImages.map((item: string) => item);
