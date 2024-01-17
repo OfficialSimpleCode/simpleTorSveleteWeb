@@ -2,7 +2,7 @@ import { Timestamp } from '@firebase/firestore-types';
 
 
 
-class WorkerPublicData {
+export default class WorkerPublicData {
   bookingsTimes: Record<string, Record<string, number>> = {};
   lastBookingTimeDate?: Date;
   duringPaymentBookingsTime: Record<string, Record<string, [Timestamp, number]>> = {};

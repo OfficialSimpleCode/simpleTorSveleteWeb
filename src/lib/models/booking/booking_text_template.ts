@@ -1,5 +1,6 @@
 // Assuming Booking and BookingReminderType classes are defined somewhere
 
+import { formatedPhone, getFormatedTime, translate } from "$lib/utils/string_utilitis";
 import Booking from "./booking_model";
 
 class BookingTextTemplate extends Booking {
