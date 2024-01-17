@@ -1,10 +1,18 @@
-<script lang="ts">
-    import { Icon, ChatBubbleLeftEllipsis } from "svelte-hero-icons";
 
+
+<script lang="ts">
     // Assets
-    import Google from "$lib/images/google.svg";
-    import Facebook from "$lib/images/facebook.svg";
-    import Apple from "$lib/images/apple.svg";
+    import { AuthProvider, authProviderToImage, authProviderToStr } from "$lib/consts/auth";
+    import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
+    import { LoginType } from "$lib/services/external_services/firebase_auth_service";
+
+    function handleClick(authProvider:AuthProvider){
+        VerificationHelper.GI().handleLogin({
+            provider:authProvider,
+            loginType:LoginType.login
+        });
+    };
+    
 </script>
 
 <main class="flex w-full h-full">
@@ -15,12 +23,15 @@
     />
     <div class="flex-[1] flex flex-col justify-center items-center gap-8">
         <h1 class="text-4xl">Login Or Signup</h1>
-
-        <div id="buttons" class="flex flex-col items-center gap-2 w-[90%] sm:w-[60%]">
-            <button class="btn sm:btn-lg btn-outline w-full">
-                <img class="w-10 h-10" src={Google} alt="google" />
-                Signin with Google
+        {#each  Object.values(AuthProvider) as authProvider, i}
+            <button on:click = {()=>handleClick(authProvider)} class="btn sm:btn-lg btn-outline w-full">
+                <img class="w-10 h-10" src={authProviderToImage[authProvider]} alt="google" />
+                Signin with {authProviderToStr[authProvider]}
             </button>
+        {/each}
+
+        <!-- <div id="buttons" class="flex flex-col items-center gap-2 w-[90%] sm:w-[60%]">
+            
             <button class="btn sm:btn-lg btn-outline w-full">
                 <img class="w-10 h-10" src={Facebook} alt="facebook" />
                 Signin with Facebook</button
@@ -33,6 +44,6 @@
                 <Icon src={ChatBubbleLeftEllipsis} size="2.5rem" />
                 Signin with Phone Number
             </button>
-        </div>
+        </div> -->
     </div>
 </main>
