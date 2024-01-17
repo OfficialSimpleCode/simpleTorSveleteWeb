@@ -10,8 +10,9 @@
     import { page } from "$app/stores";
 
     async function loadBusiness() {
-        let businessID = $page.data.businessID;
-        console.log(businessID);
+        let businessID =
+            $page.data.businessID ||
+            "972-525656377--857e6680-b863-11ed-89a5-05ff99923d7e";
         if (businessID == null) {
             return;
         }
