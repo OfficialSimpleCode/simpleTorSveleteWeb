@@ -3,14 +3,16 @@ import BusinessInitializer from "$lib/initializers/business_initializer.js";
 import BusinessModel from "$lib/models/business/business_model";
 import { initializeApp } from "firebase/app";
 
+import { business } from "$lib/stores/Business.js";
+
 /** @type {import('./$types').PageLoad} */
 export async function load({ params }) {
-  const business = await getBusinessById(
+  const b = await getBusinessById(
     "972-525656377--857e6680-b863-11ed-89a5-05ff99923d7e"
   );
-  console.log(business.toJson());
+  console.log(b.toJson());
+  business.set(b);
   return {
-    businessData: business,
     profile: {
       name: "Amit Nails",
       gender: "male",
@@ -23,17 +25,6 @@ export async function load({ params }) {
       },
     },
     name: "Amit Nails",
-    geo: {
-      title: "Ort 23",
-      link: "https://maps.google.com",
-    },
-    socialLinks: {
-      whatsapp: "whatsapp://send?phone=972525656377",
-      instagram: "",
-      call: "tel:972-525656377",
-      maps: "https://www.google.com/maps/search/?api=1&query=%D7%90%D7%95%D7%A8%D7%98+23",
-      policy: "",
-    },
     displayImages: [
       {
         link: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fd.newsweek.com%2Fen%2Ffull%2F1524142%2Fcardio-workout.jpg&f=1&nofb=1&ipt=918d5daae85a875795a8fbc59ed713efac18c5151772da9d651dda889ce597b5&ipo=images",

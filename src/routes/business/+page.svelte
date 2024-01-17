@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import { pushState } from "$app/navigation";
     import { base } from "$app/paths";
     import { page } from "$app/stores";
@@ -13,20 +14,25 @@
     import ImageDisplayDialog from "./components/ImageDisplayDialog.svelte";
     import ShareDialog from "./components/ShareDialog.svelte";
     import SocialLinks from "./components/SocialLinks.svelte";
-	
+    import { business } from "$lib/stores/Business.js";
 
     /** @type {import('./$types').PageData} */
     export let data;
 
     let loggedIn: boolean = true;
     let profile: Record<string, string> = data.profile;
-    let name: string = data.name;
-    let geo: Record<string, string> = data.geo;
+    let name: string = $business.shopName;
+    let geo: Record<string, string> = {
+        title: $business.adress,
+        link: "https://blabla.com",
+    };
     let socialLinks: Object = data.socialLinks;
     let displayImages: Array<Record<string, any>> = data.displayImages;
     let notifications: Array<Record<string, any>> = data.notifications;
 
-    let businessData: BusinessModel = data.businessData;
+    // onMount(() => {
+    //     document.documentElement.style.setProperty("--p", "red");
+    // });
 
     // Dialogs
     let shareDialog: HTMLDialogElement;
@@ -68,13 +74,13 @@
     />
 {/if}
 
-<main class="w-full h-full">
+<main class="w-full h-full" style="">
     <Navbar {notifications} {loggedIn} {profile} />
 
     <!-- background image -->
     <img
         class="h-1/2 w-full object-cover"
-        src="https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?cs=srgb&dl=action-athlete-barbell-841130.jpg&fm=jpg"
+        src={$business.design.changingImages[0]}
         alt="backgroud"
     />
 
@@ -85,7 +91,7 @@
                 id="profile-row"
                 class="flex justify-between items-center gap-10"
             >
-                <Avatar />
+                <Avatar img={$business.design.shopIconUrl} />
 
                 <!-- Order now and Share buttons -->
                 <div class="flex gap-5 items-center">
@@ -115,7 +121,7 @@
                     </a>
                 </div>
 
-                <SocialLinks {socialLinks} />
+                <SocialLinks />
 
                 <!-- Display images -->
                 <div
