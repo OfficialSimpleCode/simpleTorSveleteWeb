@@ -1,16 +1,13 @@
-import {
-  BusinessesTypes,
-  businessTypeFromStr,
-} from "$lib/consts/business_types";
-import { hypPathFromStr, type HypPaths } from "$lib/consts/hyp_pathes";
 import { Timestamp } from "firebase/firestore";
 import { CurrencyModel, defaultCurrency } from "../general/currency_model";
 import BusinessPayloadData from "../notifications/business_data_payload";
 
+import {
+  BusinessesTypes,
+  businessTypeFromStr,
+} from "$lib/consts/business_types";
 import { BusinessData } from "./business_data";
 import { BusinessDesign } from "./business_design";
-import { ProductModel } from "./product_model";
-import { Update } from "./update_model";
 
 export default class BusinessModel {
   businesseType: BusinessesTypes = BusinessesTypes.Other;
@@ -275,9 +272,9 @@ export default class BusinessModel {
     data.createdAt = this.createdAt;
     data.lastTimeConnected = this.lastTimeConnected;
 
-    // if (Object.keys(data.workersPermissions).length === 0) {
-    //   delete data.workersPermissions;
-    // }
+    if (Object.keys(data.workersPermissions).length === 0) {
+      delete data.workersPermissions;
+    }
 
     if (this.isLandingPageMode) {
       data.isLandingPageMode = this.isLandingPageMode;
