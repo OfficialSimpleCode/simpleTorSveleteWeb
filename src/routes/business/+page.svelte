@@ -5,6 +5,7 @@
     import { Icon, MapPin, Share } from "svelte-hero-icons";
 
     import { goto } from "$app/navigation";
+    import type BusinessModel from "$lib/models/business/business_model";
     import Avatar from "./components/Avatar.svelte";
     import GuestProfile from "./components/GuestProfile.svelte";
     import ImageDisplayDialog from "./components/ImageDisplayDialog.svelte";
@@ -23,6 +24,8 @@
     let socialLinks: Object = data.socialLinks;
     let displayImages: Array<Record<string, any>> = data.displayImages;
     let notifications: Array<Record<string, any>> = data.notifications;
+
+    let businessData:BusinessModel = data.businessData
 
     // Dialogs
     let shareDialog: HTMLDialogElement;
@@ -94,7 +97,7 @@
                 <!-- Order now and Share buttons -->
                 <div class="flex gap-5 items-center">
                     <button class="btn btn-primary" on:click={orderNow}>
-                        Order Now
+                        {businessData.shopName}
                     </button>
                     <button class="btn btn-primary" on:click={openShareDialog}>
                         <Icon src={Share} size="26px" />
