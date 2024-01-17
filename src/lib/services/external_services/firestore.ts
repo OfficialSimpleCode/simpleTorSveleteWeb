@@ -5,33 +5,67 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable max-len */
 
-
-
-import { DocumentSnapshot, Firestore, Timestamp, Transaction, WriteBatch, collection, deleteField, doc, runTransaction, writeBatch, type DocumentData } from 'firebase/firestore';
-import { getFirestore, increment } from 'firebase/firestore/lite';
-import RealTimeDatabase from './real_time_data_base';
-
-
+import {
+  DocumentSnapshot,
+  Firestore,
+  Timestamp,
+  Transaction,
+  WriteBatch,
+  collection,
+  deleteField,
+  doc,
+  getDoc,
+  runTransaction,
+  writeBatch,
+  type DocumentData,
+} from "firebase/firestore";
+import { getFirestore, increment } from "firebase/firestore/lite";
+import RealTimeDatabase from "./real_time_data_base";
 
 enum NumericCommands {
   decrement,
-  increment
+  increment,
 }
 
-
 export default class FirestoreDataBase extends RealTimeDatabase {
-  
   _firestore: Firestore;
   constructor() {
     super();
     this._firestore = getFirestore();
   }
 
-  get getBatch():WriteBatch  {
+  get getBatch(): WriteBatch {
     return writeBatch(this._firestore);
   }
 
-  async commmitBatch(batch: WriteBatch):Promise<boolean>  {
+  async getDocSRV({
+    path,
+    docId,
+    insideEnviroments = true,
+  }: {
+    path: string;
+    docId: string;
+    insideEnviroments: boolean;
+  }): Promise<DocumentSnapshot<DocumentData, DocumentData> | undefined> {
+    try {
+      const collectionRef = collection(
+        this._firestore,
+        insideEnviroments ? `${envKey}/${path}` : path
+      );
+      const docRef = doc(collectionRef, docId);
+      return await getDoc(docRef);
+    } catch (e) {
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.message,
+        });
+        throw e;
+      }
+    }
+  }
+
+  async commmitBatch(batch: WriteBatch): Promise<boolean> {
     try {
       await batch.commit();
       return true;
@@ -41,12 +75,16 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     }
   }
 
-  async runTransaction(transacionCommands: (transaction: Transaction)=> Promise<boolean>):Promise<boolean>  {
-    
+  async runTransaction(
+    transacionCommands: (transaction: Transaction) => Promise<boolean>
+  ): Promise<boolean> {
     try {
-      const result = await runTransaction(this._firestore,async (transaction) => {
-        return await transacionCommands(transaction);
-      });
+      const result = await runTransaction(
+        this._firestore,
+        async (transaction) => {
+          return await transacionCommands(transaction);
+        }
+      );
 
       return result;
     } catch (e) {
@@ -55,10 +93,14 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     }
   }
 
-  async transactionGet(transaction: Transaction , path: string , docId: string ):Promise<DocumentSnapshot<DocumentData>> {
+  async transactionGet(
+    transaction: Transaction,
+    path: string,
+    docId: string
+  ): Promise<DocumentSnapshot<DocumentData>> {
     try {
-      const collectionRef = collection(this._firestore,`${envKey}/${path}`);
-      const docRef = doc(collectionRef,docId);
+      const collectionRef = collection(this._firestore, `${envKey}/${path}`);
+      const docRef = doc(collectionRef, docId);
       const snapshot = await transaction.get(docRef);
       return snapshot;
     } catch (e) {
@@ -67,13 +109,17 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     }
   }
 
-  
-
-  async transactionUpdateAsMap(transaction:Transaction , path: string, docId: string , fieldName: string , value: any):Promise<any> {
+  async transactionUpdateAsMap(
+    transaction: Transaction,
+    path: string,
+    docId: string,
+    fieldName: string,
+    value: any
+  ): Promise<any> {
     try {
-      const collectionRef = collection(this._firestore,`${envKey}/${path}`);
-      const docRef = doc(collectionRef,docId);
-      const updateData = {[fieldName]: value ? value : deleteField()};
+      const collectionRef = collection(this._firestore, `${envKey}/${path}`);
+      const docRef = doc(collectionRef, docId);
+      const updateData = { [fieldName]: value ? value : deleteField() };
       transaction.update(docRef, updateData);
     } catch (e) {
       console.error("Error while updating document in transaction -->", e);
@@ -81,22 +127,39 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     }
   }
 
-  async transactionUpdateMultipleFieldsAsMap(transaction:Transaction, path:string, docId: string, data: Record<string, any>,insideEnvironments:boolean = true) {
+  async transactionUpdateMultipleFieldsAsMap(
+    transaction: Transaction,
+    path: string,
+    docId: string,
+    data: Record<string, any>,
+    insideEnvironments: boolean = true
+  ) {
     try {
-      const collectionRef = collection(this._firestore,insideEnvironments ? `${envKey}/${path}` : path);
-      const docRef = doc(collectionRef,docId);
+      const collectionRef = collection(
+        this._firestore,
+        insideEnvironments ? `${envKey}/${path}` : path
+      );
+      const docRef = doc(collectionRef, docId);
       const updateData = this.organizeData(data);
       transaction.update(docRef, updateData);
     } catch (e) {
-      console.error("Error while updating multiple fields in transaction -->", e);
+      console.error(
+        "Error while updating multiple fields in transaction -->",
+        e
+      );
       throw new Error(`Server Error: ${e}`);
     }
   }
 
-  async transactionCreateDoc(transaction:Transaction, path:string , docId: string , value: Record<string, any>):Promise<any> {
+  async transactionCreateDoc(
+    transaction: Transaction,
+    path: string,
+    docId: string,
+    value: Record<string, any>
+  ): Promise<any> {
     try {
-      const collectionRef = collection(this._firestore,`${envKey}/${path}`);
-      const docRef = doc(collectionRef,docId);
+      const collectionRef = collection(this._firestore, `${envKey}/${path}`);
+      const docRef = doc(collectionRef, docId);
       transaction.set(docRef, value);
     } catch (e) {
       console.error("Error while creating document in transaction -->", e);
@@ -104,24 +167,39 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     }
   }
 
-  async transactionSetAsMap(transaction:Transaction , path: string, docId: string , data: Record<string, any>):Promise<any> {
+  async transactionSetAsMap(
+    transaction: Transaction,
+    path: string,
+    docId: string,
+    data: Record<string, any>
+  ): Promise<any> {
     try {
-      const collectionRef = collection(this._firestore,`${envKey}/${path}`);
-      const docRef = doc(collectionRef,docId);
+      const collectionRef = collection(this._firestore, `${envKey}/${path}`);
+      const docRef = doc(collectionRef, docId);
       const setData = this.organizeData(data);
-      transaction.set(docRef, setData, {merge: true});
+      transaction.set(docRef, setData, { merge: true });
     } catch (e) {
-      console.error("Error while setting document as map in transaction -->", e);
+      console.error(
+        "Error while setting document as map in transaction -->",
+        e
+      );
       throw new Error(`Server Error: ${e}`);
     }
   }
 
-  
-
-  async updateMultipleFieldsInsideDocAsMap(batch:WriteBatch ,path:string ,docId:string ,data:any,insideEnvironments:boolean = true) {
+  async updateMultipleFieldsInsideDocAsMap(
+    batch: WriteBatch,
+    path: string,
+    docId: string,
+    data: any,
+    insideEnvironments: boolean = true
+  ) {
     try {
-      const collectionRef = collection(this._firestore,insideEnvironments ? `${envKey}/${path}` : path)
-      const docRef = doc(collectionRef,docId);
+      const collectionRef = collection(
+        this._firestore,
+        insideEnvironments ? `${envKey}/${path}` : path
+      );
+      const docRef = doc(collectionRef, docId);
       batch.update(docRef, this.organizeData(data));
     } catch (e) {
       console.error("Error while updating the batch -->", e);
@@ -131,33 +209,31 @@ export default class FirestoreDataBase extends RealTimeDatabase {
 
   organizeData(data: Record<string, any>): Record<string, any> {
     var organizedData: Record<string, any> = {};
-  
+
     Object.entries(data).forEach(([fieldName, value]) => {
       let organizedValue: any = value;
-  
+
       if (organizedValue === null) {
         organizedValue = deleteField();
       }
-  
+
       // Replace NumericCommands with the actual type of NumericCommands
       if (organizedValue === NumericCommands.increment) {
         organizedValue = increment(1);
       }
-  
+
       // Replace NumericCommands with the actual type of NumericCommands
       if (organizedValue === NumericCommands.decrement) {
         organizedValue = increment(-1);
       }
-  
+
       organizedData[fieldName] = organizedValue;
     });
-  
+
     return organizedData;
   }
 
- 
-  get currentTimestamp():Timestamp {
+  get currentTimestamp(): Timestamp {
     return Timestamp.now();
-  };
-  
+  }
 }

@@ -1,20 +1,4 @@
-import { DateFormat, addMonths } from "date-fns";
-
-// Assuming these models are defined in other parts of your codebase
-type Religion = "christian"; // Update with your actual Religion type
-interface WorkerModel {
-  religions: Religion[];
-  shiftsFor(day: Date): string[];
-}
-interface BreakModel {
-  day: string;
-  start: string;
-  minutesNotification: number;
-}
-interface CustomDateRange {
-  start: Date;
-  end: Date;
-}
+import type WorkerModel from "$lib/models/worker/worker_model";
 
 export function addDurationFromDateString(
   date: string,
@@ -66,10 +50,10 @@ export function getHolidayNames(
   worker.religions.forEach((religion) => {
     let dateString = DateFormat("dd-MM-yyyy").format(date);
     switch (religion) {
-      case "christian":
+      case Religion.christian:
         dateString = dateString.substring(0, dateString.length - 4) + "0000";
-        if (holidays.christian[dateString] !== undefined) {
-          holidaysString.christian = holidays.christian[dateString];
+        if (holidays[Religion.christian][dateString] !== undefined) {
+          holidaysString[Religion.christian] = holidays[Religion.christian][dateString];
         }
         return;
       default:

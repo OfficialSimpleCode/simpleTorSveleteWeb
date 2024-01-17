@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import BusinessPayloadData from "../notifications/business_data_payload";
 import { BusinessDesign } from "./business_design";
 
@@ -94,8 +95,119 @@ export default class BusinessModel {
     return instance;
   }
 
+  
   setData(json: Record<string, any>, newBusinessId: string): void {
-   
+    this.businessId = newBusinessId;
+
+    if (json["currency"] != null) {
+      this.currency = CurrencyModel.fromJson(json["currency"]);
+    }
+
+    if (json["design"] != null) {
+      this.design = BusinessDesign.fromJson(json["design"]);
+    } else {
+      const theme = json['theme']; // themeFromStr[json['theme']] ?? Themes.dark;
+      this.design.pickedThemeKey = theme;
+      Object.entries(json["products"]).forEach(([productId, product]) => {
+        this.design.products[productId] = ProductModel.fromJson(product, productId);
+      });
+
+      if (json["changingImages"] != null) {
+        this.design.changingImages = json["changingImages"]
+          .map((item: string) => item);
+      }
+
+      if (json["updates"] != null) {
+        (json["updates"] as Record<string, any>[]).forEach((update, index) => {
+          this.design.updates[index.toString()] = Update.fromJson(update, index.toString());
+        });
+      }
+
+      this.design.bottomIcons = json['bottomIcons'] ?? false;
+      this.design.storyTitle = json["storyTitle"] ?? "";
+      this.design.changingImagesSwapSeconds = json['changingImagesSwapSeconds'] ?? 6;
+      this.design.shopIconUrl = json["shopIcon"] ?? "";
+    }
+
+    this.previewDoc = json['previewDoc'] ?? "";
+    this.workersProductsId = json['workersProductsId'] ?? "";
+    this.pendingWorkersProductsId = json["pendingWorkersProductsId"] ?? "";
+    this.shopName = json["shopName"] ?? "";
+    this.isLandingPageMode = json["isLandingPageMode"] ?? false;
+    this.searchable = json["searchable"] ?? true;
+
+    if (json["expiredDate"] != null) {
+      this.expiredDate = new Date(json["expiredDate"]);
+    }
+
+    this.notifyOnNewCustomer = json["notifyOnNewCustomer"] ?? true;
+
+    
+    // json["workersPermissions"] ??= {};
+    // this.workersPermissions = WorkersPermissions.fromJson(json["workersPermissions"]);
+
+    this.companyNumber = json["companyNumber"] ?? "";
+
+    if (json["hypPath"] != null) {
+      this.hypPath = hypPathFromStr[json["hypPath"]];
+    }
+
+    this.allWorkersIds = {};
+    if (json["allWorkersIds"] != null) {
+      Object.entries<string>(json["allWorkersIds"]).forEach(([workerId, details]) => {
+        this.allWorkersIds[workerId] = details;
+      });
+    }
+
+    const ownerPhone = this.businessId.split("--")[0];
+    if (!this.allWorkersIds.hasOwnProperty("+" + ownerPhone)) {
+      this.allWorkersIds["+" + ownerPhone] = "";
+    }
+
+    this.workersIds = {};
+    if (json["workersIds"] != null) {
+      Object.entries<string>(json["workersIds"]).forEach(([workerId, details]) => {
+        this.workersIds[workerId] = details;
+      });
+    }
+
+    if (!this.workersIds.hasOwnProperty(ownerPhone)) {
+      this.workersIds[ownerPhone] = "";
+    }
+
+    this.dynamicLink = json["dynamicLink"] ?? "";
+    this.masofNumber = json["masofNumber"] ?? "";
+
+    this.ownersName = json['ownersName'] ?? "";
+    this.revenueCatId = json['revenueCatId'] ?? "";
+    this.productId = json['productId'] ?? "";
+    this.pendingProductId = json["pendingProductId"] ?? "";
+
+    this.businesseType = businessTypeFromStr[json['businesseType']] ?? BusinessesTypes.Other;
+
+    this.instagramAccount = json["instagramAccount"] ?? "";
+    this.adress = json["adress"] ?? "";
+    this.shopPhone = json["shopPhone"] ?? "";
+
+    try {
+      if (json["billingIssue"] != null) {
+        Object.entries(json["billingIssue"]).forEach(([productId, date]) => {
+          this.billingIssue[productId] = (date as Timestamp).toDate();
+        });
+      }
+    } catch (e) {
+      // logger.e(e);
+    }
+
+    if (json["createdAt"] instanceof Timestamp) {
+      this.createdAt = (json["createdAt"] as Timestamp).toDate();
+    } else if (typeof json["createdAt"] === "string") {
+      this.createdAt =  new Date(json['createdAt']) || new Date();
+    }
+
+    if (json["lastTimeConnected"] != null) {
+      this.lastTimeConnected = new Date(json['lastTimeConnected']) || new Date();
+    }
   }
 
 
@@ -121,7 +233,7 @@ export default class BusinessModel {
     if (Object.keys(this.billingIssue).length > 0) {
       data.billingIssue = {};
       Object.entries(this.billingIssue).forEach(([productId, date]) => {
-        data.billingIssue[productId] = date.toDate(); // Adjust based on the actual structure of 'date'
+        data.billingIssue[productId] = Timestamp.fromDate(date);
       });
     }
     if (this.dynamicLink !== "") {

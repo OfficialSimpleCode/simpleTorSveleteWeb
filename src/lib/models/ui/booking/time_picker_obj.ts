@@ -1,6 +1,6 @@
 import RecurrenceEvent from "$lib/models/schedule/recurrence_event";
 
-class TimePickerObj {
+export default class TimePickerObj {
     displayDate?: Date;
     from: Date = new Date(0);
     duration: number = 0;

@@ -3,7 +3,7 @@
 import { BusinessDesign } from "./business_design";
 import BusinessModel from "./business_model";
 
-class BusinessInfo {
+export default class BusinessInfo {
     businessName: string = "";
     iconUrl: string = "";
     businessId: string = "";

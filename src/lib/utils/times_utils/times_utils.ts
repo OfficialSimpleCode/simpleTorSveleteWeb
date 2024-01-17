@@ -1,5 +1,8 @@
 import { format, parse } from "date-fns";
 
+import Booking from "$lib/models/booking/booking_model.js";
+import type TimePickerObj from "$lib/models/ui/booking/time_picker_obj.js";
+import type WorkerModel from "$lib/models/worker/worker_model.js";
 import { max } from "lodash"; // Import max function from lodash library
 import {
   convertStringToTime,
@@ -9,6 +12,7 @@ import {
   setToStartOfMonth,
   setToStartOfYear
 } from '../dates_utils.js';
+import { translate } from "../string_utilitis.js";
 /**
  * Checks if the given time should be skipped based on the booking date and optional todayCheck.
  * @param pointerWork - The time to check.
