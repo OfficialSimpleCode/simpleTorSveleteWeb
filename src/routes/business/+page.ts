@@ -1,5 +1,7 @@
+import { firebaseConfig } from "$lib/firebase_config";
 import BusinessInitializer from "$lib/initializers/business_initializer.js";
 import BusinessModel from "$lib/models/business/business_model";
+import { initializeApp } from "firebase/app";
 
 /** @type {import('./$types').PageLoad} */
 export async function load({ params }) {
@@ -58,6 +60,7 @@ export async function load({ params }) {
 }
 
 async function getBusinessById(id: string): Promise<BusinessModel> {
+  const firebaseApp = initializeApp(firebaseConfig);
   await BusinessInitializer.GI().loadBusiness(id, "");
   const business = BusinessInitializer.GI().business;
   return business;
