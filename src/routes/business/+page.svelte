@@ -13,11 +13,6 @@
     import Navbar from "./components/Navbar.svelte";
     import ShareDialog from "./components/ShareDialog.svelte";
     import SocialLinks from "./components/SocialLinks.svelte";
-
-    import { firebaseConfig } from "$lib/firebase_config";
-    import { initializeApp } from "firebase/app";
-	
-	const firebaseApp = initializeApp(firebaseConfig);
 	
 
     /** @type {import('./$types').PageData} */
