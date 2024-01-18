@@ -110,15 +110,6 @@ export default class TransactionModel extends PaymentObject {
       BN: this.businessName,
       TR: this.transactionReference,
     };
-
-    if (this.isDeposit) {
-      data.ID = this.isDeposit;
-    }
-
-    if (this.invoiceId) {
-      data.II = this.invoiceId;
-    }
-
     return data;
   }
 }
