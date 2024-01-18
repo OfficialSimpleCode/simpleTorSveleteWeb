@@ -22,7 +22,7 @@ export class CurrencyModel {
     this.symbol = symbol;
   }
 
-  static fromJson(json: { [key: string]: any }): CurrencyModel {
+  static fromJson(json: Record<string, any>): CurrencyModel {
     return new CurrencyModel({
       code: json["code"] || "",
       name: json["name"] || "",
@@ -30,11 +30,11 @@ export class CurrencyModel {
     });
   }
 
-  toJson(): { [key: string]: any } {
+  toJson(): Record<string, any> {
     return {
-      code: this.code,
-      name: this.name,
-      symbol: this.symbol,
+      ["code"]: this.code,
+      ["name"]: this.name,
+      ["symbol"]: this.symbol,
     };
   }
 

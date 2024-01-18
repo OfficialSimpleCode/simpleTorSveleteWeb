@@ -11,22 +11,26 @@
     import { LoadAppHelper } from "$lib/helpers/load_app_helper";
     import UserInitializer from "$lib/initializers/user_initializer";
     import { business } from "$lib/stores/Business";
+    import { user } from "$lib/stores/User";
 
     async function loadBusiness() {
         LinksHelper.GI().linkedBuisnessId =
             $page.data.businessID ||
-            "972-525656377--857e6680-b863-11ed-89a5-05ff99923d7e";
+            "972-525656377--50ab63a0-a192-11ed-950c-3ba22fe40036";
         if (LinksHelper.GI().linkedBuisnessId === "") {
             return;
         }
-        
-        const firebaseApp =  (getApps().length === 0 ?  initializeApp(firebaseConfig):getApp());
-        await LoadAppHelper.GI().loadAppData();
-       
-        const b = BusinessInitializer.GI().business;
 
-        console.log(UserInitializer.GI().user);
+        const firebaseApp =
+            getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+        await LoadAppHelper.GI().loadAppData();
+
+        const b = BusinessInitializer.GI().business;
         business.set(b);
+        console.log(b);
+
+        const u = UserInitializer.GI().user;
+        user.set(u);
     }
 
     let businessLoading = loadBusiness();

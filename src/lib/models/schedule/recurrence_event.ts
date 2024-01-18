@@ -1,4 +1,9 @@
-import { dateStrToDate } from "$lib/utils/times_utils/times_utils";
+import { translate } from "$lib/utils/string_utilitis";
+import {
+  dateStrToDate,
+  dateToDateStr,
+  setToMidNight,
+} from "$lib/utils/times_utils/times_utils";
 import { add, format, isAfter, set, sub } from "date-fns";
 
 export enum FreqRecurrence {
@@ -78,15 +83,20 @@ export default class RecurrenceEvent {
 
   constructor({
     start,
-    endOption,
+    endOption = RecurrenceEventEnd.repeats,
     endDate,
     repeats = 10,
     interval = 1,
     customEndDate,
     freqRecurrence = FreqRecurrence.days,
   }: {
+<<<<<<< HEAD
     start: Date | null;
     endOption: RecurrenceEventEnd;
+=======
+    start?: Date;
+    endOption?: RecurrenceEventEnd;
+>>>>>>> 6d7bd92514abbe47e90a05f8dfcb5762d59d7e4f
     endDate?: Date | null;
     repeats?: number;
     interval?: number;
@@ -104,23 +114,70 @@ export default class RecurrenceEvent {
 
   static fromJson(
     json: { [key: string]: any },
-    startTime: Date | null
+    startTime?: Date
   ): RecurrenceEvent {
-    return new RecurrenceEvent({
-      start: startTime,
+    const newObj = new RecurrenceEvent({});
+    newObj.start = startTime;
+    newObj.endDate = json["ED"] ? new Da1te(json["ED"]) : null;
+    newObj.repeats = json["R"] || 10;
+    newObj.interval = json["I"] || 1;
 
-      endDate: json["ED"] ? new Date(json["ED"]) : null,
-      repeats: json["R"] || 10,
-      interval: json["I"] || 1,
+    newObj.weekDays = new Set(json["WD"] || []);
 
-      weekDays: new Set(json["WD"] || []),
+    newObj.exceptionDates = new Set(
+      Object.keys(json["EDA"] || {}).map(dateStrToDate)
+    );
 
-      exceptionDates: new Set(
-        Object.keys(json["EDA"] || {}).map(dateStrToDate)
-      ),
+    newObj.freqRecurrence =
+      freqRecurrenceFromStr[json["FR"]] || FreqRecurrence.days;
 
-      freqRecurrence: freqRecurrenceFromStr[json["FR"]] || FreqRecurrence.days,
-    });
+    return newObj;
+  }
+
+  toJson({
+    saveStartDate = false,
+    saveEnd = true,
+    saveException = true,
+  }: {
+    saveStartDate?: boolean;
+    saveEnd?: boolean;
+    saveException?: boolean;
+  }): Record<string, any> {
+    const data: Record<string, any> = {};
+
+    if (saveEnd && this.endDate && this.endOption === RecurrenceEventEnd.date) {
+      data["ED"] = dateToDateStr(this.endDate);
+    }
+
+    if (saveEnd && this.endOption === RecurrenceEventEnd.repeats) {
+      data["R"] = this.repeats;
+    }
+
+    if (this.interval !== 1) {
+      data["I"] = this.interval;
+    }
+
+    if (
+      this.weekDays.size > 0 &&
+      this.freqRecurrence === FreqRecurrence.weeks
+    ) {
+      data["WD"] = [...this.weekDays];
+    }
+
+    if (saveException && this.exceptionDates.size > 0) {
+      data["EDA"] = {};
+      this.exceptionDates.forEach((date) => {
+        data["EDA"][dateToDateStr(date)] = "";
+      });
+    }
+
+    if (saveStartDate && this.start) {
+      data["SD"] = this.start.toISOString();
+    }
+
+    data["FR"] = freqRecurrenceToStr[this.freqRecurrence];
+
+    return data;
   }
 
   static fromRecurrenceEvent(
@@ -162,52 +219,6 @@ export default class RecurrenceEvent {
       setEquals(recurrenceEvent.exceptionDates, this.exceptionDates) &&
       this.endOption === recurrenceEvent.endOption
     );
-  }
-
-  toJson({
-    saveStartDate = false,
-    saveEnd = true,
-    saveException = true,
-  }: {
-    saveStartDate?: boolean;
-    saveEnd?: boolean;
-    saveException?: boolean;
-  } = {}): { [key: string]: any } {
-    const data: { [key: string]: any } = {};
-
-    if (saveEnd && this.endDate && this.endOption === RecurrenceEventEnd.date) {
-      data["ED"] = dateToDateStr(this.endDate);
-    }
-
-    if (saveEnd && this.endOption === RecurrenceEventEnd.repeats) {
-      data["R"] = this.repeats;
-    }
-
-    if (this.interval !== 1) {
-      data["I"] = this.interval;
-    }
-
-    if (
-      this.weekDays.size > 0 &&
-      this.freqRecurrence === FreqRecurrence.weeks
-    ) {
-      data["WD"] = [...this.weekDays];
-    }
-
-    if (saveException && this.exceptionDates.size > 0) {
-      data["EDA"] = {};
-      this.exceptionDates.forEach((date) => {
-        data["EDA"][dateToDateStr(date)] = "";
-      });
-    }
-
-    if (saveStartDate && this.start) {
-      data["SD"] = this.start.toISOString();
-    }
-
-    data["FR"] = freqRecurrenceToStr[this.freqRecurrence];
-
-    return data;
   }
 
   ///Get the syncfusion calendar template for the event
@@ -325,7 +336,7 @@ export default class RecurrenceEvent {
           this.getStartOfWeek(this.endDate)
         );
         const weekRepeats = Math.floor(
-          diff.getTime() / this.rangeBetweenInterval().getTime()
+          diff.getTime() / this.rangeBetweenInterval.getTime
         );
 
         const lastWeekSunday = this.getStartOfWeek(this.endDate);
@@ -376,7 +387,7 @@ export default class RecurrenceEvent {
     );
   }
 
-  get endOfTheEvent(): DateTime | null {
+  get endOfTheEvent(): Date | null {
     const rangeBetween = this.rangeBetweenInterval;
     if (this.endOption === RecurrenceEventEnd.date && this.endDate !== null) {
       return this.endDate;
@@ -516,8 +527,8 @@ export default class RecurrenceEvent {
     return intervalFromStart.inDays % rangeBetween.inDays === 0;
   }
 
-  addRangeBetween(date: DateTime): DateTime {
-    const utcDate = new DateTime(
+  addRangeBetween(date: Date): Date {
+    const utcDate = new Date(
       date.year,
       date.month,
       date.day,
@@ -704,19 +715,5 @@ export default class RecurrenceEvent {
 
   private dateToDateStr(date: DateTime): string {
     return `${date.day}/${date.month}/${date.year}`;
-  }
-
-  private toJson(): object {
-    return {
-      freqRecurrence: this.freqRecurrence,
-      interval: this.interval,
-      freqRecurrenceToDuration: this.freqRecurrenceToDuration,
-      start: this.start,
-      endOption: this.endOption,
-      endDate: this.endDate,
-      repeats: this.repeats,
-      weekDays: this.weekDays,
-      exceptionDates: this.exceptionDates,
-    };
   }
 }

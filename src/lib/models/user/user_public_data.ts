@@ -4,6 +4,7 @@ import type Booking from "../booking/booking_model";
 import CustomerData from "../general/customer_data";
 import Device from "../general/device";
 import LocalDocReference from "../general/local_doc_reference";
+import BookingsPreview from "./booking_month_preview";
 import type UserModel from "./user_model";
 
 export default class UserPublicData {
@@ -95,7 +96,7 @@ export default class UserPublicData {
   //   });
   // }
 
-  setUserPublicData(dataJson: { [key: string]: any }, user?: UserModel): void {
+  setUserPublicData(dataJson: Record<string, any>, user?: UserModel): void {
     this.permission = {};
     this.myBuisnessesIds = [];
     this.isVerifiedEmail = dataJson["isVerifiedEmail"] || false;

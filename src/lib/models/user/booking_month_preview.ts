@@ -1,4 +1,4 @@
-class BookingsPreview {
+export default class BookingsPreview {
   bookingCount: number = 0;
   lastUpdateTime: Date = new Date(0);
   docId: string = "";

@@ -1,4 +1,17 @@
+import {
+  bookingsCollection,
+  bookingsObjectsCollection,
+  buisnessCollection,
+  businessDataCollection,
+  countersCollection,
+  dataCollection,
+  dataDoc,
+  likesCollection,
+  usersCollection,
+  workersCollection,
+} from "$lib/consts/db";
 import type Booking from "$lib/models/booking/booking_model";
+import { GeneralData } from "./general_data";
 
 export default class DbPathesHelper {
   private static _singleton: DbPathesHelper = new DbPathesHelper();
@@ -43,23 +56,15 @@ export default class DbPathesHelper {
     return `${buisnessCollection}/${businessId}/${businessDataCollection}/messagesCounter`;
   }
 
-  // Other methods...
-
-  // User-related methods...
   userBookingsPathByBooking(booking: Booking): string {
     return `${usersCollection}/${booking.customerId}/${dataCollection}/${dataDoc}/${bookingsCollection}`;
+  }
+  userBookingsPathByUser(userId: string): string {
+    return `${usersCollection}/${userId}/${dataCollection}/${dataDoc}/${bookingsCollection}`;
   }
 
   // Worker-related methods...
   workerBookingsPath(booking: Booking): string {
     return `${buisnessCollection}/${booking.buisnessId}/${workersCollection}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`;
   }
-
-  // Other user and worker-related methods...
-
-  // Add more methods as needed...
-
-  // Example usage:
-  // const pathHelper = DbPathesHelper.getInstance();
-  // const likesPath = pathHelper.getLikesChildPath('worker123', 'business456', 'image789');
 }

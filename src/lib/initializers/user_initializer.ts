@@ -1,5 +1,11 @@
 import { logger } from "$lib/consts/application_general";
-import { usersCollection } from "$lib/consts/db";
+import {
+  dataCollection,
+  dataDoc,
+  recurrenceBookingsDoc,
+  usersCollection,
+} from "$lib/consts/db";
+import DbPathesHelper from "$lib/helpers/db_paths_helper";
 import { GeneralData } from "$lib/helpers/general_data";
 import UserRepo from "$lib/helpers/user/user_repo";
 import VerificationRepo from "$lib/helpers/verification/verification_repo";
@@ -81,6 +87,10 @@ export default class UserInitializer {
 
       this.user = UserModel.fromUserDocJson(this.userDoc?.data()!);
 
+      /*No need to take the user public data the startListening 
+        func will take it*/
+      this.startPublicDataListening();
+
       return true;
     } catch (e) {
       /*initialize the user Doc*/
@@ -91,6 +101,101 @@ export default class UserInitializer {
       }
 
       return false;
+    }
+  }
+
+  async startPublicDataListening() {
+    /*create listening for the user public data */
+    if (!this.isConnected) return;
+
+    this.user.userPublicDataListener = this.userRepo.docListenerRepo({
+      path: `${usersCollection}/${this.user.id}/${dataCollection}`,
+      docId: dataDoc,
+      onChanged: async (dataJson) => {
+        try {
+          if (dataJson.exists()) {
+            this.user.setUserPublicData(dataJson.data()!);
+
+            // await this.loadBookingsDocs(
+            //   this.user.userPublicData.bookingsDocsToLoad
+            // );
+
+            // // update server to relevant fcm for notifications
+            // _updateFcmIfNeeded();
+            // _transaferInvoiceIfNeeded();
+            // transaferBookingsIfNeeded(this.user);
+            // _deleteDocsFromLocal();
+            // _updateLastTimeConnect();
+
+            // await loadBookingsDocs(this.user.userPublicData.bookingsDocsToLoad);
+
+            // console.log("Getting new user data from database");
+            // this.user.userPublicData.reminders = {};
+
+            // if (GeneralData.currentBusinesssId !== "") {
+            //   this.user.userPublicData.reminders = await checkForReminders();
+            // }
+
+            // if (
+            //   this.user.userPublicData.reminders != null &&
+            //   this.user.userPublicData.reminders.isEmpty &&
+            //   BusinessUIController().showReminderNavigator.value
+            // ) {
+            //   BusinessUIController().showReminderNavigator.value = false;
+            //   BusinessUIController().showReminderNavigator.notifyListeners();
+            // }
+
+            // if (
+            //   this.user.userPublicData.reminders != null &&
+            //   this.user.userPublicData.reminders.isNotEmpty &&
+            //   !BusinessUIController().showReminderNavigator.value
+            // ) {
+            //   BusinessUIController().showReminderNavigator.value = true;
+            //   BusinessUIController().showReminderNavigator.notifyListeners();
+            // }
+
+            // UiManager.insertUpdate(Providers.user);
+
+            // if (this.userListinerAllowUpdate) {
+            //   UiManager.updateUi({ context: GeneralData.generalContext });
+            // }
+          }
+        } catch (error) {
+          console.error(`Error in startPublicDataListening: ${error}`);
+        }
+      },
+    });
+  }
+
+  async loadBookingsDocs(docs: Set<string>) {
+    const futures: Promise<void>[] = [];
+
+    docs.forEach((docId) => {
+      futures.push(this.loadBookingDoc(docId));
+    });
+
+    await Promise.all(futures);
+  }
+
+  async loadBookingDoc(docId: string): Promise<void> {
+    try {
+      const bookingsDoc = await this.userRepo.getDocRepo({
+        path: DbPathesHelper.GI().userBookingsPathByUser(this.user.id),
+        docId: docId,
+      });
+
+      if (docId === recurrenceBookingsDoc) {
+        UserInitializer.GI().user.bookings.setRecurrence(
+          bookingsDoc?.data() || {}
+        );
+      } else {
+        UserInitializer.GI().user.bookings.setMonth(
+          bookingsDoc?.data() || {},
+          docId
+        );
+      }
+    } catch (error) {
+      console.error(`Error loading booking doc ${docId}: ${error}`);
     }
   }
 }
