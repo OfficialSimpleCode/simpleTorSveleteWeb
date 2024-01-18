@@ -11,6 +11,7 @@
     import { LoadAppHelper } from "$lib/helpers/load_app_helper";
     import UserInitializer from "$lib/initializers/user_initializer";
     import { business } from "$lib/stores/Business";
+    import { user } from "$lib/stores/User";
 
     async function loadBusiness() {
         LinksHelper.GI().linkedBuisnessId =
@@ -19,14 +20,16 @@
         if (LinksHelper.GI().linkedBuisnessId === "") {
             return;
         }
-        
-        const firebaseApp =  (getApps().length === 0 ?  initializeApp(firebaseConfig):getApp());
-        await LoadAppHelper.GI().loadAppData();
-       
-        const b = BusinessInitializer.GI().business;
 
-        console.log(UserInitializer.GI().user);
+        const firebaseApp =
+            getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+        await LoadAppHelper.GI().loadAppData();
+
+        const b = BusinessInitializer.GI().business;
         business.set(b);
+
+        const u = UserInitializer.GI().user;
+        user.set(u);
     }
 
     let businessLoading = loadBusiness();
