@@ -50,7 +50,6 @@ export default class Booking extends ScheduleItem {
   note: string = "";
   needCancel: boolean = false;
   treatments: Record<string, Treatment> = {};
-
   userGender: Gender = Gender.anonymous;
   workerGender: Gender = Gender.anonymous;
   status: BookingStatuses = BookingStatuses.approved;
