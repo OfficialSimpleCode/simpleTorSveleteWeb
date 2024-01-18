@@ -11,10 +11,17 @@
     } from "svelte-hero-icons";
 
     export let employee: Record<string, string>;
-    export let service: Record<string, any>;
+    export let services: Array<Record<string, any>>;
+    export let totalServicesDuration: string;
     export let dateAndTime: Record<string, string>;
 
-    let totalServicesPrice: number = service.price * service.quantity;
+    let totalServicesPrice: number = services
+        .map((s) => s.price * s.quntity)
+        .reduce((a, b) => a + b);
+
+    let totalNumberOfServices: number = services
+        .map((s) => s.quntity)
+        .reduce((a, b) => a + b);
 
     function getWeekdayFromDate(dateString: string): string {
         // Parse the date string into a Date object
@@ -118,16 +125,13 @@
                 <Icon src={WrenchScrewdriver} size="26px" />
                 <div class="flex flex-col items-start justify-between">
                     <h3 class="font-semibold">
-                        {service.quantity} services
+                        {totalNumberOfServices} services
                     </h3>
                     <h3 class="flex flex-row items-center">
                         {totalServicesPrice} ₪
                         <div class="divider divider-horizontal mx-0 sm:mx-2" />
                         <h3>
-                            {multiplyAndSumDurations(
-                                service.duration,
-                                service.quantity,
-                            )}
+                            {totalServicesDuration}
                         </h3>
                     </h3>
                 </div>
