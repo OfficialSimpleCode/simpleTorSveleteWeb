@@ -9,9 +9,18 @@
     import LoggedInProfile from "./LoggedInProfile.svelte";
     import GuestProfile from "./GuestProfile.svelte";
 
+    // Assets
+    import ILFlag from "$lib/images/flags/il.svg";
+    import USFlag from "$lib/images/flags/us.svg";
+
     export let notifications: Array<Record<string, any>>;
     let unreadNotifications: Boolean = false;
     $: unreadNotifications = notifications.filter((n) => !n.viewed).length > 0;
+
+    let languages: Array<Record<string, string>> = [
+        { name: "Hebrew", flag: ILFlag },
+        { name: "English", flag: USFlag },
+    ];
 
     export let loggedIn: boolean;
     export let profile: Record<string, string> = {};
@@ -37,9 +46,7 @@
             <button class="btn btn-ghost btn-circle">
                 <Icon src={GlobeAlt} size="26px" />
             </button>
-            <LanguageBoard
-                languages={[{ name: "Hebrew" }, { name: "English" }]}
-            />
+            <LanguageBoard {languages} />
         </div>
         <div class="dropdown dropdown-left dropdown-bottom">
             <button class="btn btn-ghost btn-circle">

@@ -27,6 +27,7 @@
 
         const b = BusinessInitializer.GI().business;
         business.set(b);
+        console.log(b);
 
         const u = UserInitializer.GI().user;
         user.set(u);
