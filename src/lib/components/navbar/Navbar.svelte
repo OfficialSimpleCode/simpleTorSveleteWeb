@@ -13,7 +13,7 @@
     import ILFlag from "$lib/images/flags/il.svg";
     import USFlag from "$lib/images/flags/us.svg";
 
-    export let notifications: Array<Record<string, any>>;
+    let notifications: Array<Record<string, any>> = Object.values($business.design.updates);
     let unreadNotifications: Boolean = false;
     $: unreadNotifications = notifications.filter((n) => !n.viewed).length > 0;
 

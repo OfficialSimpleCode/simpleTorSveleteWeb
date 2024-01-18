@@ -16,7 +16,7 @@
     async function loadBusiness() {
         LinksHelper.GI().linkedBuisnessId =
             $page.data.businessID ||
-            "972-525656377--857e6680-b863-11ed-89a5-05ff99923d7e";
+            "972-525656377--50ab63a0-a192-11ed-950c-3ba22fe40036";
         if (LinksHelper.GI().linkedBuisnessId === "") {
             return;
         }

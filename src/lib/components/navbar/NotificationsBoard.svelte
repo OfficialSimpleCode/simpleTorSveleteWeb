@@ -35,8 +35,8 @@
                         />
                     {/if}
                 </div>
-                <p class="text-ellipsis max-h-[24px] overflow-hidden">
-                    {notification.body}
+                <p class="text-ellipsis max-h-[24px] overflow-hidden text-center">
+                    {notification.content}
                 </p>
             </button>
         </li>

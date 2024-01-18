@@ -96,7 +96,7 @@
 {/if}
 
 <main class="w-full h-full" style="">
-    <Navbar {notifications} {loggedIn} {profile} />
+    <Navbar {loggedIn} {profile} />
 
     <!-- background image -->
     <img

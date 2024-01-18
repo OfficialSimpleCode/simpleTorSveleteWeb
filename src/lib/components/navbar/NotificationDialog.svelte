@@ -16,7 +16,7 @@
         {#if notification}
             <div class="text-center">
                 <h1 class="text-xl font-bold">{notification.title}</h1>
-                <p>{notification.body}</p>
+                <p>{notification.content}</p>
             </div>
         {/if}
         <div class="h-[100px]"></div>
