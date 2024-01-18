@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import { pushState } from "$app/navigation";
     import { base } from "$app/paths";
     import { page } from "$app/stores";
@@ -6,12 +7,14 @@
 
     import { Icon, MapPin, Share } from "svelte-hero-icons";
 
-    import Navbar from "$lib/components/Navbar.svelte";
+    import { numberToHex, hexToXyY } from "$lib/utils/colors";
+    import { business } from "$lib/stores/Business.js";
+
+    import Navbar from "$lib/components/navbar/Navbar.svelte";
     import Avatar from "../../lib/components/Avatar.svelte";
     import ImageDisplayDialog from "./components/ImageDisplayDialog.svelte";
     import ShareDialog from "./components/ShareDialog.svelte";
     import SocialLinks from "./components/SocialLinks.svelte";
-    import { business } from "$lib/stores/Business.js";
 
     /** @type {import('./$types').PageData} */
     export let data;
@@ -23,13 +26,32 @@
         title: $business.adress,
         link: "https://blabla.com",
     };
-    let socialLinks: Object = data.socialLinks;
     let displayImages: Array<Record<string, any>> = data.displayImages;
-    let notifications: Array<Record<string, any>> = data.notifications;
 
-    // onMount(() => {
-    //     document.documentElement.style.setProperty("--p", "red");
-    // });
+    onMount(() => {
+        document.documentElement.style.setProperty(
+            "--p",
+            hexToXyY(
+                numberToHex(
+                    Object.values($business.design.businessThemes)[3].primary,
+                ),
+            ),
+        );
+        // document.documentElement.style.setProperty(
+        //     "--b1",
+        //     hexToXyY(
+        //         numberToHex(
+        //             $business.design.businessThemes[
+        //                 "7c123ea0-3b35-11ee-8d1b-954dea4c29c7"
+        //             ].background,
+        //         ),
+        //     ),
+        // );
+        // document.documentElement.style.setProperty(
+        //     "--pc",
+        //     hexToXyY("#ffadff2f"),
+        // );
+    });
 
     // Dialogs
     let shareDialog: HTMLDialogElement;
@@ -72,7 +94,7 @@
 {/if}
 
 <main class="w-full h-full" style="">
-    <Navbar {notifications} {loggedIn} {profile} />
+    <Navbar {loggedIn} {profile} />
 
     <!-- background image -->
     <img

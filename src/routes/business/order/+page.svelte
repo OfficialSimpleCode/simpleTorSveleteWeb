@@ -5,6 +5,7 @@
     import ChooseService from "./steps/ChooseService.svelte";
     import ChooseDateAndTime from "./steps/ChooseDateAndTime.svelte";
     import VerifyDetails from "./steps/VerifyDetails.svelte";
+    import { sumDurations, multiplyAndSumDurations } from "./durationUtils";
     // import SyncfusionSchedualer from "./components/SyncfusionSchedualer.svelte";
 
     let steps: string[] = ["Employee", "Service", "Date and Time"];
@@ -33,12 +34,18 @@
     let selectedEmployee: Record<string, string>;
     let selectedDateAndTime: Record<string, string>;
 
-    let services: Array<Record<string, string>> = [
-        { name: "Nails", price: "150", duration: "1h 20m" },
-        { name: "Build", price: "340", duration: "2h 10m" },
-        { name: "Hair", price: "230", duration: "1h" },
+    let services: Array<Record<string, any>> = [
+        { name: "Nails", price: "150", duration: "1h 20m", quntity: 0 },
+        { name: "Build", price: "340", duration: "2h 10m", quntity: 0 },
+        { name: "Hair", price: "230", duration: "1h", quntity: 0 },
     ];
-    let selectedService: Record<string, any>;
+    let selectedServices: Array<Record<string, any>> = [];
+    let totalServicesDuration: string = "0h";
+    $: totalServicesDuration = sumDurations(
+        selectedServices.map((s) =>
+            multiplyAndSumDurations(s.duration, s.quntity),
+        ),
+    );
 
     function clickedOnStep(stepNumber: number) {
         if (stepNumber == currentStep) {
@@ -53,7 +60,10 @@
             return;
         }
 
-        if (stepNumber == 3 && !selectedService) {
+        if (
+            stepNumber == 3 &&
+            (!selectedServices || selectedServices.length == 0)
+        ) {
             ShowToast({
                 text: "Finish the current step first",
                 status: "warning",
@@ -69,8 +79,8 @@
         currentStep += 1;
     }
 
-    function serviceSelected(service: Record<string, string>) {
-        selectedService = service;
+    function servicesSelected(services: Array<Record<string, any>>) {
+        selectedServices = services;
         currentStep += 1;
     }
 
@@ -103,20 +113,21 @@
     {:else if currentStep == 2}
         <ChooseService
             {services}
-            bind:selectedService
-            on:service={(event) => serviceSelected(event.detail)}
+            bind:selectedServices
+            on:services={(event) => servicesSelected(event.detail)}
         />
     {:else if currentStep == 3}
         <ChooseDateAndTime
             bind:selectedDateAndTime
-            duration={selectedService.duration}
+            duration={totalServicesDuration}
             on:dateAndTime={(event) => dateAndTimeSelected(event.detail)}
         />
         <!-- <SyncfusionSchedualer /> -->
     {:else if currentStep == 4}
         <VerifyDetails
             bind:employee={selectedEmployee}
-            bind:service={selectedService}
+            bind:services={selectedServices}
+            bind:totalServicesDuration
             bind:dateAndTime={selectedDateAndTime}
             on:edit-services={() => (currentStep = 2)}
         />
