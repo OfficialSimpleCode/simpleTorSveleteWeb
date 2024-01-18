@@ -88,7 +88,9 @@ export default class Treatment {
   }
 
   isEqual(treatment: Treatment): boolean {
-    return deepEqual(treatment.toJson(), this.toJson());
+    return true;
+    //TODO
+    //return deepEqual(treatment.toJson(), this.toJson());
   }
 
   getTotalMinutes(): number {
@@ -217,7 +219,7 @@ export default class Treatment {
   }
 
   minutesToString(): string {
-    return durationToString({ minutes: this.totalMinutes });
+    return durationToString(new Duration({ minutes: this.totalMinutes }));
   }
 
   static fromJson(json: { [key: string]: any }, newIndex: string): Treatment {

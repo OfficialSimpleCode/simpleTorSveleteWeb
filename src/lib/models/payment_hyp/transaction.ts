@@ -1,12 +1,14 @@
-
+import BookingTransactionModel from "../booking/booking_transaction";
+import { defaultCurrency } from "../general/currency_model";
+import { Price } from "../general/price";
 
 export default class TransactionModel extends PaymentObject {
-  transactionReference: string = '';
-  userName: string = '';
-  info: string = '';
-  transactionId: string = '';
+  transactionReference: string = "";
+  userName: string = "";
+  info: string = "";
+  transactionId: string = "";
   isDeposit: boolean = false;
-  businessName: string = '';
+  businessName: string = "";
   invoiceId?: string;
 
   constructor({
@@ -44,13 +46,13 @@ export default class TransactionModel extends PaymentObject {
 
   static empty(): TransactionModel {
     return new TransactionModel({
-      price: new Price({ amount: '0', currency: 'defaultCurrency' }), // Replace with your actual default currency
+      price: new Price({ amount: "0", currency: defaultCurrency }), // Replace with your actual default currency
       createdAt: new Date(0),
-      transactionReference: '',
-      userName: '',
-      transactionId: '',
-      info: '',
-      businessName: '',
+      transactionReference: "",
+      userName: "",
+      transactionId: "",
+      info: "",
+      businessName: "",
       isDeposit: false,
       invoiceId: undefined,
     });
@@ -60,11 +62,11 @@ export default class TransactionModel extends PaymentObject {
     const transactionModel = new TransactionModel({
       price: Price.fromJson(json.price),
       createdAt: json.CA ? new Date(json.CA) : new Date(0),
-      transactionReference: json.TR || '',
-      userName: json.UN || '',
+      transactionReference: json.TR || "",
+      userName: json.UN || "",
       transactionId: newId,
-      info: json.I || '',
-      businessName: json.BN || '',
+      info: json.I || "",
+      businessName: json.BN || "",
       isDeposit: json.ID || false,
       invoiceId: json.II,
     });
@@ -94,7 +96,7 @@ export default class TransactionModel extends PaymentObject {
       createdAt: this.createdAt,
       hypId: this.transactionReference,
       id: this.transactionId,
-      type: this.isDeposit ? 'deposit' : 'payment',
+      type: this.isDeposit ? "deposit" : "payment",
     });
   }
 
@@ -108,17 +110,6 @@ export default class TransactionModel extends PaymentObject {
       BN: this.businessName,
       TR: this.transactionReference,
     };
-
-    if (this.isDeposit) {
-      data.ID = this.isDeposit;
-    }
-
-    if (this.invoiceId) {
-      data.II = this.invoiceId;
-    }
-
     return data;
   }
 }
-
-
