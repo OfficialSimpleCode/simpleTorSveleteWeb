@@ -1,60 +1,55 @@
-import { add, format, isAfter, set, sub } from 'date-fns';
+import { add, format, isAfter, set, sub } from "date-fns";
 
-enum FreqRecurrence {
+export enum FreqRecurrence {
   years,
   months,
   weeks,
-  days
+  days,
 }
 
-const freqRecurrenceToStr: { [key in FreqRecurrence]: string } = {
+export const freqRecurrenceToStr: { [key in FreqRecurrence]: string } = {
   [FreqRecurrence.years]: "years",
   [FreqRecurrence.months]: "months",
   [FreqRecurrence.weeks]: "weeks",
-  [FreqRecurrence.days]: "days"
+  [FreqRecurrence.days]: "days",
 };
 
-const freqRecurrenceFromStr: { [key: string]: FreqRecurrence } = {
-  "years": FreqRecurrence.years,
-  "months": FreqRecurrence.months,
-  "weeks": FreqRecurrence.weeks,
-  "days": FreqRecurrence.days,
+export const freqRecurrenceFromStr: { [key: string]: FreqRecurrence } = {
+  years: FreqRecurrence.years,
+  months: FreqRecurrence.months,
+  weeks: FreqRecurrence.weeks,
+  days: FreqRecurrence.days,
 };
 
-const freqRecurrenceToSyncfuStr: { [key in FreqRecurrence]: string } = {
+export const freqRecurrenceToSyncfuStr: { [key in FreqRecurrence]: string } = {
   [FreqRecurrence.years]: "YEARLY",
   [FreqRecurrence.months]: "MONTHLY",
   [FreqRecurrence.weeks]: "WEEKLY",
-  [FreqRecurrence.days]: "DAILY"
+  [FreqRecurrence.days]: "DAILY",
 };
 
-enum RecurrenceEventEnd {
+export enum RecurrenceEventEnd {
   endless,
   date,
-  repeats
+  repeats,
 }
 
-const recurrenceEventEndToStr: { [key in RecurrenceEventEnd]: string } = {
-  [RecurrenceEventEnd.endless]: "endless",
-  [RecurrenceEventEnd.date]: "date",
-  [RecurrenceEventEnd.repeats]: "repeats",
-};
+export const recurrenceEventEndToStr: { [key in RecurrenceEventEnd]: string } =
+  {
+    [RecurrenceEventEnd.endless]: "endless",
+    [RecurrenceEventEnd.date]: "date",
+    [RecurrenceEventEnd.repeats]: "repeats",
+  };
 
-const synfuWeekDays = [
-  "SU",
-  "MO",
-  "TU",
-  "WE",
-  "TH",
-  "FR",
-  "SA",
-];
+export const synfuWeekDays = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
 
-const freqRecurrenceToDuration: { [key in FreqRecurrence]: { days: number } } = {
+export const freqRecurrenceToDuration: {
+  [key in FreqRecurrence]: { days: number };
+} = {
   [FreqRecurrence.years]: { days: 365 },
   [FreqRecurrence.months]: { days: 30 },
   [FreqRecurrence.weeks]: { days: 7 },
-  [FreqRecurrence.days]: { days: 1 }
+  [FreqRecurrence.days]: { days: 1 },
 };
 
 export default class RecurrenceEvent {
@@ -80,24 +75,23 @@ export default class RecurrenceEvent {
   /// end date for ui porpuses
   customEndDate?: Date | null;
 
-  constructor(
-    {
-      start,
-      endOption,
-      endDate,
-      repeats = 10,
-      interval = 1,
-      customEndDate,
-      freqRecurrence = FreqRecurrence.days
-    }: {
-      start: Date;
-      endOption: RecurrenceEventEnd;
-      endDate?: Date | null;
-      repeats?: number;
-      interval?: number;
-      customEndDate?: Date | null;
-      freqRecurrence?: FreqRecurrence;
-    }) {
+  constructor({
+    start,
+    endOption,
+    endDate,
+    repeats = 10,
+    interval = 1,
+    customEndDate,
+    freqRecurrence = FreqRecurrence.days,
+  }: {
+    start: Date;
+    endOption: RecurrenceEventEnd;
+    endDate?: Date | null;
+    repeats?: number;
+    interval?: number;
+    customEndDate?: Date | null;
+    freqRecurrence?: FreqRecurrence;
+  }) {
     this.start = start;
     this.endOption = endOption;
     this.endDate = endDate;
@@ -109,17 +103,18 @@ export default class RecurrenceEvent {
 
   fromJson(json: { [key: string]: any }, startTime?: Date): void {
     this.start = startTime;
-    this.endDate = json['ED'] ? new Date(json['ED']) : null;
-    this.repeats = json['R'] || 10;
-    this.interval = json['I'] || 1;
-    
-    this.weekDays = new Set(json['WD'] || []);
-    
+    this.endDate = json["ED"] ? new Date(json["ED"]) : null;
+    this.repeats = json["R"] || 10;
+    this.interval = json["I"] || 1;
+
+    this.weekDays = new Set(json["WD"] || []);
+
     this.exceptionDates = new Set(
-      Object.keys(json['EDA'] || {}).map(dateStrToDate)
+      Object.keys(json["EDA"] || {}).map(dateStrToDate)
     );
 
-    this.freqRecurrence = freqRecurrenceFromStr[json['FR']] || FreqRecurrence.days;
+    this.freqRecurrence =
+      freqRecurrenceFromStr[json["FR"]] || FreqRecurrence.days;
   }
 
   fromRecurrenceEvent(recurrenceEvent: RecurrenceEvent): void {
@@ -128,32 +123,45 @@ export default class RecurrenceEvent {
     this.repeats = recurrenceEvent.repeats;
     this.interval = recurrenceEvent.interval;
     this.freqRecurrence = recurrenceEvent.freqRecurrence;
-    
+
     this.weekDays = new Set(recurrenceEvent.weekDays);
-    
+
     this.endOption = recurrenceEvent.endOption;
 
     this.exceptionDates = new Set(recurrenceEvent.exceptionDates);
   }
 
   isEqual(recurrenceEvent: RecurrenceEvent): boolean {
-    if (!this.start || !recurrenceEvent.start || this.start.getTime() !== recurrenceEvent.start.getTime()) {
+    if (
+      !this.start ||
+      !recurrenceEvent.start ||
+      this.start.getTime() !== recurrenceEvent.start.getTime()
+    ) {
       return false;
     }
 
-    if ((this.endDate?.getTime() || 0) !== (recurrenceEvent.endDate?.getTime() || 0)) {
+    if (
+      (this.endDate?.getTime() || 0) !==
+      (recurrenceEvent.endDate?.getTime() || 0)
+    ) {
       return false;
     }
 
-    return this.repeats === recurrenceEvent.repeats &&
+    return (
+      this.repeats === recurrenceEvent.repeats &&
       this.interval === recurrenceEvent.interval &&
       this.freqRecurrence === recurrenceEvent.freqRecurrence &&
       setEquals(recurrenceEvent.weekDays, this.weekDays) &&
       setEquals(recurrenceEvent.exceptionDates, this.exceptionDates) &&
-      this.endOption === recurrenceEvent.endOption;
+      this.endOption === recurrenceEvent.endOption
+    );
   }
 
-  toJson({ saveStartDate = false, saveEnd = true, saveException = true }: {
+  toJson({
+    saveStartDate = false,
+    saveEnd = true,
+    saveException = true,
+  }: {
     saveStartDate?: boolean;
     saveEnd?: boolean;
     saveException?: boolean;
@@ -172,13 +180,16 @@ export default class RecurrenceEvent {
       data["I"] = this.interval;
     }
 
-    if (this.weekDays.size > 0 && this.freqRecurrence === FreqRecurrence.weeks) {
+    if (
+      this.weekDays.size > 0 &&
+      this.freqRecurrence === FreqRecurrence.weeks
+    ) {
       data["WD"] = [...this.weekDays];
     }
 
     if (saveException && this.exceptionDates.size > 0) {
       data["EDA"] = {};
-      this.exceptionDates.forEach(date => {
+      this.exceptionDates.forEach((date) => {
         data["EDA"][dateToDateStr(date)] = "";
       });
     }
@@ -188,7 +199,7 @@ export default class RecurrenceEvent {
     }
 
     data["FR"] = freqRecurrenceToStr[this.freqRecurrence];
-    
+
     return data;
   }
 
@@ -201,15 +212,20 @@ export default class RecurrenceEvent {
     }
 
     if (this.freqRecurrence === FreqRecurrence.years && this.start) {
-      resp += `BYMONTHDAY=${this.start.getDate()};BYMONTH=${this.start.getMonth() + 1};`;
+      resp += `BYMONTHDAY=${this.start.getDate()};BYMONTH=${
+        this.start.getMonth() + 1
+      };`;
     }
 
     resp += `INTERVAL=${this.interval};`;
 
-    if (this.freqRecurrence === FreqRecurrence.weeks && this.weekDays.size > 0) {
+    if (
+      this.freqRecurrence === FreqRecurrence.weeks &&
+      this.weekDays.size > 0
+    ) {
       resp += "BYDAY=";
 
-      this.weekDays.forEach(index => {
+      this.weekDays.forEach((index) => {
         if (index < synfuWeekDays.length) {
           resp += synfuWeekDays[index] + ",";
         }
@@ -218,22 +234,29 @@ export default class RecurrenceEvent {
       resp = resp.slice(0, -1) + ";";
     }
 
-    if (this.customEndDate &&
+    if (
+      this.customEndDate &&
       (this.endOption === RecurrenceEventEnd.endless ||
-        (this.endOfTheEvent &&
-          isAfter(this.endOfTheEvent, new Date())))) {
-      const date = set(this.customEndDate, { hours: this.start?.getHours() || 0, minutes: this.start?.getMinutes() || 0 });
+        (this.endOfTheEvent && isAfter(this.endOfTheEvent, new Date())))
+    ) {
+      const date = set(this.customEndDate, {
+        hours: this.start?.getHours() || 0,
+        minutes: this.start?.getMinutes() || 0,
+      });
 
-      resp += `UNTIL=${format(date, 'yyyyMMdd\'T\'HHmmss\'Z\'')}`;
+      resp += `UNTIL=${format(date, "yyyyMMdd'T'HHmmss'Z'")}`;
     } else {
       switch (this.endOption) {
         case RecurrenceEventEnd.endless:
           break;
         case RecurrenceEventEnd.date:
           if (this.endDate) {
-            const date = set(this.endDate, { hours: this.start?.getHours() || 0, minutes: this.start?.getMinutes() || 0 });
+            const date = set(this.endDate, {
+              hours: this.start?.getHours() || 0,
+              minutes: this.start?.getMinutes() || 0,
+            });
 
-            resp += `UNTIL=${format(date, 'yyyyMMdd\'T\'HHmmss\'Z\'')}`;
+            resp += `UNTIL=${format(date, "yyyyMMdd'T'HHmmss'Z'")}`;
           }
           break;
         case RecurrenceEventEnd.repeats:
@@ -269,7 +292,7 @@ export default class RecurrenceEvent {
       let exceptionLength = 0;
 
       //consider exception only the excption that before the end date
-      this.exceptionDates.forEach(date => {
+      this.exceptionDates.forEach((date) => {
         if (!isAfter(date, this.endDate)) {
           exceptionLength++;
         }
@@ -279,35 +302,46 @@ export default class RecurrenceEvent {
         //find the start week repeats
         let startWeekRepeats = 0;
         const startWeekSunday = this.getStartOfWeek(this.start);
-        this.weekDays.forEach(day => {
-          if (this.isAccureInDate({
-            date: add(startWeekSunday, { days: day }),
-            considerException: false
-          })) {
+        this.weekDays.forEach((day) => {
+          if (
+            this.isAccureInDate({
+              date: add(startWeekSunday, { days: day }),
+              considerException: false,
+            })
+          ) {
             startWeekRepeats++;
           }
         });
 
-        const diff = sub(add(startWeekSunday, { days: 6 }), this.getStartOfWeek(this.endDate));
-        const weekRepeats = Math.floor(diff.getTime() / this.rangeBetweenInterval().getTime());
+        const diff = sub(
+          add(startWeekSunday, { days: 6 }),
+          this.getStartOfWeek(this.endDate)
+        );
+        const weekRepeats = Math.floor(
+          diff.getTime() / this.rangeBetweenInterval().getTime()
+        );
 
         const lastWeekSunday = this.getStartOfWeek(this.endDate);
         let lastWeekRepeats = 0;
 
-        if (setToMidNight(lastWeekSunday).getTime() !== setToMidNight(startWeekSunday).getTime()) {
-          this.weekDays.forEach(day => {
-            if (this.isAccureInDate({
-              date: add(lastWeekSunday, { days: day }),
-              considerException: false
-            })) {
+        if (
+          setToMidNight(lastWeekSunday).getTime() !==
+          setToMidNight(startWeekSunday).getTime()
+        ) {
+          this.weekDays.forEach((day) => {
+            if (
+              this.isAccureInDate({
+                date: add(lastWeekSunday, { days: day }),
+                considerException: false,
+              })
+            ) {
               lastWeekRepeats++;
             }
           });
         }
 
-        const repeatsSum = (weekRepeats * this.weekDays.size) +
-          lastWeekRepeats +
-          startWeekRepeats;
+        const repeatsSum =
+          weekRepeats * this.weekDays.size + lastWeekRepeats + startWeekRepeats;
 
         return repeatsSum - exceptionLength;
       } else if (this.freqRecurrence === FreqRecurrence.months) {
@@ -318,7 +352,9 @@ export default class RecurrenceEvent {
         // find the diffrence between the start and the end
         // and divide it by the range between interval
         const diff = this.start.getTime() - this.endDate.getTime();
-        const jumps = Math.floor(Math.abs(diff) / this.rangeBetweenInterval().getTime());
+        const jumps = Math.floor(
+          Math.abs(diff) / this.rangeBetweenInterval().getTime()
+        );
         return jumps - exceptionLength;
       }
     }
@@ -326,10 +362,10 @@ export default class RecurrenceEvent {
     return null;
   }
 
-
   get rangeBetweenInterval(): Duration {
     return new Duration(
-      this.freqRecurrenceToDuration[this.freqRecurrence].inMinutes * this.interval
+      this.freqRecurrenceToDuration[this.freqRecurrence].inMinutes *
+        this.interval
     );
   }
 
@@ -340,7 +376,8 @@ export default class RecurrenceEvent {
     } else if (this.endOption === RecurrenceEventEnd.repeats) {
       if (this.freqRecurrence === FreqRecurrence.weeks) {
         let startWeekRepeats = 0;
-        const startWeekDay = this.start!.weekday === 7 ? 0 : this.start!.weekday;
+        const startWeekDay =
+          this.start!.weekday === 7 ? 0 : this.start!.weekday;
         this.weekDays.forEach((day) => {
           if (day >= startWeekDay) {
             startWeekRepeats++;
@@ -359,7 +396,9 @@ export default class RecurrenceEvent {
         try {
           return sunday.add(
             new Duration(
-              daysJumps - 1 < 0 ? this.weekDays.last : this.weekDays.elementAt(daysJumps - 1)
+              daysJumps - 1 < 0
+                ? this.weekDays.last
+                : this.weekDays.elementAt(daysJumps - 1)
             )
           );
         } catch (e) {
@@ -368,7 +407,9 @@ export default class RecurrenceEvent {
       } else if (this.freqRecurrence === FreqRecurrence.months) {
         return this.addMonths(this.start!, (this.repeats - 1) * this.interval);
       } else {
-        return this.start!.add(new Duration(rangeBetween.inMinutes * (this.repeats - 1)));
+        return this.start!.add(
+          new Duration(rangeBetween.inMinutes * (this.repeats - 1))
+        );
       }
     }
     return null;
@@ -376,49 +417,59 @@ export default class RecurrenceEvent {
 
   get explainText(): string {
     if (this.start === null) {
-      return '';
+      return "";
     }
-    let resp = '';
+    let resp = "";
     const rangeBetween = new Duration(
-      this.freqRecurrenceToDuration[this.freqRecurrence].inMinutes * this.interval
+      this.freqRecurrenceToDuration[this.freqRecurrence].inMinutes *
+        this.interval
     );
     switch (this.freqRecurrence) {
       case FreqRecurrence.years:
-        resp += translate('yearTamplate')
-          .replaceAll('DURATION', this.durationToString(rangeBetween))
-          .replaceAll('DATE', new DateFormat('dd/MM').format(this.start!));
+        resp += translate("yearTamplate")
+          .replaceAll("DURATION", this.durationToString(rangeBetween))
+          .replaceAll("DATE", new DateFormat("dd/MM").format(this.start!));
         break;
       case FreqRecurrence.months:
-        resp += translate('monthTemplate')
-          .replaceAll('DURATION', this.durationToString(rangeBetween))
-          .replaceAll('DATE', this.start!.day.toString());
+        resp += translate("monthTemplate")
+          .replaceAll("DURATION", this.durationToString(rangeBetween))
+          .replaceAll("DATE", this.start!.day.toString());
         break;
       case FreqRecurrence.weeks:
-        let daysString = '';
+        let daysString = "";
         this.weekDays.forEach((day) => {
-          daysString += translate(synfuWeekDays[day]) + ', ';
+          daysString += translate(synfuWeekDays[day]) + ", ";
         });
         daysString = daysString.substring(0, daysString.length - 2);
-        resp += translate('weekTemplate')
-          .replaceAll('DURATION', this.durationToString(rangeBetween))
-          .replaceAll('DAYS', daysString)
+        resp += translate("weekTemplate")
+          .replaceAll("DURATION", this.durationToString(rangeBetween))
+          .replaceAll("DAYS", daysString)
           .replaceAll(
-            'AMOUNT',
-            translate(this.weekDays.length === 1 ? 'onDay' : 'onDays')
+            "AMOUNT",
+            translate(this.weekDays.length === 1 ? "onDay" : "onDays")
           );
         break;
       case FreqRecurrence.days:
-        resp += translate('dayTemplate').replaceAll('DURATION', this.durationToString(rangeBetween));
+        resp += translate("dayTemplate").replaceAll(
+          "DURATION",
+          this.durationToString(rangeBetween)
+        );
         break;
     }
     const endOfEventTemp = this.endOfTheEvent;
     if (endOfEventTemp !== null) {
-      resp += ` ${translate('until')} ${this.dateToDateStr(endOfEventTemp)}`;
+      resp += ` ${translate("until")} ${this.dateToDateStr(endOfEventTemp)}`;
     }
     return resp;
   }
 
-  isAccureInDate({ date, considerException = true }: { date: DateTime; considerException?: boolean }): boolean {
+  isAccureInDate({
+    date,
+    considerException = true,
+  }: {
+    date: DateTime;
+    considerException?: boolean;
+  }): boolean {
     if (this.start === null || this.setToMidNight(this.start!).isAfter(date)) {
       return false;
     }
@@ -426,11 +477,15 @@ export default class RecurrenceEvent {
     if (eventEnd !== null && eventEnd.isBefore(this.setToMidNight(date))) {
       return false;
     }
-    if (considerException && this.exceptionDates.contains(this.setToMidNight(date))) {
+    if (
+      considerException &&
+      this.exceptionDates.contains(this.setToMidNight(date))
+    ) {
       return false;
     }
     const rangeBetween = new Duration(
-      this.freqRecurrenceToDuration[this.freqRecurrence].inMinutes * this.interval
+      this.freqRecurrenceToDuration[this.freqRecurrence].inMinutes *
+        this.interval
     );
     const intervalFromStart = date.difference(this.setToMidNight(this.start!));
     const startWeekDay = this.start!.weekday === 7 ? 0 : this.start!.weekday;
@@ -438,14 +493,18 @@ export default class RecurrenceEvent {
     if (this.freqRecurrence === FreqRecurrence.weeks) {
       const maxDelta = 7 - startWeekDay;
       const minDelta = rangeBetween.inDays - startWeekDay;
-      const restOFdays = (intervalFromStart.inDays + rangeBetween.inDays) % rangeBetween.inDays;
+      const restOFdays =
+        (intervalFromStart.inDays + rangeBetween.inDays) % rangeBetween.inDays;
       return (
-        (restOFdays < maxDelta || restOFdays >= minDelta) && this.weekDays.contains(dateWeekDay)
+        (restOFdays < maxDelta || restOFdays >= minDelta) &&
+        this.weekDays.contains(dateWeekDay)
       );
     }
     if (this.freqRecurrence === FreqRecurrence.months) {
       const monthsDiffrence = this.monthDiffrence(this.start!, date);
-      return this.start!.day === date.day && monthsDiffrence % this.interval === 0;
+      return (
+        this.start!.day === date.day && monthsDiffrence % this.interval === 0
+      );
     }
     return intervalFromStart.inDays % rangeBetween.inDays === 0;
   }
@@ -477,7 +536,11 @@ export default class RecurrenceEvent {
     const eventForIteration = sortedEvents[0];
     const eventToCheck = sortedEvents[1];
     let datePointer = eventForIteration.start!;
-    while (!this.setToMidNight(datePointer).isAfter(this.setToMidNight(eventForIteration.endOfTheEvent!))) {
+    while (
+      !this.setToMidNight(datePointer).isAfter(
+        this.setToMidNight(eventForIteration.endOfTheEvent!)
+      )
+    ) {
       if (eventForIteration.freqRecurrence === FreqRecurrence.weeks) {
         const sunday = this.getStartOfWeek(datePointer);
         eventForIteration.weekDays.forEach((dayToCheck) => {
@@ -503,29 +566,43 @@ export default class RecurrenceEvent {
   }
 
   get isRelevant(): boolean {
-    return this.endOfTheEvent === null || this.endOfTheEvent!.isAfter(DateTime.now());
+    return (
+      this.endOfTheEvent === null || this.endOfTheEvent!.isAfter(DateTime.now())
+    );
   }
 
-  nearestFutureAccurenceDate(date: DateTime, { needToBeAfterStart = true }: { needToBeAfterStart?: boolean } = {}): DateTime | null {
+  nearestFutureAccurenceDate(
+    date: DateTime,
+    { needToBeAfterStart = true }: { needToBeAfterStart?: boolean } = {}
+  ): DateTime | null {
     if (this.endOfTheEvent !== null && date.isAfter(this.endOfTheEvent!)) {
       return null;
     }
     if (
       this.start === null ||
-      (date.isBefore(this.start!) && needToBeAfterStart && this.isAccureInDate({ date: this.start! }))
+      (date.isBefore(this.start!) &&
+        needToBeAfterStart &&
+        this.isAccureInDate({ date: this.start! }))
     ) {
       return this.start;
     }
     const delta = date.difference(this.start!).inDays;
     if (this.freqRecurrence === FreqRecurrence.weeks) {
-      const jumpsToReachDate = Math.floor(delta / this.rangeBetweenInterval.inDays);
-      let nearestDate = this.start!.add(new Duration({ days: jumpsToReachDate * this.rangeBetweenInterval.inDays }));
+      const jumpsToReachDate = Math.floor(
+        delta / this.rangeBetweenInterval.inDays
+      );
+      let nearestDate = this.start!.add(
+        new Duration({
+          days: jumpsToReachDate * this.rangeBetweenInterval.inDays,
+        })
+      );
       const sunday = this.getStartOfWeek(nearestDate);
       for (const dayToCheck of this.weekDays) {
         const dateToCheck = sunday.add(new Duration({ days: dayToCheck }));
         if (
           !dateToCheck.isBefore(date) &&
-          (this.endOfTheEvent === null || !nearestDate.isAfter(this.endOfTheEvent!))
+          (this.endOfTheEvent === null ||
+            !nearestDate.isAfter(this.endOfTheEvent!))
         ) {
           return dateToCheck;
         }
@@ -536,20 +613,30 @@ export default class RecurrenceEvent {
         const dateToCheck = sunday.add(new Duration({ days: dayToCheck }));
         if (
           !dateToCheck.isBefore(date) &&
-          (this.endOfTheEvent === null || !nearestDate.isAfter(this.endOfTheEvent!))
+          (this.endOfTheEvent === null ||
+            !nearestDate.isAfter(this.endOfTheEvent!))
         ) {
           return dateToCheck;
         }
       }
       return null;
     }
-    const jumpsToReachDate = Math.ceil(delta / this.rangeBetweenInterval.inDays);
-    let nearestDate = this.start!.add(new Duration({ days: jumpsToReachDate * this.rangeBetweenInterval.inDays }));
+    const jumpsToReachDate = Math.ceil(
+      delta / this.rangeBetweenInterval.inDays
+    );
+    let nearestDate = this.start!.add(
+      new Duration({
+        days: jumpsToReachDate * this.rangeBetweenInterval.inDays,
+      })
+    );
     if (nearestDate.isBefore(date)) {
       nearestDate = this.addRangeBetween(nearestDate);
     }
     const end = this.endOfTheEvent;
-    while (!this.isAccureInDate({ date: nearestDate }) && (end === null || nearestDate.isBefore(end))) {
+    while (
+      !this.isAccureInDate({ date: nearestDate }) &&
+      (end === null || nearestDate.isBefore(end))
+    ) {
       nearestDate = this.addRangeBetween(nearestDate);
     }
     if (end === null || !nearestDate.isAfter(end)) {
@@ -558,7 +645,10 @@ export default class RecurrenceEvent {
     return null;
   }
 
-  private _getOptimalEventToPassOver(first: RecurrenceEvent, second: RecurrenceEvent): RecurrenceEvent[] {
+  private _getOptimalEventToPassOver(
+    first: RecurrenceEvent,
+    second: RecurrenceEvent
+  ): RecurrenceEvent[] {
     if (first.endOfTheEvent === null && second.endOfTheEvent !== null) {
       return [second, first];
     }
@@ -584,9 +674,15 @@ export default class RecurrenceEvent {
   }
 
   private addMonths(date: DateTime, months: number): DateTime {
-    const newMonth = (date.month + months - 1) % 12 + 1;
+    const newMonth = ((date.month + months - 1) % 12) + 1;
     const yearDiff = Math.floor((date.month + months - 1) / 12);
-    return new DateTime(date.year + yearDiff, newMonth, date.day, date.hour, date.minute);
+    return new DateTime(
+      date.year + yearDiff,
+      newMonth,
+      date.day,
+      date.hour,
+      date.minute
+    );
   }
 
   private monthDiffrence(date1: DateTime, date2: DateTime): number {
@@ -617,4 +713,3 @@ export default class RecurrenceEvent {
     };
   }
 }
-

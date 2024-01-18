@@ -1,25 +1,34 @@
+import { Gender, genderFromStr } from "$lib/consts/gender";
+import { phoneToDocId } from "$lib/utils/user";
 
-
-class PaymentRequestUser {
+export default class PaymentRequestUser {
   userId: string = "";
   name: string = "";
   gender: Gender = Gender.male;
   phone: string = "";
-  payments: Map<string, Date> = new Map();
+  payments: Record<string, Date> = {};
   isExist: boolean = false;
   fcmTokens?: Set<string>;
   isVerifiedPhone: boolean = false;
   userDecline: boolean = false;
 
-  constructor(
-    userId: string,
-    name: string,
-    gender: Gender,
-    isVerifiedPhone: boolean,
-    phone: string,
-    isExist: boolean,
-    userDecline: boolean = false
-  ) {
+  constructor({
+    userId = "",
+    name = "",
+    gender = Gender.male,
+    isVerifiedPhone = false,
+    phone = "",
+    isExist = true,
+    userDecline = false,
+  }: {
+    userId: string;
+    name: string;
+    gender: Gender;
+    isVerifiedPhone: boolean;
+    phone: string;
+    isExist: boolean;
+    userDecline: boolean;
+  }) {
     this.userId = userId;
     this.name = name;
     this.gender = gender;
@@ -38,34 +47,33 @@ class PaymentRequestUser {
   }
 
   get isPaid(): boolean {
-    return this.payments.size > 0;
+    return Object.keys(this.payments).length > 0;
   }
 
   static fromJson(json: any, newId: string): PaymentRequestUser {
-    const user = new PaymentRequestUser(
-      newId,
-      json["N"] ?? "",
-      json["G"] ? Gender[json["G"]] : Gender.male,
-      json["IVP"] ?? false,
-      json["P"] ?? "",
-      json["IE"] ?? true,
-      json["UD"] ?? false
-    );
+    const user = new PaymentRequestUser({
+      userId: newId,
+      name: json["N"] ?? "",
+      gender: json["G"] ? genderFromStr[json["G"]] : Gender.male,
+      isVerifiedPhone: json["IVP"] ?? false,
+      phone: json["P"] ?? "",
+      isExist: json["IE"] ?? true,
+      userDecline: json["UD"] ?? false,
+    });
 
     if (json["PY"] != null && typeof json["PY"] === "object") {
-      Object.entries(json["PY"]).forEach(([transactionId, dateStr]) => {
-        user.payments.set(
-          transactionId,
-          dateStr ? new Date(dateStr) : new Date(0)
-        );
+      Object.entries<string>(json["PY"]).forEach(([transactionId, dateStr]) => {
+        user.payments[transactionId] = dateStr
+          ? new Date(dateStr)
+          : new Date(0);
       });
     }
 
     return user;
   }
 
-  toJson(): any {
-    const data: any = {};
+  toJson(): Record<string, any> {
+    const data: Record<string, any> = {};
     data["N"] = this.name;
     if (this.isVerifiedPhone) {
       data["IVP"] = this.isVerifiedPhone;
@@ -77,9 +85,9 @@ class PaymentRequestUser {
     if (this.gender !== Gender.male) {
       data["G"] = Gender[this.gender];
     }
-    if (this.payments.size > 0) {
+    if (Object.keys(this.payments).length > 0) {
       data["PY"] = {};
-      this.payments.forEach((date, transactionId) => {
+      Object.entries<Date>(this.payments).forEach(([transactionId, date]) => {
         data["PY"][transactionId] = date.toString();
       });
     }
@@ -90,8 +98,6 @@ class PaymentRequestUser {
   }
 
   toString(): string {
-    return JSON.stringify(this.toJson(), null, '  ');
+    return JSON.stringify(this.toJson(), null, "  ");
   }
 }
-
-

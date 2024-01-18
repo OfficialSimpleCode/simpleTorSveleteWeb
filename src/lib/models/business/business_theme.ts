@@ -1,3 +1,10 @@
+import { isLight } from "$lib/utils/general_utils";
+
+export enum Brightness {
+  light,
+  dark,
+}
+
 export class BusinessTheme {
   background: number = 0;
   primary: number = 0;
@@ -78,11 +85,9 @@ export class BusinessTheme {
     return JSON.stringify(jsonA) === JSON.stringify(jsonB);
   }
 
-  // get brightness(): string {
-  //   return this.computeLuminance(this.background) < 0.5
-  //     ? "Brightness.dark"
-  //     : "Brightness.light";
-  // }
+  get brightness(): Brightness {
+    return isLight(this.background) ? Brightness.dark : Brightness.light;
+  }
 
   toJson(): Record<string, any> {
     const data: Record<string, any> = {};

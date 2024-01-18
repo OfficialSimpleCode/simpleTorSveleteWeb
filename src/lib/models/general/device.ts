@@ -1,5 +1,3 @@
-
-
 export default class Device {
   token: string;
   joinDate: Date;
@@ -7,9 +5,9 @@ export default class Device {
   activeNotifications: boolean;
 
   constructor({
-    token = '',
+    token = "",
     joinDate,
-    id = '',
+    id = "",
     activeNotifications = true,
   }: {
     token?: string;
@@ -29,10 +27,25 @@ export default class Device {
     });
 
     device.id = deviceId;
-    device.activeNotifications = json['activeNotifications'] ?? true;
-    device.token = json['token'] ?? '';
+    device.activeNotifications = json["activeNotifications"] ?? true;
+    device.token = json["token"] ?? "";
 
     return device;
+  }
+
+  toJson(): { [key: string]: any } {
+    const data: { [key: string]: any } = {};
+
+    // Check if activeNotifications is false and add it to data
+    if (!this.activeNotifications) {
+      data["activeNotifications"] = this.activeNotifications;
+    }
+
+    // Add token and formatted joinDate to data
+    data["token"] = this.token;
+    data["joinDate"] = dateToDateStr(this.joinDate);
+
+    return data;
   }
 
   static fromDevice(device: Device): Device {
@@ -43,6 +56,4 @@ export default class Device {
       token: device.token,
     });
   }
-
- 
 }

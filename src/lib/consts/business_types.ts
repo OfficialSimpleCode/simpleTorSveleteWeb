@@ -104,7 +104,7 @@ export const businessTypeToStr: { [key in BusinessesTypes]: string } = {
   [BusinessesTypes.Washer]: "washer",
 };
 
-const businessTypesToIcon: { [key in BusinessesTypes]: string } = {
+export const businessTypesToIcon: { [key in BusinessesTypes]: string } = {
   [BusinessesTypes.Barber]: "assets/icons/barber.webp",
   [BusinessesTypes.Polish]: "assets/icons/nail-polish.webp",
   [BusinessesTypes.Other]: "assets/icons/more-information.webp",

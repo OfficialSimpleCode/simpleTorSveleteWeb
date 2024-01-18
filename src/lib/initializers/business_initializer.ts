@@ -18,7 +18,7 @@ export default class BusinessInitializer {
     return BusinessInitializer.instance;
   }
 
-  generalRepo: GeneralRepo = GeneralRepo.GI();
+  generalRepo: GeneralRepo = new GeneralRepo();
 
   business: BusinessModel = new BusinessModel({
     businessId: "",
@@ -26,6 +26,8 @@ export default class BusinessInitializer {
   }); // hold app settings (server settings)
 
   workers: Record<string, WorkerModel> = {};
+
+  businessIcon: string = "";
 
   async initSettings(
     businessId: string,
