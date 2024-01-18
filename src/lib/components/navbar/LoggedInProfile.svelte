@@ -7,6 +7,7 @@
     export let profile: Record<string, string>;
 
     let profileDialog: HTMLDialogElement;
+    let purchasesDialog: HTMLDialogElement;
 
     function openProfileDialog() {
         pushState("", {
@@ -19,7 +20,7 @@
         pushState("", {
             showModal: true,
         });
-        setTimeout(() => profileDialog.showModal(), 100);
+        setTimeout(() => purchasesDialog.showModal(), 100);
     }
 </script>
 
@@ -28,7 +29,7 @@
     <ProfileDialog bind:dialog={profileDialog} bind:profile />
 {/if}
 {#if $page.state.showModal}
-    <PurchesesDialog bind:dialog={profileDialog} />
+    <PurchesesDialog bind:dialog={purchasesDialog} />
 {/if}
 
 <div class="dropdown dropdown-end">
@@ -47,9 +48,7 @@
             <button on:click={openProfileDialog}> Profile </button>
         </li>
         <li>
-            <button on:click={openPurchesesDialog}>
-                Purchases
-            </button>
+            <button on:click={openPurchesesDialog}> Purchases </button>
         </li>
         <li><a href="appointments">My Appointments</a></li>
     </ul>

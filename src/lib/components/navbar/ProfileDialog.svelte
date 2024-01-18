@@ -18,6 +18,7 @@
     } from "svelte-hero-icons";
     import InfoCircle from "$lib/components/InfoCircle.svelte";
     import Avatar from "$lib/components/Avatar.svelte";
+    import InfoTooltipButton from "../InfoTooltipButton.svelte";
 
     export let dialog: HTMLDialogElement;
     export let profile: Record<string, string>;
@@ -34,13 +35,7 @@
 >
     <div class="modal-box bg-base-200 pb-10">
         <div class="flex justify-between items-center mb-[1rem]">
-            <button
-                class="tooltip tooltip-right btn btn-ghost"
-                data-tip="Here you can edit your personal information, watch your profile information, businesses you manage or work at and more."
-            >
-                <!-- TODO: fix for mobile devices -->
-                <Icon src={InformationCircle} size="24px" />
-            </button>
+            <InfoTooltipButton message="Placeholder TODO" />
             <h3 class="font-bold text-lg">Profile</h3>
             <button class="btn btn-ghost" on:click={() => dialog.close()}>
                 <Icon src={XCircle} size="24px" />

@@ -11,6 +11,7 @@
         Key,
     } from "svelte-hero-icons";
     import InfoCircle from "$lib/components/InfoCircle.svelte";
+    import { goto } from "$app/navigation";
 
     export let dialog: HTMLDialogElement;
 </script>
@@ -39,6 +40,7 @@
             <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
+                    on:click={() => goto("receipts")}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={PaperClip} size="26px" />
@@ -51,6 +53,7 @@
                 <div class="divider h-[1px]" />
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
+                    on:click={() => goto("payments")}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={CreditCard} size="26px" />
@@ -63,6 +66,7 @@
                 <div class="divider h-[1px]" />
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
+                    on:click={() => goto("payment-requests")}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={ReceiptRefund} size="26px" />
@@ -79,11 +83,10 @@
                 class="relative rounded-lg bg-base-100 p-6 flex items-center justify-center gap-10 w-[90%]"
             >
                 <InfoCircle
-                    message="hello this is a test message for the info circle"
+                    message="After making a purchase you will be able to save the payment details"
                 />
                 <button id="male" class="flex flex-col items-center">
-                    <Icon src={HandThumbUp} size="35px" />
-                    <div>Credit Card</div>
+                    <Icon src={CreditCard} size="120px" />
                 </button>
             </section>
 
@@ -91,6 +94,7 @@
             <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
+                    on:click={() => goto("update-payment-password")}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={Key} size="26px" />
