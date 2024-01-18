@@ -20,7 +20,7 @@ export class VerificationHelper {
   public currentCredential: PhoneAuthCredential | null = null;
   public phoneVerificationWithFirebase: boolean = true;
 
-  public verificationRepo: VerificationRepo = VerificationRepo.GI();
+  public verificationRepo: VerificationRepo = new VerificationRepo();
 
   public updateFinishLogIn(val: boolean): void {
     // Update the finishLogIn logic

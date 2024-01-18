@@ -5,6 +5,8 @@ export enum LoginType {
   phoneUpdate,
 }
 
+import { firebaseConfig } from "$lib/firebase_config";
+import { getApp, getApps, initializeApp } from "firebase/app";
 import {
   FacebookAuthProvider,
   GoogleAuthProvider,
@@ -28,6 +30,8 @@ import {
 export class FirebaseAuthService {
   _auth: Auth;
   constructor() {
+    const firebaseApp =
+      getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
     this._auth = getAuth();
   }
 
@@ -186,7 +190,7 @@ export class FirebaseAuthService {
   }
 
   get isLoggedInSRV(): boolean {
-    return this._auth.currentUser !== null;
+    return this._auth.currentUser != null;
   }
 
   async updateUserNameSRV(name: string): Promise<void> {

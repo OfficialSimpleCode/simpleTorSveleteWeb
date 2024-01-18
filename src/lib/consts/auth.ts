@@ -13,7 +13,7 @@ export const authProviderToStr: Record<AuthProvider, string> = {
   [AuthProvider.Apple]: "Apple",
   [AuthProvider.Google]: "Google",
   [AuthProvider.Facebook]: "Facebook",
-  [AuthProvider.Phone]: "phone",
+  [AuthProvider.Phone]: "Phone",
 };
 
 export const appleOrder: AuthProvider[] = [
@@ -31,17 +31,17 @@ export const googleOrder: AuthProvider[] = [
 ];
 
 export const authProviderFromStr: Record<string, AuthProvider> = {
-  Apple: AuthProvider.Apple,
-  Google: AuthProvider.Google,
-  Facebook: AuthProvider.Facebook,
-  phone: AuthProvider.Phone,
+  ["Apple"]: AuthProvider.Apple,
+  ["Google"]: AuthProvider.Google,
+  ["Facebook"]: AuthProvider.Facebook,
+  ["Phone"]: AuthProvider.Phone,
 };
 
 export const authProviderToImage: Record<AuthProvider, string> = {
   [AuthProvider.Apple]: Apple,
   [AuthProvider.Google]: Google,
   [AuthProvider.Facebook]: Facebook,
-  [AuthProvider.Phone]: "phone",
+  [AuthProvider.Phone]: "Phone",
 };
 
 export const authProviderToProviderId: Record<AuthProvider, string> = {
@@ -52,8 +52,8 @@ export const authProviderToProviderId: Record<AuthProvider, string> = {
 };
 
 export const providerIdToProvider: Record<string, AuthProvider> = {
-  "apple.com": AuthProvider.Apple,
-  "google.com": AuthProvider.Google,
-  "facebook.com": AuthProvider.Facebook,
-  phone: AuthProvider.Phone,
+  ["apple.com"]: AuthProvider.Apple,
+  ["google.com"]: AuthProvider.Google,
+  ["facebook.com"]: AuthProvider.Facebook,
+  ["phone"]: AuthProvider.Phone,
 };

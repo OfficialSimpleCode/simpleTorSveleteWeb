@@ -1,11 +1,12 @@
 
 
 <script lang="ts">
+  import { AuthProvider, authProviderToImage, authProviderToStr, googleOrder } from "$lib/consts/auth";
+  import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
+  import { LoginType } from "$lib/services/external_services/firebase_auth_service";
+  
     // Assets
-    import { AuthProvider, authProviderToImage, authProviderToStr } from "$lib/consts/auth";
-    import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
-    import { LoginType } from "$lib/services/external_services/firebase_auth_service";
-
+    
     function handleClick(authProvider:AuthProvider){
         VerificationHelper.GI().handleLogin({
             provider:authProvider,
@@ -23,9 +24,9 @@
     />
     <div class="flex-[1] flex flex-col justify-center items-center gap-8">
         <h1 class="text-4xl">Login Or Signup</h1>
-        {#each  Object.values(AuthProvider) as authProvider, i}
+        {#each  googleOrder as authProvider, i}
             <button on:click = {()=>handleClick(authProvider)} class="btn sm:btn-lg btn-outline w-full">
-                <img class="w-10 h-10" src={authProviderToImage[authProvider]} alt="google" />
+                <img class="w-10 h-10" src={authProviderToImage[authProvider]} alt={authProviderToStr[authProvider]} />
                 Signin with {authProviderToStr[authProvider]}
             </button>
         {/each}

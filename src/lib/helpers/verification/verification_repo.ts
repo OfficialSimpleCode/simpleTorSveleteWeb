@@ -10,14 +10,8 @@ export class VerificationRepo
   extends FirebaseAuthService
   implements VerificationApi
 {
-  private static _singleton: VerificationRepo = new this();
-
-  private constructor() {
+  constructor() {
     super();
-  }
-
-  public static GI(): VerificationRepo {
-    return this._singleton;
   }
 
   // Implement the methods using the corresponding service methods

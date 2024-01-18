@@ -1,5 +1,8 @@
-import type Booking from "../booking/booking_model";
-
+import {
+  monthStrToDate,
+  setToStartOfMonth,
+} from "$lib/utils/times_utils/times_utils";
+import Booking from "../booking/booking_model";
 
 export default class UserBookings {
   futureBookings: Record<string, Record<string, Booking>> = {};
@@ -97,17 +100,26 @@ export default class UserBookings {
     includePast: boolean = false,
     initDate?: Date,
     exclude?: Date
-  ): Date | null {
-    let lastDate: Date | null = initDate;
+  ): Date | undefined {
+    let lastDate: Date | undefined = initDate;
     Object.entries(this.futureBookings).forEach(([_, bookingsDoc]) => {
       Object.entries(bookingsDoc).forEach(([_, booking]) => {
-        if (businessId !== booking.buisnessId || workerId !== booking.workerId) {
+        if (
+          businessId !== booking.buisnessId ||
+          workerId !== booking.workerId
+        ) {
           return;
         }
-        if (exclude !== undefined && exclude.getTime() === booking.bookingDate.getTime()) {
+        if (
+          exclude !== undefined &&
+          exclude.getTime() === booking.bookingDate.getTime()
+        ) {
           return;
         }
-        if (lastDate === null || booking.bookingDate.getTime() > lastDate.getTime()) {
+        if (
+          lastDate === undefined ||
+          booking.bookingDate.getTime() > lastDate.getTime()
+        ) {
           lastDate = booking.bookingDate;
         }
       });

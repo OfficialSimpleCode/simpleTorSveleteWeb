@@ -59,6 +59,7 @@ export const holidays: Record<Religion, Record<string, string>> = {
     "07-10-2025": "Sukkot",
     "14-10-2025": "Simchat Torah",
   },
+  [Religion.muslim]: {},
 };
 
 export const sceduleColors = [
@@ -119,13 +120,14 @@ export const eventFilterTypeToIcon: Record<EventFilterType, string> = {
   [EventFilterType.withoutConfirmArrival]: "check_circle",
 };
 
-export const eventFilterWithCountersTypeToStr: Record<EventFilterType, string> =
-  {
-    [EventFilterType.onHold]: "waitingsForApproval",
-    [EventFilterType.needCancel]: "waitingsForCancel",
-    [EventFilterType.waitingList]: "waitingList",
-    [EventFilterType.withDebts]: "withDebts",
-  };
+export const eventFilterWithCountersTypeToStr: {
+  [key in EventFilterType]: string;
+} = {
+  [EventFilterType.onHold]: "waitingsForApproval",
+  [EventFilterType.needCancel]: "waitingsForCancel",
+  [EventFilterType.waitingList]: "waitingList",
+  [EventFilterType.withDebts]: "withDebts",
+};
 
 export const typesNeedRecurrence = new Set([
   EventFilterType.withOutRecipts,

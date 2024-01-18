@@ -5,7 +5,10 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable max-len */
 
+import { logger } from "$lib/consts/application_general";
 import { envKey } from "$lib/consts/db";
+import { firebaseConfig } from "$lib/firebase_config";
+import { getApp, getApps, initializeApp } from "firebase/app";
 import {
   DocumentSnapshot,
   Firestore,
@@ -18,9 +21,11 @@ import {
   getDoc,
   getFirestore,
   increment,
+  onSnapshot,
   runTransaction,
   writeBatch,
   type DocumentData,
+  type Unsubscribe,
 } from "firebase/firestore";
 import RealTimeDatabase from "./real_time_data_base";
 
@@ -32,6 +37,8 @@ enum NumericCommands {
 export default class FirestoreDataBase extends RealTimeDatabase {
   _firestore: Firestore;
   constructor() {
+    const firebaseApp =
+      getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
     super();
     this._firestore = getFirestore();
   }
@@ -58,7 +65,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       return await getDoc(docRef);
     } catch (e) {
       if (e instanceof Error) {
-        console.log(e.message);
+        logger.error(e.message);
         AppErrorsHelper.GI().addError({
           error: Errors.serverError,
           details: e.message,
@@ -73,7 +80,14 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       await batch.commit();
       return true;
     } catch (e) {
-      console.error("Error while commit batch -->", e);
+      logger.error("Error while commit batch -->", e);
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
+
       throw new Error(`Server Error: ${e}`);
     }
   }
@@ -92,6 +106,13 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       return result;
     } catch (e) {
       console.error("Error while run transaction -->", e);
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
+
       throw new Error(`Server Error: ${e}`);
     }
   }
@@ -108,35 +129,93 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       return snapshot;
     } catch (e) {
       console.error("Error while getting document in transaction -->", e);
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
+
       throw new Error(`Server Error: ${e}`);
     }
   }
 
-  async transactionUpdateAsMap(
-    transaction: Transaction,
-    path: string,
-    docId: string,
-    fieldName: string,
-    value: any
-  ): Promise<any> {
+  async transactionUpdateAsMap({
+    transaction,
+    path,
+    docId,
+    fieldName,
+    value,
+  }: {
+    transaction: Transaction;
+    path: string;
+    docId: string;
+    fieldName: string;
+    value: any;
+  }): Promise<any> {
     try {
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);
       const docRef = doc(collectionRef, docId);
       const updateData = { [fieldName]: value ? value : deleteField() };
       transaction.update(docRef, updateData);
     } catch (e) {
-      console.error("Error while updating document in transaction -->", e);
+      logger.error("Error while updating document in transaction -->", e);
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
+
       throw new Error(`Server Error: ${e}`);
     }
   }
 
-  async transactionUpdateMultipleFieldsAsMap(
-    transaction: Transaction,
-    path: string,
-    docId: string,
-    data: Record<string, any>,
-    insideEnvironments: boolean = true
-  ) {
+  async setAsMap({
+    batch,
+    path,
+    docId,
+    data,
+    insideEnviroments = true,
+  }: {
+    batch: WriteBatch;
+    path: string;
+    docId: string;
+    data: any;
+    insideEnviroments?: boolean;
+  }) {
+    /* create doc if doesn't exist */
+    try {
+      const collectionRef = collection(
+        this._firestore,
+        insideEnviroments ? `${envKey}/${path}` : path
+      );
+      const docRef = doc(collectionRef, docId);
+      batch.set(docRef, data, { merge: true });
+    } catch (e) {
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
+      throw e;
+    }
+  }
+
+  async transactionUpdateMultipleFieldsAsMap({
+    transaction,
+    path,
+    docId,
+    data,
+    insideEnvironments = true,
+  }: {
+    transaction: Transaction;
+    path: string;
+    docId: string;
+    data: Record<string, any>;
+    insideEnvironments?: boolean;
+  }) {
     try {
       const collectionRef = collection(
         this._firestore,
@@ -150,63 +229,261 @@ export default class FirestoreDataBase extends RealTimeDatabase {
         "Error while updating multiple fields in transaction -->",
         e
       );
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
+
       throw new Error(`Server Error: ${e}`);
     }
   }
 
-  async transactionCreateDoc(
-    transaction: Transaction,
-    path: string,
-    docId: string,
-    value: Record<string, any>
-  ): Promise<any> {
+  async transactionCreateDoc({
+    transaction,
+    path,
+    docId,
+    value,
+  }: {
+    transaction: Transaction;
+    path: string;
+    docId: string;
+    value: Record<string, any>;
+  }): Promise<any> {
     try {
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);
       const docRef = doc(collectionRef, docId);
       transaction.set(docRef, value);
     } catch (e) {
-      console.error("Error while creating document in transaction -->", e);
+      logger.error("Error while creating document in transaction -->", e);
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
       throw new Error(`Server Error: ${e}`);
     }
   }
 
-  async transactionSetAsMap(
-    transaction: Transaction,
-    path: string,
-    docId: string,
-    data: Record<string, any>
-  ): Promise<any> {
+  async transactionSetAsMap({
+    transaction,
+    path,
+    docId,
+    data,
+  }: {
+    transaction: Transaction;
+    path: string;
+    docId: string;
+    data: Record<string, any>;
+  }): Promise<any> {
     try {
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);
       const docRef = doc(collectionRef, docId);
       const setData = this.organizeData(data);
       transaction.set(docRef, setData, { merge: true });
     } catch (e) {
-      console.error(
-        "Error while setting document as map in transaction -->",
-        e
-      );
+      logger.error("Error while setting document as map in transaction -->", e);
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
       throw new Error(`Server Error: ${e}`);
     }
   }
 
-  async updateMultipleFieldsInsideDocAsMap(
-    batch: WriteBatch,
-    path: string,
-    docId: string,
-    data: any,
-    insideEnvironments: boolean = true
-  ) {
+  async deleteDoc({
+    batch,
+    path,
+    docId,
+  }: {
+    batch: WriteBatch;
+    path: string;
+    docId: string;
+  }) {
+    try {
+      const collectionRef = collection(this._firestore, `${envKey}/${path}`);
+      const docRef = doc(collectionRef, docId);
+      batch.delete(docRef);
+    } catch (e) {
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
+
+      throw e;
+    }
+  }
+
+  async setDoc({
+    batch,
+    path,
+    docId,
+    valueToSet,
+    insideEnviroments = true,
+  }: {
+    batch: WriteBatch;
+    path: string;
+    docId: string;
+    valueToSet: Record<string, any>;
+    insideEnviroments?: boolean;
+  }) {
     try {
       const collectionRef = collection(
         this._firestore,
-        insideEnvironments ? `${envKey}/${path}` : path
+        insideEnviroments ? `${envKey}/${path}` : path
+      );
+      const docRef = doc(collectionRef, docId);
+      batch.set(docRef, valueToSet);
+    } catch (e) {
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
+      throw e;
+    }
+  }
+  async createDoc({
+    batch,
+    path,
+    docId,
+    valueAsJson,
+    insideEnviroments = true,
+    mergeIfExist = false,
+  }: {
+    batch: WriteBatch;
+    path: string;
+    docId: string;
+    valueAsJson: any;
+    insideEnviroments: boolean;
+    mergeIfExist?: boolean;
+  }) {
+    try {
+      const options = mergeIfExist ? { merge: true } : null;
+      const collectionRef = collection(
+        this._firestore,
+        insideEnviroments ? `${envKey}/${path}` : path
+      );
+      const docRef = doc(collectionRef, docId);
+      batch.set(docRef, valueAsJson, { merge: mergeIfExist });
+    } catch (e) {
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
+      throw e;
+    }
+  }
+
+  async updateFieldInsideDocAsMap({
+    batch,
+    path,
+    docId,
+    value,
+    fieldName,
+    command,
+    insideEnviroments = true,
+  }: {
+    batch: WriteBatch;
+    path: string;
+    docId: string;
+
+    value: any;
+    fieldName: string;
+    command?: NumericCommands | null;
+    insideEnviroments?: boolean;
+  }) {
+    try {
+      const collectionRef = collection(
+        this._firestore,
+        insideEnviroments ? `${envKey}/${path}` : path
+      );
+      const docRef = doc(collectionRef, docId);
+
+      if (command === null) {
+        batch.update(docRef, { [fieldName]: value ?? deleteField() });
+      } else {
+        batch.update(docRef, {
+          [fieldName]:
+            command === NumericCommands.increment
+              ? increment(1)
+              : increment(-1),
+        });
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
+      throw e;
+    }
+  }
+
+  async updateMultipleFieldsInsideDocAsMap({
+    batch,
+    path,
+    docId,
+    data,
+    insideEnviroments = true,
+  }: {
+    batch: WriteBatch;
+    path: string;
+    docId: string;
+    data: any;
+    insideEnviroments?: boolean;
+  }) {
+    try {
+      const collectionRef = collection(
+        this._firestore,
+        insideEnviroments ? `${envKey}/${path}` : path
       );
       const docRef = doc(collectionRef, docId);
       batch.update(docRef, this.organizeData(data));
     } catch (e) {
-      console.error("Error while updating the batch -->", e);
+      logger.error("Error while updating the batch -->", e);
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
       throw new Error(`Server Error: ${e}`);
+    }
+  }
+
+  docListener({
+    path,
+    docId,
+    onChanged,
+  }: {
+    path: string;
+    docId: string;
+    onChanged: (snapshot: DocumentSnapshot<DocumentData>) => void;
+  }): Unsubscribe {
+    try {
+      const collectionRef = collection(this._firestore, `${envKey}/${path}`);
+      const docRef = doc(collectionRef, docId);
+      return onSnapshot(docRef, onChanged);
+    } catch (e) {
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.message,
+        });
+      }
+
+      throw e;
     }
   }
 

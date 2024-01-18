@@ -1,26 +1,31 @@
 <script lang="ts">
-    import "../app.css";
     import ToastManager from "$lib/components/ToastManager.svelte";
+    import "../app.css";
 
     import { firebaseConfig } from "$lib/firebase_config";
     import BusinessInitializer from "$lib/initializers/business_initializer.js";
-    import { initializeApp } from "firebase/app";
+    import { getApp, getApps, initializeApp } from "firebase/app";
 
-    import { business } from "$lib/stores/Business.js";
     import { page } from "$app/stores";
+    import LinksHelper from "$lib/helpers/links_helper";
+    import { LoadAppHelper } from "$lib/helpers/load_app_helper";
+    import UserInitializer from "$lib/initializers/user_initializer";
+    import { business } from "$lib/stores/Business";
 
     async function loadBusiness() {
-        let businessID =
+        LinksHelper.GI().linkedBuisnessId =
             $page.data.businessID ||
             "972-525656377--857e6680-b863-11ed-89a5-05ff99923d7e";
-        if (businessID == null) {
+        if (LinksHelper.GI().linkedBuisnessId === "") {
             return;
         }
-
-        const firebaseApp = initializeApp(firebaseConfig);
-        await BusinessInitializer.GI().loadBusiness(businessID, "");
+        
+        const firebaseApp =  (getApps().length === 0 ?  initializeApp(firebaseConfig):getApp());
+        await LoadAppHelper.GI().loadAppData();
+       
         const b = BusinessInitializer.GI().business;
-        console.log(b);
+
+        console.log(UserInitializer.GI().user);
         business.set(b);
     }
 
