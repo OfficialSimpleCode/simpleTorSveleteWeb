@@ -51,7 +51,7 @@ export function hexToXyY(hex: string) {
 
     // Format xyY string
     function formatXyY(x: number, y: number, Y: number) {
-        return `${x.toFixed(5)} ${y.toFixed(5)} ${Y.toFixed(5)}`;
+        return `${x.toFixed(3)} ${y.toFixed(3)} ${Y.toFixed(3)}`;
     }
 
     // Convert hex to xyY
@@ -60,11 +60,14 @@ export function hexToXyY(hex: string) {
     let xyYColor = xyzToXyY(xyzColor.x, xyzColor.y, xyzColor.z);
     let xyYString = formatXyY(xyYColor.x, xyYColor.y, xyYColor.Y);
 
+    console.log(xyYString);
+
     return xyYString;
 }
 
 export function numberToHex(num: number): string {
-    let hexValue = num.toString(16);
+    let hexValue = num.toString(16).slice(2);
     let hexString = "#" + hexValue;
+    console.log(hexString)
     return hexString;
 }
