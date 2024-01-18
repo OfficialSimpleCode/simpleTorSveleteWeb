@@ -17,7 +17,7 @@
         Plus,
     } from "svelte-hero-icons";
     import InfoCircle from "$lib/components/InfoCircle.svelte";
-    import Avatar from "./Avatar.svelte";
+    import Avatar from "$lib/components/Avatar.svelte";
 
     export let dialog: HTMLDialogElement;
     export let profile: Record<string, string>;

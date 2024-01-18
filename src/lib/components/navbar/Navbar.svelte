@@ -1,7 +1,11 @@
 <script lang="ts">
     import { base } from "$app/paths";
+
+    import { Icon, GlobeAlt } from "svelte-hero-icons";
+
     import { business } from "$lib/stores/Business.js";
     import NotificationsBoard from "./NotificationsBoard.svelte";
+    import LanguageBoard from "./LanguageBoard.svelte";
     import LoggedInProfile from "./LoggedInProfile.svelte";
     import GuestProfile from "./GuestProfile.svelte";
 
@@ -29,6 +33,14 @@
         >
     </div>
     <div>
+        <div class="dropdown dropdown-left dropdown-bottom">
+            <button class="btn btn-ghost btn-circle">
+                <Icon src={GlobeAlt} size="26px" />
+            </button>
+            <LanguageBoard
+                languages={[{ name: "Hebrew" }, { name: "English" }]}
+            />
+        </div>
         <div class="dropdown dropdown-left dropdown-bottom">
             <button class="btn btn-ghost btn-circle">
                 <div class="indicator">

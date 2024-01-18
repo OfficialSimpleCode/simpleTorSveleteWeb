@@ -6,7 +6,7 @@
 
     import { Icon, MapPin, Share } from "svelte-hero-icons";
 
-    import Navbar from "$lib/components/Navbar.svelte";
+    import Navbar from "$lib/components/navbar/Navbar.svelte";
     import Avatar from "../../lib/components/Avatar.svelte";
     import ImageDisplayDialog from "./components/ImageDisplayDialog.svelte";
     import ShareDialog from "./components/ShareDialog.svelte";
