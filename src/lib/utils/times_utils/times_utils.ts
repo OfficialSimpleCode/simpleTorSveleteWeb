@@ -2,6 +2,7 @@ import { format, parse } from "date-fns";
 
 import { logger } from "$lib/consts/application_general.js";
 import { WindowSpaces } from "$lib/consts/worker.js";
+import type Booking from "$lib/models/booking/booking_model.js";
 import type WorkerModel from "$lib/models/worker/worker_model.js";
 import { isHoliday } from "../dates_utils.js";
 import { translate } from "../string_utilitis.js";
@@ -12,19 +13,19 @@ import { translate } from "../string_utilitis.js";
  * @param todayCheck - Optional flag to override today's check.
  * @returns Whether the time should be skipped.
  */
-// function shouldSkip(
-//   pointerWork: Date,
-//   bookingDate: string,
-//   todayCheck?: boolean
-// ): boolean {
-//   const currentTime: string = format(new Date(), "HH:mm");
-//   const isToday: boolean =
-//     todayCheck ?? bookingDate === format(new Date(), "dd-MM-yyyy");
-//   const timePassed: boolean =
-//     pointerWork < parse(currentTime, "HH:mm", new Date());
+function shouldSkip(
+  pointerWork: Date,
+  bookingDate: string,
+  todayCheck?: boolean
+): boolean {
+  const currentTime: string = format(new Date(), "HH:mm");
+  const isToday: boolean =
+    todayCheck ?? bookingDate === format(new Date(), "dd-MM-yyyy");
+  const timePassed: boolean =
+    pointerWork < parse(currentTime, "HH:mm", new Date());
 
-//   return isToday && timePassed;
-// }
+  return isToday && timePassed;
+}
 
 /**
  * Checks if the given time has already passed for a specific booking date.
@@ -46,30 +47,30 @@ export function timeIsAlreadyPassed(time: Date, bookingDate: string): boolean {
  * @param startTime - The start time for the segments.
  * @returns The map of time segments.
  */
-// export function generateTimeSegmentsMap(
-//   booking: Booking,
-//   startTime: Date
-// ): TimeSegmentsMap {
-//   const timesSegments: TimeSegmentsMap = {};
-//   let lastTime: Date = startTime;
-//   const treatment: Treatment = Treatment.fromTreatmentsMap(booking.treatments);
+export function generateTimeSegmentsMap(
+  booking: Booking,
+  startTime: Date
+): TimeSegmentsMap {
+  const timesSegments: TimeSegmentsMap = {};
+  let lastTime: Date = startTime;
+  const treatment: Treatment = Treatment.fromTreatmentsMap(booking.treatments);
 
-//   treatment.times.forEach((timeIndex, timeData) => {
-//     // Adding the break before the treatment
-//     lastTime = new Date(lastTime.getTime() + timeData.breakMinutes * 60000);
+  treatment.times.forEach((timeIndex, timeData) => {
+    // Adding the break before the treatment
+    lastTime = new Date(lastTime.getTime() + timeData.breakMinutes * 60000);
 
-//     // Adding the break before - start of the treatment
-//     timesSegments[timeIndex] = {
-//       start: lastTime,
-//       duration: { minutes: timeData.workMinutes },
-//     };
+    // Adding the break before - start of the treatment
+    timesSegments[timeIndex] = {
+      start: lastTime,
+      duration: { minutes: timeData.workMinutes },
+    };
 
-//     // Adding the time of the treatment
-//     lastTime = new Date(lastTime.getTime() + timeData.workMinutes * 60000);
-//   });
+    // Adding the time of the treatment
+    lastTime = new Date(lastTime.getTime() + timeData.workMinutes * 60000);
+  });
 
-//   return timesSegments;
-// }
+  return timesSegments;
+}
 
 /**
  * Generates a reversed map of time segments with start and duration based on treatment times.

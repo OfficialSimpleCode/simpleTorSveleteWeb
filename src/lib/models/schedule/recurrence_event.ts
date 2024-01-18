@@ -1,3 +1,4 @@
+import { dateStrToDate } from "$lib/utils/times_utils/times_utils";
 import { add, format, isAfter, set, sub } from "date-fns";
 
 export enum FreqRecurrence {
@@ -54,7 +55,7 @@ export const freqRecurrenceToDuration: {
 
 export default class RecurrenceEvent {
   //-------------------- start ---------------------------
-  start?: Date;
+  start?: Date | null;
   //---------------------end vars ------------------------
   endDate?: Date | null; // only if  "RecurrenceEventEnd.date"
   repeats: number = 10; // only if  "RecurrenceEventEnd.repeats"
@@ -84,7 +85,7 @@ export default class RecurrenceEvent {
     customEndDate,
     freqRecurrence = FreqRecurrence.days,
   }: {
-    start: Date;
+    start: Date | null;
     endOption: RecurrenceEventEnd;
     endDate?: Date | null;
     repeats?: number;
@@ -101,34 +102,40 @@ export default class RecurrenceEvent {
     this.freqRecurrence = freqRecurrence;
   }
 
-  fromJson(json: { [key: string]: any }, startTime?: Date): void {
-    this.start = startTime;
-    this.endDate = json["ED"] ? new Date(json["ED"]) : null;
-    this.repeats = json["R"] || 10;
-    this.interval = json["I"] || 1;
+  static fromJson(
+    json: { [key: string]: any },
+    startTime: Date | null
+  ): RecurrenceEvent {
+    return new RecurrenceEvent({
+      start: startTime,
 
-    this.weekDays = new Set(json["WD"] || []);
+      endDate: json["ED"] ? new Date(json["ED"]) : null,
+      repeats: json["R"] || 10,
+      interval: json["I"] || 1,
 
-    this.exceptionDates = new Set(
-      Object.keys(json["EDA"] || {}).map(dateStrToDate)
-    );
+      weekDays: new Set(json["WD"] || []),
 
-    this.freqRecurrence =
-      freqRecurrenceFromStr[json["FR"]] || FreqRecurrence.days;
+      exceptionDates: new Set(
+        Object.keys(json["EDA"] || {}).map(dateStrToDate)
+      ),
+
+      freqRecurrence: freqRecurrenceFromStr[json["FR"]] || FreqRecurrence.days,
+    });
   }
 
-  fromRecurrenceEvent(recurrenceEvent: RecurrenceEvent): void {
-    this.start = recurrenceEvent.start;
-    this.endDate = recurrenceEvent.endDate;
-    this.repeats = recurrenceEvent.repeats;
-    this.interval = recurrenceEvent.interval;
-    this.freqRecurrence = recurrenceEvent.freqRecurrence;
-
-    this.weekDays = new Set(recurrenceEvent.weekDays);
-
-    this.endOption = recurrenceEvent.endOption;
-
-    this.exceptionDates = new Set(recurrenceEvent.exceptionDates);
+  static fromRecurrenceEvent(
+    recurrenceEvent: RecurrenceEvent
+  ): RecurrenceEvent {
+    return new RecurrenceEvent({
+      start: recurrenceEvent.start,
+      endDate: recurrenceEvent.endDate,
+      repeats: recurrenceEvent.repeats,
+      interval: recurrenceEvent.interval,
+      freqRecurrence: recurrenceEvent.freqRecurrence,
+      weekDays: new Set(recurrenceEvent.weekDays),
+      endOption: recurrenceEvent.endOption,
+      exceptionDates: new Set(recurrenceEvent.exceptionDates),
+    });
   }
 
   isEqual(recurrenceEvent: RecurrenceEvent): boolean {
