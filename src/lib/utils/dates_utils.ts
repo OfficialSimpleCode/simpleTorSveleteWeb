@@ -1,20 +1,29 @@
+import { Religion, holidays } from "$lib/consts/worker_schedule";
+import type Booking from "$lib/models/booking/booking_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
+
+import { addDays, format, parse, startOfWeek } from "date-fns";
+import {
+  dateStrToDate,
+  dateToMonthStr,
+  timeStrToDate,
+} from "./times_utils/times_utils";
 
 export function addDurationFromDateString(
   date: string,
   duration: Duration
 ): string {
-  const dateObj = DateFormat("HH:mm").parse(date);
-  dateObj.setMinutes(dateObj.getMinutes() + duration);
-  return DateFormat("HH:mm").format(dateObj);
+  const dateObj =
+    parse(date, "HH:mm", new Date()).getTime() + duration.inMilliseconds;
+  return format(new Date(dateObj), "HH:mm");
 }
 
 export function setTo1970(dateTime: Date): Date {
-  return new Date(dateTime.setSeconds(0, 0));
+  return parse(format(dateTime, "HH:mm"), "HH:mm", new Date(1970, 0, 1));
 }
 
 export function setToMidNight(dateTime: Date): Date {
-  return new Date(dateTime.setHours(0, 0, 0, 0));
+  return parse(format(dateTime, "dd-MM-yyyy"), "dd-MM-yyyy", new Date());
 }
 
 export function setToStartOfMonth(dateTime: Date): Date {
@@ -28,15 +37,18 @@ export function setToStartOfYear(dateTime: Date): Date {
 export function isHoliday(worker: WorkerModel, date: Date): boolean {
   let isHoliday = false;
   worker.religions.forEach((religion) => {
-    let dateString = DateFormat("dd-MM-yyyy").format(date);
+    let dateString = format(date, "dd-MM-yyyy");
     switch (religion) {
-      case "christian":
+      case Religion.christian:
         dateString = dateString.substring(0, dateString.length - 4) + "0000";
-        isHoliday = isHoliday || holidays.christian[dateString] !== undefined;
-        return;
+        isHoliday =
+          (isHoliday || holidays[Religion.christian]?.[dateString] != null) ??
+          false;
+        break;
       default:
-        isHoliday = isHoliday || holidays[religion][dateString] !== undefined;
-        return;
+        isHoliday =
+          (isHoliday || holidays[religion]?.[dateString] != null) ?? false;
+        break;
     }
   });
   return isHoliday;
@@ -45,20 +57,20 @@ export function isHoliday(worker: WorkerModel, date: Date): boolean {
 export function getHolidayNames(
   worker: WorkerModel,
   date: Date
-): Record<Religion, string> {
-  const holidaysString: Record<Religion, string> = {};
+): Map<Religion, string> {
+  const holidaysString = new Map<Religion, string>();
   worker.religions.forEach((religion) => {
-    let dateString = DateFormat("dd-MM-yyyy").format(date);
+    let dateString = format(date, "dd-MM-yyyy");
     switch (religion) {
       case Religion.christian:
         dateString = dateString.substring(0, dateString.length - 4) + "0000";
-        if (holidays[Religion.christian][dateString] !== undefined) {
-          holidaysString[Religion.christian] = holidays[Religion.christian][dateString];
+        if (holidays[religion]?.[dateString] != null) {
+          holidaysString.set(religion, holidays[religion]![dateString]);
         }
         return;
       default:
-        if (holidays[religion][dateString] !== undefined) {
-          holidaysString[religion] = holidays[religion][dateString];
+        if (holidays[religion]?.[dateString] != null) {
+          holidaysString.set(religion, holidays[religion]![dateString]);
         }
         return;
     }
@@ -67,41 +79,29 @@ export function getHolidayNames(
 }
 
 export function convertStringToTime(strTimes: string[] | null): Date[] {
-  if (!strTimes) return [];
+  if (strTimes == null) return [];
   const times: Date[] = [];
   strTimes.forEach((element) => {
-    times.push(DateFormat("HH:mm").parse(element));
+    times.push(new Date(format(element, "HH:mm")));
   });
   return times;
 }
 
 export function convertStringToDateTime(strTimes: string[] | null): Date[] {
-  if (!strTimes) return [];
+  if (strTimes == null) return [];
   const times: Date[] = [];
   strTimes.forEach((element) => {
-    times.push(DateFormat("dd-MM-yyyy").parse(element));
+    times.push(new Date(format(element, "dd-MM-yyyy")));
   });
   return times;
 }
 
 export function getWeekOf(day: Date): Date[] {
-  const weekDays: Date[] = [];
-  const dayWeekConvertor = {
-    7: 1,
-    1: 2,
-    2: 3,
-    3: 4,
-    4: 5,
-    5: 6,
-    6: 7,
-  };
-
-  const firstDayOfTheWeek = new Date(day);
-  firstDayOfTheWeek.setDate(day.getDate() - dayWeekConvertor[day.getDay()]);
-
+  let weekDays: Date[] = [];
+  const firstDayOfWeek = startOfWeek(day, { weekStartsOn: 1 });
+  // adding the days
   for (let index = 0; index < 7; index++) {
-    const indexDate = new Date(firstDayOfTheWeek);
-    indexDate.setDate(firstDayOfTheWeek.getDate() + index);
+    let indexDate = addDays(firstDayOfWeek, index);
     weekDays.push(indexDate);
   }
   return weekDays;
@@ -111,20 +111,16 @@ export function isDateOverlappingWorkTime(
   worker: WorkerModel,
   date: Date
 ): boolean {
-  const workDay = worker.shiftsFor(date);
+  const workDay = worker.shiftsFor({ day: date });
   const date1970 = setTo1970(date);
-
   let isOverlapping = false;
-
   for (let i = 0; i < workDay.length; i += 2) {
     if (workDay.length <= i + 1) {
       continue;
     }
-
-    const start = DateFormat("HH:mm").parse(workDay[i]);
-    const end = DateFormat("HH:mm").parse(workDay[i + 1]);
-
-    if (!date1970.isBefore(start) && !date1970.isAfter(end)) {
+    const start = parse(workDay[i], "HH:mm", new Date(1970, 0, 1));
+    const end = parse(workDay[i + 1], "HH:mm", new Date(1970, 0, 1));
+    if (date1970 >= start && date1970 <= end) {
       isOverlapping = true;
       break;
     }
@@ -133,23 +129,36 @@ export function isDateOverlappingWorkTime(
 }
 
 export function isInTheRange(range: CustomDateRange, date: Date): boolean {
-  return !date.isBefore(range.start) && !date.isAfter(range.end);
+  return !(date < range.start) && !(date > range.end);
 }
 
 export function firstDayOfTheMonth(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), 1);
 }
 
-export function laterDate(date1: Date, date2: Date): Date {
-  return date2.isAfter(date1) ? date2 : date1;
+export function addMonths(inputDate: Date, numberOfMonths: number): Date {
+  const newDate = new Date(inputDate);
+  newDate.setMonth(newDate.getMonth() + numberOfMonths);
+  return newDate;
 }
 
-export function dateToRemindBooking(
-  booking: BookingModel,
-  minutes: number
-): Date {
+export function monthDifference(date1: Date, date2: Date): number {
+  let years = date1.getFullYear() - date2.getFullYear();
+  let months = date1.getMonth() - date2.getMonth();
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+  return Math.abs(years * 12 + months);
+}
+
+export function laterDate(date1: Date, date2: Date): Date {
+  return date2 > date1 ? date2 : date1;
+}
+
+export function dateToRemindBooking(booking: Booking, minutes: number): Date {
   return new Date(
-    booking.bookingDate.getTime() - minutes * 60 * 1000
+    booking.bookingDate.getTime() - minutes * 60000
   ).toUTCString();
 }
 
@@ -158,7 +167,7 @@ export function dateToRemindMultiBooking(
   minutes: number
 ): Date {
   return new Date(
-    multiBooking.bookingDate.getTime() - minutes * 60 * 1000
+    multiBooking.bookingDate.getTime() - minutes * 60000
   ).toUTCString();
 }
 
@@ -173,20 +182,60 @@ export function dateToNotifyBreak(breakModel: BreakModel): Date {
     time.getMinutes()
   );
   return new Date(
-    breakDate.getTime() - breakModel.minutesNotification * 60 * 1000
+    breakDate.getTime() - breakModel.minutesNotification * 60000
   ).toUTCString();
 }
 
 export function allMonthBetween(date1: Date, date2: Date): Set<string> {
   const months = new Set<string>();
-  let tempStart = date1.getTime() < date2.getTime() ? date1 : date2;
-  const end = date1.getTime() < date2.getTime() ? date2 : date1;
-
-  while (
-    !setToStartOfMonth(tempStart).getTime() > setToStartOfMonth(end).getTime()
-  ) {
-    months.add(dateToMonthStr(new Date(tempStart)));
-    tempStart = addMonths(setToStartOfMonth(tempStart), 1).getTime();
+  let tempStart = date1 < date2 ? date1 : date2;
+  const end = date1 < date2 ? date2 : date1;
+  while (!(setToStartOfMonth(tempStart) > setToStartOfMonth(end))) {
+    months.add(dateToMonthStr(tempStart));
+    tempStart = addMonths(setToStartOfMonth(tempStart), 1);
   }
   return months;
 }
+
+// enum CustomDurationOptions {
+//   last30Days,
+//   last7Days,
+//   lastYear,
+//   custom,
+//   fromBeginOfWorker
+// }
+
+// const customDurationOptionsToStr: { [key in CustomDurationOptions]: string } = {
+//   [CustomDurationOptions.last30Days]: "last30Days",
+//   [CustomDurationOptions.last7Days]: "last7Days",
+//   [CustomDurationOptions.lastYear]: "lastYear",
+//   [CustomDurationOptions.custom]: "custom",
+//   [CustomDurationOptions.fromBeginOfWorker]: "fromBeginOfWorker"
+// };
+
+// class CustomDateRange {
+//   option: CustomDurationOptions;
+//   start: Date;
+//   end: Date;
+
+//   constructor(option: CustomDurationOptions, start: Date, end: Date) {
+//     this.option = option;
+//     this.start = start;
+//     this.end = end;
+//   }
+
+//   toPickerDateRange(): PickerDateRange {
+//     return new PickerDateRange(this.end, this.start);
+//   }
+
+//   toDateTimeRange(): DateTimeRange {
+//     return new DateTimeRange(this.start, this.end);
+//   }
+
+//   isTheSame(range: CustomDateRange): boolean {
+//     return this.start.getTime() === range.start.getTime() && this.end.getTime() === range.end.getTime();
+//   }
+// }
+
+// // Assuming PickerDateRange and DateTimeRange are defined elsewhere in your TypeScript code.
+// // If not, you would need to define these classes or use appropriate types from a library.

@@ -1,12 +1,22 @@
+import {
+  businessTypeFromStr,
+  type BusinessesTypes,
+} from "$lib/consts/business_types";
+import { Gender, maleToFemaleMap } from "$lib/consts/gender";
+import { weekDays } from "$lib/consts/worker_schedule";
+import UserInitializer from "$lib/initializers/user_initializer";
+import { addDays, format } from "date-fns";
 
-
- export function durationToString(duration: Duration, shortTime: number = -1): string {
-  let hours = '';
-  let minutes = '';
-  let seconds = '';
-  let days = '';
-  let weeks = '';
-  let months = '';
+export function durationToString(
+  duration: Duration,
+  shortTime: number = -1
+): string {
+  let hours = "";
+  let minutes = "";
+  let seconds = "";
+  let days = "";
+  let weeks = "";
+  let months = "";
   let daysInt = duration.days;
   if (Math.floor(daysInt / 30) > 0) {
     if (Math.floor(daysInt / 30) === 1) {
@@ -55,54 +65,56 @@
   minutes = minutesInt > 0 ? `${minutesInt}` + translate("minutesChar") : "";
   let secondsInt = duration.seconds - duration.minutes * 60;
   if (secondsInt === 1) {
-    seconds = translate("second", { needGender: false });
+    seconds = translate("second", false);
   }
   if (secondsInt > 1) {
     seconds = `${secondsInt}` + " " + translate("seconds");
   }
-  let text = '';
+  let text = "";
   if (duration.days === 365) {
     text = translate("year");
   } else if (duration.days % 365 === 0 && duration.days > 365) {
-    text =
-      (duration.days / 365).toFixed(0) + " " + translate("years");
-  } else if (weeks === '' && months !== '' && days === '') {
+    text = (duration.days / 365).toFixed(0) + " " + translate("years");
+  } else if (weeks === "" && months !== "" && days === "") {
     text = months;
-  } else if (weeks !== '' && months === '' && days === '') {
+  } else if (weeks !== "" && months === "" && days === "") {
     text = weeks;
-  } else if (weeks !== '' && months !== '' && days === '') {
+  } else if (weeks !== "" && months !== "" && days === "") {
     text = months + " " + translate("and") + weeks;
-  } else if (weeks !== '' && months === '' && days !== '') {
+  } else if (weeks !== "" && months === "" && days !== "") {
     text = weeks + " " + translate("and") + days;
-  } else if (weeks === '' && months !== '' && days !== '') {
+  } else if (weeks === "" && months !== "" && days !== "") {
     text = months + " " + translate("and") + days;
-  } else if (weeks !== '' && months !== '' && days !== '') {
+  } else if (weeks !== "" && months !== "" && days !== "") {
     text = months + " ," + weeks + " " + translate("and") + days;
-  } else if (minutes === '' && hours === '' && days !== '') {
+  } else if (minutes === "" && hours === "" && days !== "") {
     text = days;
-  } else if (minutes !== '' && hours === '' && days === '') {
+  } else if (minutes !== "" && hours === "" && days === "") {
     text = minutes;
-  } else if (minutes === '' && hours !== '' && days === '') {
+  } else if (minutes === "" && hours !== "" && days === "") {
     text = hours;
-  } else if (minutes !== '' && hours !== '' && days === '') {
+  } else if (minutes !== "" && hours !== "" && days === "") {
     text = hours + " " + translate("and") + minutes;
-  } else if (minutes !== '' && hours === '' && days !== '') {
+  } else if (minutes !== "" && hours === "" && days !== "") {
     text = days + " " + translate("and") + minutes;
-  } else if (minutes === '' && hours !== '' && days !== '') {
+  } else if (minutes === "" && hours !== "" && days !== "") {
     text = days + " " + translate("and") + hours;
-  } else if (minutes !== '' && hours !== '' && days !== '') {
+  } else if (minutes !== "" && hours !== "" && days !== "") {
     text = days + " ," + hours + " " + translate("and") + minutes;
   } else if (seconds !== "") {
     text = seconds;
   }
-  if (text.length === 0) return '';
+  if (text.length === 0) return "";
   if (shortTime === -1) return text;
   if (shortTime > text.length) return text;
-  return text.replaceRange(shortTime, null, '..');
+
+  return text.slice(0, shortTime) + ".." + text.slice(shortTime);
+  // This is the dart code
+  // return text.replaceRange(shortTime, null, "..");
 }
 
- export function getUsablePhone(phoneNumber: string): string {
-  return phoneNumber.replace('-', '');
+export function getUsablePhone(phoneNumber: string): string {
+  return phoneNumber.replace("-", "");
 }
 
 export function durationFormated(duration: Duration): string {
@@ -112,8 +124,8 @@ export function durationFormated(duration: Duration): string {
 }
 
 export function textAccordingToGender(txt: string): string {
-  const userGender = UserInitializer().user.gender;
-  const isMale = (userGender === Gender.male || userGender === Gender.anonymous);
+  const userGender = UserInitializer.GI().user.gender;
+  const isMale = userGender === Gender.male || userGender === Gender.anonymous;
   if (!isMale) {
     Object.keys(maleToFemaleMap).forEach((key) => {
       txt = txt.replaceAll(key, maleToFemaleMap[key]);
@@ -124,7 +136,7 @@ export function textAccordingToGender(txt: string): string {
 
 export function translate(strName: string, needGender: boolean = true): string {
   const translatedStr = ApplicationLocalizations.translate(strName);
-  if (LanguageHelper().currentLaguageCode === 'he' && needGender)
+  if (LanguageHelper().currentLaguageCode === "he" && needGender)
     return textAccordingToGender(translatedStr);
   return translatedStr;
 }
@@ -141,27 +153,35 @@ export function loadBusinessesTypesIntepeter(): Map<string, BusinessesTypes> {
   return interpeter;
 }
 
-export function getFormatedTime(date: Date, withTime: boolean = true, withDayOfTheWeek: boolean = true): string {
-  const day = format(date, 'dd-MM-yyyy');
-  const time = format(date, 'HH:mm');
+export function getFormatedTime(
+  date: Date,
+  withTime: boolean = true,
+  withDayOfTheWeek: boolean = true
+): string {
+  const day = format(date, "dd-MM-yyyy");
+  const time = format(date, "HH:mm");
   let templete = "DATE DAY IN TIME";
   return templete
-    .replaceAll('DATE', day)
-    .replaceAll(' TIME', withTime ? " " + time : "")
+    .replaceAll("DATE", day)
+    .replaceAll(" TIME", withTime ? " " + time : "")
     .replaceAll("DAY", withDayOfTheWeek ? `(${getDayString(date)})` : "")
-    .replaceAll(' IN', withTime ? " " + translate("at") : "");
+    .replaceAll(" IN", withTime ? " " + translate("at") : "");
 }
 
 export function getDayString(date: Date, beforeDay: string = ""): string {
   let todayOrTomorrow = "";
-  if (format(date, 'dd-MM-yyyy') === format(addDays(new Date(), 1), 'dd-MM-yyyy')) {
+  if (
+    format(date, "dd-MM-yyyy") === format(addDays(new Date(), 1), "dd-MM-yyyy")
+  ) {
     todayOrTomorrow = translate("tomorrow");
   }
-  if (format(date, 'dd-MM-yyyy') === format(new Date(), 'dd-MM-yyyy')) {
+  if (format(date, "dd-MM-yyyy") === format(new Date(), "dd-MM-yyyy")) {
     todayOrTomorrow = translate("today");
   }
   const day = weekDays[date.getDay()];
-  return `${todayOrTomorrow !== "" ? todayOrTomorrow : beforeDay + translate(day)}`;
+  return `${
+    todayOrTomorrow !== "" ? todayOrTomorrow : beforeDay + translate(day)
+  }`;
 }
 
 export function formatedPhone(phone: string): string {
@@ -169,9 +189,9 @@ export function formatedPhone(phone: string): string {
     const indexOfhyphen = phone.indexOf("-");
     let formated = phone.substring(indexOfhyphen + 1, phone.length);
     formated = "0" + formated;
-    return formated.substring(0, 3) +
-      "-" +
-      formated.substring(3, formated.length);
+    return (
+      formated.substring(0, 3) + "-" + formated.substring(3, formated.length)
+    );
   } catch (e) {
     return phone;
   }
@@ -193,33 +213,21 @@ export function addCommaToNumString(numString: string): string {
     afterDecimal = numString.substring(decimalIndex, numString.length);
     numString = numString.substring(0, decimalIndex);
   }
-  numString = numString.replaceAll(',', ''); // Remove existing commas if any
-  const reversedNumString = numString.split('').reverse().join(); // Reverse the string
-  let newString = '';
+  numString = numString.replaceAll(",", ""); // Remove existing commas if any
+  const reversedNumString = numString.split("").reverse().join(); // Reverse the string
+  let newString = "";
   for (let i = 0; i < reversedNumString.length; i++) {
     if (i > 0 && i % 3 === 0) {
-      newString += ','; // Add comma after every three characters
+      newString += ","; // Add comma after every three characters
     }
     newString += reversedNumString[i];
   }
-  const result = newString.split('').reverse().join(); // Reverse the string back
+  const result = newString.split("").reverse().join(); // Reverse the string back
   return result + afterDecimal;
 }
 
 export function dateToString(myTime: Date): string {
-  if (isWeb) {
-    return format(myTime, 'HH:mm');
-  }
-  try {
-    const countryCode = Platform.localeName.split("_")[1];
-    if (countryCode === "US")
-      return format(myTime, 'hh:mm a');
-    else {
-      return format(myTime, 'HH:mm');
-    }
-  } catch (e) {
-    return format(myTime, 'HH:mm');
-  }
+  return format(myTime, "HH:mm");
 }
 
 export function removePhoneNumberPrefix(phoneNumber: string): string {
@@ -242,12 +250,10 @@ export function timeUuid(): string {
 export function parseVersionToInt(version: string): number {
   /* vaersion - x.x.x 
     output - xxx*/
-  const versionSegments = version.split('.');
+  const versionSegments = version.split(".");
   let versionNum = 0;
   versionSegments.forEach((element) => {
-    versionNum = (versionNum * 10) + parseInt(element);
+    versionNum = versionNum * 10 + parseInt(element);
   });
   return versionNum;
 }
-
-
