@@ -1,4 +1,5 @@
 import {
+  dateToMonthStr,
   monthStrToDate,
   setToStartOfMonth,
 } from "$lib/utils/times_utils/times_utils";
@@ -21,7 +22,7 @@ export default class UserBookings {
       this.passedBookings[monthStr] = {};
     }
     Object.entries(json).forEach(([bookingId, bookingJson]) => {
-      const booking = new Booking(bookingJson, bookingId);
+      const booking = Booking.fromJson(bookingJson, bookingId);
       if (booking.cancelDate !== null) {
         return;
       }
@@ -36,11 +37,11 @@ export default class UserBookings {
   setRecurrence(json: Record<string, any>): void {
     this.recurrence = {};
     Object.entries(json).forEach(([bookingId, bookingJson]) => {
-      const booking = new Booking(bookingJson, bookingId);
+      const booking = Booking.fromJson(bookingJson, bookingId);
       if (booking.cancelDate !== null) {
         return;
       }
-      this.recurrence[bookingId] = booking;
+      this.recurrence![bookingId] = booking;
     });
   }
 
@@ -125,16 +126,5 @@ export default class UserBookings {
       });
     });
     return lastDate;
-  }
-
-  firstBookingForBusiness(
-    businessId: string,
-    workerId: string,
-    includePast: boolean = false,
-    initDate?: Date,
-    exclude?: Date
-  ): Date | null {
-    let firstDate: Date | null = initDate;
-    return firstDate;
   }
 }

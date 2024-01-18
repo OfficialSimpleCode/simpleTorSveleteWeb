@@ -13,7 +13,7 @@ export enum Level {
   fatal = 7,
   off = 8,
 }
-export const logger: Logger<ILogObj> = new Logger({ minLevel: Level.error });
+export const logger: Logger<ILogObj> = new Logger({ minLevel: Level.info });
 
 export enum ErrorsTypeLog {
   login = "login",

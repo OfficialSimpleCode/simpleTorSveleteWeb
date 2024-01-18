@@ -4,14 +4,23 @@ export class Price {
   amount: number = 0.0;
   currency: CurrencyModel = defaultCurrency; // Assuming defaultCurrency is an instance of CurrencyModel
 
-  constructor(amount: string, currency: CurrencyModel) {
+  constructor({
+    amount,
+    currency,
+  }: {
+    amount: string;
+    currency: CurrencyModel;
+  }) {
     const amountAsDouble = parseFloat(amount) || 0.0;
     this.amount = parseFloat(amountAsDouble.toFixed(2));
     this.currency = currency;
   }
 
-  static fromJson(json: any): Price {
-    const price = new Price("0.0", CurrencyModel.fromJson(json.currency));
+  static fromJson(json: Record<string, any>): Price {
+    const price = new Price({
+      amount: "0.0",
+      currency: CurrencyModel.fromJson(json["currency"]),
+    });
     if (json.amount != null) {
       price.amount =
         typeof json.amount === "number" ? json.amount : parseFloat(json.amount);
