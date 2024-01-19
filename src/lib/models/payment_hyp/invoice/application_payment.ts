@@ -1,6 +1,9 @@
-
-
-enum PayApplication { Bit, PayPal, PayBox, Other }
+enum PayApplication {
+  Bit,
+  PayPal,
+  PayBox,
+  Other,
+}
 
 const payApplicationToStr: Record<PayApplication, string> = {
   [PayApplication.PayPal]: "payPal",
@@ -10,10 +13,10 @@ const payApplicationToStr: Record<PayApplication, string> = {
 };
 
 const payApplicationFromStr: Record<string, PayApplication> = {
-  "payPal": PayApplication.PayPal,
-  "bit": PayApplication.Bit,
-  "payBox": PayApplication.PayBox,
-  "other": PayApplication.Other,
+  payPal: PayApplication.PayPal,
+  bit: PayApplication.Bit,
+  payBox: PayApplication.PayBox,
+  other: PayApplication.Other,
 };
 
 const payApplicationToIcon: Record<PayApplication, string> = {
@@ -27,9 +30,15 @@ class ApplicationPayment {
   amount: number = 0;
   application: PayApplication = PayApplication.Bit;
 
-  constructor({ amount = 0, application = PayApplication.Bit}: { amount?: number; application?: PayApplication }) {
+  constructor({
+    amount = 0,
+    application = PayApplication.Bit,
+  }: {
+    amount?: number;
+    application?: PayApplication;
+  }) {
     this.amount = amount || 0;
-    this.application = application|| PayApplication.Bit;
+    this.application = application || PayApplication.Bit;
   }
 
   toJson(): Record<string, any> {
@@ -41,13 +50,13 @@ class ApplicationPayment {
     return data;
   }
 
-  static fromJson(json: Record<string, any>): ApplicationPayment{
-    const newObj = new ApplicationPayment();
+  static fromJson(json: Record<string, any>): ApplicationPayment {
+    const newObj = new ApplicationPayment({});
     newObj.amount = json["A"];
     if (json["PA"] !== null) {
-        newObj.application = payApplicationFromStr[json["PA"]] || PayApplication.Bit;
+      newObj.application =
+        payApplicationFromStr[json["PA"]] || PayApplication.Bit;
     }
     return newObj;
   }
-
 }

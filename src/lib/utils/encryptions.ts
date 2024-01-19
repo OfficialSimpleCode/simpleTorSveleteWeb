@@ -1,4 +1,5 @@
-import { AES, enc, SHA256 } from "crypto-js";
+import pkg from "crypto-js";
+const { AES, enc, SHA256 } = pkg;
 
 const iv16len = "16charactersiv!"; // Replace this with your actual initialization vector (IV)
 

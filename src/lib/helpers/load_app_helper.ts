@@ -23,7 +23,10 @@ export class LoadAppHelper {
   public firstTime: boolean = true;
 
   public async loadAppData(): Promise<void> {
-    if (this.status !== LoadingStatuses.loading) return;
+    if (this.status !== LoadingStatuses.loading) {
+      return;
+    }
+
     if (ThemeHelper.GI().themeCauseMainBuilt) {
       this.status = LoadingStatuses.success;
 

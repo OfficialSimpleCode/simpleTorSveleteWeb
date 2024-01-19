@@ -1,4 +1,11 @@
 import { Gender } from "$lib/consts/gender";
+import { laterDate } from "$lib/utils/dates_utils";
+import { hashId } from "$lib/utils/encryptions";
+import { firstDate } from "$lib/utils/times_utils/times_utils";
+import { phoneToDocId } from "$lib/utils/user";
+import MultiBookingUser from "../multi_booking/multi_booking_user";
+import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
+import PublicCustomer from "../worker/public_customer";
 import type WorkerModel from "../worker/worker_model";
 
 export const minBookingCountToRegular: number = 3;
@@ -14,25 +21,25 @@ export enum CustomerTypes {
   deleted,
 }
 
-export const customerTypesToStr: { [key in CustomerTypes]: string } = {
-  [CustomerTypes.regular]: "RegularClient",
-  [CustomerTypes.returned]: "ReturnedClient",
-  [CustomerTypes.fresh]: "NewClient",
-  [CustomerTypes.missing]: "MissingClient",
-  [CustomerTypes.self]: "selfClient",
-  [CustomerTypes.deleted]: "deleted",
-  [CustomerTypes.blocked]: "blockedMale",
-  [CustomerTypes.any]: "All",
-};
+export const customerTypesToStr: Map<CustomerTypes, string> = new Map([
+  [CustomerTypes.regular, "RegularClient"],
+  [CustomerTypes.returned, "ReturnedClient"],
+  [CustomerTypes.fresh, "NewClient"],
+  [CustomerTypes.missing, "MissingClient"],
+  [CustomerTypes.self, "selfClient"],
+  [CustomerTypes.deleted, "deleted"],
+  [CustomerTypes.blocked, "blockedMale"],
+  [CustomerTypes.any, "All"],
+]);
 
-export const customerTypesToColor: { [key in CustomerTypes]: string } = {
-  [CustomerTypes.fresh]: "green",
-  [CustomerTypes.regular]: "blue",
-  [CustomerTypes.blocked]: "black",
-  [CustomerTypes.returned]: "yellow",
-  [CustomerTypes.deleted]: "red",
-  [CustomerTypes.self]: "orange",
-};
+export const customerTypesToColor: Map<CustomerTypes, string> = new Map([
+  [CustomerTypes.fresh, "green"],
+  [CustomerTypes.regular, "blue"],
+  [CustomerTypes.blocked, "black"],
+  [CustomerTypes.returned, "yellow"],
+  [CustomerTypes.deleted, "red"],
+  [CustomerTypes.self, "orange"],
+]);
 
 export default class CustomerData {
   name: string = ""; //the name that the user gave
@@ -48,12 +55,13 @@ export default class CustomerData {
   addedManually: boolean = false;
   gender: Gender = Gender.male;
   amoutOfBookings: number = 0;
-  firstBookingsDate?: Date;
-  userFirstBookingsDate?: Date;
-  lastBookingsDate?: Date;
+  firstBookingsDate: Date | null;
+  userFirstBookingsDate: Date | null;
+  lastBookingsDate: Date | null;
   belongings: Set<string> = new Set<string>();
   isDeleted: boolean = false;
 
+  constructor({});
   constructor({
     name = "",
     amoutOfBookings = 0,
@@ -83,10 +91,10 @@ export default class CustomerData {
     workerNaming?: string;
     blocked?: boolean;
     phoneNumber?: string;
-    firstBookingsDate?: Date;
-    userFirstBookingsDate?: Date;
-    lastBookingsDate?: Date;
-  } = {}) {
+    firstBookingsDate: Date | null;
+    userFirstBookingsDate: Date | null;
+    lastBookingsDate: Date | null;
+  }) {
     this.name = name;
     this.amoutOfBookings = amoutOfBookings;
     this.gender = gender;
@@ -105,7 +113,7 @@ export default class CustomerData {
   }
 
   static fromJson(json: { [key: string]: any }, uuid: string): CustomerData {
-    const customerData: CustomerData = new CustomerData();
+    const customerData: CustomerData = new CustomerData({});
     customerData.name = json["name"] ?? "";
     if (json["gender"] != null) {
       customerData.gender = customerData.getGenderFromStr(json["gender"]);
@@ -172,7 +180,7 @@ export default class CustomerData {
     return this.workerNaming == "" ? this.name : this.workerNaming;
   }
 
-  get getFirstDate(): Date | undefined {
+  get getFirstDate(): Date | null {
     if (
       this.firstBookingsDate == null ||
       (this.userFirstBookingsDate != null &&
@@ -184,7 +192,7 @@ export default class CustomerData {
   }
 
   get customerHashPhone(): string {
-    return this.phoneToDocId(this.phoneNumber);
+    return phoneToDocId(this.phoneNumber);
   }
 
   get customerPhoneAsCollection(): string {
@@ -245,15 +253,13 @@ export default class CustomerData {
   }
 
   get toMultiBookingUser(): MultiBookingUser {
-    return {
-      userFcms: {},
-      debts: {},
-      remindersTypes: {},
-      customerName: this.name !== "" ? this.name : this.workerNaming,
-      customerPhone: this.phoneNumber,
-      customerId: this.customerUuid,
-      userGender: this.gender,
-    };
+    const newMultiBookingUser = new MultiBookingUser();
+    newMultiBookingUser.customerName =
+      this.name != "" ? this.name : this.workerNaming;
+    newMultiBookingUser.customerPhone = this.phoneNumber;
+    newMultiBookingUser.customerId = this.customerUuid;
+    newMultiBookingUser.userGender = this.gender;
+    return newMultiBookingUser;
   }
 
   get toPaymentRequestUser(): PaymentRequestUser {
@@ -368,15 +374,15 @@ export default class CustomerData {
     this.isVerifiedPhone = other.isVerifiedPhone || this.isVerifiedPhone;
     this.gender = this.gender;
     this.blocked = other.blocked || this.blocked;
-    this.lastBookingsDate = this.laterDate(
+    this.lastBookingsDate = laterDate(
       other.lastBookingsDate,
       this.lastBookingsDate
     );
-    this.firstBookingsDate = this.firstDate(
+    this.firstBookingsDate = firstDate(
       other.firstBookingsDate,
       this.firstBookingsDate
     );
-    this.userFirstBookingsDate = this.firstDate(
+    this.userFirstBookingsDate = firstDate(
       other.userFirstBookingsDate,
       this.userFirstBookingsDate
     );
@@ -400,11 +406,11 @@ export default class CustomerData {
   }
 
   get publicCustomer(): PublicCustomer {
-    return {
+    return new PublicCustomer({
       freeFromPayments: this.freeFromPayments,
       blocked: this.blocked,
-      hashNumber: this.hashId(this.customerUuid),
-    };
+      hashNumber: hashId({ id: this.customerUuid }),
+    });
   }
 
   belongingsNames(workers: Map<string, WorkerModel>): string {
@@ -414,7 +420,7 @@ export default class CustomerData {
   }
 
   get forUpdate(): CustomerData {
-    const customerData: CustomerData = new CustomerData();
+    const customerData: CustomerData = new CustomerData({});
     customerData.name = this.name;
     customerData.gender = this.gender;
     customerData.isVerifiedPhone = this.isVerifiedPhone;
@@ -436,42 +442,14 @@ export default class CustomerData {
     return customerData;
   }
 
-  toCustomerStatisticsData(): CustomerStatisticsData {
-    return {
-      phoneNumber: this.phoneNumber,
-      userId: this.customerUuid,
-      name: this.nameForWorker,
-      gender: this.gender,
-    };
-  }
-
-  private phoneToDocId(phoneNumber: string): string {
-    // Implement the phoneToDocId function here
-  }
-
-  private hashId(id: string): string {
-    // Implement the hashId function here
-  }
-
-  private laterDate(dateA?: Date, dateB?: Date): Date | undefined {
-    if (dateA == null) {
-      return dateB;
-    }
-    if (dateB == null) {
-      return dateA;
-    }
-    return dateA > dateB ? dateA : dateB;
-  }
-
-  private firstDate(dateA?: Date, dateB?: Date): Date | undefined {
-    if (dateA == null) {
-      return dateB;
-    }
-    if (dateB == null) {
-      return dateA;
-    }
-    return dateA < dateB ? dateA : dateB;
-  }
+  // toCustomerStatisticsData(): CustomerStatisticsData {
+  //   return {
+  //     phoneNumber: this.phoneNumber,
+  //     userId: this.customerUuid,
+  //     name: this.nameForWorker,
+  //     gender: this.gender,
+  //   };
+  // }
 
   toString(): string {
     return JSON.stringify(this.toJson(), null, "  ");

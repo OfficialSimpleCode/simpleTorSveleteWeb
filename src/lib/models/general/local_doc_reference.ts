@@ -7,8 +7,8 @@ export default class LocalDocReference {
     this.path = path;
   }
 
-  toJson(): { [key: string]: any } {
-    const data: { [key: string]: any } = {};
+  toJson(): Record<string, any> {
+    const data: Record<string, any> = {};
 
     data["docId"] = this.docId;
     data["path"] = this.path;

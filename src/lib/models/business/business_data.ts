@@ -2,6 +2,7 @@ import {
   messagesForNewBusiness,
   paymentRequsetForNewBusiness,
 } from "$lib/consts/limitation";
+import type { DataSnapshot } from "firebase/database";
 
 export const messagesLimits: { [key: string]: number } = {
   simpletor_golden_business_month_1: 1000,
@@ -42,9 +43,9 @@ export class BusinessData {
 
   setBusinessData(ref: DataSnapshot): void {
     this.messagesCounter =
-      parseInt(ref.child("messagesCounter").value.toString()) || 0;
+      parseInt(ref.child("messagesCounter").val().toString()) || 0;
     this.paymentRequestCounter =
-      parseInt(ref.child("paymentRequestCounter").value.toString()) || 0;
+      parseInt(ref.child("paymentRequestCounter").val().toString()) || 0;
   }
 
   toJson(): any {

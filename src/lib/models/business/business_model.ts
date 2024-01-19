@@ -17,10 +17,10 @@ export default class BusinessModel {
   currency: CurrencyModel = defaultCurrency;
   notifyOnNewCustomer: boolean = true;
   searchable: boolean = true;
-  billingIssue: Record<string, Date> = {};
+  billingIssue: Map<string, Date> = new Map();
   isLandingPageMode: boolean = false;
-  allWorkersIds: Record<string, string> = {};
-  workersIds: Record<string, string> = {};
+  allWorkersIds: Map<string, string> = new Map();
+  workersIds: Map<string, string> = new Map();
   hypPath?: HypPaths;
   expiredDate: Date = new Date();
   shopPhone: string = "";
@@ -40,7 +40,7 @@ export default class BusinessModel {
   productId: string = "";
   businessId: string = "";
   createdAt: Date = new Date();
-  blockedUsersTemp: Record<string, string> = {};
+  blockedUsersTemp: Map<string, string> = new Map();
   lastTimeConnected: Date = new Date();
   businessData: BusinessData = new BusinessData();
   design: BusinessDesign = new BusinessDesign();
@@ -121,9 +121,9 @@ export default class BusinessModel {
       this.design.pickedThemeKey = theme;
       Object.entries<Record<string, any>>(json["products"]).forEach(
         ([productId, productJson]) => {
-          this.design.products[productId] = ProductModel.fromJson(
-            productJson,
-            productId
+          this.design.products.set(
+            productId,
+            ProductModel.fromJson(productJson, productId)
           );
         }
       );
@@ -136,9 +136,9 @@ export default class BusinessModel {
 
       if (json["updates"] != null) {
         (json["updates"] as Record<string, any>[]).forEach((update, index) => {
-          this.design.updates[index.toString()] = Update.fromJson(
-            update,
-            index.toString()
+          this.design.updates.set(
+            index.toString(),
+            Update.fromJson(update, index.toString())
           );
         });
       }
@@ -172,31 +172,31 @@ export default class BusinessModel {
       this.hypPath = hypPathFromStr[json["hypPath"]];
     }
 
-    this.allWorkersIds = {};
+    this.allWorkersIds = new Map();
     if (json["allWorkersIds"] != null) {
       Object.entries<string>(json["allWorkersIds"]).forEach(
         ([workerId, details]) => {
-          this.allWorkersIds[workerId] = details;
+          this.allWorkersIds.set(workerId, details);
         }
       );
     }
 
     const ownerPhone = this.businessId.split("--")[0];
     if (!this.allWorkersIds.hasOwnProperty("+" + ownerPhone)) {
-      this.allWorkersIds["+" + ownerPhone] = "";
+      this.allWorkersIds.set("+" + ownerPhone, "");
     }
 
-    this.workersIds = {};
+    this.workersIds = new Map();
     if (json["workersIds"] != null) {
       Object.entries<string>(json["workersIds"]).forEach(
         ([workerId, details]) => {
-          this.workersIds[workerId] = details;
+          this.workersIds.set(workerId, details);
         }
       );
     }
 
     if (!this.workersIds.hasOwnProperty(ownerPhone)) {
-      this.workersIds[ownerPhone] = "";
+      this.workersIds.set(ownerPhone, "");
     }
 
     this.dynamicLink = json["dynamicLink"] ?? "";
@@ -217,7 +217,7 @@ export default class BusinessModel {
     try {
       if (json["billingIssue"] != null) {
         Object.entries(json["billingIssue"]).forEach(([productId, date]) => {
-          this.billingIssue[productId] = (date as Timestamp).toDate();
+          this.billingIssue.set(productId, (date as Timestamp).toDate());
         });
       }
     } catch (e) {
@@ -254,9 +254,9 @@ export default class BusinessModel {
       data.hypPath = this.hypPath;
     }
 
-    if (Object.keys(this.billingIssue).length > 0) {
+    if (this.billingIssue.size > 0) {
       data.billingIssue = {};
-      Object.entries(this.billingIssue).forEach(([productId, date]) => {
+      this.billingIssue.forEach((date, productId) => {
         data.billingIssue[productId] = Timestamp.fromDate(date);
       });
     }

@@ -1,11 +1,15 @@
 import {
   BookingReminderType,
+  BookingStatuses,
   NotificationType,
   OrderingOptions,
 } from "$lib/consts/booking";
 import { Gender } from "$lib/consts/gender";
 import { NotificationOption } from "$lib/consts/notification";
+import type BookingInvoiceData from "../booking/booking_invoice_data";
+import type BookingTransactionModel from "../booking/booking_transaction";
 import type CustomerData from "../general/customer_data";
+import type Debt from "../schedule/debt";
 // import { v4 as uuid } from "uuid";
 import type WorkerModel from "../worker/worker_model";
 
@@ -15,10 +19,10 @@ export default class MultiBookingUser {
   isVerifiedPhone: boolean = false;
   notificationType: NotificationType = NotificationType.none;
   workerNotificationOption: NotificationOption = NotificationOption.PushOrSMS;
-  workerRemindersTypes: { [key in BookingReminderType]: number } = {};
+  workerRemindersTypes: Map<BookingReminderType, number> = new Map();
   customerId: string = "";
-  orderingOptions: WorkerOptions = OrderingOptions.app;
-  remindersTypes: { [key in BookingReminderType]: number } = {};
+  orderingOptions: OrderingOptions = OrderingOptions.app;
+  remindersTypes: Map<BookingReminderType, number> = new Map();
   isUserExist: boolean = true;
   signOnDeviceCalendar: boolean = false;
   lastTimeNotifyOnDebt: Date | null = null;
@@ -36,78 +40,13 @@ export default class MultiBookingUser {
   confirmedArrival: boolean = false;
   userFcms: Set<string> = new Set();
   clientNote: string = "";
-  invoices: Record<string, BookingInvoiceData> = {};
-  transactions: Record<string, BookingTransactionModel> = {};
-  debts: Record<string, Debt> = {};
+  invoices: Map<string, BookingInvoiceData> = new Map();
+  transactions: Map<string, BookingTransactionModel> = new Map();
+  debts: Map<string, Debt> = new Map();
   addToClientAt: boolean = false;
   userDeleted: boolean = false;
 
-  constructor(params: {
-    customerName?: string;
-    customerPhone?: string;
-    isVerifiedPhone?: boolean;
-    notificationType?: NotificationType;
-    workerNotificationOption?: NotificationOption;
-    workerRemindersTypes?: Record<BookingReminderType, number>;
-    customerId?: string;
-    orderingOptions?: OrderingOptions;
-    remindersTypes?: Record<BookingReminderType, number>;
-    isUserExist?: boolean;
-    signOnDeviceCalendar?: boolean;
-    lastTimeNotifyOnDebt?: Date | null;
-    clientMail?: string;
-    finishInvoices?: boolean;
-    showAdressAlert?: boolean;
-    userBookingId?: string;
-    showPhoneAlert?: boolean;
-    cancelDate?: Date | null;
-    wasWaiting?: boolean;
-    createdAt?: Date;
-    needCancel?: boolean;
-    userGender?: Gender;
-    status?: BookingStatuses;
-    confirmedArrival?: boolean;
-    userFcms?: Set<string>;
-    clientNote?: string;
-    invoices?: Record<string, BookingInvoiceData>;
-    transactions?: Record<string, BookingTransactionModel>;
-    debts?: Record<string, Debt>;
-    addToClientAt?: boolean;
-    userDeleted?: boolean;
-  }) {
-    this.customerName = params.customerName || "";
-    this.customerPhone = params.customerPhone || "";
-    this.isVerifiedPhone = params.isVerifiedPhone || false;
-    this.notificationType = params.notificationType || NotificationType.none;
-    this.workerNotificationOption =
-      params.workerNotificationOption || NotificationOption.PushOrSMS;
-    this.workerRemindersTypes = params.workerRemindersTypes || new Map();
-    this.customerId = params.customerId || "";
-    this.orderingOptions = params.orderingOptions || OrderingOptions.app;
-    this.remindersTypes = params.remindersTypes || new Map();
-    this.isUserExist = params.isUserExist || true;
-    this.signOnDeviceCalendar = params.signOnDeviceCalendar || false;
-    this.lastTimeNotifyOnDebt = params.lastTimeNotifyOnDebt || null;
-    this.clientMail = params.clientMail || "";
-    this.finishInvoices = params.finishInvoices || false;
-    this.showAdressAlert = params.showAdressAlert || false;
-    this.userBookingId = params.userBookingId || "";
-    this.showPhoneAlert = params.showPhoneAlert || false;
-    this.cancelDate = params.cancelDate || null;
-    this.wasWaiting = params.wasWaiting || false;
-    this.createdAt = params.createdAt || new Date(0);
-    this.needCancel = params.needCancel || false;
-    this.userGender = params.userGender || Gender.anonymous;
-    this.status = params.status || BookingStatuses.approved;
-    this.confirmedArrival = params.confirmedArrival || false;
-    this.userFcms = params.userFcms || new Set();
-    this.clientNote = params.clientNote || "";
-    this.invoices = params.invoices || new Map();
-    this.transactions = params.transactions || new Map();
-    this.debts = params.debts || new Map();
-    this.addToClientAt = params.addToClientAt || false;
-    this.userDeleted = params.userDeleted || false;
-  }
+  constructor() {}
 
   copyDataToOrder(params: {
     worker: WorkerModel;

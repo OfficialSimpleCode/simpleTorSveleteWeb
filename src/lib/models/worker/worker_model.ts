@@ -14,10 +14,12 @@ import { translate } from "$lib/utils/string_utilitis";
 import { dateToDateStr } from "$lib/utils/times_utils/times_utils";
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
 import Booking from "../booking/booking_model";
-import type Device from "../general/device";
+import Device from "../general/device";
+import Treatment from "../general/treatment_model";
 import type Invoice from "../payment_hyp/invoice/invoice";
 import type TransactionModel from "../payment_hyp/transaction";
-import type WorkerPublicData from "./worker_public_data";
+import TreatmentSubject from "./treatment_subject";
+import WorkerPublicData from "./worker_public_data";
 
 export default class WorkerModel {
   //---------------------------------- workerDoc json -------------------------
@@ -71,7 +73,7 @@ export default class WorkerModel {
   specificRangeChanges: { [key: string]: ShiftChangeRange } = {};
   treatmentsSubjects: { [key: string]: TreatmentSubject } = {};
   //----------------------------------from public worker json-------------------------------
-  workerPublicData: WorkerPublicData = new WorkerPublicData({}, {});
+  workerPublicData: WorkerPublicData = new WorkerPublicData({});
   //----------------------------- from bookingsEvents doc -------------------
   events: Events = new Events({}, this);
   //------------------------------ from customerData doc ----------------------
@@ -364,9 +366,9 @@ export default class WorkerModel {
       this.longestBookingTime = pointerLognestBookingTime[0];
     } else if (workerJson["treatments"]) {
       // old users with no subjects
-      const treatments: { [key: string]: Treatment } = {};
+      const treatments: Map<string, Treatment> = new Map();
       let index = 0; //also the colorindex
-      Object.entries(workerJson["treatments"]).forEach(
+      Object.entries<Record<string, any>>(workerJson["treatments"]).forEach(
         ([name, treatmentJson]) => {
           const treatment = Treatment.fromOldJson(
             treatmentJson,
@@ -374,17 +376,17 @@ export default class WorkerModel {
             name,
             index + 4
           );
-          treatments[index.toString()] = treatment;
+          treatments.set(index.toString(), treatment);
           // save the first duration of the short booking time
           if (treatment.totalMinutes < this.shortBookingTime) {
             this.shortBookingTime = Math.max(
-              treatment.times["0"].workMinutes,
+              treatment.times.get("0")!.workMinutes,
               5
             );
           }
           if (treatment.totalMinutes === this.shortBookingTime) {
             this.shortBookingTime = Math.min(
-              Math.max(treatment.times["0"].workMinutes, 5),
+              Math.max(treatment.times.get("0")!.workMinutes, 5),
               this.shortBookingTime
             );
           }
@@ -392,7 +394,11 @@ export default class WorkerModel {
         }
       );
       this.treatmentsSubjects = {
-        "0": new TreatmentSubject(translate("general"), treatments, "0"),
+        "0": new TreatmentSubject({
+          name: translate("general"),
+          treatments: treatments,
+          index: "0",
+        }),
       };
     }
     this.initialTreatmentsById();
@@ -402,9 +408,11 @@ export default class WorkerModel {
       workerJson["devices"] != null &&
       typeof workerJson["devices"] === "object"
     ) {
-      Object.entries(workerJson["devices"]).forEach(([fcmId, fcmJson]) => {
-        this.devices[fcmId] = Device.fromJson(fcmJson, fcmId);
-      });
+      Object.entries<Record<string, any>>(workerJson["devices"]).forEach(
+        ([deviceId, deviceJson]) => {
+          this.devices[deviceId] = Device.fromJson(deviceJson, deviceId);
+        }
+      );
     }
     this.deleteNeerDedlineBookingMessage =
       workerJson["deleteNeerDedlineBookingMessage"];
