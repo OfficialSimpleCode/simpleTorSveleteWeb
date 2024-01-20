@@ -20,7 +20,6 @@
     export let data;
 
     let loggedIn: boolean = true;
-    let profile: Record<string, string> = data.profile;
     let name: string = $business.shopName;
     let geo: Record<string, string> = {
         title: $business.adress,
@@ -29,6 +28,7 @@
     let displayImages: Array<Record<string, any>> = data.displayImages;
 
     onMount(() => {
+        console.log($business);
         // document.documentElement.style.setProperty(
         //     "--p",
         //     hexToXyY(
@@ -95,7 +95,7 @@
 {/if}
 
 <main class="w-full h-full" style="">
-    <Navbar {loggedIn} {profile} />
+    <Navbar />
 
     <!-- background image -->
     <img

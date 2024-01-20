@@ -92,7 +92,7 @@
 </script>
 
 <main class="h-screen w-screen flex flex-col items-center gap-8 bg-base-100">
-    <Navbar loggedIn={true} />
+    <Navbar />
     <ul class="steps min-h-20 w-[90%] sm:w-[60%] mt-5">
         {#each steps as step, i}
             <button

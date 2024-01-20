@@ -35,13 +35,10 @@
             status: "approved",
         },
     ];
-    let notifications: Array<Record<string, any>> = [];
-    let profile: Record<string, string> = {};
-    let loggedIn: boolean = true;
 </script>
 
 <main>
-    <Navbar {notifications} {loggedIn} {profile} />
+    <Navbar />
     <div class="pt-20 flex flex-col gap-8 items-center">
         <h1 class="text-3xl mx-10">Appointments</h1>
         <div class="overflow-x-auto w-full hidden md:block min-h-[400px] mx-10">

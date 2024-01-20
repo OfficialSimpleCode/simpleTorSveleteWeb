@@ -22,8 +22,8 @@
         { name: "English", flag: USFlag },
     ];
 
-    export let loggedIn: boolean;
-    export let profile: Record<string, string> = {};
+    let loggedIn: boolean = true;
+    let profile: Record<string, string> = {};
 
     function markAsRead(notification: Record<string, any>) {
         let selectedNotification = notifications.filter(
