@@ -9,7 +9,7 @@
         WrenchScrewdriver,
         ChevronRight,
     } from "svelte-hero-icons";
-    import PaymentDialog from "../components/PaymentDialog.svelte";
+    import TipDialog from "../components/TipDialog.svelte";
 
     export let employee: Record<string, string>;
     export let services: Array<Record<string, any>>;
@@ -56,7 +56,7 @@
 </script>
 
 <!-- Dialogs -->
-<PaymentDialog bind:dialog={paymentDialog} bind:amount={totalServicesPrice} />
+<TipDialog bind:dialog={paymentDialog} bind:amount={totalServicesPrice} />
 
 <section class="flex flex-col items-center gap-8 w-[90%] sm:w-[70%]">
     <h1 class="text-3xl text-center">

@@ -1,13 +1,24 @@
 <script lang="ts">
     import { business } from "$lib/stores/Business.js";
+    import ChoosePaymentCardDialog from "./ChoosePaymentCardDialog.svelte";
+
     export let dialog: HTMLDialogElement;
     export let amount: number;
 
     let tip: number = 0;
     let tipOptions: number[] = [0, 5, 10, 17];
 
-    function onPay() {}
+    let totalAmount: number = amount;
+    $: totalAmount = amount + amount * (tip / 100);
+
+    let choosePaymentDialog: HTMLDialogElement;
 </script>
+
+<!-- Dialogs -->
+<ChoosePaymentCardDialog
+    bind:dialog={choosePaymentDialog}
+    bind:amount={totalAmount}
+/>
 
 <dialog
     bind:this={dialog}
@@ -18,8 +29,7 @@
 >
     <div class="modal-box bg-base-200 flex flex-col gap-4">
         <h1 class="text-xl text-center">
-            Pay - {(amount + amount * (tip / 100)).toFixed(2)}{$business
-                .currency.symbol}
+            Pay - {totalAmount.toFixed(2)}{$business.currency.symbol}
         </h1>
         <div
             class="bg-base-300 rounded-lg w-full p-3 flex flex-col items-center gap-4"
@@ -49,7 +59,12 @@
             <button class="btn btn-outline" on:click={() => dialog.close()}>
                 Cancel
             </button>
-            <button class="btn btn-primary"> Pay </button>
+            <button
+                class="btn btn-primary"
+                on:click={() => choosePaymentDialog.showModal()}
+            >
+                Continue
+            </button>
         </div>
     </div>
 
