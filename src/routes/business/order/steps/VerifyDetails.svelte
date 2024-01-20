@@ -9,11 +9,14 @@
         WrenchScrewdriver,
         ChevronRight,
     } from "svelte-hero-icons";
+    import TipDialog from "../components/TipDialog.svelte";
 
     export let employee: Record<string, string>;
     export let services: Array<Record<string, any>>;
     export let totalServicesDuration: string;
     export let dateAndTime: Record<string, string>;
+
+    let paymentDialog: HTMLDialogElement;
 
     let totalServicesPrice: number = services
         .map((s) => s.price * s.quntity)
@@ -47,42 +50,13 @@
         return weekdayName;
     }
 
-    function multiplyAndSumDurations(
-        duration: string,
-        multiplier: number,
-    ): string {
-        // Define a regular expression to extract hours and minutes from the duration string
-        const durationRegex = /(\d+)h(?:\s*(\d*)m)?/;
-
-        // Use regular expression to extract hours and minutes
-        const matches = duration.match(durationRegex);
-
-        if (matches) {
-            const hours = parseInt(matches[1]) || 0;
-            const minutes = parseInt(matches[2]) || 0;
-
-            // Calculate total duration in minutes after applying the multiplier
-            const totalMinutes = (hours * 60 + minutes) * multiplier;
-
-            // Calculate total hours and remaining minutes
-            const totalHours = Math.floor(totalMinutes / 60);
-            const remainingMinutes = totalMinutes % 60;
-
-            return (
-                totalHours +
-                "h " +
-                (remainingMinutes > 0 ? remainingMinutes + "m" : "")
-            );
-        } else {
-            console.error("Invalid duration format: " + duration);
-            return "";
-        }
-    }
-
     function gotoServicesStep() {
         dispatch("edit-services", {});
     }
 </script>
+
+<!-- Dialogs -->
+<TipDialog bind:dialog={paymentDialog} bind:amount={totalServicesPrice} />
 
 <section class="flex flex-col items-center gap-8 w-[90%] sm:w-[70%]">
     <h1 class="text-3xl text-center">
@@ -151,5 +125,8 @@
         />
     </label>
 
-    <button class="btn sm:btn-lg btn-primary">Confirm Appointment</button>
+    <button
+        class="btn sm:btn-lg btn-primary"
+        on:click={() => paymentDialog.showModal()}>Confirm Appointment</button
+    >
 </section>

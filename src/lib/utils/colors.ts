@@ -60,14 +60,11 @@ export function hexToXyY(hex: string) {
     let xyYColor = xyzToXyY(xyzColor.x, xyzColor.y, xyzColor.z);
     let xyYString = formatXyY(xyYColor.x, xyYColor.y, xyYColor.Y);
 
-    console.log(xyYString);
-
     return xyYString;
 }
 
 export function numberToHex(num: number): string {
     let hexValue = num.toString(16).slice(2);
     let hexString = "#" + hexValue;
-    console.log(hexString)
     return hexString;
 }

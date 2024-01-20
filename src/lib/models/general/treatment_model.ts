@@ -27,11 +27,11 @@ export default class Treatment {
   tempMaxParticipants?: number;
   hide: boolean = false;
   showParticipants: boolean = true;
-  times: { [key: string]: TreatmentTime } = {};
+  times: Map<string, TreatmentTime> = new Map();
   priceChangingNote?: string;
 
   constructor({
-    times = {},
+    times = new Map(),
     id = "",
     price,
     count = 1,
@@ -49,7 +49,7 @@ export default class Treatment {
     showParticipants = true,
     showTime = true,
   }: {
-    times?: { [key: string]: TreatmentTime };
+    times?: Map<string, TreatmentTime>;
     id?: string;
     price?: Price;
     count?: number;
@@ -84,7 +84,7 @@ export default class Treatment {
     this.showPrice = showPrice;
     this.showParticipants = showParticipants;
     this.showTime = showTime;
-    this.totalMinutes = this.getTotalMinutes();
+    this.totalMinutes = this.totalTotalMinutes;
   }
 
   isEqual(treatment: Treatment): boolean {
@@ -93,23 +93,21 @@ export default class Treatment {
     //return deepEqual(treatment.toJson(), this.toJson());
   }
 
-  getTotalMinutes(): number {
+  get totalTotalMinutes(): number {
     let minutes = 0;
-    for (const timeIndex in this.times) {
-      if (this.times.hasOwnProperty(timeIndex)) {
-        minutes += this.times[timeIndex].wholeMinutes;
-      }
-    }
+    this.times.forEach((time, _) => {
+      minutes += time.wholeMinutes;
+    });
+
     return minutes;
   }
 
   get totalWorkMinutes(): number {
     let minutes = 0;
-    for (const timeIndex in this.times) {
-      if (this.times.hasOwnProperty(timeIndex)) {
-        minutes += this.times[timeIndex].workMinutes;
-      }
-    }
+    this.times.forEach((time, _) => {
+      minutes += time.workMinutes;
+    });
+
     return minutes;
   }
 
@@ -131,7 +129,7 @@ export default class Treatment {
 
   static fromTreatment(treatment: Treatment): Treatment {
     const newTreatment = new Treatment({
-      times: {},
+      times: new Map(),
       showTime: treatment.showTime,
       paymentType: treatment.paymentType,
       id: treatment.id,
@@ -153,57 +151,44 @@ export default class Treatment {
     newTreatment.priceChangingNote = treatment.priceChangingNote;
     newTreatment.tempMaxParticipants = treatment.tempMaxParticipants;
     newTreatment.totalMinutes = treatment.totalMinutes;
-    for (const timeIndex in treatment.times) {
-      if (treatment.times.hasOwnProperty(timeIndex)) {
-        newTreatment.times[timeIndex] = TreatmentTime.fromTreatmentTime(
-          treatment.times[timeIndex]
-        );
-      }
-    }
+    treatment.times.forEach((time, index) => {
+      newTreatment.times.set(index, TreatmentTime.fromTreatmentTime(time));
+    });
 
     return newTreatment;
   }
 
-  static fromTreatmentsMap(treatments: {
-    [key: string]: Treatment;
-  }): Treatment {
+  static fromTreatmentsMap(treatments: Map<string, Treatment>): Treatment {
     let index = 0;
     const newTreatment = new Treatment({
       price: new Price({ amount: "0", currency: defaultCurrency }),
     });
 
-    for (const key in treatments) {
-      if (treatments.hasOwnProperty(key)) {
-        const treatment = treatments[key];
+    treatments.forEach((treatment, treatmentIndex) => {
+      for (let i = 0; i < treatment.count; i++) {
+        treatment.times.forEach((time, timeIndex) => {
+          newTreatment.times.set(index.toString(), time);
+          index++;
+        });
 
-        for (let i = 0; i < treatment.count; i++) {
-          for (const timeIndex in treatment.times) {
-            if (treatment.times.hasOwnProperty(timeIndex)) {
-              newTreatment.times[`${index}`] = treatment.times[timeIndex];
-              index++;
-            }
-          }
-
-          if (treatment.price) {
-            newTreatment.price!.amount += treatment.price.amount;
-            newTreatment.price!.currency = treatment.price.currency;
-          }
-
-          if (newTreatment.name === "") {
-            newTreatment.name = treatment.name;
-          } else {
-            newTreatment.name += ` + ${treatment.name}`;
-          }
-
-          newTreatment.showTime = newTreatment.showTime && treatment.showTime;
-          newTreatment.showPrice =
-            newTreatment.showPrice && treatment.showPrice;
-          newTreatment.paymentType = treatment.paymentType;
-          newTreatment.amountInAdvance += treatment.amountInAdvance;
-          newTreatment.totalMinutes += treatment.totalMinutes;
+        if (treatment.price) {
+          newTreatment.price!.amount += treatment.price.amount;
+          newTreatment.price!.currency = treatment.price.currency;
         }
+
+        if (newTreatment.name === "") {
+          newTreatment.name = treatment.name;
+        } else {
+          newTreatment.name += ` + ${treatment.name}`;
+        }
+
+        newTreatment.showTime = newTreatment.showTime && treatment.showTime;
+        newTreatment.showPrice = newTreatment.showPrice && treatment.showPrice;
+        newTreatment.paymentType = treatment.paymentType;
+        newTreatment.amountInAdvance += treatment.amountInAdvance;
+        newTreatment.totalMinutes += treatment.totalMinutes;
       }
-    }
+    });
 
     return newTreatment;
   }
@@ -224,7 +209,7 @@ export default class Treatment {
 
   static fromJson(json: { [key: string]: any }, newIndex: string): Treatment {
     const newTreatment = new Treatment({
-      times: {},
+      times: new Map(),
       id: json["id"] || "",
       colorIndex: json["colorIndex"] || -2,
       maxTicketsForUser: json["maxTicketsForUser"] || 1,
@@ -256,11 +241,10 @@ export default class Treatment {
 
     if (json["times"]) {
       for (const timeIndex in json["times"]) {
-        if (json["times"].hasOwnProperty(timeIndex)) {
-          newTreatment.times[timeIndex] = TreatmentTime.fromJson(
-            json["times"][timeIndex]
-          );
-        }
+        newTreatment.times.set(
+          timeIndex,
+          TreatmentTime.fromJson(json["times"][timeIndex])
+        );
       }
     }
 
@@ -271,11 +255,9 @@ export default class Treatment {
     const data: { [key: string]: any } = {};
 
     data["times"] = {};
-    for (const index in this.times) {
-      if (this.times.hasOwnProperty(index)) {
-        data["times"][index] = this.times[index].toJson();
-      }
-    }
+    this.times.forEach((time, index) => {
+      data["times"][index] = time.toJson();
+    });
 
     data["name"] = this.name;
     if (this.note !== "") {
@@ -326,43 +308,47 @@ export default class Treatment {
     return data;
   }
 
-  fromOldJson(
-    json: { [key: string]: any },
+  static fromOldJson(
+    json: Record<string, any>,
     newIndex: string,
     newName: string,
     colorIndex: number
-  ): void {
+  ): Treatment {
+    const newObj = new Treatment({});
     if (json["times"]) {
       for (const timeIndex in json["times"]) {
         if (json["times"].hasOwnProperty(timeIndex)) {
-          this.times[timeIndex] = TreatmentTime.fromJson(
-            json["times"][timeIndex]
+          newObj.times.set(
+            timeIndex,
+            TreatmentTime.fromJson(json["times"][timeIndex])
           );
         }
       }
     }
 
-    this.id = "";
-    this.colorIndex = colorIndex;
-    this.index = newIndex;
+    newObj.id = "";
+    newObj.colorIndex = colorIndex;
+    newObj.index = newIndex;
 
-    this.name = this.parseNameFromDbField(newName);
+    newObj.name = newObj.parseNameFromDbField(newName);
 
     if (json["price"]) {
-      this.price = Price.fromJson(json["price"]);
+      newObj.price = Price.fromJson(json["price"]);
     }
 
     if (json["amountInAdvance"] !== undefined) {
-      this.amountInAdvance =
+      newObj.amountInAdvance =
         typeof json["amountInAdvance"] === "number"
           ? json["amountInAdvance"]
           : parseFloat(json["amountInAdvance"]);
     }
-    this.paymentType = paymentTypesFromStr[json["paymentType"]];
-    this.showPrice = json["showPrice"] || false;
-    this.showTime = json["showTime"] || false;
+    newObj.paymentType = paymentTypesFromStr[json["paymentType"]];
+    newObj.showPrice = json["showPrice"] || false;
+    newObj.showTime = json["showTime"] || false;
 
-    this.totalMinutes = this.getTotalMinutes();
+    newObj.totalMinutes = newObj.totalTotalMinutes;
+
+    return newObj;
   }
 
   parseNameFromDbField(name: string): string {

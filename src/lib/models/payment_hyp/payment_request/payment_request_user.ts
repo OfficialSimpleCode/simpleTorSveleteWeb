@@ -27,7 +27,7 @@ export default class PaymentRequestUser {
     isVerifiedPhone: boolean;
     phone: string;
     isExist: boolean;
-    userDecline: boolean;
+    userDecline?: boolean;
   }) {
     this.userId = userId;
     this.name = name;

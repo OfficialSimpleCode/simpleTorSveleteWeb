@@ -35,7 +35,7 @@ export default class Booking extends ScheduleItem {
   isUserExist: boolean = true;
   notificationType: NotificationType = NotificationType.none;
   workerNotificationOption: NotificationOption = NotificationOption.PushOrSMS;
-  workerRemindersTypes: { [key in BookingReminderType]?: number } = {};
+  workerRemindersTypes: Map<BookingReminderType, number> = new Map();
   workerDeleted: boolean = false;
   clientMail: string = "";
   showAdressAlert: boolean = false;
@@ -49,7 +49,7 @@ export default class Booking extends ScheduleItem {
   bookingDate: Date = new Date(0);
   note: string = "";
   needCancel: boolean = false;
-  treatments: Record<string, Treatment> = {};
+  treatments: Map<string, Treatment> = new Map();
   userGender: Gender = Gender.anonymous;
   workerGender: Gender = Gender.anonymous;
   status: BookingStatuses = BookingStatuses.approved;
@@ -60,18 +60,18 @@ export default class Booking extends ScheduleItem {
 
   shopIcon: IconData = new IconData();
 
-  remindersTypes: { [key in BookingReminderType]?: number } = {};
+  remindersTypes: Map<BookingReminderType, number> = new Map();
   createdAt: Date = new Date();
 
   finishInvoices: boolean = false;
-  invoices: Record<string, BookingInvoiceData> = {};
+  invoices: Map<string, BookingInvoiceData> = new Map();
 
-  transactions: Record<string, BookingTransactionModel> = {};
+  transactions: Map<string, BookingTransactionModel> = new Map();
 
   recurrenceTimeId?: string;
   recurreneFatherDate?: string;
 
-  debts: Record<string, Debt> = {};
+  debts: Map<string, Debt> = new Map();
 
   addToClientAt: boolean = false;
   paymentRequest?: BookingPaymentRequestData;
@@ -159,23 +159,24 @@ export default class Booking extends ScheduleItem {
     newBooking.customerId = booking.customerId;
     newBooking.workerPhone = booking.workerPhone;
     newBooking.lastTimeNotifyOnDebt = booking.lastTimeNotifyOnDebt;
-
-    Object.entries<Debt>(booking.debts).forEach(([id, debt]) => {
-      newBooking.debts[id] = Debt.fromDebt(debt);
+    booking.debts.forEach((debt, id) => {
+      newBooking.debts.set(id, Debt.fromDebt(debt));
     });
 
-    newBooking.treatments = {};
-    for (const [index, treatmentJson] of Object.entries(booking.treatments)) {
-      const treatment = Treatment.fromTreatment(treatmentJson);
-      treatment.index = index;
-      newBooking.treatments[index] = treatment;
-    }
+    newBooking.treatments = new Map();
+    booking.treatments.forEach((treatment, index) => {
+      const tempTreatment = Treatment.fromTreatment(treatment);
+      tempTreatment.index = index;
+      newBooking.treatments.set(index, treatment);
+    });
 
-    newBooking.invoices = {};
-    for (const [id, invoice] of Object.entries(booking.invoices)) {
-      newBooking.invoices[id] =
-        BookingInvoiceData.fromBookingInvoiceData(invoice);
-    }
+    newBooking.invoices = new Map();
+    booking.invoices.forEach((invoice, id) => {
+      newBooking.invoices.set(
+        id,
+        BookingInvoiceData.fromBookingInvoiceData(invoice)
+      );
+    });
 
     newBooking.clientNote = booking.clientNote;
     newBooking.status = booking.status;
@@ -190,18 +191,18 @@ export default class Booking extends ScheduleItem {
 
     newBooking.recurreneFatherDate = booking.recurreneFatherDate;
     newBooking.recurrenceRef = booking.recurrenceRef;
-    newBooking.transactions = {};
-    for (const [id, transaction] of Object.entries<BookingTransactionModel>(
-      booking.transactions
-    )) {
-      newBooking.transactions[id] =
-        BookingTransactionModel.fromTransaction(transaction);
-    }
+    newBooking.transactions = new Map();
+    booking.transactions.forEach((transaction, id) => {
+      newBooking.transactions.set(
+        id,
+        BookingTransactionModel.fromTransaction(transaction)
+      );
+    });
 
     return newBooking;
   }
 
-  static fromJson(json: any, id: string): Booking {
+  static fromJson(json: Record<string, any>, id: string): Booking {
     const newBooking = new Booking({});
     newBooking.workerGender =
       genderFromStr[json["workerGender"]] || Gender.anonymous;
@@ -237,21 +238,27 @@ export default class Booking extends ScheduleItem {
       Object.entries<number>(json["remindersTypes"]).forEach(
         ([type, minutes]) => {
           if (bookingReminderTypeFromStr[type] != null) {
-            newBooking.remindersTypes[bookingReminderTypeFromStr[type]] =
-              minutes;
+            newBooking.remindersTypes.set(
+              bookingReminderTypeFromStr[type],
+              minutes
+            );
           }
         }
       );
     } else {
-      newBooking.remindersTypes[BookingReminderType.regular] =
-        json["minutesBeforeNotify"] || 60;
+      newBooking.remindersTypes = new Map([
+        BookingReminderType.regular,
+        json["minutesBeforeNotify"] || 60,
+      ]);
     }
     if (json["workerRemindersTypes"] != null) {
       Object.entries<number>(json["workerRemindersTypes"]).forEach(
         ([type, minutes]) => {
           if (bookingReminderTypeFromStr[type] != null) {
-            newBooking.workerRemindersTypes[bookingReminderTypeFromStr[type]] =
-              minutes;
+            newBooking.workerRemindersTypes.set(
+              bookingReminderTypeFromStr[type],
+              minutes
+            );
           }
         }
       );
@@ -271,7 +278,7 @@ export default class Booking extends ScheduleItem {
     }
     if (json["debts"] != null) {
       Object.entries(json["debts"]).forEach(([id, debtJson]) => {
-        newBooking.debts[id] = Debt.fromJson(debtJson, id);
+        newBooking.debts.set(id, Debt.fromJson(debtJson, id));
       });
     }
     if (json["cancelDate"] != null) {
@@ -282,10 +289,9 @@ export default class Booking extends ScheduleItem {
     if (json["invoices"] != null) {
       Object.entries<Record<string, any>>(json["invoices"]).forEach(
         ([id, invoiceJson]) => {
-          newBooking.invoices[id] = BookingInvoiceData.fromJson(
-            invoiceJson,
+          newBooking.invoices.set(
             id,
-            newBooking.workerId
+            BookingInvoiceData.fromJson(invoiceJson, id, newBooking.workerId)
           );
         }
       );
@@ -302,19 +308,19 @@ export default class Booking extends ScheduleItem {
       newBooking.bookingDate = new Date(json["bookingDate"]) || new Date(0);
     }
     if (json["treatments"] != null) {
-      newBooking.treatments = {};
+      newBooking.treatments = new Map();
       let index = 0;
       Object.entries(json["treatments"]).forEach(([_, __]) => {
         const treatmentJson = json["treatments"][index.toString()];
-        newBooking.treatments[index.toString()] = Treatment.fromJson(
-          treatmentJson,
-          index.toString()
+        newBooking.treatments.set(
+          index.toString(),
+          Treatment.fromJson(treatmentJson, index.toString())
         );
         index += 1;
       });
     } else if (json["treatment"] != null) {
       const tempTreatment = Treatment.fromJson(json["treatment"], "0");
-      newBooking.treatments["0"] = tempTreatment;
+      newBooking.treatments.set("0", tempTreatment);
     }
     newBooking.showAdressAlert = json["showAdressAlert"] || false;
     newBooking.showPhoneAlert = json["showPhoneAlert"] || false;
@@ -358,13 +364,13 @@ export default class Booking extends ScheduleItem {
     //     json["RERI"]
     //   );
     // }
-    newBooking.transactions = {};
+    newBooking.transactions = new Map();
     if (json["transactions"] != null) {
       Object.entries<Record<string, any>>(json["transactions"]).forEach(
         ([id, transactionJson]) => {
-          newBooking.transactions[id] = BookingTransactionModel.fromJson(
-            transactionJson,
-            id
+          newBooking.transactions.set(
+            id,
+            BookingTransactionModel.fromJson(transactionJson, id)
           );
         }
       );
@@ -375,6 +381,26 @@ export default class Booking extends ScheduleItem {
       );
     }
     return newBooking;
+  }
+  get treatmentLength(): number {
+    return Array.from(this.treatments.values()).reduce(
+      (previousValue, treatment) => treatment.count + previousValue,
+      0
+    );
+  }
+
+  get treatmentsToStringNotDetailed(): string {
+    if (this.treatmentLength === 1) {
+      return this.treatments.values().next().value.name;
+    } else if (this.treatments.size === 1) {
+      return `${this.treatments.values().next().value.name}x${
+        this.treatmentLength
+      }`;
+    } else {
+      return `${this.treatments.values().next().value.name}+${
+        this.treatmentLength - 1
+      }`;
+    }
   }
 
   // get isPassed(): boolean {
@@ -395,7 +421,7 @@ export default class Booking extends ScheduleItem {
   // }
   get totalMinutes(): number {
     let minutes = 0;
-    Object.entries<Treatment>(this.treatments).forEach(([_, treatment]) => {
+    this.treatments.forEach((treatment, _) => {
       minutes += treatment.totalMinutesForBooking;
     });
     return minutes;
@@ -435,9 +461,9 @@ export default class Booking extends ScheduleItem {
     if (this.finishInvoices) {
       data["finishInvoices"] = this.finishInvoices;
     }
-    if (Object.keys(this.debts).length > 0) {
+    if (this.debts.size > 0) {
       data["debts"] = {};
-      Object.entries<Debt>(this.debts).forEach(([id, debt]) => {
+      this.debts.forEach((debt, id) => {
         data["debts"][id] = debt.toJson();
       });
     }
@@ -467,15 +493,13 @@ export default class Booking extends ScheduleItem {
     if (this.recurreneFatherDate != null) {
       data["recurreneFatherDate"] = this.recurreneFatherDate;
     }
-    Object.entries<Treatment>(this.treatments).forEach(([index, treatment]) => {
+    this.treatments.forEach((treatment, index) => {
       data["treatments"][index.toString()] = treatment.toJson();
     });
     data["invoices"] = {};
-    Object.entries<BookingInvoiceData>(this.invoices).forEach(
-      ([id, invoice]) => {
-        data["invoices"][id] = invoice.toJson();
-      }
-    );
+    this.invoices.forEach((invoice, id) => {
+      data["invoices"][id] = invoice.toJson();
+    });
     if (this.isMultiRef) {
       data["isMultiRef"] = this.isMultiRef;
     }
@@ -525,11 +549,9 @@ export default class Booking extends ScheduleItem {
     //   });
     // }
     data["transactions"] = {};
-    Object.entries<BookingTransactionModel>(this.transactions).forEach(
-      ([id, transaction]) => {
-        data["transactions"][id] = transaction.toJson();
-      }
-    );
+    this.transactions.forEach((transaction, id) => {
+      data["transactions"][id] = transaction.toJson();
+    });
     if (this.paymentRequest != null) {
       data["paymentRequest"] = this.paymentRequest.toJson();
     }

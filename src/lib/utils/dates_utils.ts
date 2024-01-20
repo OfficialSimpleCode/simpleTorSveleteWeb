@@ -2,6 +2,7 @@ import { Religion, holidays } from "$lib/consts/worker_schedule";
 import type Booking from "$lib/models/booking/booking_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
 
+import type MultiBooking from "$lib/models/multi_booking/multi_booking";
 import { addDays, format, parse, startOfWeek } from "date-fns";
 import {
   dateStrToDate,
@@ -152,7 +153,17 @@ export function monthDifference(date1: Date, date2: Date): number {
   return Math.abs(years * 12 + months);
 }
 
-export function laterDate(date1: Date, date2: Date): Date {
+export function laterDate(date1: Date | null, date2: Date | null): Date | null {
+  if (date1 === null && date2 === null) {
+    return null;
+  }
+  if (date1 === null) {
+    return date2;
+  }
+  if (date2 === null) {
+    return date1;
+  }
+
   return date2 > date1 ? date2 : date1;
 }
 

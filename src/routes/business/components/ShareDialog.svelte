@@ -49,7 +49,7 @@
                     ring={false}
                     img={$business.design.shopIconUrl}
                 />
-                <h3 class="w-max text-center text-lg font-semibold">{name}</h3>
+                <h3 class="w-full text-center text-lg font-semibold">{name}</h3>
                 <a
                     href={geo.link}
                     class="block w-full text-center link link-neutral text-gray-500"

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { ShowToast } from "$lib/stores/ToastManager";
+    import Navbar from "$lib/components/navbar/Navbar.svelte";
 
     import ChooseEmployee from "./steps/ChooseEmployee.svelte";
     import ChooseService from "./steps/ChooseService.svelte";
@@ -91,6 +92,7 @@
 </script>
 
 <main class="h-screen w-screen flex flex-col items-center gap-8 bg-base-100">
+    <Navbar />
     <ul class="steps min-h-20 w-[90%] sm:w-[60%] mt-5">
         {#each steps as step, i}
             <button
