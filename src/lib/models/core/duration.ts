@@ -1,4 +1,4 @@
-class Duration {
+export class Duration {
   static readonly microsecondsPerMillisecond: number = 1000;
   static readonly millisecondsPerSecond: number = 1000;
   static readonly secondsPerMinute: number = 60;
@@ -96,27 +96,27 @@ class Duration {
   }
 
   public get inDays(): number {
-    return Math.floor(this._duration / (1000 * 60 * 60 * 24));
+    return Math.floor(this._duration / Duration.microsecondsPerDay);
   }
 
   public get inHours(): number {
-    return Math.floor(this._duration / (1000 * 60 * 60));
+    return Math.floor(this._duration / Duration.microsecondsPerHour);
   }
 
   public get inMinutes(): number {
-    return Math.floor(this._duration / (1000 * 60));
+    return Math.floor(this._duration / Duration.microsecondsPerMinute);
   }
 
   public get inSeconds(): number {
-    return Math.floor(this._duration / 1000);
+    return Math.floor(this._duration / Duration.microsecondsPerSecond);
   }
 
   public get inMilliseconds(): number {
-    return this._duration;
+    return Math.floor(this._duration);
   }
 
   public get inMicroseconds(): number {
-    return Math.floor(this._duration * 1000);
+    return this._duration;
   }
 
   public equals(other: any): boolean {
