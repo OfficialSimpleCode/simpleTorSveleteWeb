@@ -11,7 +11,7 @@
     import { business } from "$lib/stores/Business.js";
 
     import Navbar from "$lib/components/navbar/Navbar.svelte";
-    import Avatar from "../../lib/components/Avatar.svelte";
+    import Avatar from "$lib/components/Avatar.svelte";
     import ImageDisplayDialog from "./components/ImageDisplayDialog.svelte";
     import ShareDialog from "./components/ShareDialog.svelte";
     import SocialLinks from "./components/SocialLinks.svelte";
@@ -65,7 +65,6 @@
         }
 
         goto(`${base}/business/order`);
-        // window.location.href = `${base}/business/order`
     }
 
     function openImageDisplayDialog(index: number) {
