@@ -29,14 +29,14 @@
     let displayImages: Array<Record<string, any>> = data.displayImages;
 
     onMount(() => {
-        document.documentElement.style.setProperty(
-            "--p",
-            hexToXyY(
-                numberToHex(
-                    Object.values($business.design.businessThemes)[3].primary,
-                ),
-            ),
-        );
+        // document.documentElement.style.setProperty(
+        //     "--p",
+        //     hexToXyY(
+        //         numberToHex(
+        //             Object.values($business.design.businessThemes)[0].primary,
+        //         ),
+        //     ),
+        // );
         // document.documentElement.style.setProperty(
         //     "--b1",
         //     hexToXyY(
@@ -65,6 +65,7 @@
         }
 
         goto(`${base}/business/order`);
+        // window.location.href = `${base}/business/order`
     }
 
     function openImageDisplayDialog(index: number) {
