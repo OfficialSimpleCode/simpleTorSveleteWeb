@@ -1,4 +1,6 @@
 import { Gender } from "$lib/consts/gender";
+import type MultiBookingUser from "../multi_booking/multi_booking_user";
+import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
 import type WorkerModel from "../worker/worker_model";
 
 export const minBookingCountToRegular: number = 3;
@@ -32,6 +34,9 @@ export const customerTypesToColor: { [key in CustomerTypes]: string } = {
   [CustomerTypes.returned]: "yellow",
   [CustomerTypes.deleted]: "red",
   [CustomerTypes.self]: "orange",
+  // have to include all of them
+  [CustomerTypes.any]: "",
+  [CustomerTypes.missing]: "",
 };
 
 export default class CustomerData {
@@ -246,7 +251,7 @@ export default class CustomerData {
 
   get toMultiBookingUser(): MultiBookingUser {
     return {
-      userFcms: {},
+      userFcms: new Set(),
       debts: {},
       remindersTypes: {},
       customerName: this.name !== "" ? this.name : this.workerNaming,
