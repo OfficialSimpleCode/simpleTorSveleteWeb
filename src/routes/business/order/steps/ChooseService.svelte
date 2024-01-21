@@ -32,7 +32,7 @@
                 class="w-full max-w-[90%] sm:min-w-[380px] sm:w-[40%] flex flex-col items-center gap-1"
             >
                 <button
-                    class="bg-base-200 rounded-xl w-full h-24 sm:h-28 flex items-center px-6 box-border gap-5 border justify-between"
+                    class="bg-base-200 rounded-xl w-full h-20 sm:h-28 flex items-center px-6 box-border gap-5 border justify-between"
                     class:border-black={selectedServices.includes(service)}
                     on:click={() => serviceChosen(service)}
                 >

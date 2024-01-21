@@ -134,4 +134,10 @@
             on:edit-services={() => (currentStep = 2)}
         />
     {/if}
+    <div class="pb-4 w-[90%]">
+        <button
+            class="btn btn-outline sm:hidden w-full"
+            on:click={() => history.back()}>Cancel</button
+        >
+    </div>
 </main>
