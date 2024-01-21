@@ -13,20 +13,22 @@
         pushState("", {
             showModal: true,
         });
-        setTimeout(() => profileDialog.showModal(), 200);
+        setTimeout(() => profileDialog.showModal(), 100);
     }
 
     function openPurchesesDialog() {
         pushState("", {
             showModal: true,
         });
-        setTimeout(() => purchasesDialog.showModal(), 200);
+        setTimeout(() => purchasesDialog.showModal(), 100);
     }
 </script>
 
 <!-- Dialog -->
 {#if $page.state.showModal}
     <ProfileDialog bind:dialog={profileDialog} bind:profile />
+{/if}
+{#if $page.state.showModal}
     <PurchesesDialog bind:dialog={purchasesDialog} />
 {/if}
 
