@@ -90,8 +90,13 @@ export default class RecurrenceEvent {
     customEndDate,
     freqRecurrence = FreqRecurrence.days,
   }: {
+<<<<<<< HEAD
+    start: Date | null;
+    endOption: RecurrenceEventEnd;
+=======
     start?: Date;
     endOption?: RecurrenceEventEnd;
+>>>>>>> 6d7bd92514abbe47e90a05f8dfcb5762d59d7e4f
     endDate?: Date | null;
     repeats?: number;
     interval?: number;
