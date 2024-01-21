@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from "svelte-i18n";
     import { createEventDispatcher } from "svelte";
     const dispatch = createEventDispatcher();
 
@@ -13,7 +14,7 @@
 </script>
 
 <section id="employee-step" class="w-full flex flex-col items-center gap-10">
-    <h1 class="text-2xl">Choose Employee</h1>
+    <h1 class="text-2xl">{$_("chooseWorkers")}</h1>
     <ul class="w-[%70] h-full flex flex-wrap items-center justify-center gap-7">
         {#each employees as employee}
             <button
@@ -31,7 +32,8 @@
                         {employee.name}
                     </h1>
                     <p class="text-gray-500">
-                        {employee.role} sains: {employee.startDate}
+                        {$_(employee.role.toLowerCase())}
+                        {$_("since")}: {employee.startDate}
                     </p>
                 </div>
             </button>

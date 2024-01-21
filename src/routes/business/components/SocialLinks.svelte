@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from "svelte-i18n";
     import { Icon, MapPin, Phone, DocumentText } from "svelte-hero-icons";
     import type { IconSource } from "svelte-hero-icons";
     import { ShowToast } from "$lib/stores/ToastManager";
@@ -12,7 +13,7 @@
         call: `tel:${$business.shopPhone}`,
         instagram: $business.instagramAccount,
         whatsapp: `whatsapp://send?phone=${$business.shopPhone}`,
-        maps: `https://www.google.com/maps/search/?api=1&query=${$business.adress}`,
+        navigate: `https://www.google.com/maps/search/?api=1&query=${$business.adress}`,
         policy: $business.previewDoc,
     };
 
@@ -22,7 +23,7 @@
     };
     let socialHeroIcons: { [key: string]: IconSource } = {
         call: Phone,
-        maps: MapPin,
+        navigate: MapPin,
         policy: DocumentText,
     };
 
@@ -53,7 +54,7 @@
                     <Icon src={socialHeroIcons[name]} size="100%" />
                 {/if}
             </button>
-            <h5 class="text-sm text-gray-500 select-none">{name}</h5>
+            <h5 class="text-sm text-gray-500 select-none">{$_(name)}</h5>
         </div>
     {/each}
 </ul>

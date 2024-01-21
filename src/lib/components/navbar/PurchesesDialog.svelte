@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from "svelte-i18n";
     import {
         Icon,
         XCircle,
@@ -23,7 +24,7 @@
     <div class="modal-box bg-base-200 pb-10">
         <div class="flex justify-between items-center mb-[1rem]">
             <InfoTooltipButton message="Placeholder TODO" />
-            <h3 class="font-bold text-lg">Purcheses</h3>
+            <h3 class="font-bold text-lg">{$_("purchases")}</h3>
             <button class="btn btn-ghost" on:click={() => dialog.close()}>
                 <Icon src={XCircle} size="24px" />
             </button>
@@ -33,11 +34,11 @@
             <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
-                    on:click={() => goto("receipts")}
+                    on:click={() => goto("invoices")}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={PaperClip} size="26px" />
-                        Reacites
+                        {$_("invoices")}
                     </div>
                     <div class="flex items-center text-gray-500">
                         <Icon src={ChevronRight} size="18px" />
@@ -50,7 +51,7 @@
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={CreditCard} size="26px" />
-                        Payments
+                        {$_("payments")}
                     </div>
                     <div class="flex items-center text-gray-500">
                         <Icon src={ChevronRight} size="18px" />
@@ -63,7 +64,7 @@
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={ReceiptRefund} size="26px" />
-                        Payment Requests
+                        {$_("paymentRequests")}
                     </div>
                     <div class="flex items-center text-gray-500">
                         <Icon src={ChevronRight} size="18px" />
@@ -78,7 +79,7 @@
                 <InfoCircle
                     message="After making a purchase you will be able to save the payment details"
                 />
-                <button id="male" class="flex flex-col items-center">
+                <button class="flex flex-col items-center">
                     <Icon src={CreditCard} size="120px" />
                 </button>
             </section>
@@ -91,7 +92,7 @@
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={Key} size="26px" />
-                        Password - Credit Cards
+                        {$_("creditCardPassowrd")}
                     </div>
                     <div class="flex items-center text-gray-500">
                         <Icon src={ChevronRight} size="18px" />

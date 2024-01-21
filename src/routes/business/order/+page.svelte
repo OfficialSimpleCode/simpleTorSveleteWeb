@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from "svelte-i18n";
     import { ShowToast } from "$lib/stores/ToastManager";
     import Navbar from "$lib/components/navbar/Navbar.svelte";
 
@@ -9,7 +10,7 @@
     import { sumDurations, multiplyAndSumDurations } from "./durationUtils";
     // import SyncfusionSchedualer from "./components/SyncfusionSchedualer.svelte";
 
-    let steps: string[] = ["Employee", "Service", "Date and Time"];
+    let steps: string[] = ["worker", "treatment", "dateAndTime"];
     let currentStep: number = 1;
 
     let employees: Array<Record<string, string>> = [
@@ -21,13 +22,13 @@
         },
         {
             name: "Ron",
-            role: "Employee",
+            role: "Worker",
             startDate: "25-11-2018",
             image: "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
         },
         {
             name: "Mosh",
-            role: "Employee",
+            role: "Worker",
             startDate: "03-06-2021",
             image: "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
         },
@@ -101,7 +102,7 @@
                 data-content={currentStep > i + 1 ? "✓" : (i + 1).toString()}
                 on:click={() => clickedOnStep(i + 1)}
             >
-                {step}
+                {$_(step)}
             </button>
         {/each}
     </ul>
@@ -137,7 +138,8 @@
     <div class="pb-4 w-[90%]">
         <button
             class="btn btn-outline sm:hidden w-full"
-            on:click={() => history.back()}>Cancel</button
-        >
+            on:click={() => history.back()}
+            >{$_("cancel")}
+        </button>
     </div>
 </main>

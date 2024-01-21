@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from "svelte-i18n";
     import Google from "$lib/images/google.svg";
     import {
         Icon,
@@ -36,7 +37,7 @@
     <div class="modal-box bg-base-200 pb-10">
         <div class="flex justify-between items-center mb-[1rem]">
             <InfoTooltipButton message="Placeholder TODO" />
-            <h3 class="font-bold text-lg">Profile</h3>
+            <h3 class="font-bold text-lg">{$_("profile")}</h3>
             <button class="btn btn-ghost" on:click={() => dialog.close()}>
                 <Icon src={XCircle} size="24px" />
             </button>
@@ -50,7 +51,9 @@
                     img="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
                 />
                 <h1 class="text-xl">{profile.name}</h1>
-                <h5 class="text-sm text-gray-500">sains: {profile.joinDate}</h5>
+                <h5 class="text-sm text-gray-500">
+                    {$_("since")}: {profile.joinDate}
+                </h5>
             </section>
 
             <!-- Profile Information -->
@@ -61,7 +64,7 @@
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={Identification} size="26px" />
-                        Name
+                        {$_("name")}
                     </div>
                     <div class="flex items-center text-gray-500">
                         {profile.name}
@@ -75,7 +78,7 @@
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={Phone} size="26px" />
-                        Phone
+                        {$_("phoneNumber")}
                     </div>
                     <div class="flex items-center text-gray-500">
                         {profile.phoneNumber}
@@ -89,7 +92,7 @@
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={Envelope} size="26px" />
-                        Email
+                        {$_("email")}
                     </div>
                     <div class="flex items-center text-gray-500">
                         {profile.emailAddress}
@@ -102,7 +105,7 @@
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={User} size="26px" />
-                        User ID
+                        {$_("userId")}
                     </div>
                     <div class="flex items-center text-gray-500">
                         {profile.userID}
@@ -125,7 +128,7 @@
                     on:click={() => updateGender("male")}
                 >
                     <Icon src={HandThumbUp} size="35px" />
-                    <div>Male</div>
+                    <div>{$_("male")}</div>
                 </button>
                 <button
                     id="female"
@@ -134,7 +137,7 @@
                     on:click={() => updateGender("female")}
                 >
                     <Icon src={HandThumbDown} size="35px" />
-                    <span>Female</span>
+                    <span>{$_("female")}</span>
                 </button>
                 <button
                     id="other"
@@ -143,7 +146,7 @@
                     on:click={() => updateGender("other")}
                 >
                     <Icon src={Moon} size="35px" />
-                    <span>Other</span>
+                    <span>{$_("other")}</span>
                 </button>
             </section>
 
@@ -166,7 +169,7 @@
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={ArrowRightOnRectangle} size="26px" />
-                        Logout
+                        {$_("logout")}
                     </div>
                     <div class="flex items-center text-gray-500">
                         <Icon src={ChevronRight} size="18px" />
@@ -178,7 +181,7 @@
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={Trash} size="26px" />
-                        Delete Profile
+                        {$_("deleteUser")}
                     </div>
                     <div class="flex items-center text-gray-500">
                         <Icon src={ChevronRight} size="18px" />

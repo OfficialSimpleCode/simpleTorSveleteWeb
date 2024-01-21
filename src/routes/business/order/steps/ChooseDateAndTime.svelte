@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from "svelte-i18n";
     import DateButton from "./../components/DateButton.svelte";
     import {
         Icon,
@@ -71,8 +72,8 @@
 
 <section id="date-step" class="w-full flex flex-col items-center gap-2">
     <div class="text-center">
-        <h1 class="text-2xl">Choose Date and Time</h1>
-        <h3 class="text-gray-500">Total Duration: {duration}</h3>
+        <h1 class="text-2xl">{$_("timeOfBooking")}</h1>
+        <h3 class="text-gray-500">{$_("theWholeTime")}: {duration}</h3>
     </div>
     <div class="w-full">
         <div class="divider" />
@@ -84,7 +85,7 @@
                 </button>
             </div>
             <h3>
-                {monthName}
+                {$_(monthName)}
                 {now.getFullYear()}
             </h3>
             <div class="mx-4">

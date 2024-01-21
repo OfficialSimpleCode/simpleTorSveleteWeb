@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from "svelte-i18n";
     import { business } from "$lib/stores/Business.js";
     import {
         Icon,
@@ -35,7 +36,7 @@
             >
                 <Icon src={copied ? CheckCircle : Link} size="24px" />
             </button>
-            <h3 class="font-bold text-lg">Share</h3>
+            <h3 class="font-bold text-lg">{$_("Share")}</h3>
             <button class="btn btn-ghost" on:click={() => dialog.close()}>
                 <Icon src={XCircle} size="24px" />
             </button>
@@ -65,17 +66,18 @@
         </div>
 
         <p class="text-gray-500 mt-4 text-sm text-center">
-            When a client clicks on this link, they will be directed to your
-            business page within the app. If the client doesn't have the app
-            installed, they will be automatically redirected to your business
-            page on our website.
+            {$_("featureExplianShareBusiness")}
         </p>
 
         <button
             class="btn btn-primary flex items-center gap-2 mx-auto mt-8"
             on:click={copy}
         >
-            {copied ? "Copied" : "Copy Link"}
+            {#if copied}
+                {$_("Copied")}
+            {:else}
+                {$_("CopyLink")}
+            {/if}
             <Icon src={copied ? CheckCircle : Clipboard} size="28px" />
         </button>
     </div>

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { base } from "$app/paths";
 
+    import { _ } from "svelte-i18n";
     import { Icon, GlobeAlt } from "svelte-hero-icons";
 
     import { business } from "$lib/stores/Business.js";
@@ -12,14 +13,18 @@
     // Assets
     import ILFlag from "$lib/images/flags/il.svg";
     import USFlag from "$lib/images/flags/us.svg";
+    // import RUFlag from "$lib/images/flags/ru.svg";
 
-    let notifications: Array<Record<string, any>> = Object.values($business.design.updates);
+    let notifications: Array<Record<string, any>> = Object.values(
+        $business.design.updates,
+    );
     let unreadNotifications: Boolean = false;
     $: unreadNotifications = notifications.filter((n) => !n.viewed).length > 0;
 
     let languages: Array<Record<string, string>> = [
-        { name: "Hebrew", flag: ILFlag },
-        { name: "English", flag: USFlag },
+        { name: "Hebrew", flag: ILFlag, locale: "he" },
+        { name: "English", flag: USFlag, locale: "en" },
+        // { name: $_("Russian"), flag: RUFlag },
     ];
 
     let loggedIn: boolean = true;

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from "svelte-i18n";
     import { pushState } from "$app/navigation";
     import { page } from "$app/stores";
     import ProfileDialog from "./ProfileDialog.svelte";
@@ -43,11 +44,11 @@
         class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
     >
         <li>
-            <button on:click={openProfileDialog}> Profile </button>
+            <button on:click={openProfileDialog}> {$_("profile")} </button>
         </li>
         <li>
-            <button on:click={openPurchesesDialog}> Purchases </button>
+            <button on:click={openPurchesesDialog}> {$_("purchases")} </button>
         </li>
-        <li><a href="appointments">My Appointments</a></li>
+        <li><a href="appointments">{$_("myBookings")}</a></li>
     </ul>
 </div>
