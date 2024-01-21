@@ -12,7 +12,7 @@
     <div class="flex items-center justify-between w-full pt-4">
         <InfoTooltipButton message="Placeholder TODO" />
         <div>
-            <h1 class="text-2xl text-center">Update Payment Password</h1>
+            <h1 class="text-xl text-center">Update Payment Password</h1>
         </div>
         <BackButton />
     </div>
