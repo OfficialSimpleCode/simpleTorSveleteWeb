@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { base } from "$app/paths";
     import { _ } from "svelte-i18n";
     import Google from "$lib/images/google.svg";
     import {
@@ -60,7 +61,7 @@
             <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
-                    on:click={() => goto("update-profile-name")}
+                    on:click={() => goto(`${base}/update-profile-name`)}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={Identification} size="26px" />
@@ -74,7 +75,7 @@
                 <div class="divider h-[1px]" />
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
-                    on:click={() => goto("update-profile-phone")}
+                    on:click={() => goto(`${base}update-profile-phone`)}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={Phone} size="26px" />
@@ -88,7 +89,7 @@
                 <div class="divider h-[1px]" />
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
-                    on:click={() => goto(`update-profile-email`)}
+                    on:click={() => goto(`${base}/update-profile-email`)}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={Envelope} size="26px" />

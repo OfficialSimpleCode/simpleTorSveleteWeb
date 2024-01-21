@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { base } from "$app/paths";
     import { _ } from "svelte-i18n";
     import {
         Icon,
@@ -34,7 +35,7 @@
             <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
-                    on:click={() => goto("invoices")}
+                    on:click={() => goto(`${base}/invoices`)}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={PaperClip} size="26px" />
@@ -47,7 +48,7 @@
                 <div class="divider h-[1px]" />
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
-                    on:click={() => goto("payments")}
+                    on:click={() => goto(`${base}/payments`)}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={CreditCard} size="26px" />
@@ -60,7 +61,7 @@
                 <div class="divider h-[1px]" />
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
-                    on:click={() => goto("payment-requests")}
+                    on:click={() => goto(`${base}/payment-requests`)}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={ReceiptRefund} size="26px" />
@@ -88,7 +89,7 @@
             <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
-                    on:click={() => goto("update-payment-password")}
+                    on:click={() => goto(`${base}/update-payment-password`)}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={Key} size="26px" />
