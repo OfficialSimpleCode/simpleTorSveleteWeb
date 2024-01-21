@@ -4,7 +4,6 @@
 
     function chooseLang(language: Record<string, string>) {
         locale.set(language.locale);
-        alert("lang set");
     }
 </script>
 
