@@ -1,6 +1,6 @@
 <script lang="ts">
     import { _ } from "svelte-i18n";
-    import { pushState } from "$app/navigation";
+    import { goto, pushState } from "$app/navigation";
     import { page } from "$app/stores";
     import ProfileDialog from "./ProfileDialog.svelte";
     import PurchesesDialog from "./PurchesesDialog.svelte";
@@ -44,11 +44,34 @@
         class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
     >
         <li>
-            <button on:click={openProfileDialog}> {$_("profile")} </button>
+            <div
+                role="button"
+                tabindex="0"
+                on:click={openProfileDialog}
+                on:keypress={openProfileDialog}
+            >
+                {$_("profile")}
+            </div>
         </li>
         <li>
-            <button on:click={openPurchesesDialog}> {$_("purchases")} </button>
+            <div
+                role="button"
+                tabindex="0"
+                on:click={openPurchesesDialog}
+                on:keypress={openPurchesesDialog}
+            >
+                {$_("purchases")}
+            </div>
         </li>
-        <li><a href="appointments">{$_("myBookings")}</a></li>
+        <li>
+            <div
+                role="button"
+                tabindex="0"
+                on:click={() => goto("appointments")}
+                on:keypress={() => goto("appointments")}
+            >
+                {$_("myBookings")}
+            </div>
+        </li>
     </ul>
 </div>
