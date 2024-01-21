@@ -6,7 +6,7 @@ import InvoiceBusinessInfo from "../invoice/invoice_business_info";
 import { PaymentObject } from "../payment_object";
 import type PaymentRequestUser from "./payment_request_user";
 
-class PaymentRequest extends PaymentObject {
+export default class PaymentRequest extends PaymentObject {
   id: string = "";
   summary: string = "";
   workerInfo: InvoiceWorkerInfo = new InvoiceWorkerInfo();
@@ -34,7 +34,6 @@ class PaymentRequest extends PaymentObject {
     workerInfo: InvoiceWorkerInfo,
     businessInfo: InvoiceBusinessInfo
   ) {
-    super(price);
     this.id = id;
     this.summary = summary;
     this.multi = multi;

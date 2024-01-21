@@ -110,11 +110,11 @@ export default class BusinessModel {
   setData(json: Record<string, any>, newBusinessId: string): void {
     this.businessId = newBusinessId;
 
-    if (json["currency"] != null) {
+    if (json["currency"]) {
       this.currency = CurrencyModel.fromJson(json["currency"]);
     }
 
-    if (json["design"] != null) {
+    if (json["design"]) {
       this.design = BusinessDesign.fromJson(json["design"]);
     } else {
       const theme = json["theme"]; // themeFromStr[json['theme']] ?? Themes.dark;
@@ -128,13 +128,13 @@ export default class BusinessModel {
         }
       );
 
-      if (json["changingImages"] != null) {
+      if (json["changingImages"]) {
         this.design.changingImages = json["changingImages"].map(
           (item: string) => item
         );
       }
 
-      if (json["updates"] != null) {
+      if (json["updates"]) {
         (json["updates"] as Record<string, any>[]).forEach((update, index) => {
           this.design.updates.set(
             index.toString(),

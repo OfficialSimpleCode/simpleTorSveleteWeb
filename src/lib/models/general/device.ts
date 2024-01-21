@@ -50,6 +50,20 @@ export default class Device {
     return data;
   }
 
+  // deviceConvertor = {
+  //   toJson: (device: Device) => {
+  //     return {
+  //       name: city.name,
+  //       state: city.state,
+  //       country: city.country,
+  //     };
+  //   },
+  //   fromJson: (json) => {
+  //     const data = snapshot.data(options);
+  //     return new City(data.name, data.state, data.country);
+  //   },
+  // };
+
   static fromDevice(device: Device): Device {
     return new Device({
       joinDate: device.joinDate,

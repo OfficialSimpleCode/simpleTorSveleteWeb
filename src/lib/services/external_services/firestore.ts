@@ -19,6 +19,7 @@ import {
   deleteField,
   doc,
   getDoc,
+  getDocs,
   getFirestore,
   increment,
   onSnapshot,
@@ -72,6 +73,26 @@ export default class FirestoreDataBase extends RealTimeDatabase {
         });
         throw e;
       }
+    }
+  }
+
+  async getAllDocsInsideCollection(
+    path: string
+  ): Promise<Record<string, any>[]> {
+    try {
+      const collectionRef = collection(this._firestore, `${envKey}/${path}`);
+      const docs = await getDocs(collectionRef);
+
+      return docs.docs.map((doc) => doc.data()) as Record<string, any>[];
+    } catch (e) {
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+        throw e;
+      }
+      return [];
     }
   }
 

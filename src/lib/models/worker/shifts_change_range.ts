@@ -4,27 +4,27 @@ import {
 } from "$lib/utils/shifts_utils";
 import type Shift from "../general/shift";
 
-enum ShiftOperations {
+export enum ShiftOperations {
   replace = "R",
   add = "A",
 }
 
-const shiftOperationsToStr: { [key in ShiftOperations]: string } = {
+export const shiftOperationsToStr: { [key in ShiftOperations]: string } = {
   [ShiftOperations.replace]: "R",
   [ShiftOperations.add]: "A",
 };
 
-const shiftOperationsFromStr: { [key: string]: ShiftOperations } = {
+export const shiftOperationsFromStr: { [key: string]: ShiftOperations } = {
   R: ShiftOperations.replace,
   A: ShiftOperations.add,
 };
 
-const shiftOperationsToTextKey: { [key in ShiftOperations]: string } = {
+export const shiftOperationsToTextKey: { [key in ShiftOperations]: string } = {
   [ShiftOperations.replace]: "ReplaceExisting",
   [ShiftOperations.add]: "AddToExisting",
 };
 
-class ShiftChangeRange {
+export default class ShiftChangeRange {
   start: Date = new Date(0);
   end: Date = new Date(0);
   operation: ShiftOperations = ShiftOperations.replace;

@@ -1,9 +1,11 @@
-import { buisnessCollection } from "$lib/consts/db";
+import { logger } from "$lib/consts/application_general";
+import { buisnessCollection, workersCollection } from "$lib/consts/db";
 import GeneralRepo from "$lib/helpers/general/general_repo";
 import { GeneralData } from "$lib/helpers/general_data";
 import { BusinessDesign } from "$lib/models/business/business_design";
 import BusinessModel from "$lib/models/business/business_model";
-import type WorkerModel from "$lib/models/worker/worker_model";
+import WorkerModel from "$lib/models/worker/worker_model";
+import UserInitializer from "./user_initializer";
 
 export default class BusinessInitializer {
   private static instance: BusinessInitializer;
@@ -51,7 +53,7 @@ export default class BusinessInitializer {
 
       const resps = await Promise.all([
         this._loadSettingsDoc(businessId),
-        //this._loadBusinessWorkers(context, businessId),
+        this._loadBusinessWorkers(businessId),
       ]);
 
       //   // Update the subtype before continuing to the rest of the loading
@@ -211,6 +213,42 @@ export default class BusinessInitializer {
     } catch (e) {
       //logger.e(`Error while loading the settings doc --> ${e}`);
       return false;
+    }
+  }
+
+  async _loadBusinessWorkers(businessId: string): Promise<boolean> {
+    try {
+      const workersPath = `${buisnessCollection}/${businessId}/${workersCollection}`;
+      console.log("eewwwwwwwww");
+      const workersJsonsList =
+        await this.generalRepo.getAllDocsInsideCollection(workersPath);
+
+      if (workersJsonsList !== null) {
+        workersJsonsList.forEach((workerJson: Record<string, any>) => {
+          const workerObj = WorkerModel.fromWorkerDocJson(workerJson);
+
+          // cacheStoryImages(workerObj.storyImages, workerObj.id);
+          // storyImagesLength += workerObj.storyImages.length;
+
+          if (
+            UserInitializer.GI().getPermission > 1 ||
+            workerObj.id === UserInitializer.GI().user.id
+          ) {
+            //makeWorkerDocListener(workerObj);
+          }
+
+          this.workers[workerObj.id] = workerObj;
+        });
+      }
+
+      return true;
+    } catch (e) {
+      if (e instanceof Error) {
+        logger.error(`Error while loading the business workers docs --> ${e}`);
+        logger.error(e.stack);
+      }
+
+      return true;
     }
   }
 }

@@ -1,6 +1,6 @@
 import PublicCustomer from "./public_customer";
 
-export class PublicCustomers {
+export default class PublicCustomers {
   publicCustomersData?: { [key: string]: PublicCustomer };
 
   constructor({

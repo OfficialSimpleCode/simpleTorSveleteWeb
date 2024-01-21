@@ -5,8 +5,10 @@ import {
   paymentTypesToStr,
   type PaymentTypes,
 } from "../booking/booking_transaction";
+import { Duration } from "../core/duration";
 import { defaultCurrency } from "./currency_model";
 import { Price } from "./price";
+import TreatmentTime from "./treatment_time";
 
 export default class Treatment {
   totalMinutes: number = 0;

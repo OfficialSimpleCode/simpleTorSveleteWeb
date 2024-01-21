@@ -34,6 +34,8 @@
 
         const u = UserInitializer.GI().user;
         user.set(u);
+
+       
     }
 
     let businessLoading = loadBusiness();

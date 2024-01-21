@@ -1,22 +1,20 @@
-import { Timestamp } from "@firebase/firestore-types";
-import type { Unsubscribe } from "firebase/auth";
+import {
+  dateToDateStr,
+  dateToTimeStr,
+} from "$lib/utils/times_utils/times_utils";
+
+import { Timestamp, type Unsubscribe } from "firebase/firestore";
 
 export default class WorkerPublicData {
-  bookingsTimes: Map<string, Map<string, number>> = new Map();
+  bookingsTimes: Record<string, Record<string, number>> = {};
   lastBookingTimeDate?: Date;
-  duringPaymentBookingsTime: Map<string, Map<string, [Timestamp, number]>> =
-    new Map();
+  duringPaymentBookingsTime: Record<
+    string,
+    Record<string, [Timestamp, number]>
+  > = {};
   listener?: Unsubscribe;
-  constructor({});
-  constructor({ bookingsTimes, duringPaymentBookingsTime }: WorkerPublicData) {
-    this.bookingsTimes = bookingsTimes;
-    this.duringPaymentBookingsTime = duringPaymentBookingsTime;
-    this.lastBookingTimeDate = this.findLastBookingsTimesDate();
-  }
 
-  static empty(): WorkerPublicData {
-    return new WorkerPublicData({});
-  }
+  constructor() {}
 
   findLastBookingsTimesDate(): Date | undefined {
     let lastDate: Date | undefined;
@@ -32,62 +30,50 @@ export default class WorkerPublicData {
     return lastDate;
   }
 
-  setWorkerPublicData(
-    json: Record<string, unknown>,
-    includeVacation = true
-  ): void {
+  setWorkerPublicData(json: Record<string, any>, includeVacation = true): void {
     this.duringPaymentBookingsTime = {};
     this.bookingsTimes = {};
 
-    const allVacationsDays: Vacation[] = [];
     // Assuming dayLightSavingTimes is defined somewhere
     dayLightSavingTimes.forEach((date) => {
       date = new Date(date.getTime() + 60 * 60 * 1000); // Add 1 hour
-      this.bookingsTimes[date.toISOString()] = { [date.toISOString()]: 60 };
+      this.bookingsTimes[dateToDateStr(date)] = { [dateToTimeStr(date)]: 60 };
     });
 
-    if (json["bookingsTimes"] !== null) {
-      Object.entries(json["bookingsTimes"]).forEach(([dateString, times]) => {
-        const date = new Date(dateString);
-        const lastWeek = new Date();
-        lastWeek.setDate(lastWeek.getDate() - 7);
+    if (json["bookingsTimes"] != undefined) {
+      Object.entries<Record<string, any>>(json["bookingsTimes"]!).forEach(
+        ([dateString, times]) => {
+          const date = new Date(dateString);
+          const lastWeek = new Date();
+          lastWeek.setDate(lastWeek.getDate() - 7);
 
-        if (
-          date >= lastWeek &&
-          times instanceof Object &&
-          !Object.keys(times).length === 0
-        ) {
-          this.bookingsTimes[dateString] = {};
+          if (date >= lastWeek && Object.keys(times).length != 0) {
+            this.bookingsTimes[dateString] = {};
 
-          Object.entries(times).forEach(([time, duration]) => {
-            if (time.includes("00:00v")) {
-              const [id] = time.split("00:00v");
-              allVacationsDays.push({
-                end: new Date(0),
-                start: new Date(dateString),
-                id,
-              });
-              if (includeVacation) {
-                this.bookingsTimes[dateString] = { "00:00": 1439 };
+            Object.entries(times).forEach(([time, duration]) => {
+              if (time.includes("00:00v")) {
+                if (includeVacation) {
+                  this.bookingsTimes[dateString] = { "00:00": 1439 };
+                }
+              } else {
+                if (
+                  time !== "00:00" ||
+                  this.bookingsTimes[dateString]["00:00"] != 1439
+                ) {
+                  this.bookingsTimes[dateString][time] = duration as number;
+                }
               }
-            } else {
-              if (
-                time !== "00:00" ||
-                this.bookingsTimes[dateString]?.["00:00"] !== 1439
-              ) {
-                this.bookingsTimes[dateString]![time] = duration as number;
-              }
+            });
+
+            if (
+              Object.keys(times).length > 0 &&
+              date > (this.lastBookingTimeDate || new Date(0))
+            ) {
+              this.lastBookingTimeDate = date;
             }
-          });
-
-          if (
-            Object.keys(times).length > 0 &&
-            date > (this.lastBookingTimeDate || new Date(0))
-          ) {
-            this.lastBookingTimeDate = date;
           }
         }
-      });
+      );
     }
 
     if (json["duringPaymentBookingsTime"] !== null) {
@@ -141,14 +127,6 @@ export default class WorkerPublicData {
         this.bookingsTimes[dayString] = {};
       }
     });
-  }
-
-  addTimesFromEvent(event: Event, date: string, timeString: string): void {
-    if (date in this.bookingsTimes) {
-      this.bookingsTimes[date]![timeString] = event.durationMinutes;
-    } else {
-      this.bookingsTimes[date] = { [timeString]: event.durationMinutes };
-    }
   }
 
   toWorkerPublicDataJson(): Record<

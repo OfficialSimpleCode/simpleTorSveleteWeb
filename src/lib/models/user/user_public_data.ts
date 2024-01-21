@@ -1,6 +1,11 @@
 import type { BookingReminderType } from "$lib/consts/booking";
+import { recurrenceBookingsDoc } from "$lib/consts/db";
 import { Gender, genderFromStr, genderToStr } from "$lib/consts/gender";
-import type Booking from "../booking/booking_model";
+import {
+  monthStrToDate,
+  setToStartOfMonth,
+} from "$lib/utils/times_utils/times_utils";
+import Booking from "../booking/booking_model";
 import CustomerData from "../general/customer_data";
 import Device from "../general/device";
 import LocalDocReference from "../general/local_doc_reference";
@@ -12,21 +17,21 @@ export default class UserPublicData {
   name: string = "";
   phoneNumber: string = "";
   id: string = "";
-  devices: { [key: string]: Device } = {};
+  devices: Map<string, Device> = new Map();
   gender: Gender = Gender.anonymous;
   myBuisnessesIds: string[] = [];
-  clientAt: { [key: string]: Set<string> } = {};
+  reminders?: Map<BookingReminderType, Booking[]>;
+  clientAt: Map<string, Set<string>> = new Map();
   hasNotificationPermission: boolean = true;
-  permission: { [key: string]: number } = {};
+  permission: Map<string, number> = new Map();
   tempFcm?: string;
   allowAppNotification: boolean = true;
   isVerifiedPhone: boolean = false;
   isVerifiedEmail: boolean = false;
   invoiceCounter?: number;
-  reminders?: { [key in BookingReminderType]: Booking[] };
   newWorkerWelcomes: Set<string> = new Set();
-  bookings?: { [key: string]: Booking };
-  bookingsPreviews: { [key: string]: BookingsPreview } = {};
+  bookings?: Map<string, Booking> = new Map();
+  bookingsPreviews: Map<string, BookingsPreview> = new Map();
   bookingsDocsToLoad: Set<string> = new Set();
   localDocsToDelete: Set<LocalDocReference> = new Set();
 
@@ -38,9 +43,9 @@ export default class UserPublicData {
     phoneNumber?: string;
     id?: string;
     gender?: Gender;
-    devices: { [key: string]: Device };
+    devices: Map<string, Device>;
     myBuisnessesIds: string[];
-    bookings?: { [key: string]: Booking };
+    bookings?: Map<string, Booking>;
   }) {
     this.email = data.email || "";
     this.isVerifiedPhone = data.isVerifiedPhone || false;
@@ -97,23 +102,27 @@ export default class UserPublicData {
   // }
 
   setUserPublicData(dataJson: Record<string, any>, user?: UserModel): void {
-    this.permission = {};
+    this.permission = new Map();
     this.myBuisnessesIds = [];
     this.isVerifiedEmail = dataJson["isVerifiedEmail"] || false;
     this.email = dataJson["email"] || "";
     this.allowAppNotification = dataJson["allowAppNotification"] || true;
     this.email = dataJson["email"] || "";
     this.name = dataJson["name"] || "";
-    this.clientAt = {};
+    this.clientAt = new Map();
     if (dataJson["clientAt"]) {
-      Object.entries<string>(dataJson["clientAt"]).forEach(
+      Object.entries<Record<string, string>>(dataJson["clientAt"]).forEach(
         ([businessId, workerIds]) => {
           if (Object.keys(workerIds).length === 0) {
             return;
           }
-          this.clientAt[businessId] = new Set();
+          this.clientAt.set(businessId, new Set());
+
           Object.keys(workerIds).forEach((workerId) => {
-            this.clientAt[businessId].add(workerId);
+            this.clientAt.set(
+              businessId,
+              this.clientAt.get(businessId)!.add(workerId)
+            );
           });
         }
       );
@@ -125,11 +134,11 @@ export default class UserPublicData {
       });
     }
     this.invoiceCounter = dataJson["invoiceCounter"];
-    this.devices = {};
+    this.devices = new Map();
     if (dataJson["devices"] && typeof dataJson["devices"] === "object") {
       Object.entries<Record<string, any>>(dataJson["devices"]).forEach(
         ([deviceId, deviceJson]) => {
-          this.devices[deviceId] = Device.fromJson(deviceJson, deviceId);
+          this.devices.set(deviceId, Device.fromJson(deviceJson, deviceId));
         }
       );
     } else if (dataJson["currentFcm"] && dataJson["currentFcm"] !== "") {
@@ -146,41 +155,41 @@ export default class UserPublicData {
       Object.entries<number>(dataJson["permission"]).forEach(
         ([businessId, codePermission]) => {
           if (codePermission === 2) this.myBuisnessesIds.push(businessId);
-          this.permission[businessId] = codePermission;
+          this.permission.set(businessId, codePermission);
         }
       );
     }
     if (dataJson["bookings"]) {
-      this.bookings = {};
-      // Object.entries(dataJson["bookings"]).forEach(
-      //   ([bookingId, bookingJson]) => {
-      //     const bookingObj = Booking.fromJson(bookingJson, bookingId);
-      //     if (bookingObj.cancelDate) {
-      //       return;
-      //     }
-      //     this.bookings[bookingId] = bookingObj;
-      //   }
-      // );
+      this.bookings = new Map();
+      Object.entries<Record<string, any>>(dataJson["bookings"]).forEach(
+        ([bookingId, bookingJson]) => {
+          const bookingObj = Booking.fromJson(bookingJson, bookingId);
+          if (bookingObj.cancelDate) {
+            return;
+          }
+          this.bookings!.set(bookingId, bookingObj);
+        }
+      );
     }
     this.bookingsDocsToLoad = new Set();
     if (dataJson["bookingsPreviews"]) {
-      const newPreviews: { [key: string]: BookingsPreview } = {};
+      const newPreviews: Map<string, BookingsPreview> = new Map();
       Object.entries<Record<string, any>>(dataJson["bookingsPreviews"]).forEach(
         ([docId, previewJson]) => {
-          newPreviews[docId] = BookingsPreview.fromJson(previewJson, docId);
+          newPreviews.set(docId, BookingsPreview.fromJson(previewJson, docId));
         }
       );
-      // Object.entries(newPreviews).forEach(([docId, preview]) => {
-      //   if (
-      //     this.bookingsPreviews[docId]?.lastUpdateTime !==
-      //       preview.lastUpdateTime &&
-      //     (docId === recurrenceBookingsDoc ||
-      //       !monthStrToDate(docId).isBefore(setToStartOfMonth(new Date())) ||
-      //       (user?.bookings.passedBookings?.hasOwnProperty(docId) ?? false))
-      //   ) {
-      //     this.bookingsDocsToLoad.add(docId);
-      //   }
-      // });
+      newPreviews.forEach((preview, docId) => {
+        if (
+          this.bookingsPreviews.get(docId)?.lastUpdateTime !==
+            preview.lastUpdateTime &&
+          (docId === recurrenceBookingsDoc ||
+            monthStrToDate(docId) >= setToStartOfMonth(new Date()) ||
+            (user?.bookings.passedBookings?.hasOwnProperty(docId) ?? false))
+        ) {
+          this.bookingsDocsToLoad.add(docId);
+        }
+      });
       this.bookingsPreviews = newPreviews;
     }
     if (this.id === this.phoneNumber) {
@@ -258,11 +267,11 @@ export default class UserPublicData {
     data["email"] = this.email;
     data["name"] = this.name;
     data["devices"] = {};
-    Object.entries(this.devices).forEach(([deviceId, device]) => {
+    this.devices.forEach((device, deviceId) => {
       data["devices"][deviceId] = device.toJson();
     });
     data["clientAt"] = {};
-    Object.entries(this.clientAt).forEach(([businessId, workerIds]) => {
+    this.clientAt.forEach((workerIds, businessId) => {
       data["clientAt"][businessId] = {};
       workerIds.forEach((workerId) => {
         data["clientAt"][businessId][workerId] = "";

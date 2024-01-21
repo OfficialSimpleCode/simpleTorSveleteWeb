@@ -1,5 +1,9 @@
+import { BookingReminderType } from "$lib/consts/booking";
 import { Gender, genderFromStr, genderToStr } from "$lib/consts/gender";
-import { NotificationOption } from "$lib/consts/notification";
+import {
+  NotificationOption,
+  notificationOptionFromStr,
+} from "$lib/consts/notification";
 import {
   WindowSpaces,
   windowSpacesFromStr,
@@ -11,13 +15,19 @@ import {
   type Religion,
 } from "$lib/consts/worker_schedule";
 import { translate } from "$lib/utils/string_utilitis";
-import { dateToDateStr } from "$lib/utils/times_utils/times_utils";
+import {
+  dateStrToDate,
+  dateToDateStr,
+  setToMidNight,
+} from "$lib/utils/times_utils/times_utils";
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
-import Booking from "../booking/booking_model";
 import Device from "../general/device";
 import Treatment from "../general/treatment_model";
-import type Invoice from "../payment_hyp/invoice/invoice";
-import type TransactionModel from "../payment_hyp/transaction";
+import MultiEventsTimes from "./multi_events_times";
+import WorkerNotificatiosSettings from "./notifications_settings";
+import PublicCustomers from "./public_customers_data";
+import RecurrenceEvents from "./recurrence_events";
+import ShiftChangeRange from "./shifts_change_range";
 import TreatmentSubject from "./treatment_subject";
 import WorkerPublicData from "./worker_public_data";
 
@@ -57,139 +67,73 @@ export default class WorkerModel {
   showVacations: boolean = true;
   mustVerifyPhone: boolean = true;
   allowBookingConfirmations: boolean = true;
-  devices: { [key: string]: Device } = {};
-  storyImages: { [key: string]: string } = {};
+  devices: Map<string, Device> = new Map();
+  storyImages: Map<string, string> = new Map();
   createdAt: Date = new Date(0);
-  workTime: { [key: string]: string[] } = {
-    sunday: [],
-    monday: [],
-    tuesday: [],
-    wednesday: [],
-    thursday: [],
-    friday: [],
-    saturday: [],
-  };
+  workTime: Map<string, string[]> = new Map([
+    ["sunday", []],
+    ["monday", []],
+    ["tuesday", []],
+    ["wednesday", []],
+    ["thursday", []],
+    ["friday", []],
+    ["saturday", []],
+  ]);
   isCustomersNeedRecurrence: boolean = false;
-  specificRangeChanges: { [key: string]: ShiftChangeRange } = {};
-  treatmentsSubjects: { [key: string]: TreatmentSubject } = {};
+  specificRangeChanges: Map<string, ShiftChangeRange> = new Map();
+  treatmentsSubjects: Map<string, TreatmentSubject> = new Map();
   //----------------------------------from public worker json-------------------------------
-  workerPublicData: WorkerPublicData = new WorkerPublicData({});
-  //----------------------------- from bookingsEvents doc -------------------
-  events: Events = new Events({}, this);
-  //------------------------------ from customerData doc ----------------------
-  customers: Customers = new Customers({}, new CustomersDataSettings());
+  workerPublicData: WorkerPublicData = new WorkerPublicData();
+
   //---------------------- from publicCustomersData doc -----------------
   publicCustomers: PublicCustomers = new PublicCustomers();
-  // --------------------------- from local cache ---------------------------
-  localData: WorkerLocalData = new WorkerLocalData();
-  //------------------------------ from bookingsCollection jsons ---------------
-  bookingObjects: { [key: string]: BookingsDay } = {};
+
   // ------------------------------ from real time database ------------------
-  storylikesAmount: { [key: string]: number } = {};
-  eventsCounters: EventsCounters = new EventsCounters();
+  storylikesAmount: Map<string, number> = new Map();
   //------------------------------- from multiEventsTimes doc------------------------------
   multiEventsTimes: MultiEventsTimes = new MultiEventsTimes();
-  // ----------------------------- from waiting list collection ---------------
-  waitings: WorkerWaitings = new WorkerWaitings();
+
   //-------------------------------another vars ----------------------------
   generalBookingsCount: number = 0;
   passedBookingsCount: number = 0;
   shortBookingTime: number = 999;
   longestBookingTime: number = 0;
   recurrence: RecurrenceEvents = new RecurrenceEvents();
-  notifications: WorkerNotificatiosSettings = new WorkerNotificatiosSettings(
-    {}
-  );
-  currentMonthInvoices?: { [key: string]: Invoice };
-  currentMonthPaymentRequest?: { [key: string]: PaymentRequest };
-  currentMonthPayments?: { [key: string]: TransactionModel };
-  existInvoicesDocs: Set<string> = new Set();
-  existPaymentsDocs: Set<string> = new Set();
-  existPaymentRequestsDocs: Set<string> = new Set();
-  treatmentsById: { [key: string]: Treatment } = {};
+  notifications: WorkerNotificatiosSettings = new WorkerNotificatiosSettings();
+
   //------------------------------ listners -------------------------------
   workerDocListner?: Unsubscribe;
-  constructor({
-    phone = "",
-    id = "",
-    profileImg = "",
-    about = "",
-    name = "",
-    daysToAllowBookings = 7,
-    gender = Gender.anonymous,
-    bookingObjects,
-    closeCalendarDate,
-    openCalendar = true,
-    allowBookingConfirmations = true,
-    devices,
-    lastCleanDate,
-    onHoldMinutes,
-    treatments,
-    workTime,
-    specificRangeChanges,
-  }: {
-    phone?: string;
-    id?: string;
-    profileImg?: string;
-    about?: string;
-    name?: string;
-    daysToAllowBookings?: number;
-    gender?: Gender;
-    bookingObjects: { [key: string]: BookingsDay };
-    closeCalendarDate?: Date;
-    openCalendar?: boolean;
-    allowBookingConfirmations?: boolean;
-    devices: { [key: string]: Device };
-    lastCleanDate?: Date;
-    onHoldMinutes?: number;
-    treatments?: any;
-    workTime?: any;
-    specificRangeChanges?: any;
-  }) {
-    this.phone = phone;
-    this.id = id;
-    this.profileImg = profileImg;
-    this.about = about;
-    this.name = name;
-    this.daysToAllowBookings = daysToAllowBookings;
-    this.gender = gender;
-    this.bookingObjects = bookingObjects;
-    this.closeCalendarDate = closeCalendarDate;
-    this.openCalendar = openCalendar;
-    this.allowBookingConfirmations = allowBookingConfirmations;
-    this.devices = devices;
-    this.lastCleanDate = lastCleanDate;
-    this.onHoldMinutes = onHoldMinutes;
-    this.cancelMinutes = onHoldMinutes;
-    this.workTime = workTime;
-    this.specificRangeChanges = specificRangeChanges;
-  }
+
+  constructor({}) {}
+
   /// Extract the worker data from user data json
-  static fromUserPublicData(json: { [key: string]: any }): WorkerModel {
+  static fromUserPublicData(json: Record<string, any>): WorkerModel {
     const workerModel = new WorkerModel({});
     workerModel.phone = json["phoneNumber"] || "";
     workerModel.currentClientCount = json["currentClientCount"] || 0;
     workerModel.id = json["id"] || workerModel.phone;
     workerModel.name = json["name"] || "";
     if (json["devices"] != null && typeof json["devices"] === "object") {
-      Object.entries(json["devices"]).forEach(([fcmId, fcmJson]) => {
-        workerModel.devices[fcmId] = Device.fromJson(fcmJson, fcmId);
-      });
+      Object.entries<Record<string, any>>(json["devices"]).forEach(
+        ([fcmId, fcmJson]) => {
+          workerModel.devices.set(fcmId, Device.fromJson(fcmJson, fcmId));
+        }
+      );
     } else if (json["currentFcm"] != null && json["currentFcm"] !== "") {
       workerModel.tempFcm = json["currentFcm"];
     }
     workerModel.gender = genderFromStr[json["gender"]] || Gender.anonymous;
     workerModel.lastCleanDate = new Date();
     workerModel.createdAt = new Date();
-    workerModel.notifications.remindersTypes = {
-      [BookingReminderType.regular]: 60,
-    };
+    workerModel.notifications.remindersTypes = new Map([
+      [BookingReminderType.regular, 60],
+    ]);
     return workerModel;
   }
   /// create new worker from that json
   ///  Dont use it if you want to update the worker
   /// it will not consider the worker publicData doc
-  static fromWorkerDocJson(workerJson: { [key: string]: any }): WorkerModel {
+  static fromWorkerDocJson(workerJson: Record<string, any>): WorkerModel {
     const workerModel = new WorkerModel({});
     workerModel.setFromWorkerDoc(workerJson);
     return workerModel;
@@ -202,93 +146,42 @@ export default class WorkerModel {
     });
     return counter;
   }
-  /// Get date and returns the workTikes for this date
-  shiftsFor({ day }: { day: Date }): string[] {
-    // regular shifts
-    const defaultShifts =
-      this.workTime[
-        day.toLocaleString("en-US", { weekday: "long" }).toLowerCase()
-      ] || [];
-    // specific changes
-    for (const specifiRangeObj of Object.values(this.specificRangeChanges)) {
-      if (
-        durationStrikings(
-          specifiRangeObj.start,
-          new Date(
-            specifiRangeObj.end.getTime() + 23 * 60 * 60 * 1000 + 59 * 60 * 1000
-          ),
-          day,
-          day
-        ) === "STRIKE"
-      ) {
-        // day is include in this range changing
-        return specifiRangeObj.combineShifts(defaultShifts);
-      }
-    }
-    return combinedShuffleShifts(shiftsFromStrList(defaultShifts));
-  }
+
+  // /// Get date and returns the workTikes for this date
+  // shiftsFor({ day }: { day: Date }): string[] {
+  //   // regular shifts
+  //   const defaultShifts =
+  //     this.workTime[
+  //       day.toLocaleString("en-US", { weekday: "long" }).toLowerCase()
+  //     ] || [];
+  //   // specific changes
+  //   for (const specifiRangeObj of Object.values(this.specificRangeChanges)) {
+  //     if (
+  //       durationStrikings(
+  //         specifiRangeObj.start,
+  //         new Date(
+  //           specifiRangeObj.end.getTime() + 23 * 60 * 60 * 1000 + 59 * 60 * 1000
+  //         ),
+  //         day,
+  //         day
+  //       ) === "STRIKE"
+  //     ) {
+  //       // day is include in this range changing
+  //       return specifiRangeObj.combineShifts(defaultShifts);
+  //     }
+  //   }
+  //   return combinedShuffleShifts(shiftsFromStrList(defaultShifts));
+  // }
   // Returns whether this day is closing day or not
   isClosingDate(date: Date): boolean {
     return (
       !this.openCalendar ||
-      (this.closeCalendarDate &&
+      (this.closeCalendarDate != undefined &&
         setToMidNight(this.closeCalendarDate).getTime() ===
           setToMidNight(date).getTime())
     );
   }
-  getLocalBookingByEvent(eventDate: Date): Booking | undefined {
-    const timeStr = format(eventDate, "HH:mm");
-    const eventDay = format(eventDate, "dd-MM-yyyy");
-    if (!this.bookingObjects[eventDay]) {
-      return undefined;
-    }
-    for (const bookingObj of Object.values(
-      this.bookingObjects[eventDay].bookings
-    )) {
-      if (
-        bookingObj.cancelDate === null &&
-        bookingObj.bookingWorkTimes.hasOwnProperty(timeStr)
-      ) {
-        return bookingObj;
-      }
-    }
-    return undefined;
-  }
-  findEventTreatmentById(eventId: string): Treatment | undefined {
-    let event: Treatment | undefined;
-    Object.values(this.treatmentsSubjects).forEach((subject) => {
-      Object.values(subject.treatments).forEach((treatment) => {
-        if (treatment.id === eventId) {
-          event = treatment;
-        }
-      });
-    });
-    return event;
-  }
-  getLocalMultiBookingByEvent(eventDate: Date): MultiBooking | undefined {
-    const timeStr = format(eventDate, "HH:mm");
-    const eventDay = format(eventDate, "dd-MM-yyyy");
-    if (!this.bookingObjects[eventDay]) {
-      return undefined;
-    }
-    for (const bookingObj of Object.values(
-      this.bookingObjects[eventDay].multiBookings
-    )) {
-      if (bookingObj.timesAsJson.hasOwnProperty(timeStr)) {
-        return bookingObj;
-      }
-    }
-    return undefined;
-  }
-  ///  Get month end empty all the days times but keep the days as keys
-  emptyBookingObjectsDatesInMonth(monthString: string): void {
-    const bookingObjectsDup = { ...this.bookingObjects };
-    Object.keys(bookingObjectsDup).forEach((dayString) => {
-      if (dayString.includes(monthString)) {
-        delete this.bookingObjects[dayString];
-      }
-    });
-  }
+
   hasTreatemnt(treatmentId: string): boolean {
     for (const subject of Object.values(this.treatmentsSubjects)) {
       if (subject.containTreatment(treatmentId)) {
@@ -305,7 +198,7 @@ export default class WorkerModel {
     );
   }
   /// Get workerJson and update the current worker fields
-  setFromWorkerDoc(workerJson: { [key: string]: any }): void {
+  setFromWorkerDoc(workerJson: Record<string, any>): void {
     this.daysToAllowBookings = workerJson["daysToAllowBookings"] || 7;
     this.profileImg = workerJson["profileImg"] || "";
     this.about = workerJson["about"] || "";
@@ -319,13 +212,16 @@ export default class WorkerModel {
         (religion: string) => religionFromStr[religion]
       );
     }
+
     if (workerJson["windowSpaces"]) {
       this.windowSpaces =
         windowSpacesFromStr[workerJson["windowSpaces"]] ||
         WindowSpaces.shortestTreatment;
     }
+
     this.isCustomersNeedRecurrence =
       workerJson["isCustomersNeedRecurrence"] || false;
+
     this.showWaitingListWhenThereIsChoises =
       workerJson["showWaitingListWhenThereIsChoises"] || true;
     this.customWindowMinute = workerJson["customWindowMinute"] || 30;
@@ -335,33 +231,34 @@ export default class WorkerModel {
     this.mustVerifyPhone = workerJson["mustVerifyPhone"] || true;
     this.showVacations = workerJson["showVacations"] || true;
     this.gender = genderFromStr[workerJson["gender"]] || Gender.anonymous;
+
     this.allowAppNotification = workerJson["allowAppNotification"] || true;
     this.name = workerJson["name"] || "";
     this.maxTreatments = workerJson["maxTreatments"] || 3;
+
     this.phone = workerJson["phone"] || "";
     this.hasRecurrenceEvents = workerJson["hasRecurrenceEvents"] || false;
     this.id = workerJson["id"] || workerJson["phone"] || "";
     this.minutesBeforeBookingToConfirm =
       workerJson["minutesBeforeBookingToConfirm"] || 1440;
     this.maxFutureBookings = workerJson["maxFutureBookings"] || 4;
-    this.treatmentsSubjects = {};
-    this.treatmentsById = {};
+
+    this.treatmentsSubjects = new Map();
+
     this.shortBookingTime = 999;
     if (workerJson["treatmentsSubjects"]) {
       // new users with subjects
       let pointerShortBookingTime = [this.shortBookingTime];
       let pointerLognestBookingTime = [this.longestBookingTime];
-      Object.entries(workerJson["treatmentsSubjects"]).forEach(
-        ([index, treatmentsSubject]) => {
-          const subject = TreatmentSubject.fromJson(
-            treatmentsSubject,
-            index,
-            pointerShortBookingTime,
-            pointerLognestBookingTime
-          );
-          this.treatmentsSubjects[index] = subject;
-        }
-      );
+      Object.entries<Record<string, any>>(
+        workerJson["treatmentsSubjects"]
+      ).forEach(([index, treatmentsSubject]) => {
+        const subject = TreatmentSubject.fromJson(treatmentsSubject, index, {
+          pointerShortBookingTime: pointerShortBookingTime,
+          pointerLognestBookingTime: pointerLognestBookingTime,
+        });
+        this.treatmentsSubjects.set(index, subject);
+      });
       this.shortBookingTime = pointerShortBookingTime[0];
       this.longestBookingTime = pointerLognestBookingTime[0];
     } else if (workerJson["treatments"]) {
@@ -393,15 +290,18 @@ export default class WorkerModel {
           index += 1;
         }
       );
-      this.treatmentsSubjects = {
-        "0": new TreatmentSubject({
-          name: translate("general"),
-          treatments: treatments,
-          index: "0",
-        }),
-      };
+      this.treatmentsSubjects = new Map([
+        [
+          "0",
+          new TreatmentSubject({
+            name: translate("general"),
+            treatments: treatments,
+            index: "0",
+          }),
+        ],
+      ]);
     }
-    this.initialTreatmentsById();
+
     this.onHoldMinutes = workerJson["onHoldMinutes"] || 0;
     this.cancelMinutes = workerJson["cancelMinutes"] || 0;
     if (
@@ -410,47 +310,65 @@ export default class WorkerModel {
     ) {
       Object.entries<Record<string, any>>(workerJson["devices"]).forEach(
         ([deviceId, deviceJson]) => {
-          this.devices[deviceId] = Device.fromJson(deviceJson, deviceId);
+          this.devices.set(deviceId, Device.fromJson(deviceJson, deviceId));
         }
       );
     }
+
     this.deleteNeerDedlineBookingMessage =
       workerJson["deleteNeerDedlineBookingMessage"];
     this.orderNeerDedlineBookingMessage =
       workerJson["orderNeerDedlineBookingMessage"];
     this.generalBookingMessage = workerJson["generalBookingMessage"];
-    this.workTime = {};
+    this.workTime = new Map();
     if (workerJson["workTime"]) {
-      Object.entries(workerJson["workTime"]).forEach(([key, val]) => {
-        this.workTime[key] = val.map((item: any) => item as string);
+      Object.entries<string[]>(workerJson["workTime"]).forEach(([key, val]) => {
+        this.workTime.set(
+          key,
+          val.map((item: any) => item as string)
+        );
       });
     }
+
     this.waitingListExceptionDays = new Set();
     if (workerJson["waitingListExceptionDays"]) {
       workerJson["waitingListExceptionDays"].forEach((day: string) => {
         this.waitingListExceptionDays.add(day);
       });
     }
+
     if (workerJson["notifications"]) {
       this.notifications = WorkerNotificatiosSettings.fromJson(
         workerJson["notifications"]
       );
     } else {
-      this.notifications = new WorkerNotificatiosSettings(
-        workerJson["notifyOnWaitingListEvents"] || true,
-        workerJson["showAdressAlert"] || false,
-        workerJson["showAdressMessage"] || false,
-        workerJson["showPhoneAlert"] || false,
-        workerJson["showPhoneMessage"] || false,
-        {
-          [BookingReminderType.regular]:
+      this.notifications = new WorkerNotificatiosSettings();
+
+      (this.notifications.notifyOnWaitingListEvents =
+        workerJson["notifyOnWaitingListEvents"] || true),
+        (this.notifications.showAdressAlert =
+          workerJson["showAdressAlert"] || false),
+        (this.notifications.showAdressMessage =
+          workerJson["showAdressMessage"] || false),
+        (this.notifications.showPhoneAlert =
+          workerJson["showPhoneAlert"] || false),
+        (this.notifications.showPhoneMessage =
+          workerJson["showPhoneMessage"] || false),
+        (this.notifications.remindersTypes = new Map([
+          [
+            BookingReminderType.regular,
             workerJson["minutesBeforeNotify"] || 60,
-        },
-        workerJson["notifyOnPayments"] || true,
-        workerJson["notifyAboutCancelNearDeadline"] || true,
-        workerJson["notifyAboutOrderNearDeadline"] || true,
-        workerJson["notifyWhenGettingBooking"] || true
-      );
+          ],
+        ]));
+
+      (this.notifications.notifyOnPayments =
+        workerJson["notifyOnPayments"] || true),
+        (this.notifications.notifyAboutCancelNearDeadline =
+          workerJson["notifyAboutCancelNearDeadline"] || true),
+        (this.notifications.notifyAboutOrderNearDeadline =
+          workerJson["notifyAboutOrderNearDeadline"] || true),
+        (this.notifications.notifyWhenGettingBooking =
+          workerJson["notifyWhenGettingBooking"] || true);
       if (workerJson["notificationOption"]) {
         this.notifications.notificationOption =
           notificationOptionFromStr[workerJson["notificationOption"]] ||
@@ -464,33 +382,32 @@ export default class WorkerModel {
         this.notifications.recurrenceNotificationsLastDate = new Date();
       }
     }
-    this.specificRangeChanges = {};
+
+    this.specificRangeChanges = new Map();
     if (workerJson["specificRangeChanges"]) {
-      Object.entries(workerJson["specificRangeChanges"]).forEach(
-        ([key, val]) => {
-          const shiftRange = ShiftChangeRange.fromJson(val, key);
-          // the specific range dosen't over
-          if (!shiftRange.end.isBefore(setToMidNight(new Date()))) {
-            this.specificRangeChanges[key] = shiftRange;
-          }
+      Object.entries<Record<string, any>>(
+        workerJson["specificRangeChanges"]
+      ).forEach(([key, val]) => {
+        const shiftRange = ShiftChangeRange.fromJson(val, key);
+        // the specific range dosen't over
+        if (shiftRange.end >= setToMidNight(new Date())) {
+          this.specificRangeChanges.set(key, shiftRange);
+        }
+      });
+    }
+    this.storyImages = new Map();
+    if (workerJson["storyImages"]) {
+      Object.entries<string>(workerJson["storyImages"]).forEach(
+        ([imageId, image]) => {
+          this.storyImages.set(imageId, image);
         }
       );
-    }
-    this.storyImages = {};
-    if (workerJson["storyImages"]) {
-      Object.entries(workerJson["storyImages"]).forEach(([imageId, image]) => {
-        this.storyImages[imageId] = image;
-      });
     }
     // in not exist -> null
     if (workerJson["closeCalendarDate"]) {
       //the format is not the regular its cant
       //be changed - already used in production
-      this.closeCalendarDate = parse(
-        workerJson["closeCalendarDate"],
-        "dd/MM/yyyy",
-        new Date()
-      );
+      this.closeCalendarDate = new Date(workerJson["closeCalendarDate"]);
     }
     if (workerJson["minDateForShowinData"]) {
       this.minDateForShowinData = dateStrToDate(
@@ -501,7 +418,7 @@ export default class WorkerModel {
     this.allowBookingConfirmations =
       workerJson["allowBookingConfirmations"] || true;
     if (workerJson["createdAt"]) {
-      this.createdAt = parse(workerJson["createdAt"], "yyyy-MM-dd", new Date());
+      this.createdAt = new Date(workerJson["createdAt"]);
     } else {
       this.createdAt = new Date(2023, 0, 1);
     }
@@ -512,60 +429,7 @@ export default class WorkerModel {
       this.isVerifiedPhone = workerJson["isVerifiedPhone"] || false;
     }
   }
-  /// Update booking data
-  addOrUpdateBookingInBookingsObjects(booking: Booking): void {
-    const dateStr = format(booking.bookingDate, "dd-MM-yyyy");
-    this.bookingObjects[dateStr] ||= new BookingsDay(dateStr);
-    this.bookingObjects[dateStr].bookings[booking.bookingId] = booking;
-  }
-  /// Update booking data
-  addOrUpdateMultiBookingInBookingsObjects(multiBooking: MultiBooking): void {
-    const dateStr = format(multiBooking.bookingDate, "dd-MM-yyyy");
-    this.bookingObjects[dateStr] ||= new BookingsDay(dateStr);
-    this.bookingObjects[dateStr].multiBookings[multiBooking.bookingId] =
-      multiBooking;
-  }
-  // Update booking data
-  removeMultiBookingInBookingsObjects(multiBooking: MultiBooking) {
-    const dateStr = dateToDateStr(multiBooking.bookingDate);
-    if (
-      this.bookingObjects[dateStr] != null &&
-      this.bookingObjects[dateStr].multiBookings[multiBooking.bookingId] != null
-    ) {
-      delete this.bookingObjects[dateStr].bookings[multiBooking.bookingId];
-    }
-  }
-  // Update booking data
-  removeBookingInBookingsObjects(booking: Booking) {
-    const dateStr = dateToDateStr(booking.bookingDate);
-    if (
-      this.bookingObjects[dateStr] != null &&
-      this.bookingObjects[dateStr].bookings[booking.bookingId] != null
-    ) {
-      delete this.bookingObjects[dateStr].bookings[booking.bookingId];
-    }
-  }
-  // Parse the bookings Json camming from server to bookingsObjects data
-  setBookingsObjects({ bookingsObjectsJson, dateString }) {
-    /* This func only for the worker himself - only he get 
-      the bookingsObjects collection*/
-    this.bookingObjects[dateString] = { dateStr: dateString };
-    Object.entries(bookingsObjectsJson).forEach(([bookingId, bookingJson]) => {
-      const bookingObj = Booking.fromJson(bookingJson, bookingId);
-      this.bookingObjects[dateString].bookings[bookingObj.bookingId] =
-        bookingObj;
-    });
-  }
-  // initial the var treatmentsById by the current treatmentsSubjects
-  initialTreatmentsById() {
-    this.treatmentsById = {};
-    // initial the treatmentById map
-    Object.values(this.treatmentsSubjects).forEach((subject) => {
-      Object.values<Treatment>(subject.treatments).forEach((tempTreatment) => {
-        this.treatmentsById[tempTreatment.id] = tempTreatment;
-      });
-    });
-  }
+
   getInvoiceWorkerInfo() {
     return new InvoiceWorkerInfo({ workerId: this.id, workerName: this.name });
   }
