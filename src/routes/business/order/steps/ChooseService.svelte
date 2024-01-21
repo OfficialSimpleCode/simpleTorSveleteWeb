@@ -81,7 +81,7 @@
         {/each}
     </ul>
 
-    {#if selectedServices}
+    {#if selectedServices.length > 0}
         <div class="flex flex-col items-center gap-4 w-full">
             <button
                 class="btn btn-primary max-w-[90%] sm:max-w-sm w-full"

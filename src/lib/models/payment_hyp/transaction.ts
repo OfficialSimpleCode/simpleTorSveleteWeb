@@ -1,6 +1,7 @@
 import BookingTransactionModel from "../booking/booking_transaction";
 import { defaultCurrency } from "../general/currency_model";
 import { Price } from "../general/price";
+import { PaymentObject } from "./payment_object";
 
 export default class TransactionModel extends PaymentObject {
   transactionReference: string = "";

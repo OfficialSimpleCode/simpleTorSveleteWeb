@@ -14,6 +14,10 @@
     import { user } from "$lib/stores/User";
 
     async function loadBusiness() {
+        if ($business) {
+            return;
+        }
+
         LinksHelper.GI().linkedBuisnessId =
             $page.data.businessID ||
             "972-525656377--50ab63a0-a192-11ed-950c-3ba22fe40036";
@@ -27,7 +31,6 @@
 
         const b = BusinessInitializer.GI().business;
         business.set(b);
-       
 
         const u = UserInitializer.GI().user;
         user.set(u);

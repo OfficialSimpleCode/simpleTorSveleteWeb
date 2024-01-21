@@ -1,4 +1,8 @@
 import { Gender } from "$lib/consts/gender";
+<<<<<<< HEAD
+import type MultiBookingUser from "../multi_booking/multi_booking_user";
+import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
+=======
 import { laterDate } from "$lib/utils/dates_utils";
 import { hashId } from "$lib/utils/encryptions";
 import { firstDate } from "$lib/utils/times_utils/times_utils";
@@ -6,6 +10,7 @@ import { phoneToDocId } from "$lib/utils/user";
 import MultiBookingUser from "../multi_booking/multi_booking_user";
 import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
 import PublicCustomer from "../worker/public_customer";
+>>>>>>> 612fcb71c4eb07a22c69c4522614b882336b5580
 import type WorkerModel from "../worker/worker_model";
 
 export const minBookingCountToRegular: number = 3;
@@ -32,6 +37,19 @@ export const customerTypesToStr: Map<CustomerTypes, string> = new Map([
   [CustomerTypes.any, "All"],
 ]);
 
+<<<<<<< HEAD
+export const customerTypesToColor: { [key in CustomerTypes]: string } = {
+  [CustomerTypes.fresh]: "green",
+  [CustomerTypes.regular]: "blue",
+  [CustomerTypes.blocked]: "black",
+  [CustomerTypes.returned]: "yellow",
+  [CustomerTypes.deleted]: "red",
+  [CustomerTypes.self]: "orange",
+  // have to include all of them
+  [CustomerTypes.any]: "",
+  [CustomerTypes.missing]: "",
+};
+=======
 export const customerTypesToColor: Map<CustomerTypes, string> = new Map([
   [CustomerTypes.fresh, "green"],
   [CustomerTypes.regular, "blue"],
@@ -40,6 +58,7 @@ export const customerTypesToColor: Map<CustomerTypes, string> = new Map([
   [CustomerTypes.deleted, "red"],
   [CustomerTypes.self, "orange"],
 ]);
+>>>>>>> 612fcb71c4eb07a22c69c4522614b882336b5580
 
 export default class CustomerData {
   name: string = ""; //the name that the user gave
@@ -253,6 +272,17 @@ export default class CustomerData {
   }
 
   get toMultiBookingUser(): MultiBookingUser {
+<<<<<<< HEAD
+    return {
+      userFcms: new Set(),
+      debts: {},
+      remindersTypes: {},
+      customerName: this.name !== "" ? this.name : this.workerNaming,
+      customerPhone: this.phoneNumber,
+      customerId: this.customerUuid,
+      userGender: this.gender,
+    };
+=======
     const newMultiBookingUser = new MultiBookingUser();
     newMultiBookingUser.customerName =
       this.name != "" ? this.name : this.workerNaming;
@@ -260,6 +290,7 @@ export default class CustomerData {
     newMultiBookingUser.customerId = this.customerUuid;
     newMultiBookingUser.userGender = this.gender;
     return newMultiBookingUser;
+>>>>>>> 612fcb71c4eb07a22c69c4522614b882336b5580
   }
 
   get toPaymentRequestUser(): PaymentRequestUser {

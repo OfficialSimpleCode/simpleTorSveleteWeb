@@ -1,4 +1,5 @@
 import { maxAttemptsPassword } from "$lib/consts/hyp";
+import { decryptText, encryptText } from "$lib/utils/encryptions";
 
 const paymentBrandsFromStr: { [key: string]: string } = {
   "1": "PL",
@@ -138,9 +139,9 @@ export default class PaymentCard {
     return new PaymentCard({
       cardId: this.cardId,
       brand: this.brand,
-      token: decryptText({ encryption: this.token, password }),
-      validityMonth: decryptText({ encryption: this.validityMonth, password }),
-      validityYear: decryptText({ encryption: this.validityYear, password }),
+      token: decryptText(this.token, password),
+      validityMonth: decryptText(this.validityMonth, password),
+      validityYear: decryptText(this.validityYear, password),
       name: this.name,
       userId: this.userId,
       bankName: this.bankName,
@@ -153,9 +154,9 @@ export default class PaymentCard {
     return new PaymentCard({
       cardId: this.cardId,
       brand: this.brand,
-      token: encryptText({ text: this.token, password }),
-      validityMonth: encryptText({ text: this.validityMonth, password }),
-      validityYear: encryptText({ text: this.validityYear, password }),
+      token: encryptText(this.token, password),
+      validityMonth: encryptText(this.validityMonth, password),
+      validityYear: encryptText(this.validityYear, password),
       name: this.name,
       userId: this.userId,
       bankName: this.bankName,

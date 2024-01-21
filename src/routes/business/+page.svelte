@@ -11,7 +11,7 @@
     import { business } from "$lib/stores/Business.js";
 
     import Navbar from "$lib/components/navbar/Navbar.svelte";
-    import Avatar from "../../lib/components/Avatar.svelte";
+    import Avatar from "$lib/components/Avatar.svelte";
     import ImageDisplayDialog from "./components/ImageDisplayDialog.svelte";
     import ShareDialog from "./components/ShareDialog.svelte";
     import SocialLinks from "./components/SocialLinks.svelte";
@@ -20,7 +20,6 @@
     export let data;
 
     let loggedIn: boolean = true;
-    let profile: Record<string, string> = data.profile;
     let name: string = $business.shopName;
     let geo: Record<string, string> = {
         title: $business.adress,
@@ -29,14 +28,15 @@
     let displayImages: Array<Record<string, any>> = data.displayImages;
 
     onMount(() => {
-        document.documentElement.style.setProperty(
-            "--p",
-            hexToXyY(
-                numberToHex(
-                    Object.values($business.design.businessThemes)[3].primary,
-                ),
-            ),
-        );
+        console.log($business);
+        // document.documentElement.style.setProperty(
+        //     "--p",
+        //     hexToXyY(
+        //         numberToHex(
+        //             Object.values($business.design.businessThemes)[0].primary,
+        //         ),
+        //     ),
+        // );
         // document.documentElement.style.setProperty(
         //     "--b1",
         //     hexToXyY(
@@ -94,7 +94,7 @@
 {/if}
 
 <main class="w-full h-full" style="">
-    <Navbar {loggedIn} {profile} />
+    <Navbar />
 
     <!-- background image -->
     <img

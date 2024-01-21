@@ -22,8 +22,8 @@
         { name: "English", flag: USFlag },
     ];
 
-    export let loggedIn: boolean;
-    export let profile: Record<string, string> = {};
+    let loggedIn: boolean = true;
+    let profile: Record<string, string> = {};
 
     function markAsRead(notification: Record<string, any>) {
         let selectedNotification = notifications.filter(
@@ -34,7 +34,7 @@
     }
 </script>
 
-<div class="navbar bg-base-100 fixed z-20 gap-8 justify-between">
+<div class="navbar bg-base-100 z-20 gap-8 justify-between">
     <div>
         <a
             href="{base}/business?BusinessId={$business.businessId}"
