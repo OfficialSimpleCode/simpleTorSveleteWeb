@@ -48,13 +48,13 @@
     </div>
     <div>
         <div class="dropdown dropdown-left dropdown-bottom">
-            <button class="btn btn-ghost btn-circle">
+            <div role="button" tabindex="0" class="btn btn-ghost btn-circle">
                 <Icon src={GlobeAlt} size="26px" />
-            </button>
+            </div>
             <LanguageBoard {languages} />
         </div>
         <div class="dropdown dropdown-left dropdown-bottom">
-            <button class="btn btn-ghost btn-circle">
+            <div role="button" tabindex="0" class="btn btn-ghost btn-circle">
                 <div class="indicator">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -75,7 +75,7 @@
                         />
                     {/if}
                 </div>
-            </button>
+            </div>
             <NotificationsBoard
                 {notifications}
                 on:notification-opend={(e) => markAsRead(e.detail)}
