@@ -1,7 +1,10 @@
 <script lang="ts">
-    import { _ } from "svelte-i18n";
+    import { base } from "$app/paths";
     import { goto, pushState } from "$app/navigation";
     import { page } from "$app/stores";
+
+    import { _ } from "svelte-i18n";
+    
     import ProfileDialog from "./ProfileDialog.svelte";
     import PurchesesDialog from "./PurchesesDialog.svelte";
 
@@ -67,8 +70,8 @@
             <div
                 role="button"
                 tabindex="0"
-                on:click={() => goto("appointments")}
-                on:keypress={() => goto("appointments")}
+                on:click={() => goto(`${base}/appointments`)}
+                on:keypress={() => goto(`${base}/appointments`)}
             >
                 {$_("myBookings")}
             </div>

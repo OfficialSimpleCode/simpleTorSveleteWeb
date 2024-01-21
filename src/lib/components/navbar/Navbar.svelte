@@ -87,8 +87,8 @@
             role="button"
             tabindex="0"
             class="btn btn-ghost btn-circle"
-            on:click={() => goto("appointments")}
-            on:keypress={() => goto("appointments")}
+            on:click={() => goto(`${base}/appointments`)}
+            on:keypress={() => goto(`${base}/appointments`)}
         >
             <div class="indicator">
                 <svg
