@@ -1,6 +1,12 @@
 <script lang="ts">
     import { ShowToast } from "$lib/stores/ToastManager";
-    import { Icon, ChevronLeft, ChevronRight, Heart } from "svelte-hero-icons";
+    import {
+        Icon,
+        ChevronLeft,
+        ChevronRight,
+        Heart,
+        XCircle,
+    } from "svelte-hero-icons";
 
     export let dialog: HTMLDialogElement;
     export let displayImages: Array<Record<string, any>>;
@@ -19,6 +25,9 @@
     <div
         class="modal-box bg-base-200 p-0 h-[700px] sm:w-[520px] overflow-hidden"
     >
+        <button class="btn btn-neutral sm:hidden text-white absolute right-4 top-4" on:click={() => dialog.close()}>
+            <Icon src={XCircle} size="30px" />
+        </button>
         <img
             class="object-cover h-full w-full rounded-xl"
             src={displayImages[index].link}

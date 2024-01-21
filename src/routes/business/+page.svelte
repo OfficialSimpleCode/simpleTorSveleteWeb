@@ -4,6 +4,7 @@
     import { base } from "$app/paths";
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
+    import { _ } from "svelte-i18n";
 
     import { Icon, MapPin, Share } from "svelte-hero-icons";
 
@@ -115,7 +116,7 @@
                 <!-- Order now and Share buttons -->
                 <div class="flex gap-5 items-center">
                     <button class="btn btn-primary" on:click={orderNow}>
-                        Appointment
+                        {$_("setBooking")}
                     </button>
                     <button class="btn btn-primary" on:click={openShareDialog}>
                         <Icon src={Share} size="26px" />

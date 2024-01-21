@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from "svelte-i18n";
     import { Icon, ChevronRight, Calendar, Clock } from "svelte-hero-icons";
 
     export let order: Record<string, any>;
@@ -19,7 +20,8 @@
                 <div class="flex flex-col items-start justify-center text-sm">
                     <div class="font-bold">{order.name}</div>
                     <div class="text-sm opacity-80">
-                        with {order.employee.name}
+                        {$_("with")}
+                        {order.employee.name}
                     </div>
                 </div>
                 <div class="w-5" />
@@ -60,7 +62,11 @@
                 class:text-success-content={order.status == "approved"}
                 class="text-sm rounded-xl p-2 text-center"
             >
-                {order.status == "pending" ? "Pending" : "Approved"}
+                {#if order.status == "pending"}
+                    {$_("waiting")}
+                {:else if order.status == "approved"}
+                    {$_("approved")}
+                {/if}
             </div>
         </div>
     </div>

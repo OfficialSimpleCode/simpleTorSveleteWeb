@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from "svelte-i18n";
     import { createEventDispatcher } from "svelte";
     const dispath = createEventDispatcher();
 
@@ -35,7 +36,9 @@
                         />
                     {/if}
                 </div>
-                <p class="text-ellipsis max-h-[24px] overflow-hidden text-center">
+                <p
+                    class="text-ellipsis max-h-[24px] overflow-hidden text-center"
+                >
                     {notification.content}
                 </p>
             </button>
@@ -43,6 +46,6 @@
         <div class="divider h-2 last:hidden"></div>
     {/each}
     {#if notifications.length == 0}
-        <div class="font-bold text-center">No Notifications</div>
+        <div class="font-bold text-center">{$_("notifications")}</div>
     {/if}
 </ul>

@@ -1,6 +1,8 @@
 <script lang="ts">
+    import { goto } from "$app/navigation";
     import { base } from "$app/paths";
 
+    import { _ } from "svelte-i18n";
     import { Icon, GlobeAlt } from "svelte-hero-icons";
 
     import { business } from "$lib/stores/Business.js";
@@ -12,14 +14,18 @@
     // Assets
     import ILFlag from "$lib/images/flags/il.svg";
     import USFlag from "$lib/images/flags/us.svg";
+    // import RUFlag from "$lib/images/flags/ru.svg";
 
-    let notifications: Array<Record<string, any>> = Object.values($business.design.updates);
+    let notifications: Array<Record<string, any>> = Object.values(
+        $business.design.updates,
+    );
     let unreadNotifications: Boolean = false;
     $: unreadNotifications = notifications.filter((n) => !n.viewed).length > 0;
 
     let languages: Array<Record<string, string>> = [
-        { name: "Hebrew", flag: ILFlag },
-        { name: "English", flag: USFlag },
+        { name: "Hebrew", flag: ILFlag, locale: "he" },
+        { name: "English", flag: USFlag, locale: "en" },
+        // { name: $_("Russian"), flag: RUFlag },
     ];
 
     let loggedIn: boolean = true;
@@ -43,13 +49,13 @@
     </div>
     <div>
         <div class="dropdown dropdown-left dropdown-bottom">
-            <button class="btn btn-ghost btn-circle">
+            <div role="button" tabindex="0" class="btn btn-ghost btn-circle">
                 <Icon src={GlobeAlt} size="26px" />
-            </button>
+            </div>
             <LanguageBoard {languages} />
         </div>
         <div class="dropdown dropdown-left dropdown-bottom">
-            <button class="btn btn-ghost btn-circle">
+            <div role="button" tabindex="0" class="btn btn-ghost btn-circle">
                 <div class="indicator">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -70,32 +76,38 @@
                         />
                     {/if}
                 </div>
-            </button>
+            </div>
             <NotificationsBoard
                 {notifications}
                 on:notification-opend={(e) => markAsRead(e.detail)}
             />
         </div>
-        <a href="appointments">
-            <div role="button" class="btn btn-ghost btn-circle">
-                <div class="indicator">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        ><path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                        /></svg
-                    >
-                    <span class="badge badge-sm indicator-item">8</span>
-                </div>
+
+        <div
+            role="button"
+            tabindex="0"
+            class="btn btn-ghost btn-circle"
+            on:click={() => goto(`${base}/appointments`)}
+            on:keypress={() => goto(`${base}/appointments`)}
+        >
+            <div class="indicator">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    ><path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                    /></svg
+                >
+                <span class="badge badge-sm indicator-item">8</span>
             </div>
-        </a>
+        </div>
+
         {#if loggedIn}
             <LoggedInProfile {profile} />
         {:else}

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from "svelte-i18n";
     import DateButton from "./../components/DateButton.svelte";
     import {
         Icon,
@@ -14,11 +15,11 @@
     export let duration: string;
 
     let availableHours: Record<string, Array<string>> = {
-        "01-15-2024": ["15:00", "17:00", "20:30"],
-        "01-16-2024": ["10:00", "15:00", "17:00", "20:30"],
-        "01-17-2024": ["15:00", "17:00", "20:30"],
-        "01-18-2024": ["15:00", "17:00", "20:30"],
-        "01-19-2024": [
+        "01-20-2024": ["15:00", "17:00", "20:30"],
+        "01-21-2024": ["10:00", "15:00", "17:00", "20:30"],
+        "01-22-2024": ["15:00", "17:00", "20:30"],
+        "01-23-2024": ["15:00", "17:00", "20:30"],
+        "01-24-2024": [
             "10:25",
             "12:45",
             "13: 30",
@@ -29,7 +30,7 @@
             "22:12",
             "23:35",
         ],
-        "01-20-2024": ["15:00", "17:00", "20:30"],
+        "01-25-2024": ["15:00", "17:00", "20:30"],
     };
 
     let longestDayLength: number = Object.values(availableHours).reduce(
@@ -71,8 +72,8 @@
 
 <section id="date-step" class="w-full flex flex-col items-center gap-2">
     <div class="text-center">
-        <h1 class="text-2xl">Choose Date and Time</h1>
-        <h3 class="text-gray-500">Total Duration: {duration}</h3>
+        <h1 class="text-2xl">{$_("timeOfBooking")}</h1>
+        <h3 class="text-gray-500">{$_("theWholeTime")}: {duration}</h3>
     </div>
     <div class="w-full">
         <div class="divider" />
@@ -84,7 +85,7 @@
                 </button>
             </div>
             <h3>
-                {monthName}
+                {$_(monthName)}
                 {now.getFullYear()}
             </h3>
             <div class="mx-4">

@@ -1,61 +1,33 @@
-import IconData from "$lib/models/general/icon_data";
-import type { Price } from "$lib/models/general/price";
-import { dateToMonthStr } from "$lib/utils/times_utils/times_utils";
-import { PaymentObject } from "../payment_object";
-import type PaymentRequestUser from "./payment_request_user";
+
 
 class PaymentRequestPreview extends PaymentObject {
-  id: string = "";
-  summary: string = "";
-  workerId: string = "";
-  businessId: string = "";
-  businessName: string = "";
-  workerName: string = "";
-  users: { [key: string]: PaymentRequestUser } = {};
-  closeForAll: boolean = true;
-  oneTime: boolean = true;
-  bookingReference?: BookingRefernce;
-  shopIcon: IconData = new IconData(); // Assuming IconData is a class
-
-  constructor(
-    id: string,
-    price: Price,
-    summary: string,
-    businessName: string,
-    shopIcon: IconData,
-    oneTime: boolean,
-    closeForAll: boolean,
-    workerName: string,
-    workerId: string,
-    businessId: string
-  ) {
+  constructor({ id, price, summary = "", businessName, shopIcon, oneTime, closeForAll, workerName, workerId, businessId }) {
     super();
     this.id = id;
-    this.price = price;
     this.summary = summary;
-    this.businessName = businessName;
-    this.shopIcon = shopIcon;
-    this.oneTime = oneTime;
-    this.closeForAll = closeForAll;
-    this.workerName = workerName;
     this.workerId = workerId;
     this.businessId = businessId;
+    this.businessName = businessName;
+    this.workerName = workerName;
+    this.users = {};
+    this.closeForAll = closeForAll;
+    this.oneTime = oneTime;
+    this.bookingReference = null;
+    this.shopIcon = new IconData();
+    super.price = price;
   }
 
   static empty() {
-    return {};
+    return new PaymentRequestPreview({});
   }
 
   get link() {
-    return `https://${SERVER_BASE_URL}/${PAYMENT_REQUEST_END_POINT}`.replaceAll(
-      "PAYMENT_ID",
-      this.id
-    );
+    return `https://${SERVER_BASE_URL}/${PAYMENT_REQUEST_END_POINT}`.replaceAll("PAYMENT_ID", this.id);
   }
 
   get payers() {
-    let count: number = 0;
-    Object.values(this.users).forEach((user) => {
+    let count = 0;
+    Object.values(this.users).forEach(user => {
       count += user.payments.length;
     });
     return count;
@@ -65,8 +37,8 @@ class PaymentRequestPreview extends PaymentObject {
     return dateToMonthStr(this.createdAt);
   }
 
-  toPaymentRequest(workerInfo, businessInfo): PaymentRequest {
-    return (new PaymentRequest({
+  toPaymentRequest(workerInfo, businessInfo):PaymentRequest {
+    return new PaymentRequest({
       id: this.id,
       price: this.price,
       oneTime: this.oneTime,
@@ -75,18 +47,18 @@ class PaymentRequestPreview extends PaymentObject {
       workerInfo: workerInfo,
       businessInfo: businessInfo,
       summary: this.summary,
-      closeForAll: this.closeForAll,
-    }).createdAt = this.createdAt);
+      closeForAll: this.closeForAll
+    }).createdAt = this.createdAt;
   }
 
   get toPaymentRequestNotificationPayload() {
-    return (new PaymentRequestNotificationPayload({
+    return new PaymentRequestNotificationPayload({
       businessName: this.businessName,
       businessId: this.businessId,
       id: this.id,
       date: this.createdAt,
-      workerId: this.workerId,
-    }).shopIcon = this.shopIcon);
+      workerId: this.workerId
+    }).shopIcon = this.shopIcon;
   }
 
   static fromJson(json, newId) {
@@ -101,8 +73,7 @@ class PaymentRequestPreview extends PaymentObject {
       paymentRequestPreview.shopIcon = IconData.fromJson(json["shopIcon"]);
     }
     if (json["createdAt"] != null) {
-      paymentRequestPreview.createdAt =
-        DateTime.tryParse(json["createdAt"]) ?? new Date(0);
+      paymentRequestPreview.createdAt = DateTime.tryParse(json["createdAt"]) ?? new Date(0);
     }
     paymentRequestPreview.oneTime = json["oneTime"] ?? true;
     paymentRequestPreview.businessName = json["businessName"] ?? "";
@@ -112,22 +83,17 @@ class PaymentRequestPreview extends PaymentObject {
     paymentRequestPreview.users = {};
     if (json["users"] != null) {
       Object.entries(json["users"]).forEach(([usersId, userJson]) => {
-        paymentRequestPreview.users[usersId] = PaymentRequestUser.fromJson(
-          userJson,
-          usersId
-        );
+        paymentRequestPreview.users[usersId] = PaymentRequestUser.fromJson(userJson, usersId);
       });
     }
     if (json["bookingReference"] != null) {
-      paymentRequestPreview.bookingReference = BookingRefernce.fromJson(
-        json["bookingReference"]
-      );
+      paymentRequestPreview.bookingReference = BookingRefernce.fromJson(json["bookingReference"]);
     }
     return paymentRequestPreview;
   }
 
   toJson() {
-    const data: { [key in string]: any } = {};
+    const data = {};
     if (this.createdAt != new Date(0)) {
       data["createdAt"] = this.createdAt.toString();
     }
@@ -159,6 +125,8 @@ class PaymentRequestPreview extends PaymentObject {
   }
 
   toString() {
-    return JSON.stringify(this.toJson(), null, "  ");
+    return JSON.stringify(this.toJson(), null, '  ');
   }
 }
+
+

@@ -1,16 +1,17 @@
 <script lang="ts">
+    import { base } from "$app/paths";
+    import { _ } from "svelte-i18n";
     import {
         Icon,
-        InformationCircle,
         XCircle,
         ChevronRight,
-        HandThumbUp,
         PaperClip,
         CreditCard,
         ReceiptRefund,
         Key,
     } from "svelte-hero-icons";
     import InfoCircle from "$lib/components/InfoCircle.svelte";
+    import InfoTooltipButton from "$lib/components/InfoTooltipButton.svelte";
     import { goto } from "$app/navigation";
 
     export let dialog: HTMLDialogElement;
@@ -23,14 +24,8 @@
 >
     <div class="modal-box bg-base-200 pb-10">
         <div class="flex justify-between items-center mb-[1rem]">
-            <button
-                class="tooltip tooltip-right btn btn-ghost"
-                data-tip="Here you can edit your personal information, watch your profile information, businesses you manage or work at and more."
-            >
-                <!-- TODO: fix for mobile devices -->
-                <Icon src={InformationCircle} size="24px" />
-            </button>
-            <h3 class="font-bold text-lg">Purcheses</h3>
+            <InfoTooltipButton message="Placeholder TODO" />
+            <h3 class="font-bold text-lg">{$_("purchases")}</h3>
             <button class="btn btn-ghost" on:click={() => dialog.close()}>
                 <Icon src={XCircle} size="24px" />
             </button>
@@ -40,11 +35,11 @@
             <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
-                    on:click={() => goto("receipts")}
+                    on:click={() => goto(`${base}/invoices`)}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={PaperClip} size="26px" />
-                        Reacites
+                        {$_("invoices")}
                     </div>
                     <div class="flex items-center text-gray-500">
                         <Icon src={ChevronRight} size="18px" />
@@ -53,11 +48,11 @@
                 <div class="divider h-[1px]" />
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
-                    on:click={() => goto("payments")}
+                    on:click={() => goto(`${base}/payments`)}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={CreditCard} size="26px" />
-                        Payments
+                        {$_("payments")}
                     </div>
                     <div class="flex items-center text-gray-500">
                         <Icon src={ChevronRight} size="18px" />
@@ -66,11 +61,11 @@
                 <div class="divider h-[1px]" />
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
-                    on:click={() => goto("payment-requests")}
+                    on:click={() => goto(`${base}/payment-requests`)}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={ReceiptRefund} size="26px" />
-                        Payment Requests
+                        {$_("paymentRequests")}
                     </div>
                     <div class="flex items-center text-gray-500">
                         <Icon src={ChevronRight} size="18px" />
@@ -85,7 +80,7 @@
                 <InfoCircle
                     message="After making a purchase you will be able to save the payment details"
                 />
-                <button id="male" class="flex flex-col items-center">
+                <button class="flex flex-col items-center">
                     <Icon src={CreditCard} size="120px" />
                 </button>
             </section>
@@ -94,11 +89,11 @@
             <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
-                    on:click={() => goto("update-payment-password")}
+                    on:click={() => goto(`${base}/update-payment-password`)}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={Key} size="26px" />
-                        Password - Credit Cards
+                        {$_("creditCardPassowrd")}
                     </div>
                     <div class="flex items-center text-gray-500">
                         <Icon src={ChevronRight} size="18px" />

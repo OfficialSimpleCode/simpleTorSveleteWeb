@@ -1,10 +1,7 @@
 import IconData from "$lib/models/general/icon_data";
-import type { Price } from "$lib/models/general/price";
 import BusinessPayloadData from "$lib/models/notifications/business_data_payload";
 import PaymentRequestNotificationPayload from "$lib/models/notifications/payment_request_notification_payload";
 import InvoiceBusinessInfo from "../invoice/invoice_business_info";
-import { PaymentObject } from "../payment_object";
-import type PaymentRequestUser from "./payment_request_user";
 
 export default class PaymentRequest extends PaymentObject {
   id: string = "";
@@ -109,7 +106,9 @@ export default class PaymentRequest extends PaymentObject {
     return Object.keys(this.userPayments).length > 0;
   }
 
-  static fromJson(json: any, newId: any): PaymentRequest {
+
+
+  static fromJson(json: any, newId: any):PaymentRequest {
     this.id = newId;
     if (json["businessInfo"] != null) {
       this.businessInfo = InvoiceBusinessInfo.fromJson(json["businessInfo"]);
@@ -128,16 +127,11 @@ export default class PaymentRequest extends PaymentObject {
     }
     this.multi = json["multi"] ?? false;
     this.userDecline = json["userDecline"] ?? false;
-    if (
-      json["userPayments"] != null &&
-      typeof json["userPayments"] === "object"
-    ) {
-      Object.entries(json["userPayments"]).forEach(
-        ([transactionId, dateStr]) => {
-          this.userPayments[transactionId] =
-            dateStr != null ? new Date(dateStr) : new Date(0);
-        }
-      );
+    if (json["userPayments"] != null && typeof json["userPayments"] === "object") {
+      Object.entries(json["userPayments"]).forEach(([transactionId, dateStr]) => {
+        this.userPayments[transactionId] =
+          dateStr != null ? new Date(dateStr) : new Date(0);
+      });
     }
     this.summary = json["summary"] ?? "";
     if (json["createdAt"] != null) {
@@ -149,10 +143,7 @@ export default class PaymentRequest extends PaymentObject {
 
   toJson(): any {
     const data: any = {};
-    if (
-      this.createdAt != null &&
-      this.createdAt.getTime() !== new Date(0).getTime()
-    ) {
+    if (this.createdAt != null && this.createdAt.getTime() !== new Date(0).getTime()) {
       data["createdAt"] = this.createdAt.toISOString();
     }
     if (!this.oneTime) {
@@ -190,6 +181,8 @@ export default class PaymentRequest extends PaymentObject {
   }
 
   toString(): string {
-    return JSON.stringify(this, null, "  ");
+    return JSON.stringify(this, null, '  ');
   }
 }
+
+

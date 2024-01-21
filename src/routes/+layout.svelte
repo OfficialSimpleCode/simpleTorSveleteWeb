@@ -1,4 +1,5 @@
 <script lang="ts">
+    import localization from "$lib/language/loader"; // Do not remove
     import ToastManager from "$lib/components/ToastManager.svelte";
     import "../app.css";
 

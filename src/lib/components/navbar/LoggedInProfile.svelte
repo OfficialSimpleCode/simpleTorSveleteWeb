@@ -1,6 +1,10 @@
 <script lang="ts">
-    import { pushState } from "$app/navigation";
+    import { base } from "$app/paths";
+    import { goto, pushState } from "$app/navigation";
     import { page } from "$app/stores";
+
+    import { _ } from "svelte-i18n";
+    
     import ProfileDialog from "./ProfileDialog.svelte";
     import PurchesesDialog from "./PurchesesDialog.svelte";
 
@@ -13,22 +17,20 @@
         pushState("", {
             showModal: true,
         });
-        setTimeout(() => profileDialog.showModal(), 100);
+        setTimeout(() => profileDialog.showModal(), 200);
     }
 
     function openPurchesesDialog() {
         pushState("", {
             showModal: true,
         });
-        setTimeout(() => purchasesDialog.showModal(), 100);
+        setTimeout(() => purchasesDialog.showModal(), 200);
     }
 </script>
 
 <!-- Dialog -->
 {#if $page.state.showModal}
     <ProfileDialog bind:dialog={profileDialog} bind:profile />
-{/if}
-{#if $page.state.showModal}
     <PurchesesDialog bind:dialog={purchasesDialog} />
 {/if}
 
@@ -45,11 +47,34 @@
         class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
     >
         <li>
-            <button on:click={openProfileDialog}> Profile </button>
+            <div
+                role="button"
+                tabindex="0"
+                on:click={openProfileDialog}
+                on:keypress={openProfileDialog}
+            >
+                {$_("profile")}
+            </div>
         </li>
         <li>
-            <button on:click={openPurchesesDialog}> Purchases </button>
+            <div
+                role="button"
+                tabindex="0"
+                on:click={openPurchesesDialog}
+                on:keypress={openPurchesesDialog}
+            >
+                {$_("purchases")}
+            </div>
         </li>
-        <li><a href="appointments">My Appointments</a></li>
+        <li>
+            <div
+                role="button"
+                tabindex="0"
+                on:click={() => goto(`${base}/appointments`)}
+                on:keypress={() => goto(`${base}/appointments`)}
+            >
+                {$_("myBookings")}
+            </div>
+        </li>
     </ul>
 </div>

@@ -89,8 +89,8 @@ export default class RecurrenceEvent {
     freqRecurrence = FreqRecurrence.days,
     exceptionDates = new Set(),
   }: {
-    start?: Date;
     endOption?: RecurrenceEventEnd;
+    start?: Date;
     endDate?: Date;
     repeats?: number;
     weekDays?: Set<number>;

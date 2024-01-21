@@ -1,9 +1,4 @@
-import { hypValidCurrencies } from "$lib/consts/hyp";
-import { defaultCurrency } from "$lib/models/general/currency_model";
-import type CustomerData from "$lib/models/general/customer_data";
-import { Price } from "$lib/models/general/price";
 import InvoiceBusinessInfo from "./invoice_business_info";
-import type PaymentsMethods from "./payments_methods";
 
 export default class Invoice extends PaymentObject {
   customerData: CustomerData = new CustomerData();
@@ -12,7 +7,7 @@ export default class Invoice extends PaymentObject {
   businessInfo: InvoiceBusinessInfo = new InvoiceBusinessInfo();
   invoiceId: string = '';
   signature?: string;
-  items: Map<number, InvoiceItem> = new Map();
+  items: Record<number, InvoiceItem> = {};
   paymentsMethods: PaymentsMethods = new PaymentsMethods();
 
   constructor({
@@ -28,7 +23,7 @@ export default class Invoice extends PaymentObject {
     customerData: CustomerData;
     createdAt: Date;
     paymentsMethods: PaymentsMethods;
-    items: Map<number, InvoiceItem>;
+    items: Record<number, InvoiceItem>;
     businessInfo: InvoiceBusinessInfo;
     workerInfo: InvoiceWorkerInfo;
     invoiceNumber?: number;
