@@ -9,7 +9,7 @@
     import InsagramLogo from "$lib/images/instagram.svg";
 
     let socialLinks: Object = {
-        call: $business.shopPhone,
+        call: `tel:${$business.shopPhone}`,
         instagram: $business.instagramAccount,
         whatsapp: `whatsapp://send?phone=${$business.shopPhone}`,
         maps: `https://www.google.com/maps/search/?api=1&query=${$business.adress}`,
