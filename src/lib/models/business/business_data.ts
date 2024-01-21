@@ -41,7 +41,7 @@ export class BusinessData {
     );
   }
 
-  setBusinessData(ref: firebase.database.Reference): void {
+  setBusinessData(ref: DataSnapshot): void {
     this.messagesCounter =
       parseInt(ref.child("messagesCounter").val().toString()) || 0;
     this.paymentRequestCounter =
