@@ -12,7 +12,7 @@
 
 <main class="h-full w-full">
     <div
-        class="flex flex-row items-center justify-between w-full min-h-16 px-4 box-border"
+        class="flex rtl:flex-row-reverse flex-row items-center justify-between w-full min-h-16 px-4 box-border"
     >
         <span class="w-[60px]"></span>
         <h1 class="font-bold">{product.name}</h1>
@@ -32,7 +32,7 @@
                 >{product.price}</span
             >
         </div>
-        <div class="max-h-[50%]">
+        <div class="max-h-[50%] p-2 box-border">
             <h2 class="text-xl">{product.description}</h2>
         </div>
     </div>
