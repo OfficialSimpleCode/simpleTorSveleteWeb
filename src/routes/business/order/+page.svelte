@@ -1,5 +1,7 @@
 <script lang="ts">
     import { _ } from "svelte-i18n";
+    import { workers } from "$lib/stores/Workers";
+    import type WorkerModel from "$lib/models/worker/worker_model";
     import { ShowToast } from "$lib/stores/ToastManager";
     import Navbar from "$lib/components/navbar/Navbar.svelte";
 
@@ -13,27 +15,8 @@
     let steps: string[] = ["worker", "treatment", "dateAndTime", "confirmNow"];
     let currentStep: number = 1;
 
-    let employees: Array<Record<string, string>> = [
-        {
-            name: "Amit",
-            role: "Manager",
-            startDate: "20-03-2020",
-            image: "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
-        },
-        {
-            name: "Ron",
-            role: "Worker",
-            startDate: "25-11-2018",
-            image: "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
-        },
-        {
-            name: "Mosh",
-            role: "Worker",
-            startDate: "03-06-2021",
-            image: "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
-        },
-    ];
-    let selectedEmployee: Record<string, string>;
+    let employees: Array<WorkerModel> = Object.values($workers);
+    let selectedEmployee: WorkerModel;
     let selectedDateAndTime: Record<string, string> = {
         date: "05-11-2025",
         time: "12:56",
@@ -92,7 +75,7 @@
         currentStep = stepNumber;
     }
 
-    function employeeSelected(employee: Record<string, string>) {
+    function employeeSelected(employee: WorkerModel) {
         selectedEmployee = employee;
         currentStep += 1;
     }
