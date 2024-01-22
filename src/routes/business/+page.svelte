@@ -11,6 +11,7 @@
     import { numberToHex, hexToXyY } from "$lib/utils/colors";
     import { business } from "$lib/stores/Business.js";
     import { workers } from "$lib/stores/Workers.js";
+    import type { ProductModel } from "$lib/models/business/ProductModel";
 
     import Navbar from "$lib/components/navbar/Navbar.svelte";
     import Avatar from "$lib/components/Avatar.svelte";
@@ -39,6 +40,7 @@
             (result, currentMap) => new Map([...result, ...currentMap]),
             new Map(),
         );
+    let products: Map<string, ProductModel> = $business.design.products;
 
     onMount(() => {
         // console.log($business);
@@ -170,6 +172,40 @@
                                 alt="gym"
                             />
                         </button>
+                    {/each}
+                </div>
+
+                <div
+                    class="w-full self-center mt-10 flex items-center justify-center gap-6 gap-y-6 flex-wrap"
+                >
+                    {#each products as [productId, product]}
+                        <div
+                            class="card card-compact w-72 bg-base-100 shadow-xl"
+                        >
+                            <figure>
+                                <img
+                                    src={product.imageUrl}
+                                    alt={product.name}
+                                />
+                            </figure>
+                            <div class="card-body">
+                                <h2 class="card-title">{product.name}</h2>
+                                <p>
+                                    {$_("price")}: {product.price}
+                                </p>
+                                <div class="card-actions justify-end">
+                                    <button
+                                        class="btn btn-primary"
+                                        on:click={() =>
+                                            goto(
+                                                `${base}/business/product/${productId}`,
+                                            )}
+                                    >
+                                        {$_("details")}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     {/each}
                 </div>
             </div>
