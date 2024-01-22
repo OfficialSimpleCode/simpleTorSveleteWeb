@@ -44,7 +44,9 @@
 
         <!-- QR card -->
         <div class="h-[60%] w-[80%] bg-base-100 rounded-lg mx-auto">
-            <div class="relative left-[calc(50%-2.5rem)] top-[-2.5rem] w-min">
+            <div
+                class="relative rtl:right-[calc(50%-3rem)] ltr:left-[calc(50%-3rem)] top-[-2.5rem] w-min"
+            >
                 <Avatar
                     small={true}
                     ring={false}
