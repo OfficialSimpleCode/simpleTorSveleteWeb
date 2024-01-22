@@ -19,11 +19,7 @@
     import ShareDialog from "./components/ShareDialog.svelte";
     import SocialLinks from "./components/SocialLinks.svelte";
 
-    /** @type {import('./$types').PageData} */
-    export let data;
-
     let loggedIn: boolean = true;
-    let name: string = $business.shopName;
     let geo: Record<string, string> = {
         title: $business.adress,
         link: "https://blabla.com",
@@ -100,7 +96,7 @@
 
 <!-- Dialogs -->
 {#if $page.state.showModal}
-    <ShareDialog bind:dialog={shareDialog} {name} {geo} />
+    <ShareDialog bind:dialog={shareDialog} name={$business.shopName} {geo} />
     <ImageDisplayDialog
         bind:dialog={imageDisplayDialog}
         bind:storyId={selectedStoryId}
