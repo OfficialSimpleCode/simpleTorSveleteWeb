@@ -50,6 +50,24 @@ export async function checkTime(lookupAddress: string): Promise<Error | null> {
   }
 }
 
+export function setEquals<T>(a: Set<T> | null, b: Set<T> | null): boolean {
+  if (a === null) {
+    return b === null;
+  }
+  if (b === null || a.size !== b.size) {
+    return false;
+  }
+  if (a === b) {
+    return true;
+  }
+  for (const value of a) {
+    if (!b.has(value)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export async function isNetworkConnected() {
   return true;
 }

@@ -1696,6 +1696,13 @@ export function convertStringToTime(times: string[]): Date[] {
   return convertedTimes;
 }
 
+export function getStartOfWeek(date: Date): Date {
+  const dayOfWeek = date.getDay();
+  const diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Adjust when the day is Sunday
+
+  return new Date(date.setDate(diff));
+}
+
 /**
  * Get `start` and `end` Return the end date of
  * the event that overlapping with this range

@@ -1,3 +1,5 @@
+import { Duration } from "$lib/models/core/duration";
+
 function durationStrikings(
   start: Date,
   end: Date,
@@ -29,4 +31,8 @@ function durationInClockFormat(
     time = `${twoDigits(Math.floor(duration.hours))}:${time}`;
   }
   return time;
+}
+
+export function addDuration(date: Date, duration: Duration): Date {
+  return new Date(date.getTime() + duration.inMilliseconds);
 }
