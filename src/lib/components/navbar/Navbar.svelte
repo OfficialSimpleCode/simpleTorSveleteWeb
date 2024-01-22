@@ -40,7 +40,10 @@
     }
 </script>
 
-<div class="navbar bg-base-100 z-20 gap-8 justify-between">
+<div
+    class="navbar bg-base-100 z-20 gap-8 justify-between"
+    style="direction: ltr;"
+>
     <div>
         <a
             href="{base}/business?BusinessId={$business.businessId}"
