@@ -3,13 +3,29 @@ import {
   BookingStatuses,
   NotificationType,
   OrderingOptions,
+  bookingReminderTypeFromStr,
+  bookingReminderTypeToStr,
+  bookingsMassage,
+  bookingsMassageKeys,
+  notificationTypeFromStr,
+  orderingOptionsFromStr,
+  orderingOptionsToStr,
 } from "$lib/consts/booking";
-import { Gender } from "$lib/consts/gender";
-import { NotificationOption } from "$lib/consts/notification";
-import type BookingInvoiceData from "../booking/booking_invoice_data";
-import type BookingTransactionModel from "../booking/booking_transaction";
+import { Gender, genderFromStr } from "$lib/consts/gender";
+import {
+  NotificationOption,
+  notificationOptionFromStr,
+} from "$lib/consts/notification";
+import { EventFilterType } from "$lib/consts/worker_schedule";
+import BusinessInitializer from "$lib/initializers/business_initializer";
+import UserInitializer from "$lib/initializers/user_initializer";
+import { phoneToDocId } from "$lib/utils/user";
+import BookingInvoiceData from "../booking/booking_invoice_data";
+import type Booking from "../booking/booking_model";
+import BookingTransactionModel from "../booking/booking_transaction";
 import type CustomerData from "../general/customer_data";
-import type Debt from "../schedule/debt";
+import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
+import Debt from "../schedule/debt";
 // import { v4 as uuid } from "uuid";
 import type WorkerModel from "../worker/worker_model";
 
@@ -81,7 +97,7 @@ export default class MultiBookingUser {
     this.signOnDeviceCalendar = addToCalendar;
     this.workerNotificationOption = worker.notifications.notificationOption;
     this.workerRemindersTypes = new Map(worker.notifications.remindersTypes);
-    worker.notifications.remindersTypes.forEach((type, minutes) => {
+    worker.notifications.remindersTypes.forEach((minutes, type) => {
       if (bookingDate.getTime() < Date.now()) {
         return;
       }
@@ -114,13 +130,15 @@ export default class MultiBookingUser {
 
     this.isUserExist = true;
     if (!workerAction) {
-      this.userFcms = new Set(UserInitializer().user.userPublicData.fcmsTokens);
-      this.isVerifiedPhone = UserInitializer().user.isVerifiedPhone;
-      const clientAt = UserInitializer().user.userPublicData.clientAt;
+      this.userFcms = new Set(
+        UserInitializer.GI().user.userPublicData.fcmsTokens
+      );
+      this.isVerifiedPhone = UserInitializer.GI().user.isVerifiedPhone;
+      const clientAt = UserInitializer.GI().user.userPublicData.clientAt;
       this.addToClientAt =
-        !clientAt.has(BusinessInitializer().business.businessId) ||
+        !clientAt.has(BusinessInitializer.GI().business.businessId) ||
         !clientAt
-          .get(BusinessInitializer().business.businessId)!
+          .get(BusinessInitializer.GI().business.businessId)!
           .has(worker.id);
     } else {
       const customer = worker.customers.customersData.get(this.customerId);
@@ -149,7 +167,7 @@ export default class MultiBookingUser {
 
   get isDepositTransaction(): boolean {
     let resp = false;
-    this.transactions.forEach((_, transaction) => {
+    this.transactions.forEach((transaction, _) => {
       resp = transaction.type === PaymentTypes.deposit;
     });
     return resp;
@@ -157,7 +175,7 @@ export default class MultiBookingUser {
 
   get transactionsTotalPaymentAmount(): number {
     let amount = 0;
-    this.transactions.forEach((_, transaction) => {
+    this.transactions.forEach((transaction, _) => {
       if (transaction.type === PaymentTypes.payment) {
         amount += transaction.amount;
       }
@@ -173,7 +191,7 @@ export default class MultiBookingUser {
 
   get totalDebtAmount(): number {
     let amount = 0;
-    this.debts.forEach((key, debt) => {
+    this.debts.forEach((debt, key) => {
       amount += debt.amount;
     });
     return amount;
@@ -200,7 +218,7 @@ export default class MultiBookingUser {
 
   get transactionsTotalDepositAmount(): number {
     let amount = 0;
-    this.transactions.forEach((_, transaction) => {
+    this.transactions.forEach((transaction, _) => {
       if (transaction.type === PaymentTypes.deposit) {
         amount += transaction.amount;
       }
@@ -221,19 +239,19 @@ export default class MultiBookingUser {
   }
 
   get toPaymentRequestUser(): PaymentRequestUser {
-    return {
+    return new PaymentRequestUser({
       name: this.customerName,
       userId: this.customerId,
       gender: this.userGender,
       isExist: this.isUserExist,
       isVerifiedPhone: this.isVerifiedPhone,
       phone: this.customerPhone,
-    };
+    });
   }
 
   get toBooking(): Booking {
     const newInvoices: Map<string, BookingInvoiceData> = new Map();
-    this.invoices.forEach((id, invoice) => {
+    this.invoices.forEach((invoice, id) => {
       newInvoices.set(id, BookingInvoiceData.fromBookingInvoiceData(invoice));
     });
     const newTransactions: Map<string, BookingTransactionModel> = new Map();
@@ -294,12 +312,14 @@ export default class MultiBookingUser {
     userBookingId: string,
     workerId: string
   ): MultiBookingUser {
-    const multiBookingUser = new MultiBookingUser({
-      customerName: json["customerName"] || "",
-      customerId: json["customerId"] || "",
-      customerPhone: json["customerPhone"] || this.customerId,
-      needCancel: json["needCancel"] || false,
-      remindersTypes: json["remindersTypes"]
+    const multiBookingUser = new MultiBookingUser();
+
+    (multiBookingUser.customerName = json["customerName"] || ""),
+      (multiBookingUser.customerId = json["customerId"] || ""),
+      (multiBookingUser.customerPhone =
+        json["customerPhone"] || this.customerId),
+      (multiBookingUser.needCancel = json["needCancel"] || false),
+      (multiBookingUser.remindersTypes = json["remindersTypes"]
         ? new Map(
             Object.entries(json["remindersTypes"]).map(([type, minutes]) => [
               bookingReminderTypeFromStr[type],
@@ -308,65 +328,71 @@ export default class MultiBookingUser {
           )
         : new Map([
             [BookingReminderType.regular, json["minutesBeforeNotify"] || 60],
-          ]),
-      workerRemindersTypes: json["workerRemindersTypes"]
+          ])),
+      (multiBookingUser.workerRemindersTypes = json["workerRemindersTypes"]
         ? new Map(
             Object.entries(json["workerRemindersTypes"]).map(
               ([type, minutes]) => [bookingReminderTypeFromStr[type], minutes]
             )
           )
-        : new Map(),
-      signOnDeviceCalendar: json["signOnDeviceCalendar"] || false,
-      userDeleted: json["userDeleted"] || false,
-      isVerifiedPhone: json["isVerifiedPhone"] || false,
-      clientMail: json["clientMail"] || "",
-      clientNote: json["clientNote"] || "",
-      userBookingId: userBookingId,
-      orderingOptions:
-        orderingOptionsFromStr[json["orderingOptions"]] || OrderingOptions.app,
-      debts: json["debts"]
+        : new Map()),
+      (multiBookingUser.signOnDeviceCalendar =
+        json["signOnDeviceCalendar"] || false),
+      (multiBookingUser.userDeleted = json["userDeleted"] || false),
+      (multiBookingUser.isVerifiedPhone = json["isVerifiedPhone"] || false),
+      (multiBookingUser.clientMail = json["clientMail"] || ""),
+      (multiBookingUser.clientNote = json["clientNote"] || ""),
+      (multiBookingUser.userBookingId = userBookingId),
+      (multiBookingUser.orderingOptions =
+        orderingOptionsFromStr[json["orderingOptions"]] || OrderingOptions.app),
+      (multiBookingUser.debts = json["debts"]
         ? new Map(
             Object.entries(json["debts"]).map(([id, debtJson]) => [
               id,
               Debt.fromJson(debtJson, id),
             ])
           )
-        : new Map(),
-      finishInvoices: json["finishInvoices"] || false,
-      cancelDate: json["cancelDate"] ? new Date(json["cancelDate"]) : null,
-      wasWaiting: json["wasWaiting"] || false,
-      isUserExist: json["isUserExist"] || true,
-      lastTimeNotifyOnDebt: json["lastTimeNotifyOnDebt"]
+        : new Map()),
+      (multiBookingUser.finishInvoices = json["finishInvoices"] || false),
+      (multiBookingUser.cancelDate = json["cancelDate"]
+        ? new Date(json["cancelDate"])
+        : null),
+      (multiBookingUser.wasWaiting = json["wasWaiting"] || false),
+      (multiBookingUser.isUserExist = json["isUserExist"] || true),
+      (multiBookingUser.lastTimeNotifyOnDebt = json["lastTimeNotifyOnDebt"]
         ? new Date(json["lastTimeNotifyOnDebt"])
-        : null,
-      invoices: json["invoices"]
+        : null),
+      (multiBookingUser.invoices = json["invoices"]
         ? new Map(
             Object.entries(json["invoices"]).map(([id, invoiceJson]) => [
               id,
               BookingInvoiceData.fromJson(invoiceJson, id, workerId),
             ])
           )
-        : new Map(),
-      userGender: genderFromStr[json["userGender"]] || Gender.anonymous,
-      status:
+        : new Map()),
+      (multiBookingUser.userGender =
+        genderFromStr[json["userGender"]] || Gender.anonymous),
+      (multiBookingUser.status =
         bookingsMassageKeys[json["status"].toString()] ||
-        BookingStatuses.approved,
-      confirmedArrival: json["confirmedArrival"] || false,
-      showAdressAlert: json["showAdressAlert"] || false,
-      showPhoneAlert: json["showPhoneAlert"] || false,
-      notificationType:
+        BookingStatuses.approved),
+      (multiBookingUser.confirmedArrival = json["confirmedArrival"] || false),
+      (multiBookingUser.showAdressAlert = json["showAdressAlert"] || false),
+      (multiBookingUser.showPhoneAlert = json["showPhoneAlert"] || false),
+      (multiBookingUser.notificationType =
         notificationTypeFromStr[json["notificationType"]] ||
-        NotificationType.none,
-      workerNotificationOption:
+        NotificationType.none),
+      (multiBookingUser.workerNotificationOption =
         notificationOptionFromStr[json["workerNotificationOption"]] ||
-        NotificationOption.PushOrSMS,
-      userFcms: json["userFcms"]
+        NotificationOption.PushOrSMS),
+      (multiBookingUser.userFcms = json["userFcms"]
         ? new Set(json["userFcms"])
         : json["deviceFCM"] && json["deviceFCM"] !== ""
         ? new Set([json["deviceFCM"]])
-        : new Set(),
-      createdAt: json["createdAt"] ? new Date(json["createdAt"]) : new Date(0),
-      transactions: json["transactions"]
+        : new Set()),
+      (multiBookingUser.createdAt = json["createdAt"]
+        ? new Date(json["createdAt"])
+        : new Date(0)),
+      (multiBookingUser.transactions = json["transactions"]
         ? new Map(
             Object.entries(json["transactions"]).map(
               ([id, transactionJson]) => [
@@ -375,8 +401,7 @@ export default class MultiBookingUser {
               ]
             )
           )
-        : new Map(),
-    });
+        : new Map());
 
     return multiBookingUser;
   }

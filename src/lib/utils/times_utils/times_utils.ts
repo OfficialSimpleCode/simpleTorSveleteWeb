@@ -3,6 +3,7 @@ import { format, parse } from "date-fns";
 import { logger } from "$lib/consts/application_general.js";
 import { WindowSpaces } from "$lib/consts/worker.js";
 import type Booking from "$lib/models/booking/booking_model.js";
+import Treatment from "$lib/models/general/treatment_model.js";
 import type WorkerModel from "$lib/models/worker/worker_model.js";
 import { isHoliday } from "../dates_utils.js";
 import { translate } from "../string_utilitis.js";
@@ -55,7 +56,7 @@ export function generateTimeSegmentsMap(
   let lastTime: Date = startTime;
   const treatment: Treatment = Treatment.fromTreatmentsMap(booking.treatments);
 
-  treatment.times.forEach((timeIndex, timeData) => {
+  treatment.times.forEach((timeData, timeIndex) => {
     // Adding the break before the treatment
     lastTime = new Date(lastTime.getTime() + timeData.breakMinutes * 60000);
 
