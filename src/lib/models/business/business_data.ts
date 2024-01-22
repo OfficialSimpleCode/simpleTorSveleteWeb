@@ -2,7 +2,9 @@ import {
   messagesForNewBusiness,
   paymentRequsetForNewBusiness,
 } from "$lib/consts/limitation";
+
 import type { DataSnapshot } from "firebase/database";
+import type { Unsubscribe } from "firebase/firestore";
 
 export const messagesLimits: { [key: string]: number } = {
   simpletor_golden_business_month_1: 1000,
@@ -21,6 +23,7 @@ export const paymentRequestLimit: { [key: string]: number } = {
 export class BusinessData {
   messagesCounter: number = 0;
   paymentRequestCounter: number = 0;
+  listener?: Unsubscribe;
 
   constructor(messagesCounter: number = 0, paymentRequestCounter: number = 0) {
     this.messagesCounter = messagesCounter;

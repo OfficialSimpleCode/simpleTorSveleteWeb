@@ -1,19 +1,26 @@
-export function parseAppLimit(json: Record<string, any>): void {
-  Object.entries(json).forEach(([subType, limits]) => {
-    if (appLimits[subTypeFromStr[subType]] === undefined) {
-      return;
-    }
-    Object.entries(limits as Record<string, any>).forEach(
-      ([limitKey, value]) => {
-        const key = limitationFromStr[limitKey];
-        if (key === undefined) {
-          return;
-        }
+import { GeneralData } from "$lib/helpers/general_data";
 
-        appLimits[subTypeFromStr[subType]]![key] = value;
-      }
-    );
-  });
+// export function parseAppLimit(json: Record<string, any>): void {
+//   Object.entries(json).forEach(([subType, limits]) => {
+//     if (appLimits[subTypeFromStr[subType]] === undefined) {
+//       return;
+//     }
+//     Object.entries(limits as Record<string, any>).forEach(
+//       ([limitKey, value]) => {
+//         const key = limitationFromStr[limitKey];
+//         if (key === undefined) {
+//           return;
+//         }
+
+//         appLimits[subTypeFromStr[subType]]![key] = value;
+//       }
+//     );
+//   });
+// }
+export function isManager(userId: string): boolean {
+  return userId.length < 20
+    ? GeneralData.currentBusinesssId.startsWith(userId.substring(1))
+    : GeneralData.currentBusinesssId.startsWith(userId);
 }
 
 export function isLight(color: number) {

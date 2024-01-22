@@ -1,10 +1,16 @@
 import { logger } from "$lib/consts/application_general";
 import { buisnessCollection, workersCollection } from "$lib/consts/db";
+import { SubType } from "$lib/consts/purchases";
+import AppErrorsHelper from "$lib/helpers/app_errors";
+import DbPathesHelper from "$lib/helpers/db_paths_helper";
 import GeneralRepo from "$lib/helpers/general/general_repo";
 import { GeneralData } from "$lib/helpers/general_data";
+import ThemeHelper from "$lib/helpers/theme_helper";
 import { BusinessDesign } from "$lib/models/business/business_design";
 import BusinessModel from "$lib/models/business/business_model";
 import WorkerModel from "$lib/models/worker/worker_model";
+import { Errors } from "$lib/services/errors/messages";
+import { subTypeFromProductId } from "$lib/utils/subscription_utils";
 import UserInitializer from "./user_initializer";
 
 export default class BusinessInitializer {
@@ -31,6 +37,8 @@ export default class BusinessInitializer {
 
   businessIcon: string = "";
 
+  businessSubtype: SubType = SubType.trial;
+
   async initSettings(
     businessId: string,
     { fromLoading = false }: { fromLoading?: boolean } = {}
@@ -50,28 +58,26 @@ export default class BusinessInitializer {
       //   UserInitializer.GI().currentBusiness = businessId;
       //makeLongTimeNoSeeAlert();
       // --------------------------------------
-
+      console.log("222222222222223333333333333");
       const resps = await Promise.all([
         this._loadSettingsDoc(businessId),
         this._loadBusinessWorkers(businessId),
       ]);
 
+      console.log("22222222222222222");
+
       //   // Update the subtype before continuing to the rest of the loading
-      //   businessSubtype = subTypeFromProductId(
-      //     this.business.productId,
-      //     businessId
-      //   );
+      this.businessSubtype = subTypeFromProductId(
+        this.business.productId,
+        businessId
+      );
 
-      //   if (resps.length > 0 && resps[0] === false) {
-      //     return false;
-      //   }
+      if (resps.length > 0 && resps[0] === false) {
+        return false;
+      }
 
-      //   // Make sure the business has a subscription and the current user is connected
-      //   // before listening to messages
-      //   // if (true || settings.productId != '') {
-      //   // Make the business data listener from the real-time database
-      //   makeBusinessDataListener();
-      //   // }
+      // Make the business data listener from the real-time database
+      //this.makeBusinessDataListener();
 
       //   // Can't initialize user data; the user may not be loaded if it's from loading
       //   if (!fromLoading && UserInitializer.GI().isConnected) {
@@ -79,13 +85,10 @@ export default class BusinessInitializer {
       //     initialBusinessDataOnUser(businessId);
       //   }
 
-      //   // Update the business last time connected only for managers
-      //   this._updateLastTimeConnect();
-
       return true;
     } catch (e) {
-      //   this.emptyBusinessData();
-      //   logger.e(`Error while initializing settings --> ${e}`);
+      //this.emptyBusinessData();
+      logger.error(`Error while initializing settings --> ${e}`);
       return false;
     }
   }
@@ -98,6 +101,7 @@ export default class BusinessInitializer {
       fromSearch = false,
     }: { fromLoading?: boolean; fromSearch?: boolean } = {}
   ): Promise<boolean> {
+    console.log("1111111111111111111");
     // Clean business data
     // ScreenController.getInstance().initOffsets();
     // BusinessUIController.getInstance().changingPhotoIndex = 0;
@@ -111,6 +115,7 @@ export default class BusinessInitializer {
       const resp = await this.initSettings(businessId, {
         fromLoading,
       });
+      console.log("33333333333333333322222222222222222");
 
       //   if (!resp) {
       //     BusinessInitializer.GI().emptyBusinessData();
@@ -133,18 +138,10 @@ export default class BusinessInitializer {
       //     return fromLoading;
       //   }
 
-      //   if (UserInitializer.GI().getPermission() === 1) {
-      //     await WorkerInitializer.getInstance().setUpWorker({ workerId: userId });
-      //   }
-
-      //   if (UserInitializer.GI().getPermission() === 2) {
-      //     await WorkerInitializer.getInstance().setUpManager();
-      //   }
-
-      //   // We don't want to initialize the business when the theme is changed
-      //   if (!ThemeHelper.getInstance().themeCauseMainBuilt) {
-      //     BusinessUIController.getInstance().businessInit = false;
-      //   }
+      // We don't want to initialize the business when the theme is changed
+      if (!ThemeHelper.GI().themeCauseMainBuilt) {
+        // BusinessUIController.getInstance().businessInit = false;
+      }
 
       // Save the last business - no need to await
       // BusinessInitializer.GI().updateLastBusiness(businessId);
@@ -177,6 +174,7 @@ export default class BusinessInitializer {
 
   async _loadSettingsDoc(businessId: string): Promise<boolean> {
     try {
+      console.log("eeeeeeedddddddddddddd");
       const doc = await this.generalRepo.getDocRepo({
         path: buisnessCollection,
         docId: businessId,
@@ -250,5 +248,18 @@ export default class BusinessInitializer {
 
       return true;
     }
+  }
+  async makeBusinessDataListener() {
+    const businessDataPath = DbPathesHelper.GI().getBusinessDataPath(
+      GeneralData.currentBusinesssId
+    );
+    this.business.businessData.listener = this.generalRepo.listenToChild({
+      childPath: businessDataPath,
+      callback: (snapshot) => {
+        if (snapshot.exists()) {
+          this.business.businessData.setBusinessData(snapshot.val());
+        }
+      },
+    });
   }
 }

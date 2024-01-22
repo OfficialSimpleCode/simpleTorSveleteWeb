@@ -8,6 +8,7 @@
 import { logger } from "$lib/consts/application_general";
 import { envKey } from "$lib/consts/db";
 import { firebaseConfig } from "$lib/firebase_config";
+import AppErrorsHelper from "$lib/helpers/app_errors";
 import { getApp, getApps, initializeApp } from "firebase/app";
 import {
   DocumentSnapshot,

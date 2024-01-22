@@ -1,4 +1,4 @@
-enum BuisnessLimitations {
+export enum BuisnessLimitations {
   bookingCount,
   changingPhotos,
   storyPhotos,
@@ -11,21 +11,21 @@ enum BuisnessLimitations {
   themes,
 }
 
-const limitationToStr: Record<BuisnessLimitations, string> = {
-  [BuisnessLimitations.bookingCount]: "bookingCount",
-  [BuisnessLimitations.changingPhotos]: "changingPhotos",
-  [BuisnessLimitations.storyPhotos]: "storyPhotos",
-  [BuisnessLimitations.products]: "products",
-  [BuisnessLimitations.expiredDataDeleteHeighsetDays]:
-    "expiredDataDeleteHeighsetDays",
-  [BuisnessLimitations.expiredDataDeleteLowestDays]:
-    "expiredDataDeleteLowestDays",
-  [BuisnessLimitations.clientPerWorker]: "clientPerWorker",
-  [BuisnessLimitations.workerDataBackInDays]: "workerDataBackInDays",
-  [BuisnessLimitations.themes]: "themes",
-};
+// export const limitationToStr: Record<BuisnessLimitations, string> = {
+//   [BuisnessLimitations.bookingCount]: "bookingCount",
+//   [BuisnessLimitations.changingPhotos]: "changingPhotos",
+//   [BuisnessLimitations.storyPhotos]: "storyPhotos",
+//   [BuisnessLimitations.products]: "products",
+//   [BuisnessLimitations.expiredDataDeleteHeighsetDays]:
+//     "expiredDataDeleteHeighsetDays",
+//   [BuisnessLimitations.expiredDataDeleteLowestDays]:
+//     "expiredDataDeleteLowestDays",
+//   [BuisnessLimitations.clientPerWorker]: "clientPerWorker",
+//   [BuisnessLimitations.workerDataBackInDays]: "workerDataBackInDays",
+//   [BuisnessLimitations.themes]: "themes",
+// };
 
-const limitationFromStr: Record<string, BuisnessLimitations> = {
+export const limitationFromStr: Record<string, BuisnessLimitations> = {
   expiredDataDeleteLowestDays: BuisnessLimitations.expiredDataDeleteLowestDays,
   expiredDataDeleteHeighsetDays:
     BuisnessLimitations.expiredDataDeleteHeighsetDays,
@@ -40,35 +40,7 @@ const limitationFromStr: Record<string, BuisnessLimitations> = {
 
 // changed by the remote config during runtime
 
-type SubTypeLimits = Record<BuisnessLimitations, number>;
-
-const appLimits: Record<SubType, SubTypeLimits> = {
-  [SubType.basic]: {
-    [BuisnessLimitations.changingPhotos]: 1,
-    [BuisnessLimitations.products]: 0,
-    [BuisnessLimitations.storyPhotos]: 3,
-  },
-  [SubType.landingPage]: {
-    [BuisnessLimitations.changingPhotos]: 3,
-    [BuisnessLimitations.products]: 3,
-    [BuisnessLimitations.storyPhotos]: 4,
-  },
-  [SubType.advanced]: {
-    [BuisnessLimitations.changingPhotos]: 3,
-    [BuisnessLimitations.products]: 4,
-    [BuisnessLimitations.storyPhotos]: 5,
-  },
-  [SubType.trial]: {
-    [BuisnessLimitations.changingPhotos]: 2,
-    [BuisnessLimitations.products]: 1,
-    [BuisnessLimitations.storyPhotos]: 2,
-  },
-  [SubType.golden]: {
-    [BuisnessLimitations.changingPhotos]: 3,
-    [BuisnessLimitations.products]: 4,
-    [BuisnessLimitations.storyPhotos]: 5,
-  },
-};
+export type SubTypeLimits = Record<BuisnessLimitations, number>;
 
 // features advanced business get and basic not
 const advanceOrHigherSettings: string[] = [
@@ -99,7 +71,7 @@ const landingPageSubRestrictions: string[] = [
   "notifyOnCancelNearDeadline",
 ];
 
-enum SubType {
+export enum SubType {
   basic,
   advanced,
   trial,
@@ -107,7 +79,54 @@ enum SubType {
   golden,
 }
 
-const subTypeToStr: Record<SubType, string> = {
+export const appLimits: Map<
+  SubType,
+  Map<BuisnessLimitations, number>
+> = new Map([
+  [
+    SubType.basic,
+    new Map([
+      [BuisnessLimitations.changingPhotos, 1],
+      [BuisnessLimitations.products, 1],
+      [BuisnessLimitations.storyPhotos, 1],
+    ]),
+  ],
+
+  [
+    SubType.landingPage,
+    new Map([
+      [BuisnessLimitations.changingPhotos, 3],
+      [BuisnessLimitations.products, 3],
+      [BuisnessLimitations.storyPhotos, 4],
+    ]),
+  ],
+  [
+    SubType.advanced,
+    new Map([
+      [BuisnessLimitations.changingPhotos, 3],
+      [BuisnessLimitations.products, 4],
+      [BuisnessLimitations.storyPhotos, 5],
+    ]),
+  ],
+  [
+    SubType.trial,
+    new Map([
+      [BuisnessLimitations.changingPhotos, 2],
+      [BuisnessLimitations.products, 1],
+      [BuisnessLimitations.storyPhotos, 2],
+    ]),
+  ],
+  [
+    SubType.golden,
+    new Map([
+      [BuisnessLimitations.changingPhotos, 3],
+      [BuisnessLimitations.products, 4],
+      [BuisnessLimitations.storyPhotos, 5],
+    ]),
+  ],
+]);
+
+export const subTypeToStr: Record<SubType, string> = {
   [SubType.basic]: "Basic",
   [SubType.advanced]: "Premium",
   [SubType.trial]: "Trial",
@@ -115,7 +134,7 @@ const subTypeToStr: Record<SubType, string> = {
   [SubType.golden]: "Golden",
 };
 
-const subTypeFromStr: Record<string, SubType> = {
+export const subTypeFromStr: Record<string, SubType> = {
   ["Basic"]: SubType.basic,
   ["Premium"]: SubType.advanced,
   ["Trial"]: SubType.trial,
@@ -124,7 +143,7 @@ const subTypeFromStr: Record<string, SubType> = {
 };
 
 // optional levels of the business
-const subsLevels: Record<SubType, number> = {
+export const subsLevels: Record<SubType, number> = {
   [SubType.golden]: 5,
   [SubType.advanced]: 4,
   [SubType.basic]: 3,

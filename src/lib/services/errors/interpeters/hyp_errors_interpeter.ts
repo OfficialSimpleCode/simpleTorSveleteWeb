@@ -1,4 +1,5 @@
-import '../messages.dart';
+import { Errors } from "../messages";
+import "../messages.dart";
 
 const hypErrors = {
   "1": Errors.blockCard,
@@ -19,8 +20,8 @@ const hypErrors = {
   "16": Errors.currencyTypeIsNotAllowed,
   "17": Errors.thereIsNoAuthorizationForACreditTypeInTheTransaction,
   "26": Errors.invalidId,
-  "901": Errors
-      .terminalNotAuthorizedToWorkWithThisMethodTheTerminalIsNotAuthorized,
+  "901":
+    Errors.terminalNotAuthorizedToWorkWithThisMethodTheTerminalIsNotAuthorized,
   "902": Errors.authenticationErrorTerminalReference,
   "903": Errors.exceedingTheNumberOfPayments,
   "999": Errors.communicationError,

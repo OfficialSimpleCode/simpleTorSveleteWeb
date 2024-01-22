@@ -388,6 +388,11 @@ export default class Booking extends ScheduleItem {
       0
     );
   }
+  get canSendMessage(): boolean {
+    return (
+      this.isVerifiedPhone || this.orderingOptions === OrderingOptions.byWorker
+    );
+  }
 
   get treatmentsToStringNotDetailed(): string {
     if (this.treatmentLength === 1) {

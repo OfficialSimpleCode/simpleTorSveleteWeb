@@ -11,7 +11,7 @@ import {
   orderingOptionsFromStr,
   orderingOptionsToStr,
 } from "$lib/consts/booking";
-import { Gender, genderFromStr } from "$lib/consts/gender";
+import { Gender, genderFromStr, genderToStr } from "$lib/consts/gender";
 import {
   NotificationOption,
   notificationOptionFromStr,
@@ -19,11 +19,13 @@ import {
 import { EventFilterType } from "$lib/consts/worker_schedule";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
+import { sendMessageForMulti } from "$lib/utils/notifications_utils";
 import { phoneToDocId } from "$lib/utils/user";
 import BookingInvoiceData from "../booking/booking_invoice_data";
-import type Booking from "../booking/booking_model";
-import BookingTransactionModel from "../booking/booking_transaction";
-import type CustomerData from "../general/customer_data";
+import BookingTransactionModel, {
+  PaymentTypes,
+} from "../booking/booking_transaction";
+import CustomerData from "../general/customer_data";
 import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
 import Debt from "../schedule/debt";
 // import { v4 as uuid } from "uuid";
@@ -129,22 +131,18 @@ export default class MultiBookingUser {
     this.orderingOptions = OrderingOptions.web;
 
     this.isUserExist = true;
-    if (!workerAction) {
-      this.userFcms = new Set(
-        UserInitializer.GI().user.userPublicData.fcmsTokens
-      );
-      this.isVerifiedPhone = UserInitializer.GI().user.isVerifiedPhone;
-      const clientAt = UserInitializer.GI().user.userPublicData.clientAt;
-      this.addToClientAt =
-        !clientAt.has(BusinessInitializer.GI().business.businessId) ||
-        !clientAt
-          .get(BusinessInitializer.GI().business.businessId)!
-          .has(worker.id);
-    } else {
-      const customer = worker.customers.customersData.get(this.customerId);
-      this.addToClientAt = (customer?.amoutOfBookings || 0) <= 0;
-      this.isVerifiedPhone = customer?.isVerifiedPhone || false;
-    }
+
+    this.userFcms = new Set(
+      UserInitializer.GI().user.userPublicData.fcmsTokens
+    );
+    this.isVerifiedPhone = UserInitializer.GI().user.isVerifiedPhone;
+    const clientAt = UserInitializer.GI().user.userPublicData.clientAt;
+    this.addToClientAt =
+      !clientAt.has(BusinessInitializer.GI().business.businessId) ||
+      !clientAt
+        .get(BusinessInitializer.GI().business.businessId)!
+        .has(worker.id);
+
     if (this.createdAt.getTime() === new Date(0).getTime()) {
       this.createdAt = new Date();
     }
@@ -155,14 +153,14 @@ export default class MultiBookingUser {
   }
 
   get toCustomerData(): CustomerData {
-    return {
+    return new CustomerData({
       name: this.customerName,
       phoneNumber: this.customerPhone,
       isVerifiedPhone: this.isVerifiedPhone,
       email: this.clientMail,
       customerUuid: this.customerId,
       gender: this.userGender,
-    };
+    });
   }
 
   get isDepositTransaction(): boolean {
@@ -249,49 +247,49 @@ export default class MultiBookingUser {
     });
   }
 
-  get toBooking(): Booking {
-    const newInvoices: Map<string, BookingInvoiceData> = new Map();
-    this.invoices.forEach((invoice, id) => {
-      newInvoices.set(id, BookingInvoiceData.fromBookingInvoiceData(invoice));
-    });
-    const newTransactions: Map<string, BookingTransactionModel> = new Map();
-    this.transactions.forEach((id, transaction) => {
-      newTransactions.set(
-        id,
-        BookingTransactionModel.fromTransaction(transaction)
-      );
-    });
-    return ({
-      customerName: this.customerName,
-      customerPhone: this.customerPhone,
-      showAdressAlert: this.showAdressAlert,
-      showPhoneAlert: this.showPhoneAlert,
-      orderingOptions: this.orderingOptions,
-      isUserExist: this.isUserExist,
-      needCancel: this.needCancel,
-      userGender: this.userGender,
-      userDeleted: this.userDeleted,
-      bookingId: this.userBookingId,
-      signOnDeviceCalendar: this.signOnDeviceCalendar,
-      finishInvoices: this.finishInvoices,
-      cancelDate: this.cancelDate,
-      isVerifiedPhone: this.isVerifiedPhone,
-      customerId: this.customerId,
-      clientNote: this.clientNote,
-      lastTimeNotifyOnDebt: this.lastTimeNotifyOnDebt,
-      debts: this.debts,
-      status: this.status,
-      confirmedArrival: this.confirmedArrival,
-      clientMail: this.clientMail,
-      notificationType: this.notificationType,
-      userFcms: new Set(this.userFcms),
-      workerNotificationOption: this.workerNotificationOption,
-    }.workerRemindersTypes =
-      new Map(this.workerRemindersTypes).createdAt =
-      this.createdAt.invoices =
-      newInvoices.transactions =
-        newTransactions);
-  }
+  // get toBooking(): Booking {
+  //   const newInvoices: Map<string, BookingInvoiceData> = new Map();
+  //   this.invoices.forEach((invoice, id) => {
+  //     newInvoices.set(id, BookingInvoiceData.fromBookingInvoiceData(invoice));
+  //   });
+  //   const newTransactions: Map<string, BookingTransactionModel> = new Map();
+  //   this.transactions.forEach((id, transaction) => {
+  //     newTransactions.set(
+  //       id,
+  //       BookingTransactionModel.fromTransaction(transaction)
+  //     );
+  //   });
+  //   return ({
+  //     customerName: this.customerName,
+  //     customerPhone: this.customerPhone,
+  //     showAdressAlert: this.showAdressAlert,
+  //     showPhoneAlert: this.showPhoneAlert,
+  //     orderingOptions: this.orderingOptions,
+  //     isUserExist: this.isUserExist,
+  //     needCancel: this.needCancel,
+  //     userGender: this.userGender,
+  //     userDeleted: this.userDeleted,
+  //     bookingId: this.userBookingId,
+  //     signOnDeviceCalendar: this.signOnDeviceCalendar,
+  //     finishInvoices: this.finishInvoices,
+  //     cancelDate: this.cancelDate,
+  //     isVerifiedPhone: this.isVerifiedPhone,
+  //     customerId: this.customerId,
+  //     clientNote: this.clientNote,
+  //     lastTimeNotifyOnDebt: this.lastTimeNotifyOnDebt,
+  //     debts: this.debts,
+  //     status: this.status,
+  //     confirmedArrival: this.confirmedArrival,
+  //     clientMail: this.clientMail,
+  //     notificationType: this.notificationType,
+  //     userFcms: new Set(this.userFcms),
+  //     workerNotificationOption: this.workerNotificationOption,
+  //   }.workerRemindersTypes =
+  //     new Map(this.workerRemindersTypes).createdAt =
+  //     this.createdAt.invoices =
+  //     newInvoices.transactions =
+  //       newTransactions);
+  // }
 
   get typesOfEvents(): Map<EventFilterType, number> {
     const types: Map<EventFilterType, number> = new Map();
@@ -314,94 +312,99 @@ export default class MultiBookingUser {
   ): MultiBookingUser {
     const multiBookingUser = new MultiBookingUser();
 
-    (multiBookingUser.customerName = json["customerName"] || ""),
-      (multiBookingUser.customerId = json["customerId"] || ""),
-      (multiBookingUser.customerPhone =
-        json["customerPhone"] || this.customerId),
-      (multiBookingUser.needCancel = json["needCancel"] || false),
-      (multiBookingUser.remindersTypes = json["remindersTypes"]
-        ? new Map(
-            Object.entries(json["remindersTypes"]).map(([type, minutes]) => [
-              bookingReminderTypeFromStr[type],
-              minutes,
-            ])
+    multiBookingUser.customerName = json["customerName"] || "";
+    multiBookingUser.customerId = json["customerId"] || "";
+    multiBookingUser.customerPhone =
+      json["customerPhone"] || multiBookingUser.customerId;
+    multiBookingUser.needCancel = json["needCancel"] || false;
+    multiBookingUser.remindersTypes = json["remindersTypes"]
+      ? new Map(
+          Object.entries(json["remindersTypes"]).map(([type, minutes]) => [
+            bookingReminderTypeFromStr[type],
+            minutes as number,
+          ])
+        )
+      : new Map([
+          [
+            BookingReminderType.regular,
+            (json["minutesBeforeNotify"] || 60) as number,
+          ],
+        ]);
+    (multiBookingUser.workerRemindersTypes = json["workerRemindersTypes"]
+      ? new Map(
+          Object.entries(json["workerRemindersTypes"]).map(
+            ([type, minutes]) => [bookingReminderTypeFromStr[type], minutes]
           )
-        : new Map([
-            [BookingReminderType.regular, json["minutesBeforeNotify"] || 60],
-          ])),
-      (multiBookingUser.workerRemindersTypes = json["workerRemindersTypes"]
-        ? new Map(
-            Object.entries(json["workerRemindersTypes"]).map(
-              ([type, minutes]) => [bookingReminderTypeFromStr[type], minutes]
-            )
-          )
-        : new Map()),
+        )
+      : new Map()),
       (multiBookingUser.signOnDeviceCalendar =
         json["signOnDeviceCalendar"] || false),
-      (multiBookingUser.userDeleted = json["userDeleted"] || false),
-      (multiBookingUser.isVerifiedPhone = json["isVerifiedPhone"] || false),
-      (multiBookingUser.clientMail = json["clientMail"] || ""),
-      (multiBookingUser.clientNote = json["clientNote"] || ""),
-      (multiBookingUser.userBookingId = userBookingId),
-      (multiBookingUser.orderingOptions =
-        orderingOptionsFromStr[json["orderingOptions"]] || OrderingOptions.app),
-      (multiBookingUser.debts = json["debts"]
-        ? new Map(
-            Object.entries(json["debts"]).map(([id, debtJson]) => [
-              id,
-              Debt.fromJson(debtJson, id),
-            ])
-          )
-        : new Map()),
-      (multiBookingUser.finishInvoices = json["finishInvoices"] || false),
-      (multiBookingUser.cancelDate = json["cancelDate"]
-        ? new Date(json["cancelDate"])
-        : null),
-      (multiBookingUser.wasWaiting = json["wasWaiting"] || false),
-      (multiBookingUser.isUserExist = json["isUserExist"] || true),
-      (multiBookingUser.lastTimeNotifyOnDebt = json["lastTimeNotifyOnDebt"]
-        ? new Date(json["lastTimeNotifyOnDebt"])
-        : null),
-      (multiBookingUser.invoices = json["invoices"]
-        ? new Map(
-            Object.entries(json["invoices"]).map(([id, invoiceJson]) => [
+      (multiBookingUser.userDeleted = json["userDeleted"] || false);
+    multiBookingUser.isVerifiedPhone = json["isVerifiedPhone"] || false;
+    multiBookingUser.clientMail = json["clientMail"] || "";
+    multiBookingUser.clientNote = json["clientNote"] || "";
+    multiBookingUser.userBookingId = userBookingId;
+    multiBookingUser.orderingOptions =
+      orderingOptionsFromStr[json["orderingOptions"]] || OrderingOptions.app;
+    multiBookingUser.debts = json["debts"]
+      ? new Map(
+          Object.entries(json["debts"]).map(([id, debtJson]) => [
+            id,
+            Debt.fromJson(debtJson, id),
+          ])
+        )
+      : new Map();
+    multiBookingUser.finishInvoices = json["finishInvoices"] || false;
+    multiBookingUser.cancelDate = json["cancelDate"]
+      ? new Date(json["cancelDate"])
+      : null;
+    multiBookingUser.wasWaiting = json["wasWaiting"] || false;
+    multiBookingUser.isUserExist = json["isUserExist"] || true;
+    multiBookingUser.lastTimeNotifyOnDebt = json["lastTimeNotifyOnDebt"]
+      ? new Date(json["lastTimeNotifyOnDebt"])
+      : null;
+    multiBookingUser.invoices = json["invoices"]
+      ? new Map(
+          Object.entries<Record<string, any>>(json["invoices"]).map(
+            ([id, invoiceJson]) => [
               id,
               BookingInvoiceData.fromJson(invoiceJson, id, workerId),
-            ])
+            ]
           )
-        : new Map()),
-      (multiBookingUser.userGender =
-        genderFromStr[json["userGender"]] || Gender.anonymous),
-      (multiBookingUser.status =
-        bookingsMassageKeys[json["status"].toString()] ||
-        BookingStatuses.approved),
-      (multiBookingUser.confirmedArrival = json["confirmedArrival"] || false),
-      (multiBookingUser.showAdressAlert = json["showAdressAlert"] || false),
-      (multiBookingUser.showPhoneAlert = json["showPhoneAlert"] || false),
-      (multiBookingUser.notificationType =
-        notificationTypeFromStr[json["notificationType"]] ||
-        NotificationType.none),
-      (multiBookingUser.workerNotificationOption =
-        notificationOptionFromStr[json["workerNotificationOption"]] ||
-        NotificationOption.PushOrSMS),
-      (multiBookingUser.userFcms = json["userFcms"]
-        ? new Set(json["userFcms"])
-        : json["deviceFCM"] && json["deviceFCM"] !== ""
-        ? new Set([json["deviceFCM"]])
-        : new Set()),
-      (multiBookingUser.createdAt = json["createdAt"]
-        ? new Date(json["createdAt"])
-        : new Date(0)),
-      (multiBookingUser.transactions = json["transactions"]
-        ? new Map(
-            Object.entries(json["transactions"]).map(
-              ([id, transactionJson]) => [
-                id,
-                BookingTransactionModel.fromJson(transactionJson, id),
-              ]
-            )
+        )
+      : new Map();
+    multiBookingUser.userGender =
+      genderFromStr[json["userGender"]] || Gender.anonymous;
+    multiBookingUser.status =
+      bookingsMassageKeys[json["status"].toString()] ||
+      BookingStatuses.approved;
+    multiBookingUser.confirmedArrival = json["confirmedArrival"] || false;
+    multiBookingUser.showAdressAlert = json["showAdressAlert"] || false;
+    multiBookingUser.showPhoneAlert = json["showPhoneAlert"] || false;
+    multiBookingUser.notificationType =
+      notificationTypeFromStr[json["notificationType"]] ||
+      NotificationType.none;
+    multiBookingUser.workerNotificationOption =
+      notificationOptionFromStr[json["workerNotificationOption"]] ||
+      NotificationOption.PushOrSMS;
+    multiBookingUser.userFcms = json["userFcms"]
+      ? new Set(json["userFcms"])
+      : json["deviceFCM"] && json["deviceFCM"] !== ""
+      ? new Set([json["deviceFCM"]])
+      : new Set();
+    multiBookingUser.createdAt = json["createdAt"]
+      ? new Date(json["createdAt"])
+      : new Date(0);
+    multiBookingUser.transactions = json["transactions"]
+      ? new Map(
+          Object.entries<Record<string, any>>(json["transactions"]).map(
+            ([id, transactionJson]) => [
+              id,
+              BookingTransactionModel.fromJson(transactionJson, id),
+            ]
           )
-        : new Map());
+        )
+      : new Map();
 
     return multiBookingUser;
   }
@@ -417,11 +420,11 @@ export default class MultiBookingUser {
       data["cancelDate"] = this.cancelDate.toISOString();
     }
     data["remindersTypes"] = {};
-    this.remindersTypes.forEach((reminder, minutes) => {
+    this.remindersTypes.forEach((minutes, reminder) => {
       data["remindersTypes"][bookingReminderTypeToStr[reminder]] = minutes;
     });
     data["workerRemindersTypes"] = {};
-    this.workerRemindersTypes.forEach((reminder, minutes) => {
+    this.workerRemindersTypes.forEach((minutes, reminder) => {
       data["workerRemindersTypes"][bookingReminderTypeToStr[reminder]] =
         minutes;
     });
@@ -443,13 +446,13 @@ export default class MultiBookingUser {
     data["userGender"] = genderToStr[this.userGender];
     if (this.invoices.size > 0) {
       data["invoices"] = {};
-      this.invoices.forEach((id, invoice) => {
+      this.invoices.forEach((invoice, id) => {
         data["invoices"][id] = invoice.toJson();
       });
     }
     if (this.debts.size > 0) {
       data["debts"] = {};
-      this.debts.forEach((id, debt) => {
+      this.debts.forEach((debt, id) => {
         data["debts"][id] = debt.toJson();
       });
     }
@@ -487,7 +490,7 @@ export default class MultiBookingUser {
     data["createdAt"] = this.createdAt.toISOString();
     if (this.transactions.size > 0) {
       data["transactions"] = {};
-      this.transactions.forEach((id, transaction) => {
+      this.transactions.forEach((transaction, id) => {
         data["transactions"][id] = transaction.toJson();
       });
     }

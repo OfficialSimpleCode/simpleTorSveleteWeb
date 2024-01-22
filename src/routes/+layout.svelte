@@ -1,5 +1,5 @@
 <script lang="ts">
-    import localization from "$lib/language/loader"; // Do not remove
+    // Do not remove
     import ToastManager from "$lib/components/ToastManager.svelte";
     import "../app.css";
 
@@ -35,6 +35,7 @@
 
         const u = UserInitializer.GI().user;
         user.set(u);
+        console.log(b);
 
        
     }

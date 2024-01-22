@@ -79,10 +79,10 @@ export const bookingReminderTypeToIcon: {
 
 // Enum for NotificationType
 export enum NotificationType {
-  message = "message",
-  push = "push",
-  none = "none",
-  whatsapp = "whatsapp",
+  message,
+  push,
+  none,
+  whatsapp,
 }
 
 // Map for NotificationType to string

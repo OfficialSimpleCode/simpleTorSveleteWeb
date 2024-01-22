@@ -5,6 +5,7 @@ import {
   recurrenceBookingsDoc,
   usersCollection,
 } from "$lib/consts/db";
+import AppErrorsHelper from "$lib/helpers/app_errors";
 import DbPathesHelper from "$lib/helpers/db_paths_helper";
 import { GeneralData } from "$lib/helpers/general_data";
 import UserRepo from "$lib/helpers/user/user_repo";

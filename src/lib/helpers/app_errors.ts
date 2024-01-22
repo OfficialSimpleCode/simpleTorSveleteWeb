@@ -1,4 +1,6 @@
-class AppErrorsHelper {
+import { Errors } from "$lib/services/errors/messages";
+
+export default class AppErrorsHelper {
   static _singleton: AppErrorsHelper = new AppErrorsHelper();
 
   constructor() {}
