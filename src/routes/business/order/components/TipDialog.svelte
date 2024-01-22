@@ -23,6 +23,7 @@
 <dialog
     bind:this={dialog}
     class="modal modal-bottom sm:modal-middle"
+    style="direction: ltr;"
     on:close={() => {
         // history.back();
     }}
