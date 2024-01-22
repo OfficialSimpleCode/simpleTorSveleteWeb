@@ -10,6 +10,7 @@
 
     import { numberToHex, hexToXyY } from "$lib/utils/colors";
     import { business } from "$lib/stores/Business.js";
+    import { workers } from "$lib/stores/Workers.js";
 
     import Navbar from "$lib/components/navbar/Navbar.svelte";
     import Avatar from "$lib/components/Avatar.svelte";
@@ -26,10 +27,21 @@
         title: $business.adress,
         link: "https://blabla.com",
     };
-    let displayImages: Array<Record<string, any>> = data.displayImages;
+    let workersStories: Map<string, string> = Object.values($workers)
+        .map((w) => w.storyImages)
+        .reduce(
+            (result, currentMap) => new Map([...result, ...currentMap]),
+            new Map(),
+        );
+    let storyHearts: Map<string, number> = Object.values($workers)
+        .map((w) => w.storylikesAmount)
+        .reduce(
+            (result, currentMap) => new Map([...result, ...currentMap]),
+            new Map(),
+        );
 
     onMount(() => {
-        console.log($business);
+        // console.log($business);
         // document.documentElement.style.setProperty(
         //     "--p",
         //     hexToXyY(
@@ -58,7 +70,7 @@
     let shareDialog: HTMLDialogElement;
     let imageDisplayDialog: HTMLDialogElement;
 
-    let selectedImageIndex: number = 0;
+    let selectedStoryId: string = Object.keys(workersStories)[0] || "";
 
     function orderNow() {
         if (!loggedIn) {
@@ -68,8 +80,8 @@
         goto(`${base}/business/order`);
     }
 
-    function openImageDisplayDialog(index: number) {
-        selectedImageIndex = index;
+    function openImageDisplayDialog(storyId: string) {
+        selectedStoryId = storyId;
         pushState("", {
             showModal: true,
         });
@@ -89,8 +101,9 @@
     <ShareDialog bind:dialog={shareDialog} {name} {geo} />
     <ImageDisplayDialog
         bind:dialog={imageDisplayDialog}
-        bind:index={selectedImageIndex}
-        {displayImages}
+        bind:storyId={selectedStoryId}
+        {workersStories}
+        {storyHearts}
     />
 {/if}
 
@@ -147,11 +160,13 @@
                 <div
                     class="w-full self-center mt-10 flex items-center justify-center gap-6 gap-y-6 flex-wrap"
                 >
-                    {#each displayImages as image, index}
-                        <button on:click={() => openImageDisplayDialog(index)}>
+                    {#each workersStories as [storyId, image]}
+                        <button
+                            on:click={() => openImageDisplayDialog(storyId)}
+                        >
                             <img
                                 class="object-cover h-[500px] w-[300px] rounded-xl hover:scale-[1.01]"
-                                src={image.link}
+                                src={image}
                                 alt="gym"
                             />
                         </button>

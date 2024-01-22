@@ -13,6 +13,7 @@
     import UserInitializer from "$lib/initializers/user_initializer";
     import { business } from "$lib/stores/Business";
     import { user } from "$lib/stores/User";
+    import { workers } from "$lib/stores/Workers";
 
     async function loadBusiness() {
         if ($business) {
@@ -36,7 +37,8 @@
         const u = UserInitializer.GI().user;
         user.set(u);
 
-       
+        const w = BusinessInitializer.GI().workers;
+        workers.set(w);
     }
 
     let businessLoading = loadBusiness();

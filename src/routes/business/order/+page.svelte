@@ -8,7 +8,7 @@
     import ChooseDateAndTime from "./steps/ChooseDateAndTime.svelte";
     import VerifyDetails from "./steps/VerifyDetails.svelte";
     import { sumDurations, multiplyAndSumDurations } from "./durationUtils";
-    // import SyncfusionSchedualer from "./components/SyncfusionSchedualer.svelte";
+    import SyncfusionSchedualer from "./components/SyncfusionSchedualer.svelte";
 
     let steps: string[] = ["worker", "treatment", "dateAndTime"];
     let currentStep: number = 1;
@@ -97,7 +97,7 @@
     <ul class="steps min-h-20 w-[90%] sm:w-[60%] mt-5">
         {#each steps as step, i}
             <button
-                class="step"
+                class="step hover:step-neutral"
                 class:step-success={currentStep > i}
                 data-content={currentStep > i + 1 ? "✓" : (i + 1).toString()}
                 on:click={() => clickedOnStep(i + 1)}
@@ -120,12 +120,12 @@
             on:services={(event) => servicesSelected(event.detail)}
         />
     {:else if currentStep == 3}
-        <ChooseDateAndTime
+        <!-- <ChooseDateAndTime
             bind:selectedDateAndTime
             duration={totalServicesDuration}
             on:dateAndTime={(event) => dateAndTimeSelected(event.detail)}
-        />
-        <!-- <SyncfusionSchedualer /> -->
+        /> -->
+        <SyncfusionSchedualer />
     {:else if currentStep == 4}
         <VerifyDetails
             bind:employee={selectedEmployee}
