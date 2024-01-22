@@ -1,5 +1,5 @@
 <script lang="ts">
-    import localization from "$lib/language/loader"; // Do not remove
+    import { handleLocaleChanges } from "$lib/language/loader"; // Do not remove
     import ToastManager from "$lib/components/ToastManager.svelte";
     import "../app.css";
 
@@ -16,6 +16,8 @@
     import { workers } from "$lib/stores/Workers";
 
     async function loadBusiness() {
+        handleLocaleChanges(localStorage, document);
+
         if ($business) {
             return;
         }

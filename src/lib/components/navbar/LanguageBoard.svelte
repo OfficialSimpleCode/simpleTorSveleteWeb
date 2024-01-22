@@ -2,14 +2,8 @@
     import { locale, _ } from "svelte-i18n";
     export let languages: Array<Record<string, string>>;
 
-    let rtlLocals: string[] = ["he", "ar"];
-    let direction: "ltr" | "rtl" = "rtl";
-    document.dir = direction;
-
     function chooseLang(language: Record<string, string>) {
         locale.set(language.locale);
-        direction = rtlLocals.includes(language.locale) ? "rtl" : "ltr";
-        document.dir = direction;
     }
 </script>
 
