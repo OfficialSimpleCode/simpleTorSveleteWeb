@@ -10,7 +10,7 @@
     import { sumDurations, multiplyAndSumDurations } from "./durationUtils";
     import SyncfusionSchedualer from "./components/SyncfusionSchedualer.svelte";
 
-    let steps: string[] = ["worker", "treatment", "dateAndTime"];
+    let steps: string[] = ["worker", "treatment", "dateAndTime", "confirmNow"];
     let currentStep: number = 1;
 
     let employees: Array<Record<string, string>> = [
@@ -34,7 +34,10 @@
         },
     ];
     let selectedEmployee: Record<string, string>;
-    let selectedDateAndTime: Record<string, string>;
+    let selectedDateAndTime: Record<string, string> = {
+        date: "05-11-2025",
+        time: "12:56",
+    };
 
     let services: Array<Record<string, any>> = [
         { name: "Nails", price: "150", duration: "1h 20m", quntity: 0 },
@@ -65,6 +68,19 @@
         if (
             stepNumber == 3 &&
             (!selectedServices || selectedServices.length == 0)
+        ) {
+            ShowToast({
+                text: "Finish the current step first",
+                status: "warning",
+            });
+            return;
+        }
+
+        if (
+            stepNumber == 4 &&
+            (!selectedDateAndTime ||
+                !selectedServices ||
+                selectedServices.length == 0)
         ) {
             ShowToast({
                 text: "Finish the current step first",

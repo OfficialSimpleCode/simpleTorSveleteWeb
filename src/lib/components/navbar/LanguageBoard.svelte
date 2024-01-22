@@ -7,8 +7,6 @@
     }
 </script>
 
-<svelte:document />
-
 <ul
     class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box max-w-sm translate-x-24 sm:translate-x-12 min-w-[180px] py-4"
 >
