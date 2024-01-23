@@ -38,7 +38,6 @@
 
         const u = UserInitializer.GI().user;
         user.set(u);
-        console.log(b);
 
         const w = BusinessInitializer.GI().workers;
         workers.set(w);

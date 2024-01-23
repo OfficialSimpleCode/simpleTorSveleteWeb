@@ -1,6 +1,12 @@
 <script lang="ts">
     import { _ } from "svelte-i18n";
-    import { Icon, ChevronRight, Calendar, Clock } from "svelte-hero-icons";
+    import {
+        Icon,
+        ChevronRight,
+        ChevronLeft,
+        Calendar,
+        Clock,
+    } from "svelte-hero-icons";
 
     export let order: Record<string, any>;
 </script>
@@ -42,7 +48,10 @@
                 </div>
             </div>
 
-            <Icon src={ChevronRight} size="26px" />
+            <Icon
+                src={document.dir == "ltr" ? ChevronRight : ChevronLeft}
+                size="26px"
+            />
         </div>
         <div class="flex items-center justify-around flex-row gap-4 w-full">
             <div class="flex flex-row items-start gap-5">

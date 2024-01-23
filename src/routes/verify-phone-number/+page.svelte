@@ -1,7 +1,10 @@
 <script lang="ts">
-    import BackButton from "$lib/components/BackButton.svelte";
-    import InfoTooltipButton from "$lib/components/InfoTooltipButton.svelte";
     import { onMount } from "svelte";
+    import { base } from "$app/paths";
+
+    import { _ } from "svelte-i18n";
+    import UpdatePageHeader from "$lib/components/UpdatePageHeader.svelte";
+    import { goto } from "$app/navigation";
 
     let codeSent: boolean = false;
     let oneTimeCode: string = "";
@@ -12,43 +15,54 @@
     });
 
     function verifyCode() {}
+
+    function updatePhoneNumber() {
+        goto(`${base}/update-profile-phone`, { replaceState: true });
+    }
 </script>
 
 <main class="flex flex-col items-center mx-4 mt-0 gap-10 h-full">
-    <div class="flex items-center justify-between w-full pt-4">
-        <InfoTooltipButton message="Placeholder TODO" />
-        <div>
-            <h1 class="text-xl text-center">Verify Phone Number</h1>
-        </div>
-        <BackButton />
-    </div>
+    <UpdatePageHeader
+        title={$_("verifyPhoneMechanizem")}
+        helpMessage={$_("phoneVerificationPageExplain")}
+    />
 
     <div class="flex items-center justify-center w-full h-[60%]">
         <div class="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
             <form class="card-body">
                 <div class="form-control">
                     <label class="label" for="one-time-code">
-                        <span class="label-text">One Time Code</span>
+                        <span class="label-text">{$_("pressOpt")}</span>
                         <span class="label-text-alt">
                             {#if codeSent}
-                                <div class="badge badge-success">Sent</div>
-                                {:else}
-                                <div class="badge badge-warning">Sending</div>
+                                <div class="badge badge-success">
+                                    {$_("sendSuccess")}
+                                </div>
+                            {:else}
+                                <div class="badge badge-warning">
+                                    <div
+                                        class="loading loading-spinner loading-xs"
+                                    ></div>
+                                </div>
                             {/if}
                         </span>
                     </label>
                     <input
                         bind:value={oneTimeCode}
-                        name="one-time-code"
                         type="text"
-                        placeholder="verfication code"
                         class="input input-bordered"
                         required
                     />
                 </div>
-                <div class="form-control mt-6">
+                <div class="form-control mt-6 gap-1">
                     <button class="btn btn-primary" on:click={verifyCode}>
-                        Verify Phone Number
+                        {$_("verifyPhone")}
+                    </button>
+                    <button
+                        class="btn btn-outline"
+                        on:click|preventDefault={updatePhoneNumber}
+                    >
+                        {$_("phoneUpdate")}
                     </button>
                 </div>
             </form>

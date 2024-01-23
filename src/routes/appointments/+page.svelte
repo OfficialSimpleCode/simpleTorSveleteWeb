@@ -68,5 +68,12 @@
                 <OrderCard {order} />
             {/each}
         </div>
+        <div class="pb-4 w-[90%]">
+            <button
+                class="btn btn-outline sm:hidden w-full"
+                on:click={() => history.back()}
+                >{$_("back")}
+            </button>
+        </div>
     </div>
 </main>

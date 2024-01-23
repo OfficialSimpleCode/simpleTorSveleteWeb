@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { _ } from "svelte-i18n";
+
     import { createEventDispatcher } from "svelte";
     const dispatch = createEventDispatcher();
 
@@ -9,7 +11,7 @@
         WrenchScrewdriver,
         ChevronRight,
     } from "svelte-hero-icons";
-    
+
     import type WorkerModel from "$lib/models/worker/worker_model";
     import TipDialog from "../components/TipDialog.svelte";
 
@@ -62,9 +64,9 @@
 
 <section class="flex flex-col items-center gap-8 w-[90%] sm:w-[70%]">
     <h1 class="text-3xl text-center">
-        Setup an appointment with <span class="font-bold text-primary"
-            >{employee.name}</span
-        >
+        {$_("bookAnOrder")}
+        {$_("to")}
+        <span class="font-bold text-primary">{employee.name}</span>
     </h1>
     <div
         class="card shrink-0 w-full sm:w-[70%] bg-base-200 max-h-24 sm:max-h-full"
@@ -118,7 +120,9 @@
 
     <label class="form-control w-full sm:w-[70%]">
         <div class="label">
-            <span class="label-text sm:text-lg">Note (optional)</span>
+            <span class="label-text sm:text-lg"
+                >{$_("note")} ({$_("optional")})</span
+            >
         </div>
         <input
             type="text"
