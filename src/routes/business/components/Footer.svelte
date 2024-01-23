@@ -3,7 +3,7 @@
     import InsagramLogo from "$lib/images/instagram.svg";
 </script>
 
-<footer class="footer items-center p-4 bg-base-100 text-base-content">
+<footer class="footer items-center p-4 bg-base-100 text-base-content" style="direction: ltr;">
     <aside class="items-center grid-flow-col">
         <div class="h-12 w-12 bg-black flex items-center justify-center rounded-full">
             <h1 class="text-xl font-bold font-mono text-white text-center">ST</h1>

@@ -11,6 +11,8 @@
     import VerifyDetails from "./steps/VerifyDetails.svelte";
     import { sumDurations, multiplyAndSumDurations } from "./durationUtils";
     import SyncfusionSchedualer from "./components/SyncfusionSchedualer.svelte";
+    import type TreatmentSubject from "$lib/models/worker/treatment_subject";
+    import type Treatment from "$lib/models/general/treatment_model";
 
     let steps: string[] = ["worker", "treatment", "dateAndTime", "confirmNow"];
     let currentStep: number = 1;
@@ -22,18 +24,13 @@
         time: "12:56",
     };
 
-    let services: Array<Record<string, any>> = [
-        { name: "Nails", price: "150", duration: "1h 20m", quntity: 0 },
-        { name: "Build", price: "340", duration: "2h 10m", quntity: 0 },
-        { name: "Hair", price: "230", duration: "1h", quntity: 0 },
-    ];
-    let selectedServices: Array<Record<string, any>> = [];
+    let selectedServices: Array<Treatment> = [];
     let totalServicesDuration: string = "0h";
-    $: totalServicesDuration = sumDurations(
-        selectedServices.map((s) =>
-            multiplyAndSumDurations(s.duration, s.quntity),
-        ),
-    );
+    // $: totalServicesDuration = sumDurations(
+    //     selectedServices.map((s) =>
+    //         multiplyAndSumDurations(s.tota, s.quntity),
+    //     ),
+    // );
 
     function clickedOnStep(stepNumber: number) {
         if (stepNumber == currentStep) {
@@ -80,7 +77,7 @@
         currentStep += 1;
     }
 
-    function servicesSelected(services: Array<Record<string, any>>) {
+    function servicesSelected(services: Array<Treatment>) {
         selectedServices = services;
         currentStep += 1;
     }
@@ -114,7 +111,7 @@
         />
     {:else if currentStep == 2}
         <ChooseService
-            {services}
+            bind:selectedEmployee
             bind:selectedServices
             on:services={(event) => servicesSelected(event.detail)}
         />
