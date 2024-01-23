@@ -70,7 +70,7 @@
                 </div>
                 <div class="form-control mt-6">
                     <button class="btn btn-primary" on:click={updatePassword}>
-                        Update Password
+                        {$_("save")}
                     </button>
                     {#if error.length > 0}
                         <label class="label" for="btn">

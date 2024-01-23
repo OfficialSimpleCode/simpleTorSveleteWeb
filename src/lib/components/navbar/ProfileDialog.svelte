@@ -75,7 +75,7 @@
                 <div class="divider h-[1px]" />
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
-                    on:click={() => goto(`${base}update-profile-phone`)}
+                    on:click={() => goto(`${base}/update-profile-phone`)}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={Phone} size="26px" />
