@@ -3,10 +3,17 @@
     import InsagramLogo from "$lib/images/instagram.svg";
 </script>
 
-<footer class="footer items-center p-4 bg-base-100 text-base-content" style="direction: ltr;">
+<footer
+    class="footer items-center p-4 bg-base-100 text-base-content"
+    style="direction: ltr;"
+>
     <aside class="items-center grid-flow-col">
-        <div class="h-12 w-12 bg-black flex items-center justify-center rounded-full">
-            <h1 class="text-xl font-bold font-mono text-white text-center">ST</h1>
+        <div
+            class="h-12 w-12 bg-black flex items-center justify-center rounded-full"
+        >
+            <h1 class="text-xl font-bold font-mono text-white text-center">
+                ST
+            </h1>
         </div>
         <p>Copyright © 2024 - All right reserved</p>
     </aside>
@@ -23,10 +30,12 @@
                 ></path></svg
             >
         </a> -->
-        <a href="https://www.instagram.com/simpletor.official/">
+        <a href="https://www.instagram.com/simpletor.official/" target="_blank">
             <img src={InsagramLogo} alt="instagram" class="w-6 h-6" />
         </a>
-        <a href="https://www.facebook.com/SimpleTor?mibextid=LQQJ4d"
+        <a
+            href="https://www.facebook.com/SimpleTor?mibextid=LQQJ4d"
+            target="_blank"
             ><svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
