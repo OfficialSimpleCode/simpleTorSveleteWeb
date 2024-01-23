@@ -73,7 +73,7 @@ export default class UserInitializer {
       /*If user came from logging his doc already in the userDoc 
       and there is no need to read again from the db*/
       if (this.userDoc === undefined) {
-        this.userDoc = await this.userRepo.getDocRepo({
+        this.userDoc = await this.userRepo.getDocSRV({
           path: usersCollection,
           docId: newUserId,
         });
@@ -110,7 +110,7 @@ export default class UserInitializer {
     /*create listening for the user public data */
     if (!this.isConnected) return;
 
-    this.user.userPublicDataListener = this.userRepo.docListenerRepo({
+    this.user.userPublicDataListener = this.userRepo.docListener({
       path: `${usersCollection}/${this.user.id}/${dataCollection}`,
       docId: dataDoc,
       onChanged: async (dataJson) => {
@@ -181,7 +181,7 @@ export default class UserInitializer {
 
   async loadBookingDoc(docId: string): Promise<void> {
     try {
-      const bookingsDoc = await this.userRepo.getDocRepo({
+      const bookingsDoc = await this.userRepo.getDocSRV({
         path: DbPathesHelper.GI().userBookingsPathByUser(this.user.id),
         docId: docId,
       });

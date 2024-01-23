@@ -57,7 +57,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
   }: {
     path: string;
     docId: string;
-    insideEnviroments: boolean;
+    insideEnviroments?: boolean;
   }): Promise<DocumentSnapshot<DocumentData, DocumentData> | undefined> {
     try {
       const collectionRef = collection(
@@ -174,7 +174,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     path: string;
     docId: string;
     fieldName: string;
-    value: any;
+    value?: any;
   }): Promise<any> {
     try {
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);

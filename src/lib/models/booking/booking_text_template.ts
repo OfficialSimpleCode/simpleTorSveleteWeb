@@ -5,7 +5,7 @@ import {
   formatedPhone,
   getFormatedTime,
   translate,
-} from "$lib/utils/string_utilitis";
+} from "$lib/utils/string_utils";
 import Booking from "./booking_model";
 
 export default class BookingTextTemplate extends Booking {

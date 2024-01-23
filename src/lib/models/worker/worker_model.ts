@@ -19,7 +19,8 @@ import {
   combinedShuffleShifts,
   shiftsFromStrList,
 } from "$lib/utils/shifts_utils";
-import { translate } from "$lib/utils/string_utilitis";
+
+import { translate } from "$lib/utils/string_utils";
 import {
   dateStrToDate,
   dateToDateStr,

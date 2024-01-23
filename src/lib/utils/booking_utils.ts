@@ -8,6 +8,7 @@ import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
+import type WorkerModel from "$lib/models/worker/worker_model";
 import { addDuration, subDuration } from "./duration_utils";
 
 export async function checkForReminders(): Promise<{
@@ -169,4 +170,11 @@ export async function checkForReminders(): Promise<{
   }
 
   return finalMap;
+}
+
+export function needToHoldOn(bookingDate: Date, worker: WorkerModel): boolean {
+  const duration = new Date();
+  duration.setMinutes(duration.getMinutes() + worker.onHoldMinutes);
+
+  return duration.getTime() > bookingDate.getTime();
 }

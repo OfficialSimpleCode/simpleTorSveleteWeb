@@ -18,18 +18,38 @@ import {
   notificationOptionFromStr,
   notificationOptionToStr,
 } from "$lib/consts/notification";
+import { EventFilterType } from "$lib/consts/worker_schedule";
 import { setToMidNight } from "$lib/utils/dates_utils";
-import { addDuration } from "$lib/utils/duration_utils";
+import {
+  addDuration,
+  diffDuration,
+  subDuration,
+} from "$lib/utils/duration_utils";
+import { sendMessage } from "$lib/utils/notifications_utils";
+import {
+  dateToMonthStr,
+  dateToTimeStr,
+} from "$lib/utils/times_utils/times_utils";
+import { phoneToDocId } from "$lib/utils/user";
+import pkg from "uuid";
+import BusinessModel from "../business/business_model";
 import { Duration } from "../core/duration";
+import { defaultCurrency } from "../general/currency_model";
 import IconData from "../general/icon_data";
+import { Price } from "../general/price";
 import Treatment from "../general/treatment_model";
 import type MultiBooking from "../multi_booking/multi_booking";
+import BookingReferencePaymentObj from "../payment_hyp/booking_reference";
+import Event from "../schedule/calendar_event";
 import Debt from "../schedule/debt";
 import RecurrenceEvent from "../schedule/recurrence_event";
 import ScheduleItem from "../schedule/schedule_item";
+import type UserModel from "../user/user_model";
+import WorkerModel from "../worker/worker_model";
 import BookingInvoiceData from "./booking_invoice_data";
 import BookingPaymentRequestData from "./booking_payment_request";
 import BookingTransactionModel from "./booking_transaction";
+const { v4 } = pkg;
 
 export default class Booking extends ScheduleItem {
   customerName: string = "";
@@ -453,6 +473,485 @@ export default class Booking extends ScheduleItem {
       minutes += treatment.totalMinutesForBooking;
     });
     return minutes;
+  }
+
+  get customerHashPhone(): string {
+    return phoneToDocId(this.customerPhone);
+  }
+
+  get bookingWorkTimes(): Map<string, number> {
+    const bookingWorkTimesMap: Map<string, number> = new Map();
+    let lastTime = this.bookingDate;
+
+    Object.values(this.treatments).forEach((treatment: any) => {
+      // Generate the treatment as time as the counter
+      Array.from({ length: treatment.count }).forEach(() => {
+        Object.values(treatment.times).forEach((timeData: any) => {
+          // Adding the break before the segment
+          lastTime = addDuration(
+            lastTime,
+            new Duration({ minutes: timeData.breakMinutes })
+          );
+
+          bookingWorkTimesMap.set(
+            dateToTimeStr(lastTime),
+            timeData.workMinutes
+          );
+          // Jumping to the end of the segment
+          lastTime = addDuration(
+            lastTime,
+            new Duration({ minutes: timeData.workMinutes })
+          );
+        });
+      });
+    });
+
+    return bookingWorkTimesMap;
+  }
+
+  get totalEventsCount(): number {
+    let counter = 0;
+    Object.values(this.treatments).forEach((treatment) => {
+      counter += treatment.times.length * treatment.count;
+    });
+    return counter;
+  }
+
+  get invoicesCoverPrice(): boolean {
+    const totalInvoiceAmount = Object.values(this.invoices).reduce(
+      (previousValue, invoice) => previousValue + invoice.amount,
+      0.0
+    );
+
+    return (
+      this.finishInvoices ||
+      (this.invoices.size > 0 && totalInvoiceAmount >= this.totalPrice.amount)
+    );
+  }
+
+  get totalPrice(): Price {
+    let totalPrice = new Price({ amount: "0", currency: defaultCurrency });
+
+    Object.values(this.treatments).forEach((treatment: Treatment) => {
+      totalPrice.amount += treatment.totalPriceForBooking;
+      totalPrice.currency = treatment.price!.currency;
+    });
+
+    return totalPrice;
+  }
+
+  get typesOfEvents(): Map<EventFilterType, number> {
+    const types: Map<EventFilterType, number> = new Map<
+      EventFilterType,
+      number
+    >();
+
+    if (this.recurrenceEvent !== null) {
+      return new Map<EventFilterType, number>();
+    }
+
+    if (this.needCancel) {
+      types.set(EventFilterType.needCancel, 1);
+    }
+
+    if (this.debts.size > 0) {
+      types.set(EventFilterType.withDebts, 1);
+    }
+
+    if (this.status === BookingStatuses.waiting) {
+      types.set(EventFilterType.onHold, 1);
+    }
+
+    return types;
+  }
+
+  get bookingsEventsAsJson(): Map<string, any> {
+    const bookingsEventsMap: Map<string, any> = new Map();
+    let lastTime = this.bookingDate;
+    let totalEventsOnBooking = this.totalEventsCount;
+    let eventIndex = 0;
+    const hasInvoice = this.invoicesCoverPrice;
+
+    this.treatments.forEach((treatment, treatmentIndex) => {
+      // Generate the treatment as time as the counter
+      Array.from({ length: treatment.count }).forEach(() => {
+        treatment.times.forEach((timeData, timeIndex) => {
+          // Adding the break before the segment
+          lastTime = addDuration(
+            lastTime,
+            new Duration({ minutes: timeData.breakMinutes })
+          );
+          const timeId =
+            this.recurrenceTimeId != null && this.recurrenceEvent != null
+              ? `${dateToTimeStr(lastTime)}_${this.recurrenceTimeId}`
+              : dateToTimeStr(lastTime);
+
+          const newEvent = new Event();
+          newEvent.eventIndex = eventIndex;
+          newEvent.treatmentId = treatment.id;
+          newEvent.subTreatmentName = timeData.title;
+          newEvent.totalBookingMinutes = this.totalMinutes;
+          newEvent.belongTreatments = this.treatmentLength;
+          newEvent.onHold = this.status === "waiting";
+          newEvent.wantDelete = this.needCancel;
+          newEvent.ids = [this.workerId];
+          newEvent.confirmArrival = this.confirmedArrival;
+          newEvent.hasDebt = this.debts.size > 0;
+          newEvent.timeId =
+            this.recurrenceEvent != null ? this.recurrenceTimeId : undefined;
+          newEvent.treatmentName = treatment.name;
+          newEvent.transactionCounter = this.transactions.size;
+          newEvent.eventsBelong = totalEventsOnBooking;
+          newEvent.isBreak = false;
+          newEvent.partOfRecurrence = this.recurrenceRef != null;
+          newEvent.hasInvoice;
+          newEvent.recurrenceEvent = this.recurrenceEvent;
+          newEvent.eventName = this.customerId;
+          newEvent.from = lastTime;
+          newEvent.durationMinutes = timeData.workMinutes;
+          newEvent.colorIndex = treatment.colorIndex;
+          bookingsEventsMap.set(timeId, newEvent.toJson());
+
+          // Jumping to the end of the segment
+          lastTime = addDuration(
+            lastTime,
+            new Duration({ minutes: timeData.workMinutes })
+          );
+
+          eventIndex += 1;
+        });
+      });
+    });
+
+    return bookingsEventsMap;
+  }
+
+  get monthStr(): string {
+    return dateToMonthStr(this.bookingDate);
+  }
+
+  get toBookingReferencePaymentObj(): BookingReferencePaymentObj {
+    return new BookingReferencePaymentObj({
+      id: this.bookingId,
+      isMultiBooking: false,
+      date: this.bookingDate,
+      workerId: this.workerId,
+    });
+  }
+
+  async copyDataToOrder({
+    user,
+    worker,
+    needToHoldOn,
+    business,
+    noteText = "",
+    clientNoteText = "",
+  }: {
+    worker: WorkerModel;
+    user: UserModel;
+
+    needToHoldOn: boolean;
+    business: BusinessModel;
+    noteText: string;
+    clientNoteText: string;
+  }): Promise<void> {
+    this.customerName = user.name;
+    this.customerId = user.id;
+    this.customerPhone = user.phoneNumber;
+    this.userGender = user.gender;
+    this.isVerifiedPhone = user.isVerifiedPhone;
+    this.clientMail = user.userPublicData.email;
+    const clientAt = user.userPublicData.clientAt;
+    this.addToClientAt =
+      !clientAt.hasOwnProperty(business.businessId) ||
+      !clientAt.get(business.businessId)?.has(worker.id);
+
+    this.orderingOptions = OrderingOptions.web;
+
+    this.adress = business.adress;
+    this.clientNote = clientNoteText;
+    this.wasWaiting = false;
+    this.note = noteText;
+    this.shopIcon = business.design.shopIconData;
+    this.userFcms = user.fcmsTokens;
+    if (
+      diffDuration(this.bookingDate, new Date()).inMinutes < 60 &&
+      !needToHoldOn
+    ) {
+      this.confirmedArrival = true;
+    }
+
+    this.workerNotificationOption = worker.notifications.notificationOption;
+    this.workerRemindersTypes = { ...worker.notifications.remindersTypes };
+    for (const [type, minutes] of worker.notifications.remindersTypes) {
+      if (this.isPassed) {
+        continue;
+      }
+      if (
+        type === BookingReminderType.confirmArrival &&
+        this.confirmedArrival
+      ) {
+        continue;
+      }
+      if (
+        subDuration(this.bookingDate, new Duration({ minutes: minutes })) <
+          addDuration(new Date(), new Duration({ seconds: 1 })) &&
+        this.recurrenceEvent === undefined
+      ) {
+        this.remindersTypes.set(
+          type,
+          this.remindersTypes.get(type)! - (this.remindersTypes.get(type)! % 5)
+        );
+        if (this.remindersTypes.get(type)! < 10) {
+          this.remindersTypes.delete(type);
+        }
+      } else {
+        this.remindersTypes.set(type, minutes);
+      }
+    }
+    this.workerId = worker.id;
+    this.workerPhone = worker.phone;
+    this.workerName = worker.name;
+    this.workerGender = worker.gender;
+    this.showPhoneAlert = worker.notifications.showPhoneAlert;
+    this.showAdressAlert = worker.notifications.showAdressAlert;
+    this.businessName = business.shopName;
+    this.bookingId = this.bookingId === "" ? v4() : this.bookingId;
+    this.buisnessId = business.businessId;
+    if (needToHoldOn) {
+      this.status = BookingStatuses.waiting;
+    } else {
+      this.status = BookingStatuses.approved;
+    }
+
+    this.isVerifiedPhone = user.isVerifiedPhone;
+
+    this.notificationType = sendMessage({ booking: this, worker: worker });
+  }
+
+  updateBookingByBooking({
+    oldBooking,
+    worker,
+    needToHoldOn,
+    business,
+    newClientNote,
+    keepRecurrence = false,
+  }: {
+    oldBooking: Booking;
+
+    worker: WorkerModel;
+    needToHoldOn: boolean;
+    business: BusinessModel;
+
+    newClientNote?: string;
+    keepRecurrence: boolean;
+  }): void {
+    this.customerName = oldBooking.customerName;
+    this.customerPhone = oldBooking.customerPhone;
+    this.userGender = oldBooking.userGender;
+    this.clientMail = oldBooking.clientMail;
+    this.customerId = oldBooking.customerId;
+    this.note = oldBooking.note;
+
+    if (oldBooking.treatments.size > this.treatments.size) {
+      const newBookingNewTreatments: Map<string, Treatment> = new Map();
+      let index = 0;
+      for (const [_, treatment] of Object.entries(this.treatments)) {
+        newBookingNewTreatments.set(index.toString(), treatment);
+        index += 1;
+      }
+      this.treatments = newBookingNewTreatments;
+    }
+
+    const oldBookingNewTreatments: Map<string, Treatment> = new Map(
+      [...oldBooking.treatments.entries()].sort((entry1, entry2) =>
+        entry1[0].localeCompare(entry2[0])
+      )
+    );
+
+    oldBooking.treatments = oldBookingNewTreatments;
+    if (oldBooking.customerPhone != this.customerPhone) {
+      this.orderingOptions = OrderingOptions.byWorker;
+    } else {
+      this.orderingOptions = oldBooking.orderingOptions;
+    }
+    if (newClientNote != undefined) {
+      this.clientNote = newClientNote;
+    } else {
+      this.clientNote = oldBooking.clientNote;
+    }
+    this.workerNotificationOption = worker.notifications.notificationOption;
+    this.workerRemindersTypes = { ...worker.notifications.remindersTypes };
+    worker.notifications.remindersTypes.forEach((minutes, type) => {
+      if (
+        subDuration(this.bookingDate, new Duration({ minutes: minutes })) <
+        addDuration(new Date(), new Duration({ minutes: 1 }))
+      ) {
+        this.remindersTypes.set(
+          type,
+          Math.abs(
+            Math.floor(diffDuration(new Date(), this.bookingDate).inMinutes / 2)
+          )
+        );
+        this.remindersTypes.set(
+          type,
+          this.remindersTypes.get(type)! - (this.remindersTypes.get(type)! % 5)
+        );
+        if (this.remindersTypes.get(type)! < 10) {
+          this.remindersTypes.delete(type);
+        }
+      }
+    });
+    this.debts = { ...oldBooking.debts };
+    this.isUserExist = oldBooking.isUserExist;
+    this.createdAt = oldBooking.createdAt;
+    this.lastTimeNotifyOnDebt = oldBooking.lastTimeNotifyOnDebt;
+    this.cancelDate = oldBooking.cancelDate;
+    this.wasWaiting = oldBooking.wasWaiting;
+    this.signOnDeviceCalendar = oldBooking.signOnDeviceCalendar;
+    this.recurrenceEvent = undefined;
+    this.recurrenceNotificationsLastDate = undefined;
+    this.recurrenceTimeId = undefined;
+    if (!keepRecurrence) {
+      this.recurrenceRef = undefined;
+      this.recurreneFatherDate = undefined;
+      this.recurrenceEventRefInfo = undefined;
+    }
+    this.userDeleted = oldBooking.userDeleted;
+    this.paymentRequest = oldBooking.paymentRequest;
+    this.shopIcon = business.design.shopIconData;
+    this.workerName = worker.name;
+    this.workerGender = worker.gender;
+    this.workerId = worker.id;
+    this.workerPhone = worker.phone;
+    this.showPhoneAlert = worker.notifications.showPhoneAlert;
+    this.showAdressAlert = worker.notifications.showAdressAlert;
+    this.adress = business.adress;
+    this.invoices = { ...oldBooking.invoices };
+    this.businessName = business.shopName;
+    this.bookingId =
+      oldBooking.bookingId === "" || oldBooking.recurrenceEvent != undefined
+        ? v4()
+        : oldBooking.bookingId;
+    this.buisnessId = oldBooking.buisnessId;
+    this.notificationType = oldBooking.notificationType;
+    if (this.bookingDate === oldBooking.bookingDate) {
+      this.status = oldBooking.status;
+    } else {
+      this.status = needToHoldOn
+        ? BookingStatuses.waiting
+        : BookingStatuses.approved;
+    }
+    this.confirmedArrival = false;
+    if (!needToHoldOn) {
+      if (diffDuration(this.bookingDate, new Date()).inMinutes < 60) {
+        this.confirmedArrival = true;
+      }
+    }
+    this.needCancel = oldBooking.needCancel;
+    this.finishInvoices = oldBooking.finishInvoices;
+    this.transactions = new Map();
+    for (const [id, transaction] of Object.entries(oldBooking.transactions)) {
+      this.transactions.set(
+        id,
+        BookingTransactionModel.fromTransaction(transaction)
+      );
+    }
+  }
+
+  get bookingsEventsAsEvents(): Map<string, Event> {
+    const bookingsEventsMap: Map<string, Event> = new Map();
+    let lastTime = this.bookingDate;
+    let totalEventsOnBooking = this.totalEventsCount;
+    let eventIndex = 0;
+    const hasInvoice = this.invoicesCoverPrice;
+
+    this.treatments.forEach((treatment, treatmentIndex) => {
+      // Generate the treatment as time as the counter
+      Array.from({ length: treatment.count }).forEach(() => {
+        treatment.times.forEach((timeData, timeIndex) => {
+          // Adding the break before the segment
+          lastTime = addDuration(
+            lastTime,
+            new Duration({ minutes: timeData.breakMinutes })
+          );
+          const timeId =
+            this.recurrenceTimeId != null && this.recurrenceEvent != null
+              ? `${dateToTimeStr(lastTime)}_${this.recurrenceTimeId}`
+              : dateToTimeStr(lastTime);
+
+          const newEvent = new Event();
+          newEvent.eventIndex = eventIndex;
+          newEvent.treatmentId = treatment.id;
+          newEvent.subTreatmentName = timeData.title;
+          newEvent.totalBookingMinutes = this.totalMinutes;
+          newEvent.belongTreatments = this.treatmentLength;
+          newEvent.onHold = this.status === "waiting";
+          newEvent.wantDelete = this.needCancel;
+          newEvent.ids = [this.workerId];
+          newEvent.confirmArrival = this.confirmedArrival;
+          newEvent.hasDebt = this.debts.size > 0;
+          newEvent.timeId =
+            this.recurrenceEvent != null ? this.recurrenceTimeId : undefined;
+          newEvent.treatmentName = treatment.name;
+          newEvent.transactionCounter = this.transactions.size;
+          newEvent.eventsBelong = totalEventsOnBooking;
+          newEvent.isBreak = false;
+          newEvent.partOfRecurrence = this.recurrenceRef != null;
+          newEvent.hasInvoice;
+          newEvent.recurrenceEvent = this.recurrenceEvent;
+          newEvent.eventName = this.customerId;
+          newEvent.from = lastTime;
+          newEvent.durationMinutes = timeData.workMinutes;
+          newEvent.colorIndex = treatment.colorIndex;
+          bookingsEventsMap.set(timeId, newEvent);
+
+          // Jumping to the end of the segment
+          lastTime = addDuration(
+            lastTime,
+            new Duration({ minutes: timeData.workMinutes })
+          );
+
+          eventIndex += 1;
+        });
+      });
+    });
+
+    return bookingsEventsMap;
+  }
+  isTheSameAs({
+    booking,
+    customerId,
+    note,
+  }: {
+    booking: Booking;
+    customerId?: string;
+    note?: string;
+  }): boolean {
+    let sameTreatment = true;
+
+    if (this.treatments.size !== booking.treatments.size) {
+      return false;
+    }
+
+    for (const [treatmentIndex, treatment] of this.treatments) {
+      if (
+        booking.treatments.get(treatmentIndex)?.id != treatment.id ||
+        booking.treatments.get(treatmentIndex)?.count != treatment!.count
+      ) {
+        sameTreatment = false;
+        break;
+      }
+    }
+
+    return (
+      sameTreatment &&
+      booking.customerId === customerId &&
+      booking.clientNote === this.clientNote &&
+      booking.note === note &&
+      this.bookingDate.getTime() === booking.bookingDate.getTime() &&
+      this.workerId === booking.workerId
+    );
   }
 
   toJson(): Record<string, any> {

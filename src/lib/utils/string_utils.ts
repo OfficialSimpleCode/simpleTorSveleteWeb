@@ -5,6 +5,7 @@ import {
 import { Gender, maleToFemaleMap } from "$lib/consts/gender";
 import { weekDays } from "$lib/consts/worker_schedule";
 import UserInitializer from "$lib/initializers/user_initializer";
+import type { Duration } from "$lib/models/core/duration";
 import { addDays, format } from "date-fns";
 
 export function durationToString(
@@ -135,10 +136,10 @@ export function textAccordingToGender(txt: string): string {
 }
 
 export function translate(strName: string, needGender: boolean = true): string {
-  const translatedStr = ApplicationLocalizations.translate(strName);
-  if (LanguageHelper().currentLaguageCode === "he" && needGender)
-    return textAccordingToGender(translatedStr);
-  return translatedStr;
+  // const translatedStr = ApplicationLocalizations.translate(strName);
+  // if (LanguageHelper().currentLaguageCode === "he" && needGender)
+  //   return textAccordingToGender(translatedStr);
+  return strName;
 }
 
 export function shortName(longName: string): string {

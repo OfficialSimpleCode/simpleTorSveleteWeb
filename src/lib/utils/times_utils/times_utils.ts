@@ -13,7 +13,8 @@ import { AppErrors } from "$lib/services/errors/app_errors.js";
 import { Errors } from "$lib/services/errors/messages.js";
 import { isHoliday } from "../dates_utils.js";
 import { addDuration, durationStrikings } from "../duration_utils.js";
-import { translate } from "../string_utilitis.js";
+
+import { translate } from "../string_utils.js";
 import type { TimeSegment } from "./models.js";
 /**
  * Checks if the given time should be skipped based on the booking date and optional todayCheck.
@@ -1096,7 +1097,7 @@ export function alreadyTakenHoures(
     oldBooking.recurrenceEvent &&
     recurrenceSkipDate
   ) {
-    oldBooking.bookingsEventsAsEvents.forEach((time, event) => {
+    oldBooking.bookingsEventsAsEvents.forEach((event, time) => {
       const timeDate = new Date(format("HH:mm", time));
       datesToSkipRecurrence.add(
         new Date(

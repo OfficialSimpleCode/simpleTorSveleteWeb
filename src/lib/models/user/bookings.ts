@@ -116,7 +116,7 @@ export default class UserBookings {
           return;
         }
         if (
-          exclude !== undefined &&
+          exclude != undefined &&
           exclude.getTime() === booking.bookingDate.getTime()
         ) {
           return;

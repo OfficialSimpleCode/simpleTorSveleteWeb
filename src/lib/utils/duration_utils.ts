@@ -40,3 +40,9 @@ export function addDuration(date: Date, duration: Duration): Date {
 export function subDuration(date: Date, duration: Duration): Date {
   return new Date(date.getTime() - duration.inMilliseconds);
 }
+
+export function diffDuration(date1: Date, date2: Date): Duration {
+  return new Duration({
+    milliseconds: new Date(date1.getTime() - date2.getTime()).getTime(),
+  });
+}

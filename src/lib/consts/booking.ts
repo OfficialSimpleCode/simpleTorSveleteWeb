@@ -121,3 +121,5 @@ export const exampleBooking = {
   bookingDate: new Date(), // replace with your date
   treatments: { "0": "treatmentExample" },
 };
+
+export const payemntProcessDuration = new Duration({ minutes: 5 });

@@ -4,7 +4,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable valid-jsdoc */
 /* eslint-disable max-len */
-import { envKey } from "$lib/consts/db";
+import { NumericCommands, envKey } from "$lib/consts/db";
+import { firebaseConfig } from "$lib/firebase_config";
+import { getApp, getApps, initializeApp } from "firebase/app";
 import {
   DataSnapshot,
   Database,
@@ -19,14 +21,11 @@ import {
   type Unsubscribe,
 } from "firebase/database";
 
-enum NumericCommands {
-  Increment = "increment",
-  Decrement = "decrement",
-}
-
 export default class RealTimeDatabase {
   _db: Database;
   constructor() {
+    const firebaseApp =
+      getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
     this._db = getDatabase();
   }
 
@@ -82,7 +81,7 @@ export default class RealTimeDatabase {
     command: NumericCommands;
   }): Promise<boolean> {
     try {
-      if (command === NumericCommands.Decrement) {
+      if (command === NumericCommands.decrement) {
         delta = -delta;
       }
       const data = { [valueId]: increment(delta) };
