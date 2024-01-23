@@ -1,1 +1,1 @@
-abstract class UserApi {}
+export abstract class UserApi {}

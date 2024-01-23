@@ -28,7 +28,7 @@ import BookingTransactionModel, {
 import CustomerData from "../general/customer_data";
 import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
 import Debt from "../schedule/debt";
-// import { v4 as uuid } from "uuid";
+
 import type WorkerModel from "../worker/worker_model";
 
 export default class MultiBookingUser {

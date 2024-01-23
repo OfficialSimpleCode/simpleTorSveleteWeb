@@ -1,7 +1,7 @@
 import { monthDifference } from "$lib/utils/dates_utils";
 import { addDuration } from "$lib/utils/duration_utils";
 import { setEquals } from "$lib/utils/general_utils";
-import { durationToString, translate } from "$lib/utils/string_utilitis";
+import { durationToString, translate } from "$lib/utils/string_utils";
 import {
   addMonths,
   dateStrToDate,

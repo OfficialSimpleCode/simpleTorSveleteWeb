@@ -1,5 +1,5 @@
 import { strToReplaceAsterisk, strToReplaceSlash } from "$lib/consts/db";
-import { durationToString } from "$lib/utils/string_utilitis";
+import { durationToString } from "$lib/utils/string_utils";
 import {
   paymentTypesFromStr,
   paymentTypesToStr,

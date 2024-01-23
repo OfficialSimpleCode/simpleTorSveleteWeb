@@ -3,7 +3,9 @@ import { Gender, genderFromStr, genderToStr } from "$lib/consts/gender";
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
 // import { isEqual } from "lodash";
 // import { v4 as uuid } from "uuid";
+import type Booking from "../booking/booking_model";
 import BusinessInfo from "../business/business_info";
+import CustomerData from "../general/customer_data";
 import Device from "../general/device";
 import NotificationTopic from "../notifications/notification_topic";
 import type Invoice from "../payment_hyp/invoice/invoice";
@@ -139,6 +141,41 @@ export default class UserModel {
       isExist: true,
       phone: this.phoneNumber,
       userDecline: false,
+    });
+  }
+
+  customerDataFromBooking({
+    booking,
+    exclude,
+    needDelete = false,
+    initDate,
+  }: {
+    booking: Booking;
+    needDelete?: boolean;
+    exclude?: Date;
+    initDate?: Date;
+  }): CustomerData {
+    return new CustomerData({
+      name: this.name,
+      email: this.userPublicData.email,
+      gender: this.gender,
+      customerUuid: this.id,
+      phoneNumber: this.phoneNumber,
+      isVerifiedPhone: this.isVerifiedPhone,
+      userFirstBookingsDate: this.bookings.firstBookingForBusiness(
+        booking.buisnessId,
+        booking.workerId,
+        {
+          exclude: needDelete ? booking.bookingDate : exclude,
+          initDate: needDelete ? initDate : booking.bookingDate,
+        }
+      ),
+      lastBookingsDate: this.bookings.lastBookingForBusiness({
+        businessId: booking.buisnessId,
+        workerId: booking.workerId,
+        exclude: needDelete ? booking.bookingDate : exclude,
+        initDate: needDelete ? initDate : booking.bookingDate,
+      }),
     });
   }
 

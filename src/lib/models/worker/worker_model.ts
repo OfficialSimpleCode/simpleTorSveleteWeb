@@ -14,7 +14,7 @@ import {
   religionToStr,
   type Religion,
 } from "$lib/consts/worker_schedule";
-import { translate } from "$lib/utils/string_utilitis";
+import { translate } from "$lib/utils/string_utils";
 import {
   dateStrToDate,
   dateToDateStr,

@@ -1,6 +1,6 @@
 import { Gender } from "$lib/consts/gender";
 import type { Religion } from "$lib/consts/worker_schedule";
-import { translate } from "$lib/utils/string_utilitis";
+import { translate } from "$lib/utils/string_utils";
 import { dateStrToDate } from "$lib/utils/times_utils/times_utils";
 import type BusinessModel from "../business/business_model";
 import type IconData from "../general/icon_data";
@@ -27,11 +27,11 @@ export default class Event {
   note: string | null = null;
   ids: string[] = [];
 
-  recurrenceEvent?: RecurrenceEvent = undefined;
-  timeId: string | null = null;
+  recurrenceEvent?: RecurrenceEvent;
+  timeId?: string;
   hasDebt: boolean = false;
   confirmArrival: boolean = false;
-  treatmentId: string | null = null;
+  treatmentId?: string;
   isMulti: boolean = false;
   currentParticipants: number = 0;
   debtCounter: number = 0;
@@ -55,9 +55,9 @@ export default class Event {
   vacationCreatedAt?: Date = undefined;
   isVacation: boolean = false;
   vacationAddedToDeviceCalendar: boolean = false;
-  vacationEndTemp: Date | null = null;
+  vacationEndTemp?: Date;
   isHoliday: boolean = false;
-  holidayReligion: Religion | null = null;
+  holidayReligion?: Religion;
   subTreatmentName: string = "";
   totalBookingMinutes: number = 0;
   waitingListCounter: number = 1;
@@ -138,7 +138,6 @@ export default class Event {
     newObj.colorIndex = json["c"] ?? (newObj.isVacation ? 1 : 0);
     newObj.ids = [workerId];
     newObj.isHoliday = false;
-    newObj.holidayReligion = null;
     newObj.subTreatmentName = "";
     newObj.totalBookingMinutes = 0;
     newObj.waitingListCounter = 1;

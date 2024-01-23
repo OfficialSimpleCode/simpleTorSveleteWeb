@@ -1,12 +1,29 @@
-// Import necessary dependencies
-
-import type { NumericCommands } from "$lib/consts/db";
+import {
+  buisnessCollection,
+  dataCollection,
+  dataDoc,
+  multiEventsTimesDoc,
+  recurrenceEventsDoc,
+  workersCollection,
+  type NumericCommands,
+} from "$lib/consts/db";
+import {
+  eventFilterTypeToStr,
+  type EventFilterType,
+} from "$lib/consts/worker_schedule";
+import BusinessModel from "$lib/models/business/business_model";
+import type CustomerData from "$lib/models/general/customer_data";
+import WorkerModel from "$lib/models/worker/worker_model";
 import FirestoreDataBase from "$lib/services/external_services/firestore";
 import {
+  Transaction,
   type DocumentData,
   type DocumentSnapshot,
   type Unsubscribe,
 } from "firebase/firestore";
+import DbPathesHelper from "../db_paths_helper";
+import { GeneralData } from "../general_data";
+import { GeneralApi } from "./general_api";
 
 export default class GeneralRepo
   extends FirestoreDataBase
@@ -15,6 +32,7 @@ export default class GeneralRepo
   constructor() {
     super();
   }
+
   async getDocRepo({
     path,
     docId,
@@ -136,7 +154,7 @@ export default class GeneralRepo
   }: {
     path: string;
     docId: string;
-    data: Map<string, any>;
+    data: Record<string, any>;
     insideEnviroments?: boolean;
   }): Promise<boolean> {
     const batch = this.getBatch;
@@ -222,234 +240,169 @@ export default class GeneralRepo
     });
   }
 
-  // async getWorkerFromTransactionRepo({
-  //   transaction,
-  //   getEventDoc,
-  //   workerId,
-  //   dateToBook,
-  //   includeVacations,
-  //   businessModel,
-  //   needMultiDoc = false,
-  // }: {
-  //   transaction: Transaction;
-  //   getEventDoc: boolean;
-  //   workerId: string;
-  //   dateToBook: Date;
-  //   includeVacations: boolean;
-  //   businessModel?: BusinessModel | null;
-  //   needMultiDoc?: boolean;
-  // }): Promise<WorkerModel> {
-  //   const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
-  //   const firestoreDataBaseWorker = WorkerModel.fromWorkerDocJson(
-  //     (
-  //       await super.transactionGet({
-  //         transaction,
-  //         path,
-  //         docId: workerId,
-  //       })
-  //     ).data()
-  //   );
-  //   if (getEventDoc) {
-  //     await super
-  //       .transactionGet({
-  //         transaction,
-  //         path: `${path}/${firestoreDataBaseWorker.id}/${dataCollection}/${dataDoc}/${bookingsEventsCollection}`,
-  //         docId: dateToMonthStr(dateToBook),
-  //       })
-  //       .then((json) => {
-  //         if (json.exists) {
-  //           firestoreDataBaseWorker.events.setEvents(
-  //             json.data(),
-  //             firestoreDataBaseWorker,
-  //             dateToMonthStr(dateToBook),
-  //             { putVacations: includeVacations }
-  //           );
-  //         }
-  //       });
-  //   } else {
-  //     await super
-  //       .transactionGet({
-  //         transaction,
-  //         path: `${path}/${workerId}/${dataCollection}`,
-  //         docId: dataDoc,
-  //       })
-  //       .then((json) => {
-  //         if (json.exists) {
-  //           firestoreDataBaseWorker.workerPublicData.setWorkerPublicData(
-  //             json.data(),
-  //             { includeVacation: includeVacations }
-  //           );
-  //         }
-  //       });
-  //   }
-  //   if (
-  //     firestoreDataBaseWorker.hasRecurrenceEvents &&
-  //     firestoreDataBaseWorker.isCustomersNeedRecurrence
-  //   ) {
-  //     await super
-  //       .transactionGet({
-  //         transaction,
-  //         path: `${path}/${workerId}/${dataCollection}`,
-  //         docId: recurrenceEventsDoc,
-  //       })
-  //       .then((json) => {
-  //         if (json.exists && json.data() != null) {
-  //           firestoreDataBaseWorker.recurrence.setRecurrenceEvents(
-  //             json.data(),
-  //             workerId,
-  //             businessModel ?? BusinessModel.empty()
-  //           );
-  //         }
-  //       });
-  //   }
-  //   if (needMultiDoc) {
-  //     await super
-  //       .transactionGet({
-  //         transaction,
-  //         path: `${path}/${workerId}/${dataCollection}`,
-  //         docId: multiEventsTimesDoc,
-  //       })
-  //       .then((json) => {
-  //         if (json.exists) {
-  //           firestoreDataBaseWorker.multiEventsTimes.setData(json.data());
-  //         }
-  //       });
-  //   }
-  //   return firestoreDataBaseWorker;
-  // }
+  async getWorkerFromTransactionRepo({
+    transaction,
+    workerId,
+    businessModel,
+    needMultiDoc = false,
+  }: {
+    transaction: Transaction;
+    workerId: string;
+    businessModel?: BusinessModel;
+    needMultiDoc?: boolean;
+  }): Promise<WorkerModel | null> {
+    const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
+    const workerDoc = await this.transactionGet(transaction, path, workerId);
+    if (!workerDoc.exists()) {
+      return null;
+    }
+    const firestoreDataBaseWorker = WorkerModel.fromWorkerDocJson(
+      workerDoc!.data()
+    );
 
-  // toFormatedCustomerData({
-  //   customerData,
-  //   amountOfBookingsCommand,
-  //   useUserFirstBookingsDate = false,
-  //   saveExtraData = false,
-  // }: {
-  //   customerData: CustomerData;
-  //   amountOfBookingsCommand: any;
-  //   useUserFirstBookingsDate?: boolean;
-  //   saveExtraData?: boolean;
-  // }): Map<string, any> {
-  //   const customerDataJson = customerData.toJson();
-  //   customerDataJson["amoutOfBookings"] = amountOfBookingsCommand;
-  //   const formatedCustomrsData: Map<string, any> = {};
-  //   formatedCustomrsData[`data.${customerData.customerUuid}.amoutOfBookings`] =
-  //     customerDataJson["amoutOfBookings"];
-  //   if (customerDataJson["lastBookingsDate"] != null) {
-  //     formatedCustomrsData[
-  //       `data.${customerData.customerUuid}.lastBookingsDate`
-  //     ] = customerDataJson["lastBookingsDate"];
-  //   }
-  //   if (useUserFirstBookingsDate) {
-  //     if (customerDataJson["userFirstBookingsDate"] != null) {
-  //       formatedCustomrsData[
-  //         `data.${customerData.customerUuid}.userFirstBookingsDate`
-  //       ] = customerDataJson["userFirstBookingsDate"];
-  //     }
-  //   } else {
-  //     if (customerDataJson["firstBookingsDate"] != null) {
-  //       formatedCustomrsData[
-  //         `data.${customerData.customerUuid}.firstBookingsDate`
-  //       ] = customerDataJson["firstBookingsDate"];
-  //     }
-  //   }
-  //   if (saveExtraData) {
-  //     if (customerDataJson["gender"] != null) {
-  //       formatedCustomrsData[`data.${customerData.customerUuid}.gender`] =
-  //         customerDataJson["gender"];
-  //     }
-  //     if (customerDataJson["name"] != null) {
-  //       formatedCustomrsData[`data.${customerData.customerUuid}.name`] =
-  //         customerDataJson["name"];
-  //     }
-  //     if (customerDataJson["workerNaming"] != null) {
-  //       formatedCustomrsData[`data.${customerData.customerUuid}.name`] =
-  //         customerDataJson["workerNaming"];
-  //     }
-  //     if (customerDataJson["email"] != null) {
-  //       formatedCustomrsData[`data.${customerData.customerUuid}.email`] =
-  //         customerDataJson["email"];
-  //     }
-  //     if (customerDataJson["id"] != null) {
-  //       formatedCustomrsData[`data.${customerData.customerUuid}.id`] =
-  //         customerDataJson["id"];
-  //     }
-  //   }
-  //   return formatedCustomrsData;
-  // }
+    await super
+      .transactionGet(
+        transaction,
+        `${path}/${workerId}/${dataCollection}`,
+        dataDoc
+      )
+      .then((json) => {
+        if (json.exists()) {
+          firestoreDataBaseWorker.workerPublicData.setWorkerPublicData(
+            json.data()
+          );
+        }
+      });
 
-  // async realTimeEventsCounterHnadler({
-  //   businessId,
-  //   workerId,
-  //   types,
-  //   increment,
-  // }: {
-  //   businessId: string;
-  //   workerId: string;
-  //   types: Map<EventFilterType, number>;
-  //   increment: boolean;
-  // }): Promise<boolean> {
-  //   if (types.size === 0) {
-  //     return true;
-  //   }
-  //   const counterPath = DbPathesHelper().getWorkerCountersPath(
-  //     businessId,
-  //     workerId
-  //   );
-  //   const data: Map<string, number> = {};
-  //   types.forEach((value, type) => {
-  //     if (eventFilterTypeToStr[type] != null && value !== 0) {
-  //       data[eventFilterTypeToStr[type]!] = (increment ? 1 : -1) * value;
-  //     }
-  //   });
-  //   if (data.size === 0) {
-  //     return true;
-  //   }
-  //   return await incrementMultipleNumberChild({ childPath: counterPath, data });
-  // }
+    if (
+      firestoreDataBaseWorker.hasRecurrenceEvents &&
+      firestoreDataBaseWorker.isCustomersNeedRecurrence
+    ) {
+      await super
+        .transactionGet(
+          transaction,
+          `${path}/${workerId}/${dataCollection}`,
+          recurrenceEventsDoc
+        )
+        .then((json) => {
+          if (json.exists() && json.data() != null) {
+            firestoreDataBaseWorker.recurrence.setRecurrenceEvents(
+              json.data(),
+              workerId,
+              businessModel ?? BusinessModel.empty()
+            );
+          }
+        });
+    }
+    if (needMultiDoc) {
+      await super
+        .transactionGet(
+          transaction,
+          `${path}/${workerId}/${dataCollection}`,
+          multiEventsTimesDoc
+        )
+        .then((json) => {
+          if (json.exists()) {
+            firestoreDataBaseWorker.multiEventsTimes.setData(json.data());
+          }
+        });
+    }
+    return firestoreDataBaseWorker;
+  }
 
-  // async updateWorkerRecurrenceFields({
-  //   transaction,
-  //   batch,
-  //   worker,
-  //   recurrenceEvent,
-  // }: {
-  //   transaction?: Transaction | null;
-  //   batch?: WriteBatch | null;
-  //   worker: WorkerModel;
-  //   recurrenceEvent?: RecurrenceEvent | null;
-  // }): Promise<void> {
-  //   if (recurrenceEvent == null) {
-  //     return;
-  //   }
-  //   const workerData: Map<string, any> = {};
-  //   if (!worker.hasRecurrenceEvents) {
-  //     workerData["hasRecurrenceEvents"] = true;
-  //   }
-  //   if (!worker.isCustomersNeedRecurrence && recurrenceEvent.isRelevant) {
-  //     workerData["isCustomersNeedRecurrence"] = true;
-  //   }
-  //   if (Object.keys(workerData).length > 0) {
-  //     if (transaction != null) {
-  //       transactionUpdateMultipleFieldsAsMap({
-  //         transaction,
-  //         path: `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`,
-  //         docId: worker.id,
-  //         data: workerData,
-  //       });
-  //     } else if (batch != null) {
-  //       updateMultipleFieldsInsideDocAsMap({
-  //         batch,
-  //         path: `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`,
-  //         docId: worker.id,
-  //         data: workerData,
-  //       });
-  //     } else {
-  //       await updateMultipleFieldsInsideDocAsMapRepo({
-  //         path: `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`,
-  //         docId: worker.id,
-  //         data: workerData,
-  //       });
-  //     }
-  //   }
-  // }
+  toFormatedCustomerData({
+    customerData,
+    amountOfBookingsCommand,
+    useUserFirstBookingsDate = false,
+    saveExtraData = false,
+  }: {
+    customerData: CustomerData;
+    amountOfBookingsCommand: any;
+    useUserFirstBookingsDate?: boolean;
+    saveExtraData?: boolean;
+  }): Record<string, any> {
+    const customerDataJson = customerData.toJson();
+    customerDataJson["amoutOfBookings"] = amountOfBookingsCommand;
+    const formatedCustomrsData: Record<string, any> = {};
+    formatedCustomrsData[`data.${customerData.customerUuid}.amoutOfBookings`] =
+      customerDataJson["amoutOfBookings"];
+    if (customerDataJson["lastBookingsDate"] != null) {
+      formatedCustomrsData[
+        `data.${customerData.customerUuid}.lastBookingsDate`
+      ] = customerDataJson["lastBookingsDate"];
+    }
+    if (useUserFirstBookingsDate) {
+      if (customerDataJson["userFirstBookingsDate"] != null) {
+        formatedCustomrsData[
+          `data.${customerData.customerUuid}.userFirstBookingsDate`
+        ] = customerDataJson["userFirstBookingsDate"];
+      }
+    } else {
+      if (customerDataJson["firstBookingsDate"] != null) {
+        formatedCustomrsData[
+          `data.${customerData.customerUuid}.firstBookingsDate`
+        ] = customerDataJson["firstBookingsDate"];
+      }
+    }
+    if (saveExtraData) {
+      if (customerDataJson["gender"] != null) {
+        formatedCustomrsData[`data.${customerData.customerUuid}.gender`] =
+          customerDataJson["gender"];
+      }
+      if (customerDataJson["name"] != null) {
+        formatedCustomrsData[`data.${customerData.customerUuid}.name`] =
+          customerDataJson["name"];
+      }
+      if (customerDataJson["workerNaming"] != null) {
+        formatedCustomrsData[`data.${customerData.customerUuid}.name`] =
+          customerDataJson["workerNaming"];
+      }
+      if (customerDataJson["email"] != null) {
+        formatedCustomrsData[`data.${customerData.customerUuid}.email`] =
+          customerDataJson["email"];
+      }
+      if (customerDataJson["id"] != null) {
+        formatedCustomrsData[`data.${customerData.customerUuid}.id`] =
+          customerDataJson["id"];
+      }
+    }
+    return formatedCustomrsData;
+  }
+
+  async realTimeEventsCounterHandler({
+    businessId,
+    workerId,
+    types,
+    increment,
+  }: {
+    businessId: string;
+    workerId: string;
+    types: Map<EventFilterType, number>;
+    increment: boolean;
+  }): Promise<boolean> {
+    if (types.size === 0) {
+      return true;
+    }
+
+    const counterPath = DbPathesHelper.GI().getWorkerCountersPath(
+      businessId,
+      workerId
+    );
+    const data: Record<string, number> = {};
+
+    types.forEach((value, type) => {
+      if (eventFilterTypeToStr[type] !== null && value !== 0) {
+        data[eventFilterTypeToStr[type]!] = (increment ? 1 : -1) * value;
+      }
+    });
+
+    if (Object.keys(data).length === 0) {
+      return true;
+    }
+
+    return await this.incrementMultipleNumberChild({
+      childPath: counterPath,
+      data: data,
+    });
+  }
 }

@@ -6,7 +6,7 @@ import type Booking from "$lib/models/booking/booking_model.js";
 import Treatment from "$lib/models/general/treatment_model.js";
 import type WorkerModel from "$lib/models/worker/worker_model.js";
 import { isHoliday } from "../dates_utils.js";
-import { translate } from "../string_utilitis.js";
+import { translate } from "../string_utils.js";
 /**
  * Checks if the given time should be skipped based on the booking date and optional todayCheck.
  * @param pointerWork - The time to check.
