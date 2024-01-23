@@ -1,4 +1,6 @@
 import Shift from "$lib/models/general/shift";
+import { format } from "date-fns";
+import { durationStrikings } from "./duration_utils";
 
 export function setTo1970(date: Date): Date {
   const newDate = new Date(date);
@@ -6,17 +8,6 @@ export function setTo1970(date: Date): Date {
   newDate.setMonth(0);
   newDate.setDate(1);
   return newDate;
-}
-
-export function durationStrikings(
-  start1: Date,
-  end1: Date,
-  start2: Date,
-  end2: Date
-): string {
-  // Implement the logic for duration strikings
-  // You can adapt the logic from the Dart code here
-  return "";
 }
 
 ///  in case of after we finish the building of the current shift because we iterating like this
@@ -68,8 +59,8 @@ export function combinedShuffleShifts(combinedShifts: Shift[]): string[] {
 
   const timesToReturn: string[] = [];
   combinedOrderdShifts.forEach((shift) => {
-    timesToReturn.push(DateFormat("HH:mm").format(shift.start));
-    timesToReturn.push(DateFormat("HH:mm").format(shift.end));
+    timesToReturn.push(format(shift.start, "HH:mm"));
+    timesToReturn.push(format(shift.end, "HH:mm"));
   });
 
   return timesToReturn;
