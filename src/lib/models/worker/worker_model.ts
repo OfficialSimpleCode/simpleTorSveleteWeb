@@ -178,6 +178,25 @@ export default class WorkerModel {
     return combinedShuffleShifts(shiftsFromStrList(defaultShifts));
   }
 
+  get fcmsTokens(): Set<string> {
+    if (!this.allowAppNotification) {
+      return new Set<string>();
+    }
+
+    if (this.tempFcm != undefined) {
+      return new Set<string>([this.tempFcm]);
+    }
+
+    const setFcmsTokens = new Set<string>();
+    for (const device of Object.values(this.devices)) {
+      if (device.activeNotifications) {
+        setFcmsTokens.add(device.token);
+      }
+    }
+
+    return setFcmsTokens;
+  }
+
   // Returns whether this day is closing day or not
   isClosingDate(date: Date): boolean {
     return (

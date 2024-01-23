@@ -1,10 +1,11 @@
-import { logger } from "$lib/consts/application_general";
+import { logger, versionUpdate123Date } from "$lib/consts/application_general";
 import {
   BookingReminderType,
   BookingStatuses,
   NotificationType,
   OrderingOptions,
   bookingReminderTypeFromStr,
+  bookingReminderTypeToStr,
   bookingsMassage,
   bookingsMassageKeys,
   notificationTypeFromStr,
@@ -19,7 +20,7 @@ import {
   notificationOptionToStr,
 } from "$lib/consts/notification";
 import { EventFilterType } from "$lib/consts/worker_schedule";
-import { setToMidNight } from "$lib/utils/dates_utils";
+import { dateToRemindBooking, setToMidNight } from "$lib/utils/dates_utils";
 import {
   addDuration,
   diffDuration,
@@ -27,6 +28,7 @@ import {
 } from "$lib/utils/duration_utils";
 import { sendMessage } from "$lib/utils/notifications_utils";
 import {
+  dateToDateStr,
   dateToMonthStr,
   dateToTimeStr,
 } from "$lib/utils/times_utils/times_utils";
@@ -39,7 +41,11 @@ import IconData from "../general/icon_data";
 import { Price } from "../general/price";
 import Treatment from "../general/treatment_model";
 import type MultiBooking from "../multi_booking/multi_booking";
+import BookingNotificationPayload from "../notifications/booking_notification_payload";
+import BusinessPayloadData from "../notifications/business_data_payload";
+import NotificationTopic from "../notifications/notification_topic";
 import BookingReferencePaymentObj from "../payment_hyp/booking_reference";
+import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
 import Event from "../schedule/calendar_event";
 import Debt from "../schedule/debt";
 import RecurrenceEvent from "../schedule/recurrence_event";
@@ -48,7 +54,7 @@ import type UserModel from "../user/user_model";
 import WorkerModel from "../worker/worker_model";
 import BookingInvoiceData from "./booking_invoice_data";
 import BookingPaymentRequestData from "./booking_payment_request";
-import BookingTransactionModel from "./booking_transaction";
+import BookingTransactionModel, { PaymentTypes } from "./booking_transaction";
 const { v4 } = pkg;
 
 export default class Booking extends ScheduleItem {
@@ -857,6 +863,253 @@ export default class Booking extends ScheduleItem {
         BookingTransactionModel.fromTransaction(transaction)
       );
     }
+  }
+
+  sameTreatments(other: Booking): boolean {
+    let same = true;
+
+    if (this.treatmentLength !== other.treatmentLength) {
+      return false;
+    }
+
+    Object.entries(this.treatments).forEach(([_, currentTreatment]) => {
+      let sameTreatments = false;
+
+      Object.entries(other.treatments).forEach(([__, otherTreatment]) => {
+        if (
+          currentTreatment.id === otherTreatment.id &&
+          currentTreatment.count === otherTreatment.count
+        ) {
+          sameTreatments = true;
+        }
+      });
+
+      same = same && sameTreatments;
+    });
+
+    return same;
+  }
+
+  get businessPayloadData(): BusinessPayloadData {
+    return new BusinessPayloadData({
+      businessName: this.businessName,
+      businessId: this.buisnessId,
+      shopIcon: this.shopIcon,
+    });
+  }
+
+  get notificationTopic(): NotificationTopic {
+    return new NotificationTopic({
+      date: dateToDateStr(this.bookingDate),
+      businessId: this.buisnessId,
+      workerId: this.workerId,
+      workerName: this.workerName,
+    });
+  }
+
+  get remindersToScheduleMessages(): ScheduleMessage[] {
+    const messages: ScheduleMessage[] = [];
+
+    this.remindersTypes.forEach((_, type) => {
+      const reminder = this.reminderMessage(type);
+
+      if (reminder != null) {
+        messages.push(reminder);
+      }
+    });
+
+    return messages;
+  }
+
+  reminderMessage(type: BookingReminderType): ScheduleMessage | undefined {
+    const minutes = this.remindersTypes.get(type);
+    if (minutes == null || minutes === 0) {
+      return undefined;
+    }
+
+    const timeToSend = subDuration(
+      this.bookingDate,
+      new Duration({ minutes: minutes })
+    );
+    // the event is in an hour from now, no need to send a reminder
+    if (timeToSend < new Date()) {
+      return undefined;
+    }
+  }
+
+  get toBookingNotificationPayload(): BookingNotificationPayload {
+    return new BookingNotificationPayload({
+      businessId: this.buisnessId,
+      id: this.bookingId,
+      businessName: this.businessName,
+      totalMinutes: this.totalMinutes,
+      isRecurrence: this.recurrenceEvent != undefined,
+      date: this.bookingDate,
+      workerId: this.workerId,
+      shopIcon: this.shopIcon,
+    });
+  }
+
+  get transactionsTotalPaymentPrice(): Price {
+    let totalTransactionsPrice = new Price({
+      amount: "0",
+      currency: this.totalPrice.currency,
+    });
+    for (const transaction of Object.values(this.transactions)) {
+      if (transaction.type === PaymentTypes.payment) {
+        totalTransactionsPrice.amount += transaction.amount;
+      }
+    }
+    return totalTransactionsPrice;
+  }
+
+  get isDepositTransaction(): boolean {
+    if (Object.keys(this.transactions).length === 1) {
+      const transaction = Object.values(this.transactions)[0];
+      return transaction.type === PaymentTypes.deposit;
+    }
+    return false;
+  }
+
+  get totalDebtAmount(): number {
+    let amount = 0;
+    for (const debt of Object.values(this.debts)) {
+      amount += debt.amount;
+    }
+    return amount;
+  }
+
+  get treatmentsToStringDetailed(): string {
+    let str = "";
+    for (const treatment of Object.values(this.treatments)) {
+      str += treatment.nameForBooking + " + ";
+    }
+
+    return str.length > 0 ? str.substring(0, str.length - 3) : "";
+  }
+
+  get priceInAdvance(): Price {
+    const price: Price = new Price({ amount: "0", currency: defaultCurrency });
+
+    for (const treatment of Object.values(this.treatments)) {
+      price.amount += treatment.amountInAdvanceForBooking;
+      price.currency = treatment.price!.currency;
+    }
+
+    return price;
+  }
+
+  get messageRemindersOnBooking(): string[] {
+    const reminders: string[] = [];
+
+    if (
+      this.cancelDate !== null ||
+      this.userFcms.size === 0 ||
+      this.notificationType === NotificationType.push
+    ) {
+      return reminders;
+    }
+
+    for (const [type, minutes] of this.remindersTypes) {
+      if (minutes <= 0) {
+        continue;
+      }
+
+      const dateToNotify = dateToRemindBooking(this, minutes);
+
+      if (dateToNotify.toUTCString() >= new Date().toUTCString()) {
+        reminders.push(this.reminderId(type));
+      }
+    }
+
+    return reminders;
+  }
+
+  get invoiceItem(): InvoiceItem {
+    return new InvoiceItem({
+      code: 0,
+      information: this.treatmentsToStringDetailed,
+      amountPerItem: this.totalPrice.amount,
+      quantity: 1,
+    });
+  }
+
+  get toPaymentRequestUser(): PaymentRequestUser {
+    return new PaymentRequestUser({
+      name: this.customerName,
+      userId: this.customerId,
+      gender: this.userGender,
+      isVerifiedPhone: this.isVerifiedPhone,
+      isExist: this.isUserExist,
+      phone: this.customerPhone,
+    });
+  }
+
+  get invoiceItems(): Map<number, InvoiceItem> {
+    const items: Map<number, InvoiceItem> = new Map();
+    let index = 0;
+    for (const treatment of Object.values(this.treatments)) {
+      let itemString = treatment.name;
+      if (
+        treatment.priceChangingNote !== null &&
+        treatment.priceChangingNote !== ""
+      ) {
+        itemString += `: ${treatment.priceChangingNote}.`;
+      }
+
+      Array.from({ length: treatment.count }, (_) => {
+        items.set(
+          index,
+          new InvoiceItem({
+            code: index,
+            information: itemString,
+            amountPerItem: treatment.price!.amount,
+            quantity: 1,
+          })
+        );
+        index++;
+      });
+    }
+    return items;
+  }
+
+  get transactionsTotalDepositPrice(): Price {
+    let totalTransactionsPrice = new Price({
+      amount: "0",
+      currency: this.totalPrice.currency,
+    });
+    for (const transaction of Object.values(this.transactions)) {
+      if (transaction.type === PaymentTypes.deposit) {
+        totalTransactionsPrice.amount += transaction.amount;
+      }
+    }
+    return totalTransactionsPrice;
+  }
+
+  get transactionDepositLength(): number {
+    let counter = 0;
+    for (const transaction of Object.values(this.transactions)) {
+      if (transaction.type === PaymentTypes.deposit) {
+        counter += 1;
+      }
+    }
+    return counter;
+  }
+
+  get transactionPaymentLength(): number {
+    let counter = 0;
+    for (const transaction of Object.values(this.transactions)) {
+      if (transaction.type === PaymentTypes.payment) {
+        counter += 1;
+      }
+    }
+    return counter;
+  }
+
+  reminderId(type: BookingReminderType): string {
+    return this.createdAt < versionUpdate123Date
+      ? this.bookingId
+      : `${this.bookingId}__${bookingReminderTypeToStr[type]!}`;
   }
 
   get bookingsEventsAsEvents(): Map<string, Event> {

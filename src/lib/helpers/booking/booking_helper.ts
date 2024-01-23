@@ -2,11 +2,12 @@ import { logger } from "$lib/consts/application_general";
 import { BookingStatuses } from "$lib/consts/booking";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
-import type Booking from "$lib/models/booking/booking_model";
+import Booking from "$lib/models/booking/booking_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { Errors } from "$lib/services/errors/messages";
 import { needToHoldOn } from "$lib/utils/booking_utils";
 import AppErrorsHelper from "../app_errors";
+import NotificationHandler from "../notifications/notification_handler";
 import { BookingRepo } from "./booking_repo";
 
 export default class BookingHelper {
@@ -70,20 +71,19 @@ export default class BookingHelper {
         if (needPayInAdvance) {
           return value;
         }
-        // if (value instanceof Booking) {
-        //   this._addBookingLocally({
-        //     booking,
-        //     worker,
-        //     workerAction,
-        //     newCustomerData,
-        //     needPayInAdvance,
-        //   });
-        //   NotificationHandler.getInstance().afterAddBooking({
-        //     booking,
-        //     worker,
-        //     workerAction,
-        //   });
-        // }
+        if (value instanceof Booking) {
+          // this._addBookingLocally({
+          //   booking,
+          //   worker,
+          //   workerAction,
+          //   newCustomerData,
+          //   needPayInAdvance,
+          // });
+          NotificationHandler.GI().afterAddBooking({
+            booking,
+            worker,
+          });
+        }
         return value;
       });
   }
@@ -131,26 +131,25 @@ export default class BookingHelper {
     });
 
     if (resp) {
-      // resp.forEach((deletedBooking) => {
-      //   // Delete the booking locally
-      //   _deleteBookingLocally({
-      //     booking: deletedBooking,
-      //     worker,
-      //     fromUpdate: false,
-      //     removeFromDeviceCalendar: !workerAction,
-      //     newCustomerData,
-      //     workerAction,
-      //     deleteAllBooking,
-      //     cancelDate,
-      //   });
+      resp.forEach((deletedBooking) => {
+        // // Delete the booking locally
+        // _deleteBookingLocally({
+        //   booking: deletedBooking,
+        //   worker,
+        //   fromUpdate: false,
+        //   removeFromDeviceCalendar: !workerAction,
+        //   newCustomerData,
+        //   workerAction,
+        //   deleteAllBooking,
+        //   cancelDate,
+        // });
 
-      //   // Handle notification for the deleted booking
-      //   NotificationHandler.afterDeleteBooking({
-      //     booking: deletedBooking,
-      //     worker,
-      //     workerAction,
-      //   });
-      // });
+        // Handle notification for the deleted booking
+        NotificationHandler.GI().afterDeleteBooking({
+          booking: deletedBooking,
+          worker,
+        });
+      });
 
       return resp;
     }
@@ -269,16 +268,16 @@ export default class BookingHelper {
           //     needPayInAdvance: false,
           //     fromUpdate: true,
           //   });
-          //   NotificationHandler.afterUpdateBooking({
-          //     newBooking,
-          //     oldBooking,
-          //     newWorker,
-          //     keepRecurrence,
-          //     oldWorker,
-          //     workerAction,
-          //     isOldBoookingPassed,
-          //     oldBookingDateForReccurence,
-          //   });
+          NotificationHandler.GI().afterUpdateBooking({
+            newBooking,
+            oldBooking,
+            newWorker,
+            keepRecurrence,
+            oldWorker,
+            workerAction,
+            isOldBoookingPassed,
+            oldBookingDateForReccurence,
+          });
         }
 
         return value;
