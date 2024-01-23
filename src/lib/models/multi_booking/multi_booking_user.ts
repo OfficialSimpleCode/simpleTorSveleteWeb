@@ -23,7 +23,7 @@ import { phoneToDocId } from "$lib/utils/user";
 import BookingInvoiceData from "../booking/booking_invoice_data";
 import type Booking from "../booking/booking_model";
 import BookingTransactionModel from "../booking/booking_transaction";
-import type CustomerData from "../general/customer_data";
+import CustomerData from "../general/customer_data";
 import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
 import Debt from "../schedule/debt";
 // import { v4 as uuid } from "uuid";
@@ -155,14 +155,14 @@ export default class MultiBookingUser {
   }
 
   get toCustomerData(): CustomerData {
-    return {
+    return new CustomerData({
       name: this.customerName,
       phoneNumber: this.customerPhone,
       isVerifiedPhone: this.isVerifiedPhone,
       email: this.clientMail,
       customerUuid: this.customerId,
       gender: this.userGender,
-    };
+    });
   }
 
   get isDepositTransaction(): boolean {
