@@ -1,3 +1,5 @@
+import { Duration } from "$lib/models/core/duration";
+
 // Enum for BookingStatuses
 export enum BookingStatuses {
   waiting = "waiting",
@@ -79,10 +81,10 @@ export const bookingReminderTypeToIcon: {
 
 // Enum for NotificationType
 export enum NotificationType {
-  message = "message",
-  push = "push",
-  none = "none",
-  whatsapp = "whatsapp",
+  message,
+  push,
+  none,
+  whatsapp,
 }
 
 // Map for NotificationType to string
@@ -102,7 +104,7 @@ export const notificationTypeFromStr: { [key: string]: NotificationType } = {
 };
 
 // Constants
-export const needToRemindAnyWayDuration = { hours: 3 };
+export const needToRemindAnyWayDuration = new Duration({ hours: 3 });
 
 export const durationToUpdateBooking = { days: 7 };
 

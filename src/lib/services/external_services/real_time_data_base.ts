@@ -4,28 +4,35 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable valid-jsdoc */
 /* eslint-disable max-len */
-import { DataSnapshot, Database, get, getDatabase, increment, onValue, ref, remove, set, update, type Unsubscribe } from 'firebase/database';
-
-
-
+import { envKey } from "$lib/consts/db";
+import {
+  DataSnapshot,
+  Database,
+  get,
+  getDatabase,
+  increment,
+  onValue,
+  ref,
+  remove,
+  set,
+  update,
+  type Unsubscribe,
+} from "firebase/database";
 
 enum NumericCommands {
-  Increment = 'increment',
-  Decrement = 'decrement',
+  Increment = "increment",
+  Decrement = "decrement",
 }
 
 export default class RealTimeDatabase {
-  
-  
   _db: Database;
   constructor() {
     this._db = getDatabase();
-  
   }
 
   async getChild({ childPath }: { childPath: string }): Promise<DataSnapshot> {
     try {
-      const childRef = ref(this._db,`${envKey}/${childPath}`);
+      const childRef = ref(this._db, `${envKey}/${childPath}`);
       return await get(childRef);
     } catch (e) {
       //AppErrors().addError({ error: Errors.serverError, details: e.toString() });
@@ -33,10 +40,16 @@ export default class RealTimeDatabase {
     }
   }
 
-  async updateChild({ childPath, data }: { childPath: string; data: any }): Promise<boolean> {
+  async updateChild({
+    childPath,
+    data,
+  }: {
+    childPath: string;
+    data: any;
+  }): Promise<boolean> {
     try {
-      const childRef = ref(this._db,`${envKey}/${childPath}`);
-      await update(childRef,data);
+      const childRef = ref(this._db, `${envKey}/${childPath}`);
+      await update(childRef, data);
       return true;
     } catch (e) {
       // logger.e(`Error while updating the child --> ${e}`);
@@ -47,7 +60,7 @@ export default class RealTimeDatabase {
 
   async removeChild({ childPath }: { childPath: string }): Promise<boolean> {
     try {
-      const childRef = ref(this._db,`${envKey}/${childPath}`);
+      const childRef = ref(this._db, `${envKey}/${childPath}`);
       await remove(childRef);
       return true;
     } catch (e) {
@@ -72,10 +85,10 @@ export default class RealTimeDatabase {
       if (command === NumericCommands.Decrement) {
         delta = -delta;
       }
-      const data = { [valueId]: increment(delta)};
-      const childRef = ref(this._db,`${envKey}/${childPath}`);
+      const data = { [valueId]: increment(delta) };
+      const childRef = ref(this._db, `${envKey}/${childPath}`);
 
-      await update(childRef,data);
+      await update(childRef, data);
       return true;
     } catch (e) {
       // logger.e(`Error while updating the child --> ${e}`);
@@ -96,8 +109,8 @@ export default class RealTimeDatabase {
       for (const [key, value] of Object.entries(data)) {
         fixedData[key] = increment(value);
       }
-      const childRef = ref(this._db,`${envKey}/${childPath}`);
-      await update(childRef,fixedData);
+      const childRef = ref(this._db, `${envKey}/${childPath}`);
+      await update(childRef, fixedData);
       return true;
     } catch (e) {
       // logger.e(`Error while updating the child --> ${e}`);
@@ -106,15 +119,27 @@ export default class RealTimeDatabase {
     }
   }
 
-  listenToChild({ childPath,callback }: { childPath: string ,callback: (snapshot: DataSnapshot) => unknown}): Unsubscribe {
-    const childRef = ref(this._db,`${envKey}/${childPath}`);
-    return onValue(childRef,callback);
+  listenToChild({
+    childPath,
+    callback,
+  }: {
+    childPath: string;
+    callback: (snapshot: DataSnapshot) => unknown;
+  }): Unsubscribe {
+    const childRef = ref(this._db, `${envKey}/${childPath}`);
+    return onValue(childRef, callback);
   }
 
-  async setChild({ childPath, data }: { childPath: string; data: any }): Promise<boolean> {
+  async setChild({
+    childPath,
+    data,
+  }: {
+    childPath: string;
+    data: any;
+  }): Promise<boolean> {
     try {
-      const childRef = ref(this._db,`${envKey}/${childPath}`);
-      await  set(childRef, data);
+      const childRef = ref(this._db, `${envKey}/${childPath}`);
+      await set(childRef, data);
       return true;
     } catch (e) {
       // logger.e(`Error while updating the child --> ${e}`);
@@ -122,6 +147,4 @@ export default class RealTimeDatabase {
       return false;
     }
   }
-
-  
 }

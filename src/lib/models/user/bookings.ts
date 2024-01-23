@@ -21,11 +21,15 @@ export default class UserBookings {
     } else if (date.getTime() < nowMonth.getTime()) {
       this.passedBookings[monthStr] = {};
     }
+
     Object.entries(json).forEach(([bookingId, bookingJson]) => {
       const booking = Booking.fromJson(bookingJson, bookingId);
-      if (booking.cancelDate !== null) {
+      //no let in  bookings that has cancel date
+
+      if (booking.cancelDate != undefined) {
         return;
       }
+
       if (booking.isPassed) {
         this.passedBookings[monthStr][bookingId] = booking;
       } else {

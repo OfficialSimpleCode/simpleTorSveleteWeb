@@ -1,15 +1,32 @@
 <script lang="ts">
     import { _ } from "svelte-i18n";
+    import { business } from "$lib/stores/Business.js";
+    import type WorkerModel from "$lib/models/worker/worker_model";
+
     import { createEventDispatcher } from "svelte";
     const dispatch = createEventDispatcher();
 
-    type Employee = Record<string, string>;
+    export let employees: Array<WorkerModel>;
+    export let selectedEmployee: WorkerModel;
+    const DEFUALT_PROFILE_IMAGE =
+        "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.business2community.com%2Fwp-content%2Fuploads%2F2017%2F08%2Fblank-profile-picture-973460_640.png&f=1&nofb=1&ipt=9e0fdc4c7f54be4abb99406710ce51dc697217aa0b5d004b2a5b3c4170adf1f5&ipo=images";
 
-    export let employees: Array<Employee>;
-    export let selectedEmployee: Employee;
+    console.log();
+    console.log(employees.map((e) => e.id));
 
-    function employeeChosen(employee: Employee) {
+    function employeeChosen(employee: WorkerModel) {
         dispatch("employee", employee);
+    }
+
+    function dateToDDMMYYFormat(date: Date): string {
+        return `${date.getDay()}-${date.getMonth()}-${date.getFullYear()}`;
+    }
+
+    function isManager(employee: WorkerModel): boolean {
+        return (
+            $business.businessId.slice(0, employee.id.length - 1) ==
+            employee.id.slice(1)
+        );
     }
 </script>
 
@@ -24,7 +41,10 @@
             >
                 <div class="avatar">
                     <div class="w-14 sm:w-20 rounded-full">
-                        <img src={employee.image} alt="employee" />
+                        <img
+                            src={employee.profileImg || DEFUALT_PROFILE_IMAGE}
+                            alt="employee"
+                        />
                     </div>
                 </div>
                 <div>
@@ -32,8 +52,8 @@
                         {employee.name}
                     </h1>
                     <p class="text-gray-500">
-                        {$_(employee.role.toLowerCase())}
-                        {$_("since")}: {employee.startDate}
+                        {$_(isManager(employee) ? "manager" : "worker")}
+                        {$_("since")}: {dateToDDMMYYFormat(employee.createdAt)}
                     </p>
                 </div>
             </button>

@@ -1,5 +1,4 @@
 <script lang="ts">
-    import localization from "$lib/language/loader"; // Do not remove
     import ToastManager from "$lib/components/ToastManager.svelte";
     import "../app.css";
 
@@ -11,10 +10,14 @@
     import LinksHelper from "$lib/helpers/links_helper";
     import { LoadAppHelper } from "$lib/helpers/load_app_helper";
     import UserInitializer from "$lib/initializers/user_initializer";
+    import { handleLocaleChanges } from "$lib/language/loader";
     import { business } from "$lib/stores/Business";
     import { user } from "$lib/stores/User";
+    import { workers } from "$lib/stores/Workers";
 
     async function loadBusiness() {
+        handleLocaleChanges(localStorage, document);
+
         if ($business) {
             return;
         }
@@ -35,8 +38,10 @@
 
         const u = UserInitializer.GI().user;
         user.set(u);
+        console.log(b);
 
-       
+        const w = BusinessInitializer.GI().workers;
+        workers.set(w);
     }
 
     let businessLoading = loadBusiness();

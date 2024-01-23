@@ -1,4 +1,4 @@
-class SplayTreeSet<T> extends Set<T> {
+export class SplayTreeSet<T> extends Set<T> {
   constructor(iterable?: Iterable<T>, compareFn?: (a: T, b: T) => number) {
     super(iterable);
     if (compareFn) {

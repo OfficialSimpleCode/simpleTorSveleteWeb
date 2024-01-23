@@ -1547,7 +1547,7 @@ export function dateStrToDate(date: string): Date {
 }
 
 export function monthStrToDate(date: string): Date {
-  return new Date(date);
+  return new Date(`01-${date}`);
 }
 
 export function conversStrToDateTime(day: Date, strTime: string): Date {

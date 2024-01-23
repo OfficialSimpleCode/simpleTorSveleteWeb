@@ -1,5 +1,7 @@
 <script lang="ts">
     import { _ } from "svelte-i18n";
+    import { workers } from "$lib/stores/Workers";
+    import type WorkerModel from "$lib/models/worker/worker_model";
     import { ShowToast } from "$lib/stores/ToastManager";
     import Navbar from "$lib/components/navbar/Navbar.svelte";
 
@@ -8,33 +10,17 @@
     import ChooseDateAndTime from "./steps/ChooseDateAndTime.svelte";
     import VerifyDetails from "./steps/VerifyDetails.svelte";
     import { sumDurations, multiplyAndSumDurations } from "./durationUtils";
-    // import SyncfusionSchedualer from "./components/SyncfusionSchedualer.svelte";
+    import SyncfusionSchedualer from "./components/SyncfusionSchedualer.svelte";
 
-    let steps: string[] = ["worker", "treatment", "dateAndTime"];
+    let steps: string[] = ["worker", "treatment", "dateAndTime", "confirmNow"];
     let currentStep: number = 1;
 
-    let employees: Array<Record<string, string>> = [
-        {
-            name: "Amit",
-            role: "Manager",
-            startDate: "20-03-2020",
-            image: "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
-        },
-        {
-            name: "Ron",
-            role: "Worker",
-            startDate: "25-11-2018",
-            image: "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
-        },
-        {
-            name: "Mosh",
-            role: "Worker",
-            startDate: "03-06-2021",
-            image: "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
-        },
-    ];
-    let selectedEmployee: Record<string, string>;
-    let selectedDateAndTime: Record<string, string>;
+    let employees: Array<WorkerModel> = Object.values($workers);
+    let selectedEmployee: WorkerModel;
+    let selectedDateAndTime: Record<string, string> = {
+        date: "05-11-2025",
+        time: "12:56",
+    };
 
     let services: Array<Record<string, any>> = [
         { name: "Nails", price: "150", duration: "1h 20m", quntity: 0 },
@@ -73,10 +59,23 @@
             return;
         }
 
+        if (
+            stepNumber == 4 &&
+            (!selectedDateAndTime ||
+                !selectedServices ||
+                selectedServices.length == 0)
+        ) {
+            ShowToast({
+                text: "Finish the current step first",
+                status: "warning",
+            });
+            return;
+        }
+
         currentStep = stepNumber;
     }
 
-    function employeeSelected(employee: Record<string, string>) {
+    function employeeSelected(employee: WorkerModel) {
         selectedEmployee = employee;
         currentStep += 1;
     }
@@ -97,7 +96,7 @@
     <ul class="steps min-h-20 w-[90%] sm:w-[60%] mt-5">
         {#each steps as step, i}
             <button
-                class="step"
+                class="step hover:step-neutral"
                 class:step-success={currentStep > i}
                 data-content={currentStep > i + 1 ? "✓" : (i + 1).toString()}
                 on:click={() => clickedOnStep(i + 1)}
@@ -120,12 +119,12 @@
             on:services={(event) => servicesSelected(event.detail)}
         />
     {:else if currentStep == 3}
-        <ChooseDateAndTime
+        <!-- <ChooseDateAndTime
             bind:selectedDateAndTime
             duration={totalServicesDuration}
             on:dateAndTime={(event) => dateAndTimeSelected(event.detail)}
-        />
-        <!-- <SyncfusionSchedualer /> -->
+        /> -->
+        <SyncfusionSchedualer />
     {:else if currentStep == 4}
         <VerifyDetails
             bind:employee={selectedEmployee}

@@ -9,9 +9,11 @@
         WrenchScrewdriver,
         ChevronRight,
     } from "svelte-hero-icons";
+    
+    import type WorkerModel from "$lib/models/worker/worker_model";
     import TipDialog from "../components/TipDialog.svelte";
 
-    export let employee: Record<string, string>;
+    export let employee: WorkerModel;
     export let services: Array<Record<string, any>>;
     export let totalServicesDuration: string;
     export let dateAndTime: Record<string, string>;

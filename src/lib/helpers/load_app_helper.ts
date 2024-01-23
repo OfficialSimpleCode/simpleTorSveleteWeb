@@ -5,6 +5,7 @@ import UserInitializer from "$lib/initializers/user_initializer";
 import { Developer } from "$lib/models/developers/developer";
 import { isNetworkConnected } from "$lib/utils/general_utils";
 import { Timestamp } from "firebase/firestore";
+import AppErrorsHelper from "./app_errors";
 import DeveloperHelper from "./developer_helper";
 import { GeneralData } from "./general_data";
 import LinksHelper from "./links_helper";
@@ -119,12 +120,11 @@ export class LoadAppHelper {
   }
 
   private async loadUserData(): Promise<boolean> {
-    console.log("111111111111111111111111111111");
-    console.log(UserInitializer.GI().userId);
+    console.log(`user -> ${UserInitializer.GI().userId}`);
     if (!UserInitializer.GI().isConnected) {
       return true;
     }
-    console.log("rrrrrrrrrrrrr");
+
     if (
       !(await this.executeFuture(
         async () =>
@@ -156,6 +156,7 @@ export class LoadAppHelper {
     try {
       await LinksHelper.GI().handleOpenAppLink();
       let businessId = LinksHelper.GI().linkedBuisnessId;
+
       // if (businessId === "") {
       //   businessId =
       //     await LinksHelper.GI().getInitialBusinessIdFromDynamicLink();
@@ -174,6 +175,8 @@ export class LoadAppHelper {
       if (businessId === "") {
         return true;
       }
+
+      console.log("33333333333");
       if (
         !(await this.executeFuture(() =>
           BusinessInitializer.GI().loadBusiness(

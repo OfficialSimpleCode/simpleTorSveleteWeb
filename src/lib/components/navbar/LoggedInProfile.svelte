@@ -4,7 +4,7 @@
     import { page } from "$app/stores";
 
     import { _ } from "svelte-i18n";
-    
+
     import ProfileDialog from "./ProfileDialog.svelte";
     import PurchesesDialog from "./PurchesesDialog.svelte";
 

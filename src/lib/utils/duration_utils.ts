@@ -1,6 +1,6 @@
 import { Duration } from "$lib/models/core/duration";
 
-function durationStrikings(
+export function durationStrikings(
   start: Date,
   end: Date,
   startTime: Date,
@@ -35,4 +35,8 @@ function durationInClockFormat(
 
 export function addDuration(date: Date, duration: Duration): Date {
   return new Date(date.getTime() + duration.inMilliseconds);
+}
+
+export function subDuration(date: Date, duration: Duration): Date {
+  return new Date(date.getTime() - duration.inMilliseconds);
 }
