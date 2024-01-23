@@ -2,11 +2,19 @@ import { format, parse } from "date-fns";
 
 import { logger } from "$lib/consts/application_general.js";
 import { WindowSpaces } from "$lib/consts/worker.js";
-import type Booking from "$lib/models/booking/booking_model.js";
+import Booking from "$lib/models/booking/booking_model.js";
+import { Duration } from "$lib/models/core/duration.js";
 import Treatment from "$lib/models/general/treatment_model.js";
+import type RecurrenceEvent from "$lib/models/schedule/recurrence_event.js";
+import { FreqRecurrence } from "$lib/models/schedule/recurrence_event.js";
+import TimePickerObj from "$lib/models/ui/booking/time_picker_obj.js";
 import type WorkerModel from "$lib/models/worker/worker_model.js";
+import { AppErrors } from "$lib/services/errors/app_errors.js";
+import { Errors } from "$lib/services/errors/messages.js";
 import { isHoliday } from "../dates_utils.js";
+import { addDuration, durationStrikings } from "../duration_utils.js";
 import { translate } from "../string_utilitis.js";
+import type { TimeSegment } from "./models.js";
 /**
  * Checks if the given time should be skipped based on the booking date and optional todayCheck.
  * @param pointerWork - The time to check.
@@ -51,8 +59,8 @@ export function timeIsAlreadyPassed(time: Date, bookingDate: string): boolean {
 export function generateTimeSegmentsMap(
   booking: Booking,
   startTime: Date
-): TimeSegmentsMap {
-  const timesSegments: TimeSegmentsMap = {};
+): Map<string, TimeSegment> {
+  const timesSegments: Map<string, TimeSegment> = new Map();
   let lastTime: Date = startTime;
   const treatment: Treatment = Treatment.fromTreatmentsMap(booking.treatments);
 
@@ -61,10 +69,10 @@ export function generateTimeSegmentsMap(
     lastTime = new Date(lastTime.getTime() + timeData.breakMinutes * 60000);
 
     // Adding the break before - start of the treatment
-    timesSegments[timeIndex] = {
+    timesSegments.set(timeIndex, {
       start: lastTime,
-      duration: { minutes: timeData.workMinutes },
-    };
+      duration: new Duration({ minutes: timeData.workMinutes }),
+    });
 
     // Adding the time of the treatment
     lastTime = new Date(lastTime.getTime() + timeData.workMinutes * 60000);
@@ -79,32 +87,32 @@ export function generateTimeSegmentsMap(
  * @param endTime - The end time for the segments.
  * @returns The reversed map of time segments.
  */
-// export function generateReversedTimeSegmentsMap(
-//   booking: Booking,
-//   endTime: Date
-// ): TimeSegmentsMap {
-//   const timesSegments: TimeSegmentsMap = {};
-//   const treatment: Treatment = Treatment.fromTreatmentsMap(booking.treatments);
-//   let lastTime: Date = new Date(
-//     endTime.getTime() - treatment.totalMinutes * 60000
-//   );
+export function generateReversedTimeSegmentsMap(
+  booking: Booking,
+  endTime: Date
+): Map<string, TimeSegment> {
+  const timesSegments: Map<string, TimeSegment> = new Map();
+  const treatment: Treatment = Treatment.fromTreatmentsMap(booking.treatments);
+  let lastTime: Date = new Date(
+    endTime.getTime() - treatment.totalMinutes * 60000
+  );
 
-//   treatment.times.forEach((timeIndex, timeData) => {
-//     // Adding the break before the treatment
-//     lastTime = new Date(lastTime.getTime() + timeData.breakMinutes * 60000);
+  treatment.times.forEach((timeData, timeIndex) => {
+    // Adding the break before the treatment
+    lastTime = new Date(lastTime.getTime() + timeData.breakMinutes * 60000);
 
-//     // Adding the break before - start of the treatment
-//     timesSegments[timeIndex] = {
-//       start: lastTime,
-//       duration: { minutes: timeData.workMinutes },
-//     };
+    // Adding the break before - start of the treatment
+    timesSegments.set(timeIndex, {
+      start: lastTime,
+      duration: new Duration({ minutes: timeData.workMinutes }),
+    });
 
-//     // Adding the time of the treatment
-//     lastTime = new Date(lastTime.getTime() + timeData.workMinutes * 60000);
-//   });
+    // Adding the time of the treatment
+    lastTime = new Date(lastTime.getTime() + timeData.workMinutes * 60000);
+  });
 
-//   return timesSegments;
-// }
+  return timesSegments;
+}
 
 /**
  * Calculates the minutes to jump over forbidden times.
@@ -113,48 +121,48 @@ export function generateTimeSegmentsMap(
  * @param forbiddenTimes - List of forbidden times.
  * @returns The minutes to jump over forbidden times.
  */
-// export function minutesToJumpOverForbbiden(
-//   forbiddenTimesPointers: number[],
-//   timeSegments: TimeSegmentsMap,
-//   forbiddenTimes: Date[]
-// ): number {
-//   let minutesToJump: number = 0; // 0 represents allowed time
-//   let segmentIndex: number = 0;
-//   const segments: TimeData[] = Object.values(timeSegments);
+export function minutesToJumpOverForbbiden(
+  forbiddenTimesPointers: number[],
+  timeSegments: Map<string, TimeSegment>,
+  forbiddenTimes: Date[]
+): number {
+  let minutesToJump: number = 0; // 0 represents allowed time
+  let segmentIndex: number = 0;
+  const segments: TimeSegment[] = Object.values(timeSegments);
 
-//   forbiddenTimesPointers.forEach((pointer) => {
-//     const startSegment: Date = segments[segmentIndex].start;
-//     const endSegment: Date = new Date(
-//       startSegment.getTime() + segments[segmentIndex].duration.minutes * 60000
-//     );
+  forbiddenTimesPointers.forEach((pointer) => {
+    const startSegment: Date = segments[segmentIndex].start;
+    const endSegment: Date = new Date(
+      startSegment.getTime() + segments[segmentIndex].duration.minutes * 60000
+    );
 
-//     for (pointer; pointer < forbiddenTimes.length; pointer += 2) {
-//       if (pointer + 1 >= forbiddenTimes.length) break;
-//       const status: string = durationStrikings(
-//         forbiddenTimes[pointer],
-//         forbiddenTimes[pointer + 1],
-//         startSegment,
-//         endSegment
-//       );
+    for (pointer; pointer < forbiddenTimes.length; pointer += 2) {
+      if (pointer + 1 >= forbiddenTimes.length) break;
+      const status: string = durationStrikings(
+        forbiddenTimes[pointer],
+        forbiddenTimes[pointer + 1],
+        startSegment,
+        endSegment
+      );
 
-//       if (status === "STRIKE") {
-//         // If strike, the end of forbidden time must be after the start of the segment
-//         const currentDifference: number =
-//           endSegment.getTime() - forbiddenTimes[pointer + 1].getTime();
-//         // Set the jump to the highest option
-//         minutesToJump = max(minutesToJump, currentDifference / 60000);
-//         break;
-//       }
+      if (status === "STRIKE") {
+        // If strike, the end of forbidden time must be after the start of the segment
+        const currentDifference: number =
+          endSegment.getTime() - forbiddenTimes[pointer + 1].getTime();
+        // Set the jump to the highest option
+        minutesToJump = Math.max(minutesToJump, currentDifference / 60000);
+        break;
+      }
 
-//       if (status === "BEFORE") break;
-//     }
+      if (status === "BEFORE") break;
+    }
 
-//     // Passing to the next time segment
-//     segmentIndex += 1;
-//   });
+    // Passing to the next time segment
+    segmentIndex += 1;
+  });
 
-//   return minutesToJump;
-// }
+  return minutesToJump;
+}
 
 /**
  * Calculates the minutes to jump over forbidden times in reverse order.
@@ -163,48 +171,48 @@ export function generateTimeSegmentsMap(
  * @param forbiddenTimes - List of forbidden times.
  * @returns The minutes to jump over forbidden times in reverse order.
  */
-// export function minutesToJumpOverForbbidenReverse(
-//   forbiddenTimesPointers: number[],
-//   timeSegments: TimeSegmentsMap,
-//   forbiddenTimes: Date[]
-// ): number {
-//   let minutesToJump: number = 0; // 0 represents allowed time
-//   const segments: TimeData[] = Object.values(timeSegments);
-//   let segmentIndex: number = segments.length - 1;
+export function minutesToJumpOverForbbidenReverse(
+  forbiddenTimesPointers: number[],
+  timeSegments: Map<string, TimeSegment>,
+  forbiddenTimes: Date[]
+): number {
+  let minutesToJump: number = 0; // 0 represents allowed time
+  const segments: TimeSegment[] = Object.values(timeSegments);
+  let segmentIndex: number = segments.length - 1;
 
-//   forbiddenTimesPointers.forEach((pointer) => {
-//     const startSegment: Date = segments[segmentIndex].start;
-//     const endSegment: Date = new Date(
-//       startSegment.getTime() + segments[segmentIndex].duration.minutes * 60000
-//     );
+  forbiddenTimesPointers.forEach((pointer) => {
+    const startSegment: Date = segments[segmentIndex].start;
+    const endSegment: Date = new Date(
+      startSegment.getTime() + segments[segmentIndex].duration.minutes * 60000
+    );
 
-//     for (pointer; pointer >= 0; pointer -= 2) {
-//       if (pointer - 1 < 0) break;
-//       const status: string = durationStrikings(
-//         forbiddenTimes[pointer - 1],
-//         forbiddenTimes[pointer],
-//         startSegment,
-//         endSegment
-//       );
+    for (pointer; pointer >= 0; pointer -= 2) {
+      if (pointer - 1 < 0) break;
+      const status: string = durationStrikings(
+        forbiddenTimes[pointer - 1],
+        forbiddenTimes[pointer],
+        startSegment,
+        endSegment
+      );
 
-//       if (status === "STRIKE") {
-//         // If strike, the start of forbidden time must be before the end of the segment
-//         const currentDifference: number =
-//           endSegment.getTime() - forbiddenTimes[pointer - 1].getTime();
-//         // Set the jump to the highest option
-//         minutesToJump = max(minutesToJump, currentDifference / 60000);
-//         break;
-//       }
+      if (status === "STRIKE") {
+        // If strike, the start of forbidden time must be before the end of the segment
+        const currentDifference: number =
+          endSegment.getTime() - forbiddenTimes[pointer - 1].getTime();
+        // Set the jump to the highest option
+        minutesToJump = Math.max(minutesToJump, currentDifference / 60000);
+        break;
+      }
 
-//       if (status === "AFTER") break;
-//     }
+      if (status === "AFTER") break;
+    }
 
-//     // Passing to the next time segment
-//     segmentIndex -= 1;
-//   });
+    // Passing to the next time segment
+    segmentIndex -= 1;
+  });
 
-//   return minutesToJump;
-// }
+  return minutesToJump;
+}
 
 /**
  * Adds duration to all segments in the given map.
@@ -212,7 +220,7 @@ export function generateTimeSegmentsMap(
  * @param minutes - The duration to add.
  */
 function addMinutesToAllSegments(
-  timeSegments: TimeSegmentsMap,
+  timeSegments: Map<string, TimeSegment>,
   minutes: number
 ): void {
   Object.values(timeSegments).forEach((timeData) => {
@@ -227,104 +235,116 @@ function addMinutesToAllSegments(
  * @param treatment - The treatment for filtering relevant times.
  * @returns List of relevant multi-event times.
  */
-// export function relevantMultiEventTime({
-//   worker,
-//   dateForCheck,
-//   treatment,
-// }: {
-//   worker: WorkerModel;
-//   dateForCheck: Date;
-//   treatment: Treatment;
-// }): TimePickerObj[] {
-//   const finalTimes: TimePickerObj[] = [];
+export function relevantMultiEventTime({
+  worker,
+  dateForCheck,
+  treatment,
+}: {
+  worker: WorkerModel;
+  dateForCheck: Date;
+  treatment: Treatment;
+}): TimePickerObj[] {
+  const finalTimes: TimePickerObj[] = [];
 
-//   // Check if the date is in the worker's close calendar date
-//   if (dateToDateStr(worker.closeCalendarDate ?? new Date(0)) === dateToDateStr(dateForCheck)) {
-//     return finalTimes;
-//   }
+  // Check if the date is in the worker's close calendar date
+  if (
+    dateToDateStr(worker.closeCalendarDate ?? new Date(0)) ===
+    dateToDateStr(dateForCheck)
+  ) {
+    return finalTimes;
+  }
 
-//   // Check if the worker's calendar is closed
-//   if (!worker.openCalendar) {
-//     return finalTimes;
-//   }
+  // Check if the worker's calendar is closed
+  if (!worker.openCalendar) {
+    return finalTimes;
+  }
 
-//   // Retrieve multi-event times for the specified date
-//   const workerTimes = worker.multiEventsTimes.times[dateToDateStr(dateForCheck)] ?? {};
+  // Retrieve multi-event times for the specified date
+  const workerTimes =
+    worker.multiEventsTimes.times[dateToDateStr(dateForCheck)] ?? {};
 
-//   // Iterate through the times and filter relevant ones
-//   Object.entries(workerTimes).forEach(([timeStr, timeObj]) => {
-//     if (timeObj.treatmentId === treatment.id && timeObj.index === 0) {
-//       const startTime = timeStrToDate(timeStr);
-//       const displayDate = new Date(
-//         dateForCheck.getFullYear(),
-//         dateForCheck.getMonth(),
-//         dateForCheck.getDate(),
-//         startTime.getHours(),
-//         startTime.getMinutes()
-//       );
+  // Iterate through the times and filter relevant ones
+  Object.entries(workerTimes).forEach(([timeStr, timeObj]) => {
+    if (timeObj.treatmentId === treatment.id && timeObj.index === 0) {
+      const startTime = timeStrToDate(timeStr);
+      const displayDate = new Date(
+        dateForCheck.getFullYear(),
+        dateForCheck.getMonth(),
+        dateForCheck.getDate(),
+        startTime.getHours(),
+        startTime.getMinutes()
+      );
 
-//       // Check if the display date is before the current time
-//       if (displayDate < new Date()) {
-//         return;
-//       }
+      // Check if the display date is before the current time
+      if (displayDate < new Date()) {
+        return;
+      }
 
-//       const maxParticipants = timeObj.maxParticipants ?? treatment.participants;
+      const maxParticipants = timeObj.maxParticipants ?? treatment.participants;
 
-//       finalTimes.push({
-//         isMulti: true,
-//         showMultiWaitingList: timeObj.showWaitingList,
-//         signedPaymentRequestId: timeObj.paymentRequestId,
-//         displayDate,
-//         maxParticipants,
-//         isWaitingList: maxParticipants <= timeObj.currentPaticipants,
-//         currentParticipants: timeObj.currentPaticipants,
-//         showParticipants: treatment.showParticipants,
-//       });
-//     }
-//   });
+      finalTimes.push(
+        new TimePickerObj({
+          isMulti: true,
+          showMultiWaitingList: timeObj.showWaitingList,
+          signedPaymentRequestId: timeObj.paymentRequestId,
+          displayDate,
+          maxParticipants,
+          isWaitingList: maxParticipants <= timeObj.currentPaticipants,
+          currentParticipants: timeObj.currentPaticipants,
+          showParticipants: treatment.showParticipants,
+        })
+      );
+    }
+  });
 
-//   // Iterate through recurrence events and filter relevant ones
-//   worker.recurrence.recurrenceEvents.forEach((dateStr, eventsDay) => {
-//     eventsDay.forEach((timeStr, event) => {
-//       if (
-//         !event.isMulti ||
-//         event.recurrenceEvent === null ||
-//         event.treatmentId !== treatment.id ||
-//         !event.recurrenceEvent.isAccureInDate({ date: dateForCheck }) ||
-//         event.eventIndex !== 0
-//       ) {
-//         return;
-//       }
+  // Iterate through recurrence events and filter relevant ones
+  Object.entries(worker.recurrence.recurrenceEvents).forEach(
+    ([_, eventsDay]) => {
+      Object.entries(eventsDay).forEach(([timeStr, event]) => {
+        if (
+          !event.isMulti ||
+          event.recurrenceEvent === null ||
+          event.treatmentId !== treatment.id ||
+          !event.recurrenceEvent?.isAccureInDate({ date: dateForCheck }) ||
+          event.eventIndex !== 0
+        ) {
+          return;
+        }
 
-//       const startTime = timeStrToDate(timeStr);
-//       const displayDate = new Date(
-//         dateForCheck.getFullYear(),
-//         dateForCheck.getMonth(),
-//         dateForCheck.getDate(),
-//         startTime.getHours(),
-//         startTime.getMinutes()
-//       );
+        const startTime = timeStrToDate(timeStr);
+        const displayDate = new Date(
+          dateForCheck.getFullYear(),
+          dateForCheck.getMonth(),
+          dateForCheck.getDate(),
+          startTime.getHours(),
+          startTime.getMinutes()
+        );
 
-//       finalTimes.push({
-//         displayDate,
-//         isMulti: true,
-//         recurrenceTimeId: event.timeId,
-//         recurrenceFatherBookingId: event.recurrenceFatherBookingId,
-//         maxParticipants: treatment.participants,
-//         currentParticipants: event.currentParticipants,
-//         isWaitingList: treatment.participants <= event.currentParticipants,
-//         showParticipants: treatment.showParticipants,
-//         recurrenceMultiEvent: event.recurrenceEvent,
-//         fatherRecurrenceMultiEventDate: event.from,
-//       });
-//     });
-//   });
+        finalTimes.push(
+          new TimePickerObj({
+            displayDate,
+            isMulti: true,
+            recurrenceTimeId: event.timeId ?? undefined,
+            recurrenceFatherBookingId: event.recurrenceFatherBookingId,
+            maxParticipants: treatment.participants,
+            currentParticipants: event.currentParticipants,
+            isWaitingList: treatment.participants <= event.currentParticipants,
+            showParticipants: treatment.showParticipants,
+            recurrenceMultiEvent: event.recurrenceEvent,
+            fatherRecurrenceMultiEventDate: event.from,
+          })
+        );
+      });
+    }
+  );
 
-//   // Sort the final times by display date
-//   finalTimes.sort((a, b) => a.displayDate!.getTime() - b.displayDate!.getTime());
+  // Sort the final times by display date
+  finalTimes.sort(
+    (a, b) => a.displayDate!.getTime() - b.displayDate!.getTime()
+  );
 
-//   return finalTimes;
-// }
+  return finalTimes;
+}
 
 /**
  * Returns a list of relevant hours for the given worker, booking, and optional parameters.
@@ -333,170 +353,178 @@ function addMinutesToAllSegments(
  * @param options - Optional parameters for customization.
  * @returns List of relevant hours.
  */
-// function relevantHoures(
-//   worker: WorkerModel | null | undefined,
-//   booking: Booking,
-//   options: {
-//     isUpdate?: boolean;
-//     oldBooking?: Booking | null;
-//     workerSheet?: boolean;
-//     reverse?: boolean;
-//     workerAction?: boolean;
-//     amoutLimit?: number;
-//     recurrenceSkipDate?: Date;
-//   } = {}
-// ): TimePickerObj[] {
-//   const finalTimes: TimePickerObj[] = [];
+function relevantHoures(
+  worker: WorkerModel | null | undefined,
+  booking: Booking,
+  isUpdate: boolean = false,
+  oldBooking: Booking | null = null,
+  workerSheet: boolean = false,
+  reverse: boolean = false,
+  workerAction: boolean = false,
+  amoutLimit?: number,
+  recurrenceSkipDate?: Date
+): TimePickerObj[] {
+  const finalTimes: TimePickerObj[] = [];
 
-//   // Return empty array if worker is null or undefined
-//   if (!worker) {
-//     return finalTimes;
-//   }
+  // Return empty array if worker is null or undefined
+  if (!worker) {
+    return finalTimes;
+  }
 
-//   // Check if all day is taken
-//   if (isAllDayTaken(worker, booking.bookingDate, options.workerAction, options.workerSheet)) {
-//     return finalTimes;
-//   }
+  // Check if all day is taken
+  if (isAllDayTaken(worker, booking.bookingDate, workerAction, workerSheet)) {
+    return finalTimes;
+  }
 
-//   const bookingDate = format(booking.bookingDate, 'dd-MM-yyyy');
-//   const work = convertStringToTime(worker.shiftsFor({ day: booking.bookingDate }));
+  const bookingDate = format(booking.bookingDate, "dd-MM-yyyy");
+  const work = convertStringToTime(
+    worker.shiftsFor({ day: booking.bookingDate })
+  );
 
-//   const takenHoures = alreadyTakenHoures(worker, bookingDate, {
-//     isUpdate: options.isUpdate,
-//     workerAction: options.workerAction,
-//     oldBooking: options.oldBooking,
-//     recurrenceSkipDate: options.recurrenceSkipDate,
-//   });
+  const takenHoures = alreadyTakenHoures(worker, bookingDate, {
+    isUpdate: isUpdate,
+    workerAction: workerAction,
+    oldBooking: oldBooking,
+    recurrenceSkipDate: recurrenceSkipDate,
+  });
 
-//   const forbbidenTimes = takenHoures;
-//   forbbidenTimes.sort();
-//   work.sort();
+  const forbbidenTimes = takenHoures;
+  forbbidenTimes.sort();
+  work.sort();
 
-//   const treatment = Treatment.fromTreatmentsMap(booking.treatments);
+  const treatment = Treatment.fromTreatmentsMap(booking.treatments);
 
-//   // Call the reverse algorithm if specified
-//   if (options.reverse) {
-//     return reverseRelevantHoures(
-//       worker,
-//       work,
-//       forbbidenTimes,
-//       bookingDate,
-//       treatment,
-//       Booking.fromBooking(booking),
-//       {
-//         workerSheet: options.workerSheet,
-//         amoutLimit: options.amoutLimit,
-//       }
-//     );
-//   }
+  // Call the reverse algorithm if specified
+  if (reverse) {
+    return reverseRelevantHoures(
+      worker,
+      work,
+      forbbidenTimes,
+      bookingDate,
+      treatment,
+      Booking.fromBooking(booking),
+      workerSheet,
+      amoutLimit
+    );
+  }
 
-//   const forbiddenTimesPointers = List.generate(treatment.times.keys.length, (index) => 0);
+  const forbiddenTimesPointers: number[] = Array.from(
+    { length: treatment.times.size },
+    () => 0
+  );
 
-//   // Calculate the current legal time (end with 0 or 5)
-//   let currentTime = getTimeDevideByFive(new Date(), { inCheckFormat: true });
+  // Calculate the current legal time (end with 0 or 5)
+  let currentTime = getTimeDevideByFive(new Date(), { inCheckFormat: true });
 
-//   // Iterate over the work times
-//   let i = 0;
-//   for (let j = 0; j < work.length; j += 2) {
-//     let pointerWork = work[j];
-//     const endWork = work[j + 1];
+  // Iterate over the work times
+  let i = 0;
+  for (let j = 0; j < work.length; j += 2) {
+    let pointerWork = work[j];
+    const endWork = work[j + 1];
 
-//     // Skipping to the current time
-//     if (shouldSkip(pointerWork, bookingDate)) {
-//       switch (durationStrikings(currentTime, currentTime, pointerWork, endWork)) {
-//         case 'BEFORE':
-//           // Current is later
-//           logger.d("Alg duration status - BEFORE");
-//           continue;
-//         case 'AFTER':
-//           // Current is passed
-//           logger.d("Alg duration status - AFTER");
-//           break;
-//         case 'STRIKE':
-//           // Current is in this section
-//           logger.d("Alg duration status - STRIKE");
-//           break;
-//       }
-//       pointerWork = currentTime;
-//     }
+    // Skipping to the current time
+    if (shouldSkip(pointerWork, bookingDate)) {
+      switch (
+        durationStrikings(currentTime, currentTime, pointerWork, endWork)
+      ) {
+        case "BEFORE":
+          // Current is later
+          logger.debug("Alg duration status - BEFORE");
+          continue;
+        case "AFTER":
+          // Current is passed
+          logger.debug("Alg duration status - AFTER");
+          break;
+        case "STRIKE":
+          // Current is in this section
+          logger.debug("Alg duration status - STRIKE");
+          break;
+      }
+      pointerWork = currentTime;
+    }
 
-//     // Generate optional treatment starting at 'pointerWork'
-//     const timeSegments = generateTimeSegmentsMap(booking, pointerWork);
+    // Generate optional treatment starting at 'pointerWork'
+    const timeSegments = generateTimeSegmentsMap(booking, pointerWork);
+    // saves the last and first
+    const valuesArr = Array.from(timeSegments.values());
+    const lastTimeSegment = valuesArr[valuesArr.length - 1];
+    const firstTimeSegment = valuesArr[0];
+    // Pass over the current time stamp
+    while (
+      addDuration(lastTimeSegment.start, lastTimeSegment.duration) <= endWork
+    ) {
+      i++;
+      if (i > 500) {
+        logger.error("Infinity loop in times algorithm - stopping");
+        break;
+      }
 
-//     // Pass over the current time stamp
-//     while (!((timeSegments.values.last['start'] as Date)
-//       .add(timeSegments.values.last['duration']))
-//       .isAfter(endWork)) {
-//       i++;
-//       if (i > 500) {
-//         logger.e('Infinity loop in times algorithm - stopping');
-//         break;
-//       }
+      // Get time to jump to the next optional time
+      const minutesToJump = minutesToJumpOverForbbiden(
+        forbiddenTimesPointers,
+        timeSegments,
+        forbbidenTimes
+      );
 
-//       // Get time to jump to the next optional time
-//       const minutesToJump = minutesToJumpOverForbbiden(
-//         forbiddenTimesPointers, timeSegments, forbbidenTimes
-//       );
+      // Calculate the default jump time
+      const jump = getJump(
+        firstTimeSegment.start,
+        forbbidenTimes,
+        forbiddenTimesPointers,
+        worker
+      );
 
-//       // Calculate the default jump time
-//       const jump = getJump(
-//         timeSegments.values.first['start'] as Date,
-//         forbbidenTimes,
-//         forbiddenTimesPointers,
-//         worker
-//       );
+      // If the jump is set to 0, no need to jump - allowed time
+      const allowedTime = minutesToJump === 0;
 
-//       // If the jump is set to 0, no need to jump - allowed time
-//       const allowedTime = minutesToJump === 0;
+      // Add the time and save place for short bookings
+      if (allowedTime) {
+        const timeToAdd = firstTimeSegment.start;
+        const dateToAdd = new Date(
+          booking.bookingDate.getFullYear(),
+          booking.bookingDate.getMonth(),
+          booking.bookingDate.getDate(),
+          timeToAdd.getHours(),
+          timeToAdd.getMinutes()
+        );
 
-//       // Add the time and save place for short bookings
-//       if (allowedTime) {
-//         const timeToAdd = timeSegments.values.first['start'] as Date;
-//         const dateToAdd = new Date(
-//           booking.bookingDate.getFullYear(),
-//           booking.bookingDate.getMonth(),
-//           booking.bookingDate.getDate(),
-//           timeToAdd.getHours(),
-//           timeToAdd.getMinutes()
-//         );
+        // Adding only the first time (start of the treatment)
+        finalTimes.push(new TimePickerObj({ displayDate: dateToAdd }));
 
-//         // Adding only the first time (start of the treatment)
-//         finalTimes.push({ displayDate: dateToAdd });
+        // If there is an amount limit and we reached it, return the times
+        if (amoutLimit !== undefined && amoutLimit >= finalTimes.length) {
+          return finalTimes;
+        }
 
-//         // If there is an amount limit and we reached it, return the times
-//         if (options.amoutLimit !== undefined && options.amoutLimit >= finalTimes.length) {
-//           return finalTimes;
-//         }
+        // For worker when editing customer booking,
+        // we don't need to optimize the times by the shorter turn
+        // because the worker can already set a turn every 5 minutes in the task
+        if (workerSheet) {
+          addMinutesToAllSegments(timeSegments, 5);
+        } else {
+          addMinutesToAllSegments(timeSegments, jump);
+        }
+      } else {
+        // Finish passing all over the forbidden times
+        // (pointer of the first segment end time is out of the list)
+        if (forbbidenTimes.length - 1 < forbiddenTimesPointers[0] + 1) {
+          if (workerSheet) {
+            addMinutesToAllSegments(timeSegments, 5);
+          } else {
+            addMinutesToAllSegments(timeSegments, jump);
+          }
+        }
+        // Jump to the end of the current forbidden time -> save time complexity
+        else {
+          // If strike, adding the best time (longest)
+          addMinutesToAllSegments(timeSegments, minutesToJump);
+        }
+      }
+    }
+  }
 
-//         // For worker when editing customer booking,
-//         // we don't need to optimize the times by the shorter turn
-//         // because the worker can already set a turn every 5 minutes in the task
-//         if (options.workerSheet) {
-//           addMinutesToAllSegments(timeSegments, 5);
-//         } else {
-//           addMinutesToAllSegments(timeSegments, jump);
-//         }
-//       } else {
-//         // Finish passing all over the forbidden times
-//         // (pointer of the first segment end time is out of the list)
-//         if (forbbidenTimes.length - 1 < forbiddenTimesPointers[0] + 1) {
-//           if (options.workerSheet) {
-//             addMinutesToAllSegments(timeSegments, 5);
-//           } else {
-//             addMinutesToAllSegments(timeSegments, jump);
-//           }
-//         }
-//         // Jump to the end of the current forbidden time -> save time complexity
-//         else {
-//           // If strike, adding the best time (longest)
-//           addMinutesToAllSegments(timeSegments, minutesToJump);
-//         }
-//       }
-//     }
-//   }
-
-//   return finalTimes;
-// }
+  return finalTimes;
+}
 
 /**
  * Checks if all day is taken based on various conditions.
@@ -549,121 +577,123 @@ function isAllDayTaken(
  * @param options - Optional parameters for customization.
  * @returns List of relevant hours in reverse order.
  */
-// function reverseRelevantHoures(
-//   worker: WorkerModel,
-//   work: Date[],
-//   forbbidenTimes: Date[],
-//   bookingDate: string,
-//   treatment: Treatment,
-//   booking: Booking,
-//   options: {
-//     workerSheet?: boolean;
-//     amoutLimit?: number;
-//   } = {}
-// ): TimePickerObj[] {
-//   const finalTimes: TimePickerObj[] = [];
+function reverseRelevantHoures(
+  worker: WorkerModel,
+  work: Date[],
+  forbbidenTimes: Date[],
+  bookingDate: string,
+  treatment: Treatment,
+  booking: Booking,
+  workerSheet: boolean = false,
+  amoutLimit?: number
+): TimePickerObj[] {
+  const finalTimes: TimePickerObj[] = [];
 
-//   // Check if all day is taken
-//   if (isAllDayTaken(worker, booking.bookingDate, false, options.workerSheet)) {
-//     return finalTimes;
-//   }
+  // Check if all day is taken
+  if (isAllDayTaken(worker, booking.bookingDate, false, workerSheet)) {
+    return finalTimes;
+  }
 
-//   // Initialize forbidden times pointers to the end of the times
-//   const forbiddenTimesPointers = List.generate(
-//     treatment.times.keys.length,
-//     (index) => forbbidenTimes.length - 1
-//   );
+  // Initialize forbidden times pointers to the end of the times
+  const forbiddenTimesPointers: number[] = Array.from(
+    { length: treatment.times.size },
+    () => forbbidenTimes.length - 1
+  );
+  // Initialize iteration variables
+  let i = 0;
 
-//   // Initialize iteration variables
-//   let i = 0;
+  // Iterate over work times starting from the end
+  for (let j = work.length - 1; j >= 0; j -= 2) {
+    const endShift = work[j];
+    const startShift = work[j - 1];
 
-//   // Iterate over work times starting from the end
-//   for (let j = work.length - 1; j >= 0; j -= 2) {
-//     const endShift = work[j];
-//     const startShift = work[j - 1];
+    // Generate optional treatment starting at 'pointerWork'
+    const timeSegments = generateReversedTimeSegmentsMap(booking, endShift);
 
-//     // Generate optional treatment starting at 'pointerWork'
-//     const timeSegments = generateReversedTimeSegmentsMap(booking, endShift);
+    // saves the first
+    const valuesArr = Array.from(timeSegments.values());
+    const firstTimeSegment = valuesArr[0];
 
-//     // Pass over the current time stamp
-//     while (!(timeSegments.values.first['start'] as Date).isBefore(startShift)) {
-//       i++;
-//       if (i > 500) {
-//         logger.e('Infinity loop in times algorithm - stopping');
-//         break;
-//       }
+    // Pass over the current time stamp
 
-//       // Stop iteration if the start time of the booking is passed
-//       if (timeIsAlreadyPassed(timeSegments.values.first['start'] as Date, bookingDate)) {
-//         break;
-//       }
+    while (firstTimeSegment.start >= startShift) {
+      i++;
+      if (i > 500) {
+        logger.error("Infinity loop in times algorithm - stopping");
+        break;
+      }
 
-//       // Get time to jump to the next optional time
-//       const minutesToJump = minutesToJumpOverForbbidenReverse(
-//         forbiddenTimesPointers,
-//         timeSegments,
-//         forbbidenTimes
-//       );
+      // Stop iteration if the start time of the booking is passed
+      if (timeIsAlreadyPassed(firstTimeSegment.start, bookingDate)) {
+        break;
+      }
 
-//       // Calculate the default jump time
-//       const jump = getJumpReversed(
-//         timeSegments.values.first['start'] as Date,
-//         forbbidenTimes,
-//         forbiddenTimesPointers,
-//         worker
-//       );
+      // Get time to jump to the next optional time
+      const minutesToJump = minutesToJumpOverForbbidenReverse(
+        forbiddenTimesPointers,
+        timeSegments,
+        forbbidenTimes
+      );
 
-//       // Check if this set to 0 -> no need to jump - allowed time
-//       const allowedTime = minutesToJump === 0;
+      // Calculate the default jump time
+      const jump = getJumpReversed(
+        firstTimeSegment.start,
+        forbbidenTimes,
+        forbiddenTimesPointers,
+        worker
+      );
 
-//       // Add the time and save a place for short bookings
-//       if (allowedTime) {
-//         const timeToAdd = timeSegments.values.first['start'] as Date;
-//         const dateToAdd = new Date(
-//           booking.bookingDate.getFullYear(),
-//           booking.bookingDate.getMonth(),
-//           booking.bookingDate.getDate(),
-//           timeToAdd.getHours(),
-//           timeToAdd.getMinutes()
-//         );
+      // Check if this set to 0 -> no need to jump - allowed time
+      const allowedTime = minutesToJump === 0;
 
-//         // Adding only the first time (start of the treatment)
-//         finalTimes.push({ displayDate: dateToAdd });
+      // Add the time and save a place for short bookings
+      if (allowedTime) {
+        const timeToAdd = firstTimeSegment.start;
+        const dateToAdd = new Date(
+          booking.bookingDate.getFullYear(),
+          booking.bookingDate.getMonth(),
+          booking.bookingDate.getDate(),
+          timeToAdd.getHours(),
+          timeToAdd.getMinutes()
+        );
 
-//         // If there is an amount limit and we reached it, return the times
-//         if (options.amoutLimit !== undefined && options.amoutLimit >= finalTimes.length) {
-//           return finalTimes;
-//         }
+        // Adding only the first time (start of the treatment)
+        finalTimes.push(new TimePickerObj({ displayDate: dateToAdd }));
 
-//         /* For a worker when editing customer booking,
-//         we don't need to optimize the times by the shorter turn
-//         because the worker already can set a turn every 5 minutes in the task */
-//         if (options.workerSheet) {
-//           addMinutesToAllSegments(timeSegments, -5);
-//         } else {
-//           addMinutesToAllSegments(timeSegments, -jump);
-//         }
-//       } else {
-//         // Finish passing all over the forbidden times
-//         // (pointer of the first segment end time is out of the list)
-//         if (forbiddenTimesPointers[0] < 0) {
-//           if (options.workerSheet) {
-//             addMinutesToAllSegments(timeSegments, -5);
-//           } else {
-//             addMinutesToAllSegments(timeSegments, -jump);
-//           }
-//         }
-//         // Jump to the end of the current forbidden time -> save time complexity
-//         else {
-//           // If strike, adding the best time (longest)
-//           addMinutesToAllSegments(timeSegments, -minutesToJump);
-//         }
-//       }
-//     }
-//   }
+        // If there is an amount limit and we reached it, return the times
+        if (amoutLimit !== undefined && amoutLimit >= finalTimes.length) {
+          return finalTimes;
+        }
 
-//   return finalTimes;
-// }
+        /* For a worker when editing customer booking,
+        we don't need to optimize the times by the shorter turn
+        because the worker already can set a turn every 5 minutes in the task */
+        if (workerSheet) {
+          addMinutesToAllSegments(timeSegments, -5);
+        } else {
+          addMinutesToAllSegments(timeSegments, -jump);
+        }
+      } else {
+        // Finish passing all over the forbidden times
+        // (pointer of the first segment end time is out of the list)
+        if (forbiddenTimesPointers[0] < 0) {
+          if (workerSheet) {
+            addMinutesToAllSegments(timeSegments, -5);
+          } else {
+            addMinutesToAllSegments(timeSegments, -jump);
+          }
+        }
+        // Jump to the end of the current forbidden time -> save time complexity
+        else {
+          // If strike, adding the best time (longest)
+          addMinutesToAllSegments(timeSegments, -minutesToJump);
+        }
+      }
+    }
+  }
+
+  return finalTimes;
+}
 
 /**
  * Calculates the jump time for the forward algorithm.
@@ -751,173 +781,41 @@ function getJumpReversed(
 }
 
 /**
- * Finds problematic dates for the recurrence event based on existing bookings and worker constraints.
- * @param worker - The worker model.
- * @param booking - The booking details.
- * @param timeToOrderOn1970Format - The time to order in the 1970 format.
- * @param options - Optional parameters for customization.
- * @returns Set of problematic dates.
- */
-// function optionalTimeForRecurrence(
-//   worker: WorkerModel,
-//   booking: Booking,
-//   timeToOrderOn1970Format: Date,
-//   options: {
-//     isUpdate?: boolean;
-//     oldBooking?: Booking | null;
-//     isBreakUpdate?: boolean;
-//     oldBreak?: BreakModel | null;
-//     defaultWork?: Date[] | null;
-//     defaultVacations?: Date[] | null;
-//     defaultBreaks?: Date[] | null;
-//     defaultTakenHoures?: Date[] | null;
-//     defaultForbbidenTimes?: Date[] | null;
-//     allowAllDay?: boolean;
-//   } = {}
-// ): Set<Date> {
-//   const problematicDates: Set<Date> = new Set();
-
-//   booking.bookingsEventsAsEvents.forEach((bookingEventTime, bookingEvent) => {
-//     worker.recurrence.recurrenceEvents.forEach((date, recurrenceByHour) => {
-//       recurrenceByHour.forEach((hour, event) => {
-//         if (!event.recurrenceEvent || !bookingEvent.recurrenceEvent) {
-//           return;
-//         }
-//         if (event.isBreak && !event.blockSchedule) {
-//           return;
-//         }
-//         if (event.isVacation && options.allowAllDay) {
-//           return;
-//         }
-//         if (
-//           durationStrikings(
-//             setTo1970(bookingEvent.from),
-//             setTo1970(bookingEvent.to),
-//             setTo1970(event.from),
-//             setTo1970(event.to)
-//           ) !== 'STRIKE'
-//         ) {
-//           problematicDates.addAll(
-//             overlapingDates(
-//               booking.recurrenceEvent!,
-//               event.recurrenceEvent!
-//             )
-//           );
-//         }
-//       });
-//     });
-//   });
-
-//   // Find the closest date to iterate on and put it as the end of the iteration
-//   let lastDate = firstDate(
-//     booking.recurrenceEvent!.endOfTheEvent,
-//     worker.workerPublicData.lastBookingTimeDate
-//   );
-
-//   if (!lastDate) {
-//     logger.e('Cannot find the closest date to pass on');
-//     return problematicDates;
-//   }
-
-//   // In a week mode, jump with the start date and go back to start of the week
-//   if (booking.recurrenceEvent!.freqRecurrence === FreqRecurrence.weeks) {
-//     lastDate = booking.recurrenceEvent!.addRangeBetween(lastDate);
-//   }
-
-//   // Passing over the dates of the recurrence event
-//   let datePointer = booking.recurrenceEvent!.start!;
-
-//   while (!setToMidNight(datePointer).isAfter(setToMidNight(lastDate))) {
-//     // In case the booking is weekly, need to check all the days that are in the "weekDays" var
-//     if (booking.recurrenceEvent!.freqRecurrence === FreqRecurrence.weeks) {
-//       // Find the start of the week
-//       const sunday = getStartOfWeek(datePointer);
-
-//       // Iterate on weekDays and check every date
-//       booking.recurrenceEvent!.weekDays.forEach((dayToCheck) => {
-//         const dateToCheck = sunday.add(Duration(days: dayToCheck));
-//         const bookingForCheck = Booking.fromBooking(booking);
-//         bookingForCheck.bookingDate = dateToCheck;
-
-//         // Make sure that the recurrence will occur on this date
-//         // Need to verify that the date is not in the exception dates
-//         if (
-//           !booking.recurrenceEvent!.isAccureInDate(date: dateToCheck)
-//         ) {
-//           return;
-//         }
-
-//         if (
-//           !isOptionalTimeForBooking(
-//             worker,
-//             bookingForCheck,
-//             timeToOrderOn1970Format,
-//             { allowAllDay: options.allowAllDay }
-//           )
-//         ) {
-//           problematicDates.add(setToMidNight(dateToCheck));
-//         }
-//       });
-//     } else {
-//       // Regular case: the booking is daily, monthly, or yearly
-//       const bookingForCheck = Booking.fromBooking(booking);
-//       bookingForCheck.bookingDate = datePointer;
-
-//       // Make sure that the recurrence will occur on this date
-//       // Need to verify that the date is not in the exception dates
-//       if (booking.recurrenceEvent!.isAccureInDate(date: datePointer)) {
-//         if (
-//           !isOptionalTimeForBooking(
-//             worker,
-//             bookingForCheck,
-//             timeToOrderOn1970Format,
-//             { allowAllDay: options.allowAllDay }
-//           )
-//         ) {
-//           problematicDates.add(setToMidNight(datePointer));
-//         }
-//       }
-//     }
-
-//     datePointer = booking.recurrenceEvent!.addRangeBetween(datePointer);
-//   }
-
-//   return problematicDates;
-// }
-
-/**
  * Finds overlapping dates between two recurrence events.
  * @param first - The first recurrence event.
  * @param second - The second recurrence event.
  * @returns Set of overlapping dates.
  */
-// export function overlapingDates(first: RecurrenceEvent, second: RecurrenceEvent): Set<Date> {
-//   const firstIsWeek = first.freqRecurrence === FreqRecurrence.weeks;
-//   const secondIsWeek = second.freqRecurrence === FreqRecurrence.weeks;
+export function overlapingDates(
+  first: RecurrenceEvent,
+  second: RecurrenceEvent
+): Set<Date> {
+  const firstIsWeek = first.freqRecurrence === FreqRecurrence.weeks;
+  const secondIsWeek = second.freqRecurrence === FreqRecurrence.weeks;
 
-//   // Different types, just need to check the dates
-//   if (firstIsWeek !== secondIsWeek) {
-//     // No option to predict overlapping (not the same type and endless)
-//     if (!first.endOfTheEvent && !second.endOfTheEvent) {
-//       return new Set([new Date(0)]); // Both endless
-//     }
+  // Different types, just need to check the dates
+  if (firstIsWeek !== secondIsWeek) {
+    // No option to predict overlapping (not the same type and endless)
+    if (!first.endOfTheEvent && !second.endOfTheEvent) {
+      return new Set([new Date(0)]); // Both endless
+    }
 
-//     // Finding the optimal event to check (less repeats -> shorter for loop)
-//     return first.overlappingDatesWith(second);
-//   } else {
-//     // The same type (week & week) || (other & other)
-//     if (
-//       firstIsWeek &&
-//       secondIsWeek &&
-//       first.weekDays.intersection(second.weekDays).isEmpty
-//     ) {
-//       return new Set(); // No overlapping dates
-//     }
+    // Finding the optimal event to check (less repeats -> shorter for loop)
+    return first.overlapingDatesWith(second);
+  } else {
+    // The same type (week & week) || (other & other)
+    if (
+      firstIsWeek &&
+      secondIsWeek &&
+      first.weekDays.intersection(second.weekDays).isEmpty
+    ) {
+      return new Set(); // No overlapping dates
+    }
 
-//     // Finally return the list of the overlapping dates
-//     return first.overlappingDatesWith(second);
-//   }
-// }
+    // Finally return the list of the overlapping dates
+    return first.overlapingDatesWith(second);
+  }
+}
 
 /**
  * Checks if a given time is optional for booking based on worker constraints.
@@ -927,116 +825,143 @@ function getJumpReversed(
  * @param options - Optional parameters for customization.
  * @returns True if the time is optional, false otherwise.
  */
-// export function isOptionalTimeForBooking(
-//   worker: WorkerModel | null,
-//   booking: Booking,
-//   timeToOrderOn1970Format: Date,
-//   options: {
-//     isUpdate?: boolean;
-//     oldBooking?: Booking | null;
-//     recurrenceSkipDate?: Date | null;
-//     defaultWork?: Date[] | null;
-//     defaultVacations?: Date[] | null;
-//     defaultBreaks?: Date[] | null;
-//     defaultTakenHoures?: Date[] | null;
-//     defaultForbbidenTimes?: Date[] | null;
-//     allowAllDay?: boolean;
-//   } = {}
-// ): boolean {
-//   if (!worker) return false;
+export function isOptionalTimeForBooking(
+  worker: WorkerModel | null,
+  booking: Booking,
+  timeToOrderOn1970Format: Date,
+  isUpdate: boolean = false,
+  oldBooking?: Booking | null,
+  recurrenceSkipDate?: Date | null,
+  defaultWork?: Date[] | null,
+  defaultVacations?: Date[] | null,
+  defaultBreaks?: Date[] | null,
+  defaultTakenHoures?: Date[] | null,
+  defaultForbbidenTimes?: Date[] | null,
+  allowAllDay: boolean = false
+): boolean {
+  if (!worker) return false;
 
-//   // Free day -> holiday
-//   if (!options.allowAllDay && worker.closeScheduleOnHolidays && isHoliday(worker, booking.bookingDate)) {
-//     logger.d("Holiday is a free day for this worker -> don't generate times");
-//     return false;
-//   }
+  // Free day -> holiday
+  if (
+    !allowAllDay &&
+    worker.closeScheduleOnHolidays &&
+    isHoliday(worker, booking.bookingDate)
+  ) {
+    logger.debug(
+      "Holiday is a free day for this worker -> don't generate times"
+    );
+    return false;
+  }
 
-//   if (!options.allowAllDay && worker.isClosingDate(booking.bookingDate)) {
-//     logger.d("This day is closing by the worker");
-//     return false;
-//   }
+  if (!allowAllDay && worker.isClosingDate(booking.bookingDate)) {
+    logger.debug("This day is closing by the worker");
+    return false;
+  }
 
-//   // Every date checked in this func needs to be on the 1970 year
-//   timeToOrderOn1970Format = setTo1970(timeToOrderOn1970Format);
+  // Every date checked in this func needs to be on the 1970 year
+  timeToOrderOn1970Format = setTo1970(timeToOrderOn1970Format);
 
-//   if (options.allowAllDay) {
-//     options.defaultWork = [
-//       new Date('1970-01-01T00:00'),
-//       new Date('1970-01-01T23:59')
-//     ];
-//   }
+  if (allowAllDay) {
+    defaultWork = [new Date("1970-01-01T00:00"), new Date("1970-01-01T23:59")];
+  }
 
-//   // Vars to make code cleaner
-//   const bookingDate = DateFormat('dd-MM-yyyy').format(booking.bookingDate);
+  // Vars to make code cleaner
+  const bookingDate = format(booking.bookingDate, "dd-MM-yyyy");
 
-//   // Relevant times to calculate
-//   const work = options.defaultWork ?? convertStringToTime(worker.shiftsFor({ day: booking.bookingDate }));
-//   const takenHoures = options.defaultTakenHoures ?? alreadyTakenHoures(worker, bookingDate, {
-//     recurrenceSkipDate: options.recurrenceSkipDate,
-//     workerAction: options.allowAllDay,
-//     isUpdate: options.isUpdate,
-//     oldBooking: options.oldBooking
-//   });
-//   const forbbidenTimes = options.defaultForbbidenTimes ?? takenHoures;
+  // Relevant times to calculate
+  const work =
+    defaultWork ??
+    convertStringToTime(worker.shiftsFor({ day: booking.bookingDate }));
+  const takenHoures =
+    defaultTakenHoures ??
+    alreadyTakenHoures(worker, bookingDate, {
+      recurrenceSkipDate: recurrenceSkipDate,
+      workerAction: allowAllDay,
+      isUpdate: isUpdate,
+      oldBooking: oldBooking,
+    });
+  let forbbidenTimes: Date[] = defaultForbbidenTimes ?? takenHoures;
 
-//   // Sorting the lists
-//   if (!options.defaultWork) {
-//     work.sort();
-//   }
-//   if (!options.defaultForbbidenTimes) {
-//     forbbidenTimes.sort();
-//   }
+  // Sorting the lists
+  if (!defaultWork) {
+    work.sort();
+  }
+  if (!defaultForbbidenTimes) {
+    forbbidenTimes.sort();
+  }
 
-//   // Get rid of earlier times - not necessary
-//   forbbidenTimes = getOnlyEqualOrAfter(forbbidenTimes, timeToOrderOn1970Format);
+  // Get rid of earlier times - not necessary
+  forbbidenTimes = getOnlyEqualOrAfter(forbbidenTimes, timeToOrderOn1970Format);
 
-//   // Fill this list with 0, those will be the pointers on each time segment
-//   const treatment = Treatment.fromTreatmentsMap(booking.treatments);
-//   const forbiddenTimesPointers = Array.from({ length: treatment.times.keys.length }, (_, index) => 0);
+  // Fill this list with 0, those will be the pointers on each time segment
+  const treatment = Treatment.fromTreatmentsMap(booking.treatments);
+  const forbiddenTimesPointers = Array.from(
+    { length: treatment.times.keys.length },
+    (_, index) => 0
+  );
 
-//   // Pass over the work times
-//   for (let j = 0; j < work.length; j += 2) {
-//     let pointerWork = work[j];
-//     const endWork = work[j + 1];
+  // Pass over the work times
+  for (let j = 0; j < work.length; j += 2) {
+    let pointerWork = work[j];
+    const endWork = work[j + 1];
 
-//     // If we passed the time - failed to set booking in this time
-//     if (pointerWork > timeToOrderOn1970Format) {
-//       break;
-//     }
+    // If we passed the time - failed to set booking in this time
+    if (pointerWork > timeToOrderOn1970Format) {
+      break;
+    }
 
-//     // Jumping to the relevant time section
-//     if (endWork <= timeToOrderOn1970Format) {
-//       continue;
-//     }
+    // Jumping to the relevant time section
+    if (endWork <= timeToOrderOn1970Format) {
+      continue;
+    }
 
-//     // The "timeToOrder" has to be in this time section - jumping to it
-//     pointerWork = timeToOrderOn1970Format;
+    // The "timeToOrder" has to be in this time section - jumping to it
+    pointerWork = timeToOrderOn1970Format;
 
-//     // Validate the treatment isn't kept after the work session is done
-//     if (pointerWork.addMinutes(treatment.totalMinutes).isAfter(endWork) && !workerBookingOnMidnight(endWork, booking)) {
-//       AppErrors().error = Errors.endOfWork;
-//       return false;
-//     }
+    // Validate the treatment isn't kept after the work session is done
+    if (
+      addDuration(
+        pointerWork,
+        new Duration({ minutes: treatment.totalMinutes })
+      ) > endWork &&
+      !workerBookingOnMidnight(endWork, booking)
+    ) {
+      AppErrors.GI().error = Errors.endOfWork;
+      return false;
+    }
 
-//     // Now in the relevant time section setting the start time
-//     // Generate given booking starting at 'pointerWork'
-//     const timeSegments = generateTimeSegmentsMap(booking, pointerWork);
+    // Now in the relevant time section setting the start time
+    // Generate given booking starting at 'pointerWork'
+    const timeSegments = generateTimeSegmentsMap(booking, pointerWork);
 
-//     // Getting time to jump if one or more time segments striking with forbidden
-//     const minutesToJump = minutesToJumpOverForbidden(forbiddenTimesPointers, timeSegments, forbbidenTimes);
-//     const allowedTime = minutesToJump === 0;
+    // Getting time to jump if one or more time segments striking with forbidden
+    const minutesToJump = minutesToJumpOverForbidden(
+      forbiddenTimesPointers,
+      timeSegments,
+      forbbidenTimes
+    );
+    const allowedTime = minutesToJump === 0;
 
-//     // The restrict of set booking is because the user is just paying
-//     if (!allowedTime && isBlockFromMiddlePaymentUser(booking, timeToOrderOn1970Format, bookingDate, worker, timeSegments)) {
-//       AppErrors().error = Errors.currentlyOrderingForTime;
-//       return false;
-//     }
+    // The restrict of set booking is because the user is just paying
+    if (
+      !allowedTime &&
+      isBlockFromMiddlePaymentUser(
+        booking,
+        timeToOrderOn1970Format,
+        bookingDate,
+        worker,
+        timeSegments
+      )
+    ) {
+      AppErrors.GI().error = Errors.currentlyOrderingForTime;
+      return false;
+    }
 
-//     return allowedTime;
-//   }
+    return allowedTime;
+  }
 
-//   return false;
-// }
+  return false;
+}
 
 /**
  * Checks if the booking end is on midnight and it's a worker action.
@@ -1044,14 +969,20 @@ function getJumpReversed(
  * @param booking - The booking details.
  * @returns True if the booking end is on midnight and it's a worker action, false otherwise.
  */
-// export function workerBookingOnMidnight(endWork: Date, booking: Booking): boolean {
-//   const endOfBooking = booking.bookingDate.addMinutes(booking.totalMinutes);
-//   return (
-//     endWork.getTime() === timeStrToDate("23:59").getTime() &&
-//     endOfBooking.getHours() === 0 &&
-//     endOfBooking.getMinutes() === 0
-//   );
-// }
+export function workerBookingOnMidnight(
+  endWork: Date,
+  booking: Booking
+): boolean {
+  const endOfBooking = addDuration(
+    booking.bookingDate,
+    new Duration({ minutes: booking.totalMinutes })
+  );
+  return (
+    endWork.getTime() === timeStrToDate("23:59").getTime() &&
+    endOfBooking.getHours() === 0 &&
+    endOfBooking.getMinutes() === 0
+  );
+}
 
 /**
  * Creates fake "taken hours" only from "middle-payment" times.
@@ -1063,53 +994,52 @@ function getJumpReversed(
  * @param timeSegments - Map of time segments.
  * @returns True if the time is blocked, false otherwise.
  */
-// export function isBlockFromMiddlePaymentUser(
-//   booking: Booking,
-//   timeToOrder: Date,
-//   date: string,
-//   worker: WorkerModel,
-//   timeSegments: Map<string, Map<string, any>>
-// ): boolean {
-//   // Day isn't on middle payment times
-//   if (!worker.workerPublicData.duringPaymentBookingsTime[date]) {
-//     return false;
-//   }
+export function isBlockFromMiddlePaymentUser(
+  booking: Booking,
+  timeToOrder: Date,
+  date: string,
+  worker: WorkerModel,
+  timeSegments: Map<string, Map<string, any>>
+): boolean {
+  // Day isn't on middle payment times
+  if (!worker.workerPublicData.duringPaymentBookingsTime[date]) {
+    return false;
+  }
 
-//   // Create a list of [start, end] from duringPaymentBookingsTime
-//   const hours: Date[] = [];
-//   worker.workerPublicData.duringPaymentBookingsTime[date].forEach(
-//     (startTime: string, details: any) => {
-//       try {
-//         const start = DateFormat('HH:mm').parse(startTime);
-//         const end = start.addMinutes(details[1]);
-//         hours.push(start, end);
-//       } catch (e) {
-//         const msg =
-//           "Error while creating the during payment list, illegal list";
-//         logger.e(`${msg} -> ${details}\n${e}`);
-//       }
-//     }
-//   );
+  // Create a list of [start, end] from duringPaymentBookingsTime
+  const hours: Date[] = [];
+  Object.entries(
+    worker.workerPublicData.duringPaymentBookingsTime[date]
+  ).forEach(([startTime, details]) => {
+    try {
+      const start = new Date(format(startTime, "HH:mm"));
+      const end = addDuration(start, new Duration({ minutes: details[1] }));
+      hours.push(start, end);
+    } catch (e) {
+      const msg = "Error while creating the during payment list, illegal list";
+      logger.error(`${msg} -> ${details}\n${e}`);
+    }
+  });
 
-//   // Get rid of earlier times - not necessary
-//   const forbiddenTimes = getOnlyEqualOrAfter(hours, timeToOrder);
+  // Get rid of earlier times - not necessary
+  const forbiddenTimes = getOnlyEqualOrAfter(hours, timeToOrder);
 
-//   // Fill this list with 0; these will be the pointers on each time segment
-//   const treatment = Treatment.fromTreatmentsMap(booking.treatments);
-//   const forbiddenTimesPointers = Array.from(
-//     { length: treatment.times.keys.length },
-//     (_, index) => 0
-//   );
+  // Fill this list with 0; these will be the pointers on each time segment
+  const treatment = Treatment.fromTreatmentsMap(booking.treatments);
+  const forbiddenTimesPointers = Array.from(
+    { length: treatment.times.keys.length },
+    (_, index) => 0
+  );
 
-//   // Getting time to jump if one or more time segments striking with forbidden
-//   const minutesToJump = minutesToJumpOverForbidden(
-//     forbiddenTimesPointers,
-//     timeSegments,
-//     forbiddenTimes
-//   );
+  // Getting time to jump if one or more time segments striking with forbidden
+  const minutesToJump = minutesToJumpOverForbidden(
+    forbiddenTimesPointers,
+    timeSegments,
+    forbiddenTimes
+  );
 
-//   return minutesToJump !== 0;
-// }
+  return minutesToJump !== 0;
+}
 
 /**
  * Filters and returns the list of times equal to or after the specified start time.
@@ -1117,30 +1047,15 @@ function getJumpReversed(
  * @param startTime - Start time.
  * @returns Filtered list of times.
  */
-// export function getOnlyEqualOrAfter(times: Date[], startTime: Date): Date[] {
-//   const filteredList: Date[] = [];
-//   for (let i = 0; i < times.length; i += 2) {
-//     if (!times[i + 1].isBefore(startTime)) {
-//       filteredList.push(times[i], times[i + 1]);
-//     }
-//   }
-//   return filteredList;
-// }
-
-/**
- * Gets the list of booking times from the treatment.
- * @param booking - The booking details.
- * @returns List of booking times.
- */
-// export function getBookingTimes(booking: Booking): Date[] {
-//   const times: Date[] = [];
-//   const treatment = Treatment.fromTreatmentsMap(booking.treatments);
-//   treatment.times.forEach((timeNumber, timeData) => {
-//     timeData.workMinutes;
-//     // Add your logic for processing timeData or adjust the code accordingly
-//   });
-//   return times;
-// }
+export function getOnlyEqualOrAfter(times: Date[], startTime: Date): Date[] {
+  const filteredList: Date[] = [];
+  for (let i = 0; i < times.length; i += 2) {
+    if (times[i + 1] >= startTime) {
+      filteredList.push(times[i], times[i + 1]);
+    }
+  }
+  return filteredList;
+}
 
 /**
  * Generates a list of already taken hours based on worker constraints.
@@ -1149,145 +1064,152 @@ function getJumpReversed(
  * @param options - Options for customization.
  * @returns List of already taken hours.
  */
-// export function alreadyTakenHoures(
-//   worker: WorkerModel,
-//   bookingDate: string,
-//   options: {
-//     isUpdate?: boolean;
-//     workerAction?: boolean;
-//     oldBooking?: Booking | null;
-//     recurrenceSkipDate?: Date | null;
-//   } = {}
-// ): Date[] {
-//   const taken: Date[] = [];
-//   const dateToBook = DateFormat('dd-MM-yyyy').parse(bookingDate);
+export function alreadyTakenHoures(
+  worker: WorkerModel,
+  bookingDate: string,
+  isUpdate: boolean = false,
+  workerAction: boolean = false,
+  oldBooking: Booking | null,
+  recurrenceSkipDate?: Date | null
+): Date[] {
+  const taken: Date[] = [];
+  const dateToBook = new Date(format("dd-MM-yyyy", bookingDate));
 
-//   // Adding all the "booking times" to the "taken hours" list
-//   if (worker.workerPublicData.bookingsTimes[bookingDate]) {
-//     worker.workerPublicData.bookingsTimes[bookingDate]!.forEach(
-//       (key: string, details: any) => {
-//         const start = DateFormat('HH:mm').parse(key);
-//         taken.push(start, start.add(Duration(minutes: details)));
-//       }
-//     );
-//   }
+  // Adding all the "booking times" to the "taken hours" list
+  if (worker.workerPublicData.bookingsTimes[bookingDate]) {
+    Object.entries(worker.workerPublicData.bookingsTimes[bookingDate]!).forEach(
+      ([key, details]) => {
+        const start = new Date(format("HH:mm", key));
+        taken.push(
+          start,
+          addDuration(start, new Duration({ minutes: details }))
+        );
+      }
+    );
+  }
 
-//   const datesToSkipRecurrence = new Set<string>();
+  const datesToSkipRecurrence = new Set<string>();
 
-//   if (
-//     options.isUpdate &&
-//     options.oldBooking &&
-//     options.oldBooking.recurrenceEvent &&
-//     options.recurrenceSkipDate
-//   ) {
-//     options.oldBooking.bookingsEventsAsEvents.forEach((time, event) => {
-//       const timeDate = DateFormat("HH:mm").parse(time);
-//       datesToSkipRecurrence.add(
-//         DateTime(
-//           options.recurrenceSkipDate!.year,
-//           options.recurrenceSkipDate!.month,
-//           options.recurrenceSkipDate!.day,
-//           timeDate.hour,
-//           timeDate.minute
-//         ).toString()
-//       );
-//     });
-//   }
+  if (
+    isUpdate &&
+    oldBooking &&
+    oldBooking.recurrenceEvent &&
+    recurrenceSkipDate
+  ) {
+    oldBooking.bookingsEventsAsEvents.forEach((time, event) => {
+      const timeDate = new Date(format("HH:mm", time));
+      datesToSkipRecurrence.add(
+        new Date(
+          recurrenceSkipDate!.getFullYear(),
+          recurrenceSkipDate!.getMonth(),
+          recurrenceSkipDate!.getDate(),
+          timeDate.getHours(),
+          timeDate.getMinutes()
+        ).toString()
+      );
+    });
+  }
 
-//   // Determine if vacation already added to the taken hours
-//   let vacationAdded = false;
+  // Determine if vacation already added to the taken hours
+  let vacationAdded = false;
 
-//   // Adding all the recurrence "bookings' times" to the "taken list"
-//   worker.recurrence.recurrenceEvents.forEach((date, eventByHour) => {
-//     eventByHour.forEach((hour, event) => {
-//       // No need to consider break that does not block the schedule
-//       if (!event.blockSchedule && event.isBreak) {
-//         return;
-//       }
+  // Adding all the recurrence "bookings' times" to the "taken list"
+  Object.entries(worker.recurrence.recurrenceEvents).forEach(
+    ([date, eventByHour]) => {
+      Object.entries(eventByHour).forEach(([hour, event]) => {
+        // No need to consider break that does not block the schedule
+        if (!event.blockSchedule && event.isBreak) {
+          return;
+        }
 
-//       // Vacation doesn't block the schedule for the worker
-//       if (event.isVacation && options.workerAction) {
-//         return;
-//       }
+        // Vacation doesn't block the schedule for the worker
+        if (event.isVacation && workerAction) {
+          return;
+        }
 
-//       // If there is already vacation in the taken list, no need to add more times,
-//       // as the entire day is taken
-//       if (vacationAdded) {
-//         return;
-//       }
+        // If there is already vacation in the taken list, no need to add more times,
+        // as the entire day is taken
+        if (vacationAdded) {
+          return;
+        }
 
-//       if (
-//         options.isUpdate &&
-//         options.oldBooking &&
-//         options.oldBooking.recurrenceEvent
-//       ) {
-//         const hourTime = DateFormat("HH:mm").parse(hour);
-//         const dateToCheck = dateToBook.add(
-//          new Duration({hours: hourTime.hour, minutes: hourTime.minute})
-//         );
+        if (isUpdate && oldBooking && oldBooking.recurrenceEvent) {
+          const hourTime = new Date(format("HH:mm", hour));
+          const dateToCheck = addDuration(
+            dateToBook,
+            new Duration({ hours: hourTime.hour, minutes: hourTime.minute })
+          );
 
-//         if (datesToSkipRecurrence.has(dateToCheck.toString())) {
-//           return;
-//         }
-//       }
+          if (datesToSkipRecurrence.has(dateToCheck.toString())) {
+            return;
+          }
+        }
 
-//       // Adding only events that occur on the booking date
-//       if (!event.recurrenceEvent) {
-//         return;
-//       }
+        // Adding only events that occur on the booking date
+        if (!event.recurrenceEvent) {
+          return;
+        }
 
-//       if (event.recurrenceEvent.isAccureInDate(date: dateToBook)) {
-//         const start = DateFormat('HH:mm').parse(hour);
+        if (event.recurrenceEvent.isAccureInDate({ date: dateToBook })) {
+          const start = new Date(format("HH:mm", hour));
 
-//         // If the event is vacation, no need to keep all the events;
-//         // the entire day is taken
-//         if (event.isVacation) {
-//           vacationAdded = true;
-//           taken.length = 0; // Clear the array
-//         }
+          // If the event is vacation, no need to keep all the events;
+          // the entire day is taken
+          if (event.isVacation) {
+            vacationAdded = true;
+            taken.length = 0; // Clear the array
+          }
 
-//         taken.push(start, start.add(Duration(minutes: event.durationMinutes)));
-//       }
-//     });
-//   });
+          taken.push(
+            start,
+            addDuration(start, new Duration({ minutes: event.durationMinutes }))
+          );
+        }
+      });
+    }
+  );
 
-//   // Update -> allows you to see hours that your turn block
-//   // Remove the first of (start, end), so if duplicate doesn't matter
-//   // since this is the same index -> [1,5,4,4,7,8] remove [1,4] while sort()
-//   // the index stays the same -> [4,5,7,8].
-//   // oldBooking.recurrenceEvent == null -> in recurrence, we ignore the booking
-//   // in advance, no need to remove; it never added
-//   if (
-//     options.isUpdate &&
-//     options.oldBooking &&
-//     options.oldBooking.workerId === worker.id &&
-//     !options.oldBooking.recurrenceEvent
-//   ) {
-//     // Make sure to remove the old times only if it is the same day
-//     const oldDate = setToMidNight(options.oldBooking.bookingDate);
+  // Update -> allows you to see hours that your turn block
+  // Remove the first of (start, end), so if duplicate doesn't matter
+  // since this is the same index -> [1,5,4,4,7,8] remove [1,4] while sort()
+  // the index stays the same -> [4,5,7,8].
+  // oldBooking.recurrenceEvent == null -> in recurrence, we ignore the booking
+  // in advance, no need to remove; it never added
+  if (
+    isUpdate &&
+    oldBooking &&
+    oldBooking.workerId === worker.id &&
+    !oldBooking.recurrenceEvent
+  ) {
+    // Make sure to remove the old times only if it is the same day
+    const oldDate = setToMidNight(oldBooking.bookingDate);
 
-//     if (dateToBook.difference(oldDate).inSeconds === 0) {
-//       // To make it in 1970 - date
-//       let startTime = setTo1970(options.oldBooking.bookingDate);
+    if (dateToBook.getTime() / 1000 - oldDate.getTime() / 1000 === 0) {
+      // To make it in 1970 - date
+      let startTime = setTo1970(oldBooking.bookingDate);
 
-//       // Pass over the timeSegments and remove all the segments
-//       const treatment = Treatment.fromTreatmentsMap(
-//         options.oldBooking.treatments
-//       );
+      // Pass over the timeSegments and remove all the segments
+      const treatment = Treatment.fromTreatmentsMap(oldBooking.treatments);
 
-//       treatment.times.forEach((timeIndex, timeData) => {
-//         startTime = startTime.add(Duration(minutes: timeData.breakMinutes));
-//         const endTime = startTime.add(Duration(minutes: timeData.workMinutes));
+      treatment.times.forEach((timeData, timeIndex) => {
+        startTime = addDuration(
+          startTime,
+          new Duration({ minutes: timeData.breakMinutes })
+        );
+        const endTime = addDuration(
+          startTime,
+          new Duration({ minutes: timeData.workMinutes })
+        );
 
-//         taken.splice(taken.indexOf(startTime), 2);
-//         taken.splice(taken.indexOf(endTime), 2);
-//         startTime = endTime;
-//       });
-//     }
-//   }
+        taken.splice(taken.indexOf(startTime), 2);
+        taken.splice(taken.indexOf(endTime), 2);
+        startTime = endTime;
+      });
+    }
+  }
 
-//   return taken;
-// }
+  return taken;
+}
 
 /**
  * Gets all free times for a worker on a specific date.
@@ -1666,27 +1588,6 @@ export function addMonths(date: Date, months: number): Date {
     date.getHours(),
     date.getMinutes()
   );
-}
-
-export function durationStrikings(
-  start1: Date,
-  end1: Date,
-  start2: Date,
-  end2: Date
-): string {
-  if (
-    start1.getTime() < start2.getTime() &&
-    end1.getTime() < start2.getTime()
-  ) {
-    return "NO_STRIKE";
-  } else if (
-    start1.getTime() > end2.getTime() &&
-    end1.getTime() > end2.getTime()
-  ) {
-    return "NO_STRIKE";
-  } else {
-    return "STRIKE";
-  }
 }
 
 export function convertStringToTime(times: string[]): Date[] {

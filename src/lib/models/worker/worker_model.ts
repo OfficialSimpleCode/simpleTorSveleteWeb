@@ -14,12 +14,18 @@ import {
   religionToStr,
   type Religion,
 } from "$lib/consts/worker_schedule";
+import { durationStrikings } from "$lib/utils/duration_utils";
+import {
+  combinedShuffleShifts,
+  shiftsFromStrList,
+} from "$lib/utils/shifts_utils";
 import { translate } from "$lib/utils/string_utilitis";
 import {
   dateStrToDate,
   dateToDateStr,
   setToMidNight,
 } from "$lib/utils/times_utils/times_utils";
+import { format } from "date-fns";
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
 import Device from "../general/device";
 import Treatment from "../general/treatment_model";
@@ -147,31 +153,30 @@ export default class WorkerModel {
     return counter;
   }
 
-  // /// Get date and returns the workTikes for this date
-  // shiftsFor({ day }: { day: Date }): string[] {
-  //   // regular shifts
-  //   const defaultShifts =
-  //     this.workTime[
-  //       day.toLocaleString("en-US", { weekday: "long" }).toLowerCase()
-  //     ] || [];
-  //   // specific changes
-  //   for (const specifiRangeObj of Object.values(this.specificRangeChanges)) {
-  //     if (
-  //       durationStrikings(
-  //         specifiRangeObj.start,
-  //         new Date(
-  //           specifiRangeObj.end.getTime() + 23 * 60 * 60 * 1000 + 59 * 60 * 1000
-  //         ),
-  //         day,
-  //         day
-  //       ) === "STRIKE"
-  //     ) {
-  //       // day is include in this range changing
-  //       return specifiRangeObj.combineShifts(defaultShifts);
-  //     }
-  //   }
-  //   return combinedShuffleShifts(shiftsFromStrList(defaultShifts));
-  // }
+  /// Get date and returns the workTikes for this date
+  shiftsFor({ day }: { day: Date }): string[] {
+    // regular shifts
+    const defaultShifts =
+      this.workTime.get(format(day, "EEEE").toLowerCase()) || [];
+    // specific changes
+    for (const specifiRangeObj of Object.values(this.specificRangeChanges)) {
+      if (
+        durationStrikings(
+          specifiRangeObj.start,
+          new Date(
+            specifiRangeObj.end.getTime() + 23 * 60 * 60 * 1000 + 59 * 60 * 1000
+          ),
+          day,
+          day
+        ) === "STRIKE"
+      ) {
+        // day is include in this range changing
+        return specifiRangeObj.combineShifts(defaultShifts);
+      }
+    }
+    return combinedShuffleShifts(shiftsFromStrList(defaultShifts));
+  }
+
   // Returns whether this day is closing day or not
   isClosingDate(date: Date): boolean {
     return (
