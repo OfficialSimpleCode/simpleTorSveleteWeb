@@ -1,3 +1,4 @@
+import { logger } from "$lib/consts/application_general";
 import {
   BookingReminderType,
   BookingStatuses,
@@ -17,10 +18,14 @@ import {
   notificationOptionFromStr,
   notificationOptionToStr,
 } from "$lib/consts/notification";
+import { setToMidNight } from "$lib/utils/dates_utils";
+import { addDuration } from "$lib/utils/duration_utils";
+import { Duration } from "../core/duration";
 import IconData from "../general/icon_data";
 import Treatment from "../general/treatment_model";
 import type MultiBooking from "../multi_booking/multi_booking";
 import Debt from "../schedule/debt";
+import RecurrenceEvent from "../schedule/recurrence_event";
 import ScheduleItem from "../schedule/schedule_item";
 import BookingInvoiceData from "./booking_invoice_data";
 import BookingPaymentRequestData from "./booking_payment_request";
@@ -203,184 +208,196 @@ export default class Booking extends ScheduleItem {
   }
 
   static fromJson(json: Record<string, any>, id: string): Booking {
-    const newBooking = new Booking({});
-    newBooking.workerGender =
-      genderFromStr[json["workerGender"]] || Gender.anonymous;
-    newBooking.customerName = json["customerName"] || "";
-    newBooking.note = json["note"] || "";
-    newBooking.bookingId = id;
-    newBooking.signOnDeviceCalendar = json["signOnDeviceCalendar"] || false;
-    newBooking.userDeleted = json["userDeleted"] || false;
-    newBooking.workerDeleted = json["workerDeleted"] || false;
-    newBooking.customerId = json["customerId"] || json["customerPhone"] || "";
-    newBooking.workerPhone = json["workerPhone"] || "";
-    newBooking.customerPhone = json["customerPhone"] || "";
-    newBooking.recurrenceTimeId = json["recurrenceTimeId"];
-    newBooking.workerId = json["workerId"] || json["workerPhone"] || "";
-    newBooking.adress = json["adress"] || "";
-    if (json["shopIcon"] != null) {
-      newBooking.shopIcon = IconData.fromJson(json["shopIcon"]);
-    }
-    newBooking.isVerifiedPhone = json["isVerifiedPhone"] || false;
-    if (
-      newBooking.customerId == newBooking.customerPhone &&
-      newBooking.customerId.length == 14
-    ) {
-      newBooking.isVerifiedPhone = true;
-    }
-    newBooking.isMultiRef = json["isMultiRef"] || false;
-    newBooking.needCancel = json["needCancel"] || false;
-    if (json["lastTimeNotifyOnDebt"] != null) {
-      newBooking.lastTimeNotifyOnDebt = new Date(json["lastTimeNotifyOnDebt"]);
-    }
-    newBooking.finishInvoices = json["finishInvoices"] || false;
-    if (json["remindersTypes"] != null) {
-      Object.entries<number>(json["remindersTypes"]).forEach(
-        ([type, minutes]) => {
-          if (bookingReminderTypeFromStr[type] != null) {
-            newBooking.remindersTypes.set(
-              bookingReminderTypeFromStr[type],
-              minutes
-            );
-          }
-        }
-      );
-    } else {
-      newBooking.remindersTypes = new Map([
-        BookingReminderType.regular,
-        json["minutesBeforeNotify"] || 60,
-      ]);
-    }
-    if (json["workerRemindersTypes"] != null) {
-      Object.entries<number>(json["workerRemindersTypes"]).forEach(
-        ([type, minutes]) => {
-          if (bookingReminderTypeFromStr[type] != null) {
-            newBooking.workerRemindersTypes.set(
-              bookingReminderTypeFromStr[type],
-              minutes
-            );
-          }
-        }
-      );
-    }
-    newBooking.clientMail = json["clientMail"] || "";
-    if (json["recurrenceNotificationsLastDate"] != null) {
-      newBooking.recurrenceNotificationsLastDate = new Date(
-        json["recurrenceNotificationsLastDate"]
-      );
-    }
-    newBooking.clientNote = json["clientNote"] || "";
-    newBooking.recurreneFatherDate = json["recurreneFatherDate"];
-    newBooking.recurrenceRef = json["recurrenceRef"];
-    if (json["orderingOptions"] != null) {
-      newBooking.orderingOptions =
-        orderingOptionsFromStr[json["orderingOptions"]] || OrderingOptions.app;
-    }
-    if (json["debts"] != null) {
-      Object.entries(json["debts"]).forEach(([id, debtJson]) => {
-        newBooking.debts.set(id, Debt.fromJson(debtJson, id));
-      });
-    }
-    if (json["cancelDate"] != null) {
-      newBooking.cancelDate = new Date(json["cancelDate"]);
-    }
-    newBooking.wasWaiting = json["wasWaiting"] || false;
-    newBooking.isUserExist = json["isUserExist"] || true;
-    if (json["invoices"] != null) {
-      Object.entries<Record<string, any>>(json["invoices"]).forEach(
-        ([id, invoiceJson]) => {
-          newBooking.invoices.set(
-            id,
-            BookingInvoiceData.fromJson(invoiceJson, id, newBooking.workerId)
-          );
-        }
-      );
-    }
-    if (json["userGender"] != null) {
-      newBooking.userGender =
-        genderFromStr[json["userGender"]] || Gender.anonymous;
-    }
-    newBooking.status =
-      bookingsMassageKeys[json["status"].toString()] ||
-      BookingStatuses.approved;
-    newBooking.confirmedArrival = json["confirmedArrival"] || false;
-    if (json["bookingDate"] != null) {
-      newBooking.bookingDate = new Date(json["bookingDate"]) || new Date(0);
-    }
-    if (json["treatments"] != null) {
-      newBooking.treatments = new Map();
-      let index = 0;
-      Object.entries(json["treatments"]).forEach(([_, __]) => {
-        const treatmentJson = json["treatments"][index.toString()];
-        newBooking.treatments.set(
-          index.toString(),
-          Treatment.fromJson(treatmentJson, index.toString())
-        );
-        index += 1;
-      });
-    } else if (json["treatment"] != null) {
-      const tempTreatment = Treatment.fromJson(json["treatment"], "0");
-      newBooking.treatments.set("0", tempTreatment);
-    }
-    newBooking.showAdressAlert = json["showAdressAlert"] || false;
-    newBooking.showPhoneAlert = json["showPhoneAlert"] || false;
-    newBooking.workerName = json["workerName"] || "";
-    newBooking.businessName = json["businessName"] || "";
-    newBooking.buisnessId = json["buisnessId"] || "";
-    if (json["notificationType"] != null) {
-      newBooking.notificationType =
-        notificationTypeFromStr[json["notificationType"]] ||
-        NotificationType.push;
-    } else {
-      if (json["withMessage"] || false) {
-        newBooking.notificationType = NotificationType.message;
-      } else {
-        newBooking.notificationType = NotificationType.push;
+    try {
+      const newBooking = new Booking({});
+
+      newBooking.workerGender =
+        genderFromStr[json["workerGender"]] || Gender.anonymous;
+      newBooking.customerName = json["customerName"] || "";
+      newBooking.note = json["note"] || "";
+      newBooking.bookingId = id;
+      newBooking.signOnDeviceCalendar = json["signOnDeviceCalendar"] || false;
+      newBooking.userDeleted = json["userDeleted"] || false;
+      newBooking.workerDeleted = json["workerDeleted"] || false;
+      newBooking.customerId = json["customerId"] || json["customerPhone"] || "";
+      newBooking.workerPhone = json["workerPhone"] || "";
+      newBooking.customerPhone = json["customerPhone"] || "";
+      newBooking.recurrenceTimeId = json["recurrenceTimeId"];
+      newBooking.workerId = json["workerId"] || json["workerPhone"] || "";
+
+      newBooking.adress = json["adress"] || "";
+      if (json["shopIcon"] != null) {
+        newBooking.shopIcon = IconData.fromJson(json["shopIcon"]);
       }
-    }
-    if (json["workerNotificationOption"] != null) {
-      newBooking.workerNotificationOption =
-        notificationOptionFromStr[json["workerNotificationOption"]] ||
-        NotificationOption.PushOrSMS;
-    }
-    if (json["userFcms"] != null) {
-      json["userFcms"].forEach((fcm: string) => {
-        newBooking.userFcms.add(fcm);
-      });
-    } else if (json["deviceFCM"] != null && json["deviceFCM"] != "") {
-      newBooking.userFcms = new Set([json["deviceFCM"]]);
-    }
-    if (json["createdAt"] != null) {
-      newBooking.createdAt = new Date(json["createdAt"]) || new Date(0);
-    }
-    // if (json["RE"] != null) {
-    //   newBooking.recurrenceEvent = RecurrenceEvent.fromJson(
-    //     json["RE"],
-    //     newBooking.bookingDate
-    //   );
-    // }
-    // if (json["RERI"] != null) {
-    //   newBooking.recurrenceEventRefInfo = RecurrenceEvent.fromJson(
-    //     json["RERI"]
-    //   );
-    // }
-    newBooking.transactions = new Map();
-    if (json["transactions"] != null) {
-      Object.entries<Record<string, any>>(json["transactions"]).forEach(
-        ([id, transactionJson]) => {
-          newBooking.transactions.set(
-            id,
-            BookingTransactionModel.fromJson(transactionJson, id)
+      newBooking.isVerifiedPhone = json["isVerifiedPhone"] || false;
+      if (
+        newBooking.customerId == newBooking.customerPhone &&
+        newBooking.customerId.length == 14
+      ) {
+        newBooking.isVerifiedPhone = true;
+      }
+      newBooking.isMultiRef = json["isMultiRef"] || false;
+      newBooking.needCancel = json["needCancel"] || false;
+      if (json["lastTimeNotifyOnDebt"] != null) {
+        newBooking.lastTimeNotifyOnDebt = new Date(
+          json["lastTimeNotifyOnDebt"]
+        );
+      }
+      newBooking.finishInvoices = json["finishInvoices"] || false;
+      if (json["remindersTypes"] != null) {
+        Object.entries<number>(json["remindersTypes"]).forEach(
+          ([type, minutes]) => {
+            if (bookingReminderTypeFromStr[type] != null) {
+              newBooking.remindersTypes.set(
+                bookingReminderTypeFromStr[type],
+                minutes
+              );
+            }
+          }
+        );
+      } else {
+        newBooking.remindersTypes = new Map([
+          BookingReminderType.regular,
+          json["minutesBeforeNotify"] || 60,
+        ]);
+      }
+      if (json["workerRemindersTypes"] != null) {
+        Object.entries<number>(json["workerRemindersTypes"]).forEach(
+          ([type, minutes]) => {
+            if (bookingReminderTypeFromStr[type] != null) {
+              newBooking.workerRemindersTypes.set(
+                bookingReminderTypeFromStr[type],
+                minutes
+              );
+            }
+          }
+        );
+      }
+      newBooking.clientMail = json["clientMail"] || "";
+      if (json["recurrenceNotificationsLastDate"] != null) {
+        newBooking.recurrenceNotificationsLastDate = new Date(
+          json["recurrenceNotificationsLastDate"]
+        );
+      }
+
+      newBooking.clientNote = json["clientNote"] || "";
+      newBooking.recurreneFatherDate = json["recurreneFatherDate"];
+      newBooking.recurrenceRef = json["recurrenceRef"];
+      if (json["orderingOptions"] != null) {
+        newBooking.orderingOptions =
+          orderingOptionsFromStr[json["orderingOptions"]] ||
+          OrderingOptions.app;
+      }
+      if (json["debts"] != null) {
+        Object.entries(json["debts"]).forEach(([id, debtJson]) => {
+          newBooking.debts.set(id, Debt.fromJson(debtJson, id));
+        });
+      }
+      if (json["cancelDate"] != null) {
+        newBooking.cancelDate = new Date(json["cancelDate"]);
+      }
+      newBooking.wasWaiting = json["wasWaiting"] || false;
+      newBooking.isUserExist = json["isUserExist"] || true;
+      if (json["invoices"] != null) {
+        Object.entries<Record<string, any>>(json["invoices"]).forEach(
+          ([id, invoiceJson]) => {
+            newBooking.invoices.set(
+              id,
+              BookingInvoiceData.fromJson(invoiceJson, id, newBooking.workerId)
+            );
+          }
+        );
+      }
+      if (json["userGender"] != null) {
+        newBooking.userGender =
+          genderFromStr[json["userGender"]] || Gender.anonymous;
+      }
+      newBooking.status =
+        bookingsMassageKeys[json["status"].toString()] ||
+        BookingStatuses.approved;
+      newBooking.confirmedArrival = json["confirmedArrival"] || false;
+      if (json["bookingDate"] != null) {
+        newBooking.bookingDate = new Date(json["bookingDate"]) || new Date(0);
+      }
+      if (json["treatments"] != null) {
+        newBooking.treatments = new Map();
+        let index = 0;
+        Object.entries(json["treatments"]).forEach(([_, __]) => {
+          const treatmentJson = json["treatments"][index.toString()];
+          newBooking.treatments.set(
+            index.toString(),
+            Treatment.fromJson(treatmentJson, index.toString())
           );
+          index += 1;
+        });
+      } else if (json["treatment"] != null) {
+        const tempTreatment = Treatment.fromJson(json["treatment"], "0");
+        newBooking.treatments.set("0", tempTreatment);
+      }
+
+      newBooking.showAdressAlert = json["showAdressAlert"] || false;
+      newBooking.showPhoneAlert = json["showPhoneAlert"] || false;
+      newBooking.workerName = json["workerName"] || "";
+      newBooking.businessName = json["businessName"] || "";
+      newBooking.buisnessId = json["buisnessId"] || "";
+      if (json["notificationType"] != null) {
+        newBooking.notificationType =
+          notificationTypeFromStr[json["notificationType"]] ||
+          NotificationType.push;
+      } else {
+        if (json["withMessage"] || false) {
+          newBooking.notificationType = NotificationType.message;
+        } else {
+          newBooking.notificationType = NotificationType.push;
         }
-      );
+      }
+      if (json["workerNotificationOption"] != null) {
+        newBooking.workerNotificationOption =
+          notificationOptionFromStr[json["workerNotificationOption"]] ||
+          NotificationOption.PushOrSMS;
+      }
+      if (json["userFcms"] != null) {
+        json["userFcms"].forEach((fcm: string) => {
+          newBooking.userFcms.add(fcm);
+        });
+      } else if (json["deviceFCM"] != null && json["deviceFCM"] != "") {
+        newBooking.userFcms = new Set([json["deviceFCM"]]);
+      }
+      if (json["createdAt"] != null) {
+        newBooking.createdAt = new Date(json["createdAt"]) || new Date(0);
+      }
+      if (json["RE"] != null) {
+        newBooking.recurrenceEvent = RecurrenceEvent.fromJson(
+          json["RE"],
+          newBooking.bookingDate
+        );
+      }
+      if (json["RERI"] != null) {
+        newBooking.recurrenceEventRefInfo = RecurrenceEvent.fromJson(
+          json["RERI"]
+        );
+      }
+      newBooking.transactions = new Map();
+      if (json["transactions"] != null) {
+        Object.entries<Record<string, any>>(json["transactions"]).forEach(
+          ([id, transactionJson]) => {
+            newBooking.transactions.set(
+              id,
+              BookingTransactionModel.fromJson(transactionJson, id)
+            );
+          }
+        );
+      }
+      if (json["paymentRequest"] != null) {
+        newBooking.paymentRequest = BookingPaymentRequestData.fromJson(
+          json["paymentRequest"]
+        );
+      }
+      return newBooking;
+    } catch (e) {
+      logger.error(`Error loading booking doc ${id}: ${e}`);
+      return new Booking({});
     }
-    if (json["paymentRequest"] != null) {
-      newBooking.paymentRequest = BookingPaymentRequestData.fromJson(
-        json["paymentRequest"]
-      );
-    }
-    return newBooking;
   }
   get treatmentLength(): number {
     return Array.from(this.treatments.values()).reduce(
@@ -408,22 +425,28 @@ export default class Booking extends ScheduleItem {
     }
   }
 
-  // get isPassed(): boolean {
-  //   if (this.recurrenceEvent != null) {
-  //     if (this.recurrenceChildDate != null) {
-  //       return this.recurrenceChildDate
-  //         .add({ minutes: this.totalMinutes + 2 })
-  //         .isBefore(new Date());
-  //     }
-  //     const end = this.recurrenceEvent.endOfTheEvent;
+  get isPassed(): boolean {
+    if (this.recurrenceEvent != null) {
+      if (this.recurrenceChildDate != null) {
+        return (
+          addDuration(
+            this.recurrenceChildDate,
+            new Duration({ minutes: this.totalMinutes + 2 })
+          ) < new Date()
+        );
+      }
+      const end = this.recurrenceEvent.endOfTheEvent;
 
-  //     return end !== null && end.isBefore(setToMidNight(new Date()));
-  //   } else {
-  //     return this.bookingDate
-  //       .add({ minutes: this.totalMinutes + 2 })
-  //       .isBefore(new Date());
-  //   }
-  // }
+      return end !== null && end < setToMidNight(new Date());
+    } else {
+      return (
+        addDuration(
+          this.bookingDate,
+          new Duration({ minutes: this.totalMinutes + 2 })
+        ) < new Date()
+      );
+    }
+  }
   get totalMinutes(): number {
     let minutes = 0;
     this.treatments.forEach((treatment, _) => {

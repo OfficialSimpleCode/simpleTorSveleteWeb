@@ -11,6 +11,7 @@ import { GeneralData } from "$lib/helpers/general_data";
 import UserRepo from "$lib/helpers/user/user_repo";
 import VerificationRepo from "$lib/helpers/verification/verification_repo";
 import UserModel from "$lib/models/user/user_model";
+import { checkForReminders } from "$lib/utils/booking_utils";
 import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
 
 export default class UserInitializer {
@@ -116,26 +117,26 @@ export default class UserInitializer {
         try {
           if (dataJson.exists()) {
             this.user.setUserPublicData(dataJson.data()!);
-
-            // await this.loadBookingsDocs(
-            //   this.user.userPublicData.bookingsDocsToLoad
-            // );
+            console.log(
+              `bookings to load ->  ${this.user.userPublicData.bookingsDocsToLoad}`
+            );
+            await this.loadBookingsDocs(
+              this.user.userPublicData.bookingsDocsToLoad
+            );
 
             // // update server to relevant fcm for notifications
-            // _updateFcmIfNeeded();
             // _transaferInvoiceIfNeeded();
             // transaferBookingsIfNeeded(this.user);
             // _deleteDocsFromLocal();
-            // _updateLastTimeConnect();
 
-            // await loadBookingsDocs(this.user.userPublicData.bookingsDocsToLoad);
+            console.log("Getting new user data from database");
+            this.user.userPublicData.reminders = {};
 
-            // console.log("Getting new user data from database");
-            // this.user.userPublicData.reminders = {};
+            if (GeneralData.currentBusinesssId !== "") {
+              this.user.userPublicData.reminders = await checkForReminders();
+            }
 
-            // if (GeneralData.currentBusinesssId !== "") {
-            //   this.user.userPublicData.reminders = await checkForReminders();
-            // }
+            console.log(this.user);
 
             // if (
             //   this.user.userPublicData.reminders != null &&
@@ -186,17 +187,12 @@ export default class UserInitializer {
       });
 
       if (docId === recurrenceBookingsDoc) {
-        UserInitializer.GI().user.bookings.setRecurrence(
-          bookingsDoc?.data() || {}
-        );
+        this.user.bookings.setRecurrence(bookingsDoc?.data() || {});
       } else {
-        UserInitializer.GI().user.bookings.setMonth(
-          bookingsDoc?.data() || {},
-          docId
-        );
+        this.user.bookings.setMonth(bookingsDoc?.data() || {}, docId);
       }
     } catch (error) {
-      console.error(`Error loading booking doc ${docId}: ${error}`);
+      logger.error(`Error loading booking doc ${docId}: ${error}`);
     }
   }
 }

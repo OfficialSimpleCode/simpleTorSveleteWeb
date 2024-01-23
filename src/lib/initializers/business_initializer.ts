@@ -77,7 +77,7 @@ export default class BusinessInitializer {
       }
 
       // Make the business data listener from the real-time database
-      //this.makeBusinessDataListener();
+      this.makeBusinessDataListener();
 
       //   // Can't initialize user data; the user may not be loaded if it's from loading
       //   if (!fromLoading && UserInitializer.GI().isConnected) {
@@ -257,7 +257,8 @@ export default class BusinessInitializer {
       childPath: businessDataPath,
       callback: (snapshot) => {
         if (snapshot.exists()) {
-          this.business.businessData.setBusinessData(snapshot.val());
+          this.business.businessData.setBusinessData(snapshot);
+          console.log(this.business.businessData);
         }
       },
     });

@@ -5,7 +5,9 @@ export enum LoginType {
   phoneUpdate,
 }
 
+import { logger } from "$lib/consts/application_general";
 import { firebaseConfig } from "$lib/firebase_config";
+import AppErrorsHelper from "$lib/helpers/app_errors";
 import { getApp, getApps, initializeApp } from "firebase/app";
 import {
   FacebookAuthProvider,
@@ -26,6 +28,8 @@ import {
   type Auth,
   type User,
 } from "firebase/auth";
+import { verificationErrors } from "../errors/interpeters/verification_errors_interpeter";
+import { Errors } from "../errors/messages";
 
 export class FirebaseAuthService {
   _auth: Auth;
@@ -41,11 +45,14 @@ export class FirebaseAuthService {
 
       return true;
     } catch (e) {
-      //   console.error(`Error: ${e}`);
-      //   logger.e(`it was an error the error is --> ${e}`);
-      //   logger.e(e.code);
-      //   new AppErrorsHelper().details = e.message ?? e.code;
-      //   AppErrors().error = verificationErrors[e.code] ?? Errors.unknown;
+      if (e instanceof Error) {
+        console.error(`Error: ${e}`);
+        logger.error(`it was an error the error is --> ${e}`);
+        logger.error(e.name);
+        AppErrorsHelper.GI().details = e.name;
+        AppErrorsHelper.GI().error =
+          verificationErrors[e.name] ?? Errors.unknown;
+      }
       return false;
     }
   }
@@ -80,11 +87,15 @@ export class FirebaseAuthService {
 
       return true;
     } catch (e) {
-      //   console.error(`Error: ${e}`);
-      //   logger.e(`it was an error the error is --> ${e}`);
-      //   logger.e(e.code);
-      //   AppErrors().details = e.message ?? e.code;
-      //   AppErrors().error = verificationErrors[e.code] ?? Errors.unknown;
+      if (e instanceof Error) {
+        console.error(`Error: ${e}`);
+        logger.error(`it was an error the error is --> ${e}`);
+        logger.error(e.name);
+        AppErrorsHelper.GI().details = e.name;
+        AppErrorsHelper.GI().error =
+          verificationErrors[e.name] ?? Errors.unknown;
+      }
+
       return false;
     }
   }
@@ -116,11 +127,14 @@ export class FirebaseAuthService {
       await this.signInWithAppleWebSRV(loginType);
       return true;
     } catch (e) {
-      //   console.error(`Error: ${e}`);
-      //   logger.e(`it was an error the error is --> ${e}`);
-      //   logger.e(e.code);
-      //   AppErrors().details = e.message ?? e.code;
-      //   AppErrors().error = verificationErrors[e.code] ?? Errors.unknown;
+      if (e instanceof Error) {
+        console.error(`Error: ${e}`);
+        logger.error(`it was an error the error is --> ${e}`);
+        logger.error(e.name);
+        AppErrorsHelper.GI().details = e.name;
+        AppErrorsHelper.GI().error =
+          verificationErrors[e.name] ?? Errors.unknown;
+      }
       return false;
     }
   }
@@ -181,10 +195,14 @@ export class FirebaseAuthService {
       return true;
     } catch (e) {
       console.error(`Error: ${e}`);
-      //   logger.e(`it was an error the error is --> ${e}`);
-      //   logger.e(e.code);
-      //   AppErrors().details = e.message ?? e.code;
-      //   AppErrors().error = verificationErrors[e.code] ?? Errors.unknown;
+      if (e instanceof Error) {
+        console.error(`Error: ${e}`);
+        logger.error(`it was an error the error is --> ${e}`);
+        logger.error(e.name);
+        AppErrorsHelper.GI().details = e.name;
+        AppErrorsHelper.GI().error =
+          verificationErrors[e.name] ?? Errors.unknown;
+      }
       return false;
     }
   }

@@ -1,7 +1,6 @@
 import { Errors } from "../messages";
-import "../messages.dart";
 
-const verificationErrors = {
+export const verificationErrors: Record<string, Errors> = {
   "operation-not-allowed": Errors.providerNotAllowed,
   "user-disabled": Errors.userDisable,
   "provider-already-linked": Errors.providerAlreadyLinked,

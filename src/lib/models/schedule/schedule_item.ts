@@ -1,3 +1,5 @@
+import type RecurrenceEvent from "./recurrence_event";
+
 // For schedule items such as break, booking, and multi booking
 export default abstract class ScheduleItem {
   date: Date = new Date(0);
@@ -8,13 +10,13 @@ export default abstract class ScheduleItem {
   buisnessId: string = "";
   businessName: string = "";
 
-  //recurrenceEvent?: RecurrenceEvent;
+  recurrenceEvent?: RecurrenceEvent;
 
   // Contain the event id of the recurrence father
   recurrenceRef?: string;
 
   recurrenceFatherDate?: string;
-  //recurrenceEventRefInfo?: RecurrenceEvent;
+  recurrenceEventRefInfo?: RecurrenceEvent;
 
   // Only for when deleting a worker and need to know his id for deleting the breaks
   recurrenceNotificationsLastDate?: Date;

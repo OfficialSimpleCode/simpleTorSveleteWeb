@@ -23,35 +23,32 @@ export default class BookingTransactionModel {
   constructor({});
 
   constructor({
-    type,
-    amount,
-    id,
-    hypId,
-    createdAt,
+    type = PaymentTypes.payment,
+    amount = 0,
+    id = "",
+    hypId = "",
+    createdAt = new Date(0),
   }: {
-    type: PaymentTypes;
-    amount: number;
-    id: string;
-    hypId: string;
-    createdAt: Date;
+    type?: PaymentTypes;
+    amount?: number;
+    id?: string;
+    hypId?: string;
+    createdAt?: Date;
   }) {
     this.type = type;
-    this.amount = Number(amount.toFixed(2)) || amount;
+    this.amount = parseFloat(amount.toFixed(2));
     this.id = id;
     this.hypId = hypId;
     this.createdAt = createdAt;
   }
 
   static fromJson(
-    json: { [key: string]: any },
+    json: Record<string, any>,
     newId: string
   ): BookingTransactionModel {
     const newObj = new BookingTransactionModel({});
-    if (json["amount"] != null) {
-      newObj.amount =
-        typeof json["amount"] === "number"
-          ? json["amount"]
-          : parseFloat(json["amount"]);
+    if (json["amount"] != undefined) {
+      newObj.amount = json["amount"];
     }
     newObj.hypId = json["hypId"] || "";
     newObj.id = newId;

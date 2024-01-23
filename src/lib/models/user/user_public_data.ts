@@ -20,7 +20,9 @@ export default class UserPublicData {
   devices: Map<string, Device> = new Map();
   gender: Gender = Gender.anonymous;
   myBuisnessesIds: string[] = [];
-  reminders?: Map<BookingReminderType, Booking[]>;
+  reminders?: {
+    [key in BookingReminderType]?: Booking[];
+  };
   clientAt: Map<string, Set<string>> = new Map();
   hasNotificationPermission: boolean = true;
   permission: Map<string, number> = new Map();
@@ -35,7 +37,16 @@ export default class UserPublicData {
   bookingsDocsToLoad: Set<string> = new Set();
   localDocsToDelete: Set<LocalDocReference> = new Set();
 
-  constructor(data: {
+  constructor({
+    email = "",
+    isVerifiedPhone = false,
+    isVerifiedEmail = false,
+    name = "",
+    phoneNumber = "",
+    id = "",
+    gender = Gender.anonymous,
+    devices = new Map(),
+  }: {
     email?: string;
     isVerifiedPhone?: boolean;
     isVerifiedEmail?: boolean;
@@ -43,20 +54,16 @@ export default class UserPublicData {
     phoneNumber?: string;
     id?: string;
     gender?: Gender;
-    devices: Map<string, Device>;
-    myBuisnessesIds: string[];
-    bookings?: Map<string, Booking>;
+    devices?: Map<string, Device>;
   }) {
-    this.email = data.email || "";
-    this.isVerifiedPhone = data.isVerifiedPhone || false;
-    this.isVerifiedEmail = data.isVerifiedEmail || false;
-    this.name = data.name || "";
-    this.phoneNumber = data.phoneNumber || "";
-    this.id = data.id || "";
-    this.gender = data.gender || Gender.anonymous;
-    this.devices = data.devices;
-    this.myBuisnessesIds = data.myBuisnessesIds;
-    this.bookings = data.bookings;
+    this.email = email;
+    this.isVerifiedPhone = isVerifiedPhone;
+    this.isVerifiedEmail = isVerifiedEmail;
+    this.name = name;
+    this.phoneNumber = phoneNumber;
+    this.id = id;
+    this.gender = gender;
+    this.devices = devices;
   }
 
   static fromJson(
@@ -71,9 +78,6 @@ export default class UserPublicData {
       phoneNumber: dataJson["phoneNumber"],
       id: dataJson["id"],
       gender: dataJson["gender"],
-      devices: dataJson["devices"],
-      myBuisnessesIds: dataJson["myBuisnessesIds"],
-      bookings: dataJson["bookings"],
     });
     userPublicData.setUserPublicData(dataJson, user);
     return userPublicData;

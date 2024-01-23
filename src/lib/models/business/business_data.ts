@@ -3,7 +3,7 @@ import {
   paymentRequsetForNewBusiness,
 } from "$lib/consts/limitation";
 
-import type { DataSnapshot } from "firebase/database";
+import { type DataSnapshot } from "firebase/database";
 import type { Unsubscribe } from "firebase/firestore";
 
 export const messagesLimits: { [key: string]: number } = {
@@ -44,11 +44,11 @@ export class BusinessData {
     );
   }
 
-  setBusinessData(ref: DataSnapshot): void {
+  setBusinessData(snapshot: DataSnapshot): void {
     this.messagesCounter =
-      parseInt(ref.child("messagesCounter").val().toString()) || 0;
+      parseInt(snapshot.val().messagesCounter.toString()) || 0;
     this.paymentRequestCounter =
-      parseInt(ref.child("paymentRequestCounter").val().toString()) || 0;
+      parseInt(snapshot.val().paymentRequestCounter.toString()) || 0;
   }
 
   toJson(): any {

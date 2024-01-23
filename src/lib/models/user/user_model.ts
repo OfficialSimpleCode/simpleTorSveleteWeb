@@ -37,10 +37,7 @@ export default class UserModel {
   termsApprovals: { [key: string]: Date } = {};
   seenUpdates: { [key: string]: Set<string> } = {};
   createdAt: Date = new Date();
-  userPublicData: UserPublicData = new UserPublicData({
-    devices: {},
-    myBuisnessesIds: [],
-  });
+  userPublicData: UserPublicData = new UserPublicData({});
   name: string = "";
   isVerifiedPhone: boolean = false;
   phoneNumber: string = "";
@@ -102,9 +99,8 @@ export default class UserModel {
       name,
       phoneNumber,
       id,
-      devices: this.devices,
+
       gender,
-      myBuisnessesIds,
     });
     this.name = name;
     this.phoneNumber = phoneNumber;
@@ -379,8 +375,6 @@ export default class UserModel {
     }
 
     user.userPublicData = new UserPublicData({
-      myBuisnessesIds: [],
-      devices: {},
       isVerifiedPhone: user.isVerifiedPhone,
       phoneNumber: user.phoneNumber,
     });

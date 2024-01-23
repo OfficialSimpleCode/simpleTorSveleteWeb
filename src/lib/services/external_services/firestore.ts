@@ -29,6 +29,7 @@ import {
   type DocumentData,
   type Unsubscribe,
 } from "firebase/firestore";
+import { Errors } from "../errors/messages";
 import RealTimeDatabase from "./real_time_data_base";
 
 enum NumericCommands {
