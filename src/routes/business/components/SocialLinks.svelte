@@ -36,7 +36,7 @@
             return;
         }
 
-        window.location.href = link;
+        window.open(link, "_blank");
     }
 </script>
 
