@@ -1,19 +1,33 @@
 <script lang="ts">
+    import { pushState } from "$app/navigation";
+    import { page } from "$app/stores";
+
     import { _ } from "svelte-i18n";
     import { Icon, MapPin, Phone, DocumentText } from "svelte-hero-icons";
     import type { IconSource } from "svelte-hero-icons";
     import { ShowToast } from "$lib/stores/ToastManager";
     import { business } from "$lib/stores/Business";
 
+    import NavigationDialog from "$lib/components/NavigationDialog.svelte";
+
     // Assets
     import WhatsappLogo from "$lib/images/whatsapp.svg";
     import InsagramLogo from "$lib/images/instagram.svg";
+
+    let navigationDialog: HTMLDialogElement;
+
+    function openNavigationDialog() {
+        pushState("", {
+            showModal: true,
+        });
+        setTimeout(() => navigationDialog.showModal(), 100);
+    }
 
     let socialLinks: Object = {
         call: `tel:${$business.shopPhone}`,
         instagram: $business.instagramAccount,
         whatsapp: `whatsapp://send?phone=${$business.shopPhone}`,
-        navigate: `https://www.google.com/maps/search/?api=1&query=${$business.adress}`,
+        navigate: openNavigationDialog,
         policy: $business.previewDoc,
     };
 
@@ -27,7 +41,12 @@
         policy: DocumentText,
     };
 
-    function activateLink(link: string, name: string) {
+    function activateLink(link: string | CallableFunction, name: string) {
+        if (typeof link === "function") {
+            link();
+            return;
+        }
+
         if (!link || link.length == 0) {
             ShowToast({
                 text: `${name} link was not configured`,
@@ -39,6 +58,10 @@
         window.open(link, "_blank");
     }
 </script>
+
+{#if $page.state.showModal}
+    <NavigationDialog bind:dialog={navigationDialog} />
+{/if}
 
 <!-- Social Links -->
 <ul class="flex items-center gap-6 sm:gap-8">
