@@ -7,7 +7,7 @@
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import UserInitializer from "$lib/initializers/user_initializer";
   import { LoginType } from "$lib/services/external_services/firebase_auth_service";
-  import { userStore } from "$lib/stores/User";
+  import { isConnectedStore, userStore } from "$lib/stores/User";
   
     // Assets
     async function handleClick(authProvider:AuthProvider){
@@ -18,6 +18,11 @@
         console.log(UserInitializer.GI().userId);
         
         await UserInitializer.GI().setupUser({newUserId:UserInitializer.GI().userId});
+
+        if(!$isConnectedStore){
+            goto(`${base}/account-setup`);
+            return;
+        }
 
         console.log(UserInitializer.GI().user);
 

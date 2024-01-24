@@ -11,8 +11,8 @@
     // Assets
     import ILFlag from "$lib/images/flags/il.svg";
     import USFlag from "$lib/images/flags/us.svg";
-    import UserInitializer from "$lib/initializers/user_initializer";
     import { businessStore } from "$lib/stores/Business";
+    import { isConnectedStore } from "$lib/stores/User";
     import LoggedInProfile from "./LoggedInProfile.svelte";
     // import RUFlag from "$lib/images/flags/ru.svg";
 
@@ -112,7 +112,7 @@
             </div>
         </div>
 
-        {#if UserInitializer.GI().isConnected}
+        {#if $isConnectedStore}
             <LoggedInProfile />
         {:else}
             <GuestProfile />

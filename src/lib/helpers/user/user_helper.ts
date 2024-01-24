@@ -177,21 +177,7 @@
 //         return value;
 //       });
 //   }
-// async function logout(): Promise<boolean> {
-//   return this.verificationRepo.logout().then(async (value: boolean) => {
-//     if (value) {
-//       UserInitializer.user = {
-//         name: "guest",
-//         myBuisnessesIds: [],
-//         productsIds: {},
-//         lastVisitedBuisnessesRemoved: [],
-//         lastVisitedBuisnesses: [],
-//       };
-//       UiManager.insertUpdate(Providers.settings);
-//     }
-//     return value;
-//   });
-// }
+
 //   async updateEmail(
 //     email: string,
 //     { isVerified = false }: { isVerified?: boolean } = {}

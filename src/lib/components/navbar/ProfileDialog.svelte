@@ -5,6 +5,7 @@
     import InfoCircle from "$lib/components/InfoCircle.svelte";
     import { Gender } from "$lib/consts/gender";
     import Google from "$lib/images/google.svg";
+    import UserInitializer from "$lib/initializers/user_initializer";
     import { userStore } from "$lib/stores/User";
     import { dateToDateStr } from "$lib/utils/times_utils/times_utils";
     import {
@@ -31,6 +32,11 @@
 
     function updateGender(newGender: Gender) {
         
+    }
+
+    async function logOut() {
+        await UserInitializer.GI().logout();
+        history.back();
     }
 </script>
 
@@ -171,6 +177,7 @@
             <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
                 <button
                     class="btn btn-ghost join-item flex justify-between items-center"
+                    on:click={logOut}
                 >
                     <div class="flex items-center gap-2">
                         <Icon src={ArrowRightOnRectangle} size="26px" />
