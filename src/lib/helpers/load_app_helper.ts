@@ -3,6 +3,10 @@ import { LoadingStatuses } from "$lib/consts/loading_statuses";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import { Developer } from "$lib/models/developers/developer";
+import { business } from "$lib/stores/Business";
+import { loadAppState } from "$lib/stores/LoadApp";
+import { user } from "$lib/stores/User";
+import { workers } from "$lib/stores/Workers";
 import { delay, isNetworkConnected } from "$lib/utils/general_utils";
 import { Timestamp } from "firebase/firestore";
 import AppErrorsHelper from "./app_errors";
@@ -10,6 +14,7 @@ import DeveloperHelper from "./developer_helper";
 import { GeneralData } from "./general_data";
 import LinksHelper from "./links_helper";
 import ThemeHelper from "./theme_helper";
+import { VerificationHelper } from "./verification/verification_helper";
 
 export class LoadAppHelper {
   private static _singleton: LoadAppHelper = new LoadAppHelper();
@@ -23,7 +28,15 @@ export class LoadAppHelper {
   public cachedBusinessId: string | null = null;
   public firstTime: boolean = true;
 
-  public async loadAppData(): Promise<void> {
+  public async loadApp(): Promise<void> {
+    if (VerificationHelper.GI().canUseAuthVars) {
+      VerificationHelper.GI().startUserAuthListener(this.loadAppData);
+    } else {
+      this.loadAppData();
+    }
+  }
+
+  private async loadAppData(): Promise<void> {
     if (this.status !== LoadingStatuses.loading) {
       return;
     }
@@ -85,6 +98,15 @@ export class LoadAppHelper {
 
     GeneralData.hasPaddingFromTop = GeneralData.paddingFromTop > 0;
     this.updateStatus(LoadingStatuses.success);
+    const b = BusinessInitializer.GI().business;
+    business.set(b);
+
+    const u = UserInitializer.GI().user;
+
+    user.set(u);
+
+    const w = BusinessInitializer.GI().workers;
+    workers.set(w);
   }
 
   parseDevelopers(): Record<string, Developer> {
@@ -145,7 +167,7 @@ export class LoadAppHelper {
     return true;
   }
 
-  private updateStatus(status: LoadingStatuses): void {
+  updateStatus(status: LoadingStatuses): void {
     if (
       this.status === LoadingStatuses.noInternetConnection &&
       status !== LoadingStatuses.loading &&
@@ -156,7 +178,7 @@ export class LoadAppHelper {
     }
     logger.info("Status is updated to --> $status");
     this.status = status;
-    //UiManager.insertUpdate(Providers.loading);
+    loadAppState.set(status);
   }
 
   private async loadInitialBusiness(): Promise<boolean> {
