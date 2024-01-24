@@ -148,22 +148,3 @@ export default class FutureNotification {
     return JSON.stringify(this.toJson(), null, 2);
   }
 }
-
-// Example usage
-const futureNotification = new FutureNotification({
-  businessId: "yourBusinessId",
-  id: "yourId",
-  businessName: "yourBusinessName",
-  type: "yourType",
-  dateToNotify: new Date(),
-  isMulti: true,
-  minutesToAdd: 5,
-  address: "yourAddress",
-  phoneToContact: "yourPhoneNumber",
-  shopIcon: new IconData(),
-  fcms: new Set<string>(["fcmToken1", "fcmToken2"]),
-  totalEventMinutes: 30,
-  isRecurrence: true,
-});
-
-console.log(futureNotification.toString());

@@ -1,13 +1,17 @@
 <script lang="ts">
-    import { _ } from "svelte-i18n";
     import { user } from "$lib/stores/User";
+    import { _ } from "svelte-i18n";
 
     import UpdatePageHeader from "$lib/components/UpdatePageHeader.svelte";
 
     let email: string = $user.userPublicData.email;
     console.log($user);
+    let loading:boolean = false;
+    function updateEmail() {
+        loading = true;
 
-    function updateEmail() {}
+        loading = false;
+    }
 </script>
 
 <main class="flex flex-col items-center mx-4 mt-0 gap-10 h-full">
@@ -31,7 +35,7 @@
                     />
                 </div>
                 <div class="form-control mt-6">
-                    <button class="btn btn-primary" on:click={updateEmail}>
+                    <button class="btn btn-primary" class:btn-disabled={loading} on:click={updateEmail}>
                         {$_("emailUpdate")}
                     </button>
                 </div>

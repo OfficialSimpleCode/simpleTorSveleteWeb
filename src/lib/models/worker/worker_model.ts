@@ -96,7 +96,7 @@ export default class WorkerModel {
   publicCustomers: PublicCustomers = new PublicCustomers();
 
   // ------------------------------ from real time database ------------------
-  storylikesAmount: Map<string, number> = new Map();
+  storylikesAmount: Record<string, number> = {};
   //------------------------------- from multiEventsTimes doc------------------------------
   multiEventsTimes: MultiEventsTimes = new MultiEventsTimes();
 

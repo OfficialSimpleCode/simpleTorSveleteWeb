@@ -1,7 +1,17 @@
+import {
+  PAYMENT_REQUEST_END_POINT,
+  SERVER_BASE_URL,
+} from "$lib/consts/server_variables";
+import BookingPaymentRequestData from "$lib/models/booking/booking_payment_request";
 import IconData from "$lib/models/general/icon_data";
+import { Price } from "$lib/models/general/price";
 import BusinessPayloadData from "$lib/models/notifications/business_data_payload";
 import PaymentRequestNotificationPayload from "$lib/models/notifications/payment_request_notification_payload";
+import { dateToMonthStr } from "$lib/utils/times_utils/times_utils";
 import InvoiceBusinessInfo from "../invoice/invoice_business_info";
+import { PaymentObject } from "../payment_object";
+import PaymentRequestPreview from "./payment_request_preview";
+import type PaymentRequestUser from "./payment_request_user";
 
 export default class PaymentRequest extends PaymentObject {
   id: string = "";
@@ -18,19 +28,37 @@ export default class PaymentRequest extends PaymentObject {
   canceled: boolean = false;
   shopIcon: IconData = new IconData();
 
-  constructor(
-    id: string,
-    price: Price,
-    summary: string = "",
-    multi: boolean = false,
-    userDecline: boolean = false,
-    canceled: boolean = false,
-    oneTime: boolean,
-    shopIcon: IconData,
-    closeForAll: boolean,
-    workerInfo: InvoiceWorkerInfo,
-    businessInfo: InvoiceBusinessInfo
-  ) {
+  constructor({});
+  constructor({
+    id,
+    price,
+    createdAt,
+    summary = "",
+    multi = false,
+    userDecline = false,
+    canceled = false,
+    oneTime,
+    shopIcon,
+    closeForAll,
+    workerInfo,
+    businessInfo,
+  }: {
+    id: string;
+    price: Price;
+    createdAt: Date;
+    summary?: string;
+    multi?: boolean;
+    userDecline?: boolean;
+    canceled?: boolean;
+    oneTime: boolean;
+    shopIcon: IconData;
+    closeForAll: boolean;
+    workerInfo: InvoiceWorkerInfo;
+    businessInfo: InvoiceBusinessInfo;
+  }) {
+    super();
+    this.price = price;
+    this.createdAt = createdAt;
     this.id = id;
     this.summary = summary;
     this.multi = multi;
@@ -51,54 +79,55 @@ export default class PaymentRequest extends PaymentObject {
   }
 
   get toPaymentRequestPreview(): PaymentRequestPreview {
-    const preview = new PaymentRequestPreview(
-      this.id,
-      this.businessInfo.businessName,
-      this.shopIcon,
-      this.businessInfo.businessId,
-      this.workerInfo.workerId,
-      this.price,
-      this.oneTime,
-      this.workerInfo.workerName,
-      this.summary,
-      this.closeForAll
-    );
+    const preview = new PaymentRequestPreview({
+      id: this.id,
+      businessName: this.businessInfo.businessName,
+      shopIcon: this.shopIcon,
+      businessId: this.businessInfo.businessId,
+      workerId: this.workerInfo.workerId,
+      price: this.price,
+      oneTime: this.oneTime,
+      workerName: this.workerInfo.workerName,
+      summary: this.summary,
+      closeForAll: this.closeForAll,
+    });
     preview.users = this.users;
     preview.createdAt = this.createdAt;
     return preview;
   }
 
   get toPaymentRequestNotificationPayload(): PaymentRequestNotificationPayload {
-    const payload = new PaymentRequestNotificationPayload(
-      this.businessInfo.businessId,
-      this.id,
-      this.businessInfo.businessName,
-      this.createdAt,
-      this.workerInfo.workerId
-    );
+    const payload = new PaymentRequestNotificationPayload({
+      businessId: this.businessInfo.businessId,
+      id: this.id,
+      businessName: this.businessInfo.businessName,
+      date: this.createdAt,
+      workerId: this.workerInfo.workerId,
+      shopIcon: this.shopIcon,
+    });
     payload.shopIcon = this.shopIcon;
     return payload;
   }
 
   get businessPayloadData(): BusinessPayloadData {
-    const payloadData = new BusinessPayloadData(
-      this.businessInfo.businessName,
-      this.businessInfo.businessId,
-      this.shopIcon
-    );
+    const payloadData = new BusinessPayloadData({
+      businessName: this.businessInfo.businessName,
+      businessId: this.businessInfo.businessId,
+      shopIcon: this.shopIcon,
+    });
     return payloadData;
   }
 
+  ///Return the doc id that the PR saved on the worker collection on db
   get docId(): string {
-    return TimesUtils.dateToMonthStr(this.createdAt);
+    return dateToMonthStr(this.createdAt);
   }
 
   get toBookingPaymentRequestData(): BookingPaymentRequestData {
-    const bookingData = new BookingPaymentRequestData(
-      this.id,
-      this.workerInfo.workerId
-    );
+    const bookingData = new BookingPaymentRequestData({});
     bookingData.createdAt = this.createdAt;
+    bookingData.id = this.id;
+    bookingData.workerId = this.workerInfo.workerId;
     return bookingData;
   }
 
@@ -106,44 +135,53 @@ export default class PaymentRequest extends PaymentObject {
     return Object.keys(this.userPayments).length > 0;
   }
 
-
-
-  static fromJson(json: any, newId: any):PaymentRequest {
-    this.id = newId;
+  static fromJson(json: Record<string, any>, newId: any): PaymentRequest {
+    const newObj = new PaymentRequest({});
+    newObj.id = newId;
     if (json["businessInfo"] != null) {
-      this.businessInfo = InvoiceBusinessInfo.fromJson(json["businessInfo"]);
+      newObj.businessInfo = InvoiceBusinessInfo.fromJson(json["businessInfo"]);
     }
-    this.closeForAll = json["closeForAll"] ?? true;
+    newObj.closeForAll = json["closeForAll"] ?? true;
     if (json["workerInfo"] != null) {
-      this.workerInfo = InvoiceWorkerInfo.fromJson(json["workerInfo"]);
+      newObj.workerInfo = InvoiceWorkerInfo.fromJson(json["workerInfo"]);
     }
     if (json["shopIcon"] != null) {
-      this.shopIcon = IconData.fromJson(json["shopIcon"]);
+      newObj.shopIcon = IconData.fromJson(json["shopIcon"]);
     }
-    this.canceled = json["canceled"] ?? false;
-    this.oneTime = json["oneTime"] ?? true;
+    newObj.canceled = json["canceled"] ?? false;
+    newObj.oneTime = json["oneTime"] ?? true;
     if (json["price"] != null) {
-      this.price = Price.fromJson(json["price"]);
+      newObj.price = Price.fromJson(json["price"]);
     }
-    this.multi = json["multi"] ?? false;
-    this.userDecline = json["userDecline"] ?? false;
-    if (json["userPayments"] != null && typeof json["userPayments"] === "object") {
-      Object.entries(json["userPayments"]).forEach(([transactionId, dateStr]) => {
-        this.userPayments[transactionId] =
-          dateStr != null ? new Date(dateStr) : new Date(0);
-      });
+    newObj.multi = json["multi"] ?? false;
+    newObj.userDecline = json["userDecline"] ?? false;
+    if (
+      json["userPayments"] != null &&
+      typeof json["userPayments"] === "object"
+    ) {
+      Object.entries<string>(json["userPayments"]).forEach(
+        ([transactionId, dateStr]) => {
+          newObj.userPayments[transactionId] =
+            dateStr != null ? new Date(dateStr) : new Date(0);
+        }
+      );
     }
-    this.summary = json["summary"] ?? "";
+    newObj.summary = json["summary"] ?? "";
     if (json["createdAt"] != null) {
-      this.createdAt =
+      newObj.createdAt =
         json["createdAt"] != null ? new Date(json["createdAt"]) : new Date(0);
     }
-    this.payers = json["payers"] ?? 0;
+    newObj.payers = json["payers"] ?? 0;
+
+    return newObj;
   }
 
   toJson(): any {
     const data: any = {};
-    if (this.createdAt != null && this.createdAt.getTime() !== new Date(0).getTime()) {
+    if (
+      this.createdAt != null &&
+      this.createdAt.getTime() !== new Date(0).getTime()
+    ) {
       data["createdAt"] = this.createdAt.toISOString();
     }
     if (!this.oneTime) {
@@ -181,8 +219,6 @@ export default class PaymentRequest extends PaymentObject {
   }
 
   toString(): string {
-    return JSON.stringify(this, null, '  ');
+    return JSON.stringify(this, null, "  ");
   }
 }
-
-

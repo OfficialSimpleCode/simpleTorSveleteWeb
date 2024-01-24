@@ -1,4 +1,5 @@
 import {
+  ArrayCommands,
   buisnessCollection,
   dataCollection,
   dataDoc,
@@ -74,30 +75,30 @@ export default class GeneralRepo
     return await this.commmitBatch(batch);
   }
 
-  // async updateFieldInsideDocAsArrayRepo({
-  //   path,
-  //   docId,
-  //   fieldName,
-  //   value,
-  //   command,
-  // }: {
-  //   path: string;
-  //   docId: string;
-  //   fieldName: string;
-  //   value: any;
-  //   command: ArrayCommands;
-  // }): Promise<boolean> {
-  //   const batch = getBatch;
-  //   super.updateFieldInsideDocAsArray({
-  //     batch,
-  //     path,
-  //     docId,
-  //     fieldName,
-  //     value,
-  //     command,
-  //   });
-  //   return await commmitBatch({ batch });
-  // }
+  async updateFieldInsideDocAsArrayRepo({
+    path,
+    docId,
+    fieldName,
+    value,
+    command,
+  }: {
+    path: string;
+    docId: string;
+    fieldName: string;
+    value: any;
+    command: ArrayCommands;
+  }): Promise<boolean> {
+    const batch = this.getBatch;
+    super.updateFieldInsideDocAsArray({
+      batch,
+      path,
+      docId,
+      fieldName,
+      value,
+      command,
+    });
+    return await this.commmitBatch(batch);
+  }
 
   // async updateMultipleFieldsInsideDocAsArrayRepo({
   //   path,

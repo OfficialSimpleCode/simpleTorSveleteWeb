@@ -1,26 +1,22 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { pushState } from "$app/navigation";
+    import { goto, pushState } from "$app/navigation";
     import { base } from "$app/paths";
     import { page } from "$app/stores";
-    import { goto } from "$app/navigation";
+    import { onMount } from "svelte";
 
-    import { _ } from "svelte-i18n";
     import { Icon, MapPin, Share } from "svelte-hero-icons";
-
-    // Models
+    import { _ } from "svelte-i18n";
+// Models
     import type { ProductModel } from "$lib/models/business/ProductModel";
 
     // Components
-    import Navbar from "$lib/components/navbar/Navbar.svelte";
     import Avatar from "$lib/components/Avatar.svelte";
+    import Navbar from "$lib/components/navbar/Navbar.svelte";
+    import Footer from "./components/Footer.svelte";
     import ImageDisplayDialog from "./components/ImageDisplayDialog.svelte";
     import ShareDialog from "./components/ShareDialog.svelte";
     import SocialLinks from "./components/SocialLinks.svelte";
-    import Footer from "./components/Footer.svelte";
-
-    // other (utils / stores)
-    import { numberToHex, hexToXyY } from "$lib/utils/colors";
+// other (utils / stores)
     import { business } from "$lib/stores/Business.js";
     import { workers } from "$lib/stores/Workers.js";
 
@@ -38,7 +34,7 @@
     let storyHearts: Map<string, number> = Object.values($workers)
         .map((w) => w.storylikesAmount)
         .reduce(
-            (result, currentMap) => new Map([...result, ...currentMap]),
+            (result, currentMap) => new Map([...result, ...Object.entries(currentMap)]),
             new Map(),
         );
     let products: Map<string, ProductModel> = $business.design.products;

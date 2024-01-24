@@ -41,7 +41,6 @@ export class ProductModel {
   }
 
   static fromJson(json: Record<string, any>, newId: string): ProductModel {
-    console.log("1111111111");
     const newProduct = new ProductModel({
       id: newId,
       description: json["description"],
@@ -49,7 +48,7 @@ export class ProductModel {
       imageUrl: json["imageUrl"],
       name: json["name"],
     });
-    console.log("1111111111");
+
     newProduct.createdAt = json["createdAt"];
     return newProduct;
   }
