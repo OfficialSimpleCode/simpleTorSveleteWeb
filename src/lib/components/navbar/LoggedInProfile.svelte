@@ -9,13 +9,14 @@
     import ProfileDialog from "./ProfileDialog.svelte";
     import PurchesesDialog from "./PurchesesDialog.svelte";
 
-    export let profile: Record<string, string>;
-
     let profileDialog: HTMLDialogElement;
     let purchasesDialog: HTMLDialogElement;
 
     function openProfileDialog() {
-        console.log("0000000000000000000000000000000000000000000000"+UserInitializer.GI().isConnected);
+        console.log(
+            "0000000000000000000000000000000000000000000000" +
+                UserInitializer.GI().isConnected,
+        );
         console.log(UserInitializer.GI().user);
         pushState("", {
             showModal: true,
@@ -33,7 +34,7 @@
 
 <!-- Dialog -->
 {#if $page.state.showModal}
-    <ProfileDialog bind:dialog={profileDialog} bind:profile />
+    <ProfileDialog bind:dialog={profileDialog} />
     <PurchesesDialog bind:dialog={purchasesDialog} />
 {/if}
 

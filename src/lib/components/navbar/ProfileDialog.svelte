@@ -26,7 +26,6 @@
     import InfoTooltipButton from "../InfoTooltipButton.svelte";
     import CustomArrow from "../custom_components/CustomArrow.svelte";
 
-    export let profile:Record<string,any>;
     export let dialog: HTMLDialogElement;
     
 
