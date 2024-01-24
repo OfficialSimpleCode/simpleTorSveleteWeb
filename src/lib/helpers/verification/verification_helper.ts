@@ -19,6 +19,7 @@ export class VerificationHelper {
   public lastVerificationUnix: number = 0;
   public currentCredential: PhoneAuthCredential | null = null;
   public phoneVerificationWithFirebase: boolean = true;
+  public canUseAuthVars = false;
 
   public verificationRepo: VerificationRepo = new VerificationRepo();
 
@@ -53,6 +54,12 @@ export class VerificationHelper {
     this.currentCredential = null;
     this.submitedPhone = "";
     this.phoneVerificationWithFirebase = true;
+  }
+
+  public startUserAthListener() {
+    this.verificationRepo.onAuthUserStateChanged(() => {
+      this.canUseAuthVars = true;
+    });
   }
 
   //   public async sendSmsForFirebaseVerification(
