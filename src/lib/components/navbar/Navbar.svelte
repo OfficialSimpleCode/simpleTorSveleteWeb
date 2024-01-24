@@ -9,7 +9,7 @@
     import LanguageBoard from "./LanguageBoard.svelte";
     import LoggedInProfile from "./LoggedInProfile.svelte";
     import NotificationsBoard from "./NotificationsBoard.svelte";
-// Assets
+    // Assets
     import ILFlag from "$lib/images/flags/il.svg";
     import USFlag from "$lib/images/flags/us.svg";
     import UserInitializer from "$lib/initializers/user_initializer";
@@ -27,7 +27,6 @@
         // { name: $_("Russian"), flag: RUFlag },
     ];
 
-   
     let profile: Record<string, string> = {};
 
     function markAsRead(notification: Record<string, any>) {
@@ -90,10 +89,9 @@
             tabindex="0"
             class="btn btn-ghost btn-circle"
             on:click={() => goto(`${base}/appointments`)}
-            on:keypress={() =>{
-                
+            on:keypress={() => {
                 goto(`${base}/appointments`);
-            } }
+            }}
         >
             <div class="indicator">
                 <svg
@@ -114,7 +112,7 @@
         </div>
 
         {#if UserInitializer.GI().isConnected}
-            <LoggedInProfile {profile} />
+            <LoggedInProfile />
         {:else}
             <GuestProfile />
         {/if}
