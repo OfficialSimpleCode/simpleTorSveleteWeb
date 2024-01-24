@@ -17,11 +17,11 @@
     import SocialLinks from "./components/SocialLinks.svelte";
 // other (utils / stores)
     import Navbar from "$lib/components/navbar/Navbar.svelte";
+    import UserInitializer from "$lib/initializers/user_initializer";
     import { business } from "$lib/stores/Business.js";
     import { workers } from "$lib/stores/Workers.js";
     import Footer from "./components/Footer.svelte";
 
-    let loggedIn: boolean = true;
     let workersStories: Map<string, string> = Object.values($workers)
         .map((w) => w.storyImages)
         .reduce(
@@ -70,7 +70,7 @@
     let selectedStoryId: string = Object.keys(workersStories)[0] || "";
 
     function orderNow() {
-        if (!loggedIn) {
+        if (!UserInitializer.GI().isConnected) {
             goto(`${base}/login`);
         }
 

@@ -208,6 +208,10 @@ export class FirebaseAuthService {
   }
 
   get isLoggedInSRV(): boolean {
+    console.log(
+      "5555555555555555555555555555555555555555555555555555" +
+        this._auth.currentUser?.displayName
+    );
     return this._auth.currentUser != null;
   }
 
@@ -216,7 +220,12 @@ export class FirebaseAuthService {
       await updateProfile(this._auth.currentUser!, { displayName: name });
       await this._auth.currentUser!.reload();
     } catch (e) {
-      // AppErrors().addError({ error: Errors.updateDisplayName, details: e.toString() });
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.updateDisplayName,
+          details: e.toString(),
+        });
+      }
       throw e;
     }
   }
@@ -265,7 +274,13 @@ export class FirebaseAuthService {
   }
 
   get userIdSRV(): string {
-    if (this._auth.currentUser !== null) {
+    console.log(
+      "111111111111111111111111111111111111111111111111111111111111111"
+    );
+    if (this._auth.currentUser != null) {
+      console.log(
+        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      );
       const name = this._auth.currentUser.displayName;
 
       if (name !== null && name.includes("&&") && name.includes("+")) {

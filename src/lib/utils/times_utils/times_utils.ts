@@ -360,7 +360,7 @@ export function relevantHoures({
   worker,
   booking,
   isUpdate = false,
-  oldBooking = null,
+  oldBooking,
   workerSheet = false,
   reverse = false,
   workerAction = false,
@@ -370,7 +370,7 @@ export function relevantHoures({
   worker: WorkerModel | null | undefined;
   booking: Booking;
   isUpdate: boolean;
-  oldBooking: Booking | null;
+  oldBooking?: Booking;
   workerSheet: boolean;
   reverse: boolean;
   workerAction: boolean;
@@ -861,16 +861,16 @@ export function isOptionalTimeForBooking({
   isUpdate = false,
   allowAllDay = false,
 }: {
-  worker: WorkerModel | null;
+  worker: WorkerModel | undefined;
   booking: Booking;
   timeToOrderOn1970Format: Date;
-  oldBooking: Booking | null;
-  recurrenceSkipDate?: Date | null;
-  defaultWork?: Date[] | null;
-  defaultTakenHoures?: Date[] | null;
-  defaultForbbidenTimes?: Date[] | null;
-  isUpdate: boolean;
-  allowAllDay: boolean;
+  oldBooking?: Booking;
+  recurrenceSkipDate?: Date;
+  defaultWork?: Date[];
+  defaultTakenHoures?: Date[];
+  defaultForbbidenTimes?: Date[];
+  isUpdate?: boolean;
+  allowAllDay?: boolean;
 }): boolean {
   if (!worker) return false;
 
@@ -1109,8 +1109,7 @@ export function alreadyTakenHoures({
 }: {
   worker: WorkerModel;
   bookingDate: string;
-
-  oldBooking: Booking | null;
+  oldBooking?: Booking;
   recurrenceSkipDate?: Date | null;
   isUpdate: boolean;
   workerAction: boolean;

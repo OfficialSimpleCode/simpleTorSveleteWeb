@@ -28,7 +28,8 @@
         if (LinksHelper.GI().linkedBuisnessId === "") {
             return;
         }
-
+        
+         
         const firebaseApp =
             getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
         await LoadAppHelper.GI().loadAppData();
@@ -37,10 +38,13 @@
         business.set(b);
 
         const u = UserInitializer.GI().user;
+
         user.set(u);
 
         const w = BusinessInitializer.GI().workers;
         workers.set(w);
+
+        
     }
 
     let businessLoading = loadBusiness();

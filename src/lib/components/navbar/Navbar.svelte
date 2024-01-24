@@ -2,18 +2,17 @@
     import { goto } from "$app/navigation";
     import { base } from "$app/paths";
 
-    import { _ } from "svelte-i18n";
-    import { Icon, GlobeAlt } from "svelte-hero-icons";
+    import { GlobeAlt, Icon } from "svelte-hero-icons";
 
     import { business } from "$lib/stores/Business.js";
-    import NotificationsBoard from "./NotificationsBoard.svelte";
+    import GuestProfile from "./GuestProfile.svelte";
     import LanguageBoard from "./LanguageBoard.svelte";
     import LoggedInProfile from "./LoggedInProfile.svelte";
-    import GuestProfile from "./GuestProfile.svelte";
-
-    // Assets
+    import NotificationsBoard from "./NotificationsBoard.svelte";
+// Assets
     import ILFlag from "$lib/images/flags/il.svg";
     import USFlag from "$lib/images/flags/us.svg";
+    import UserInitializer from "$lib/initializers/user_initializer";
     // import RUFlag from "$lib/images/flags/ru.svg";
 
     let notifications: Array<Record<string, any>> = Object.values(
@@ -28,7 +27,7 @@
         // { name: $_("Russian"), flag: RUFlag },
     ];
 
-    let loggedIn: boolean = true;
+   
     let profile: Record<string, string> = {};
 
     function markAsRead(notification: Record<string, any>) {
@@ -91,7 +90,10 @@
             tabindex="0"
             class="btn btn-ghost btn-circle"
             on:click={() => goto(`${base}/appointments`)}
-            on:keypress={() => goto(`${base}/appointments`)}
+            on:keypress={() =>{
+                
+                goto(`${base}/appointments`);
+            } }
         >
             <div class="indicator">
                 <svg
@@ -111,7 +113,7 @@
             </div>
         </div>
 
-        {#if loggedIn}
+        {#if UserInitializer.GI().isConnected}
             <LoggedInProfile {profile} />
         {:else}
             <GuestProfile />

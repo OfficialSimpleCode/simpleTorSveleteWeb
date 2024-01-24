@@ -251,11 +251,11 @@ export default class GeneralRepo
     workerId: string;
     businessModel?: BusinessModel;
     needMultiDoc?: boolean;
-  }): Promise<WorkerModel | null> {
+  }): Promise<WorkerModel | undefined> {
     const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
     const workerDoc = await this.transactionGet(transaction, path, workerId);
     if (!workerDoc.exists()) {
-      return null;
+      return undefined;
     }
     const firestoreDataBaseWorker = WorkerModel.fromWorkerDocJson(
       workerDoc!.data()

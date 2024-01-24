@@ -2,13 +2,10 @@ import { Religion, holidays } from "$lib/consts/worker_schedule";
 import type Booking from "$lib/models/booking/booking_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
 
+import type { Duration } from "$lib/models/core/duration";
 import type MultiBooking from "$lib/models/multi_booking/multi_booking";
 import { addDays, format, parse, startOfWeek } from "date-fns";
-import {
-  dateStrToDate,
-  dateToMonthStr,
-  timeStrToDate,
-} from "./times_utils/times_utils";
+import { dateToMonthStr } from "./times_utils/times_utils";
 
 export function addDurationFromDateString(
   date: string,
@@ -129,10 +126,6 @@ export function isDateOverlappingWorkTime(
   return isOverlapping;
 }
 
-export function isInTheRange(range: CustomDateRange, date: Date): boolean {
-  return !(date < range.start) && !(date > range.end);
-}
-
 export function firstDayOfTheMonth(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), 1);
 }
@@ -168,33 +161,16 @@ export function laterDate(date1: Date | null, date2: Date | null): Date | null {
 }
 
 export function dateToRemindBooking(booking: Booking, minutes: number): Date {
-  return new Date(
-    booking.bookingDate.getTime() - minutes * 60000
-  ).toUTCString();
+  //TODO utc
+  return new Date(booking.bookingDate.getTime() - minutes * 60000);
 }
 
 export function dateToRemindMultiBooking(
   multiBooking: MultiBooking,
   minutes: number
 ): Date {
-  return new Date(
-    multiBooking.bookingDate.getTime() - minutes * 60000
-  ).toUTCString();
-}
-
-export function dateToNotifyBreak(breakModel: BreakModel): Date {
-  const date = dateStrToDate(breakModel.day);
-  const time = timeStrToDate(breakModel.start);
-  const breakDate = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-    time.getHours(),
-    time.getMinutes()
-  );
-  return new Date(
-    breakDate.getTime() - breakModel.minutesNotification * 60000
-  ).toUTCString();
+  //TODO utc
+  return new Date(multiBooking.bookingDate.getTime() - minutes * 60000);
 }
 
 export function allMonthBetween(date1: Date, date2: Date): Set<string> {

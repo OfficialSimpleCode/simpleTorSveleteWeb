@@ -28,6 +28,7 @@ import {
   dateToDayStr,
   dateToMonthStr,
   dateToTimeStr,
+  isOptionalTimeForBooking,
   setToMidNight,
 } from "$lib/utils/times_utils/times_utils";
 import { Timestamp, increment, type Transaction } from "firebase/firestore";
@@ -145,9 +146,8 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       booking.bookingWorkTimes.forEach((duration, time) => {
         if (needPayInAdvance) {
           timesData[`duringPaymentBookingsTime.${strBookingDate}.${time}`] = [
-            Timestamp.fromDate(
-              addDuration(new Date(), payemntProcessDuration).toUTC
-            ),
+            //TODO utc
+            Timestamp.fromDate(addDuration(new Date(), payemntProcessDuration)),
             duration,
           ];
         } else {
@@ -186,7 +186,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         worker: worker,
       });
 
-      let firestoreDataBaseWorker: WorkerModel | null;
+      let firestoreDataBaseWorker: WorkerModel | undefined;
       let allowedTime = false;
 
       if (!afterPayment) {
@@ -199,11 +199,11 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           return false;
         }
 
-        allowedTime = isOptionalTimeForBooking(
-          firestoreDataBaseWorker,
-          booking,
-          setTo1970(booking.bookingDate)
-        );
+        allowedTime = isOptionalTimeForBooking({
+          worker: firestoreDataBaseWorker,
+          booking: booking,
+          timeToOrderOn1970Format: setTo1970(booking.bookingDate),
+        });
 
         if (!allowedTime) {
           if (AppErrorsHelper.GI().error === Errors.currentlyOrderingForTime) {
@@ -443,15 +443,15 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         oldBooking.bookingDate.getTime() === newBooking.bookingDate.getTime() &&
         oldBooking.treatmentLength > newBooking.treatmentLength;
 
-      const allowedTime = isOptionalTimeForBooking(
-        firestoreDataBaseWorker,
-        newBooking,
-        setTo1970(newBooking.bookingDate),
-        oldBooking,
-        oldBookingDateForReccurence,
-        oldBooking.workerId === newBooking.workerId,
-        isTreatmentsUpdate
-      );
+      const allowedTime = isOptionalTimeForBooking({
+        worker: firestoreDataBaseWorker,
+        booking: newBooking,
+        timeToOrderOn1970Format: setTo1970(newBooking.bookingDate),
+        oldBooking: oldBooking,
+        recurrenceSkipDate: oldBookingDateForReccurence,
+        isUpdate: oldBooking.workerId === newBooking.workerId,
+        allowAllDay: isTreatmentsUpdate,
+      });
 
       if (!allowedTime) {
         if (AppErrorsHelper.GI().error === Errors.currentlyOrderingForTime) {

@@ -1,6 +1,8 @@
 
 
 <script lang="ts">
+  import { goto } from "$app/navigation";
+  import { base } from "$app/paths";
   import { AuthProvider, authProviderToImage, authProviderToStr, googleOrder } from "$lib/consts/auth";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import UserInitializer from "$lib/initializers/user_initializer";
@@ -8,7 +10,6 @@
   import { user } from "$lib/stores/User";
   
     // Assets
-    
     async function handleClick(authProvider:AuthProvider){
         const resp = await VerificationHelper.GI().handleLogin({
             provider:authProvider,
@@ -22,6 +23,8 @@
 
         const u = UserInitializer.GI().user;
         user.set(u);
+
+        goto(`${base}/business`);
         
     };
     
