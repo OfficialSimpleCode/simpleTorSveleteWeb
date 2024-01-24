@@ -4,7 +4,7 @@
     import "../app.css";
 
     import { firebaseConfig } from "$lib/firebase_config";
-    import BusinessInitializer from "$lib/initializers/business_initializer.js";
+    import BusinessInitializer from "$lib/initializers/business_initializer";
     import { getApp, getApps, initializeApp } from "firebase/app";
 
     import { page } from "$app/stores";
