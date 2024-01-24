@@ -11,8 +11,7 @@
 
     // Components
     import Avatar from "$lib/components/Avatar.svelte";
-    import Navbar from "$lib/components/navbar/Navbar.svelte";
-    import Footer from "./components/Footer.svelte";
+    import NavigationDialog from "$lib/components/NavigationDialog.svelte";
     import ImageDisplayDialog from "./components/ImageDisplayDialog.svelte";
     import ShareDialog from "./components/ShareDialog.svelte";
     import SocialLinks from "./components/SocialLinks.svelte";
@@ -21,10 +20,6 @@
     import { workers } from "$lib/stores/Workers.js";
 
     let loggedIn: boolean = true;
-    let geo: Record<string, string> = {
-        title: $business.adress,
-        link: "https://blabla.com",
-    };
     let workersStories: Map<string, string> = Object.values($workers)
         .map((w) => w.storyImages)
         .reduce(
@@ -68,6 +63,7 @@
     // Dialogs
     let shareDialog: HTMLDialogElement;
     let imageDisplayDialog: HTMLDialogElement;
+    let navigationDialog: HTMLDialogElement;
 
     let selectedStoryId: string = Object.keys(workersStories)[0] || "";
 
@@ -77,6 +73,13 @@
         }
 
         goto(`${base}/business/order`);
+    }
+
+    function openNavigationDialog() {
+        pushState("", {
+            showModal: true,
+        });
+        setTimeout(() => navigationDialog.showModal(), 100);
     }
 
     function openImageDisplayDialog(storyId: string) {
@@ -97,13 +100,18 @@
 
 <!-- Dialogs -->
 {#if $page.state.showModal}
-    <ShareDialog bind:dialog={shareDialog} name={$business.shopName} {geo} />
+    <ShareDialog
+        bind:dialog={shareDialog}
+        name={$business.shopName}
+        address={$business.adress}
+    />
     <ImageDisplayDialog
         bind:dialog={imageDisplayDialog}
         bind:storyId={selectedStoryId}
         {workersStories}
         {storyHearts}
     />
+    <NavigationDialog bind:dialog={navigationDialog} />
 {/if}
 
 <main class="w-full h-full" style="">
@@ -143,14 +151,14 @@
             >
                 <!-- Name and Geo -->
                 <div>
-                    <h1 class="text-4xl">{name}</h1>
-                    <a
-                        href={geo.link}
+                    <h1 class="text-4xl">{$business.shopName}</h1>
+                    <button
                         class="flex items-center gap-2 link link-neutral"
+                        on:click={openNavigationDialog}
                     >
-                        <h4 class="text-lg">{geo.title}</h4>
+                        <h4 class="text-lg">{$business.adress}</h4>
                         <Icon src={MapPin} size="20px" />
-                    </a>
+                    </button>
                 </div>
 
                 <SocialLinks />

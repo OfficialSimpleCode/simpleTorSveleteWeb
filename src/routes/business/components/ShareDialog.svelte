@@ -1,4 +1,7 @@
 <script lang="ts">
+    import { page } from "$app/stores";
+    import { pushState } from "$app/navigation";
+
     import { _ } from "svelte-i18n";
     import { business } from "$lib/stores/Business.js";
     import {
@@ -8,11 +11,15 @@
         CheckCircle,
         Clipboard,
     } from "svelte-hero-icons";
+
+    import NavigationDialog from "$lib/components/NavigationDialog.svelte";
     import Avatar from "$lib/components/Avatar.svelte";
+
     export let dialog: HTMLDialogElement;
     export let name: string;
-    export let geo: Record<string, string>;
+    export let address: string;
 
+    let navigationDialog: HTMLDialogElement;
     let copied: Boolean = false;
 
     function copy() {
@@ -20,7 +27,18 @@
         // TODO: copy to clipboard
         setTimeout(() => (copied = false), 1500);
     }
+
+    function openNavigationDialog() {
+        pushState("", {
+            showModal: true,
+        });
+        setTimeout(() => navigationDialog.showModal(), 100);
+    }
 </script>
+
+{#if $page.state.showModal}
+    <NavigationDialog bind:dialog={navigationDialog} />
+{/if}
 
 <dialog
     bind:this={dialog}
@@ -53,12 +71,12 @@
                     img={$business.design.shopIconUrl}
                 />
                 <h3 class="w-full text-center text-lg font-semibold">{name}</h3>
-                <a
-                    href={geo.link}
+                <button
                     class="block w-full text-center link link-neutral text-gray-500"
+                    on:click={openNavigationDialog}
                 >
-                    {geo.title}
-                </a>
+                    {address}
+                </button>
             </div>
             <img
                 class="w-[80%] mx-auto pb-12"
