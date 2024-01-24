@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import ToastManager from "$lib/components/ToastManager.svelte";
     import "../app.css";
 
@@ -16,6 +17,7 @@
     import { workers } from "$lib/stores/Workers";
 
     async function loadBusiness() {
+        console.log("svelte loaded");
         handleLocaleChanges(localStorage, document);
 
         if ($business) {
@@ -28,8 +30,7 @@
         if (LinksHelper.GI().linkedBuisnessId === "") {
             return;
         }
-        
-         
+
         const firebaseApp =
             getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
         await LoadAppHelper.GI().loadAppData();
@@ -37,14 +38,14 @@
         const b = BusinessInitializer.GI().business;
         business.set(b);
 
-        const u = UserInitializer.GI().user;
-        user.set(u);
-
         const w = BusinessInitializer.GI().workers;
         workers.set(w);
-
-        
     }
+
+    onMount(() => {
+        const u = UserInitializer.GI().user;
+        user.set(u);
+    });
 
     let businessLoading = loadBusiness();
 </script>
