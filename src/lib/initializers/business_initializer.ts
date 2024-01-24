@@ -10,6 +10,8 @@ import { BusinessDesign } from "$lib/models/business/business_design";
 import BusinessModel from "$lib/models/business/business_model";
 import WorkerModel from "$lib/models/worker/worker_model";
 import { Errors } from "$lib/services/errors/messages";
+import { businessStore } from "$lib/stores/Business";
+import { workersStore } from "$lib/stores/Workers";
 import { subTypeFromProductId } from "$lib/utils/subscription_utils";
 import UserInitializer from "./user_initializer";
 
@@ -58,13 +60,11 @@ export default class BusinessInitializer {
       //   UserInitializer.GI().currentBusiness = businessId;
       //makeLongTimeNoSeeAlert();
       // --------------------------------------
-      console.log("222222222222223333333333333");
+
       const resps = await Promise.all([
         this._loadSettingsDoc(businessId),
         this._loadBusinessWorkers(businessId),
       ]);
-
-      console.log("22222222222222222");
 
       //   // Update the subtype before continuing to the rest of the loading
       this.businessSubtype = subTypeFromProductId(
@@ -101,7 +101,6 @@ export default class BusinessInitializer {
       fromSearch = false,
     }: { fromLoading?: boolean; fromSearch?: boolean } = {}
   ): Promise<boolean> {
-    console.log("1111111111111111111");
     // Clean business data
     // ScreenController.getInstance().initOffsets();
     // BusinessUIController.getInstance().changingPhotoIndex = 0;
@@ -115,7 +114,6 @@ export default class BusinessInitializer {
       const resp = await this.initSettings(businessId, {
         fromLoading,
       });
-      console.log("33333333333333333322222222222222222");
 
       //   if (!resp) {
       //     BusinessInitializer.GI().emptyBusinessData();
@@ -160,7 +158,10 @@ export default class BusinessInitializer {
       //     BusinessInitializer.getInstance().business.design.pickedThemeKey,
       //     { needOverlayHandling: !fromSearch }
       //   );
-
+      const w = BusinessInitializer.GI().workers;
+      workersStore.set(w);
+      const b = BusinessInitializer.GI().business;
+      businessStore.set(b);
       //   UiManager.insertUpdate(Providers.settings);
       return true;
     } catch (e) {

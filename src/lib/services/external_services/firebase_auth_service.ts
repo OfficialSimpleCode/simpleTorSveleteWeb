@@ -281,13 +281,7 @@ export class FirebaseAuthService {
   }
 
   get userIdSRV(): string {
-    console.log(
-      "111111111111111111111111111111111111111111111111111111111111111"
-    );
     if (this._auth.currentUser != null) {
-      console.log(
-        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-      );
       const name = this._auth.currentUser.displayName;
 
       if (name !== null && name.includes("&&") && name.includes("+")) {

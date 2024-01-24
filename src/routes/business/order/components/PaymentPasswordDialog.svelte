@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Duration } from "$lib/models/core/duration";
-    import { business } from "$lib/stores/Business.js";
+    import { businessStore } from "$lib/stores/Business.js";
     import { Icon, LockClosed } from "svelte-hero-icons";
 
     export let dialog: HTMLDialogElement;
@@ -27,7 +27,7 @@
 >
     <div class="modal-box bg-base-200 flex flex-col gap-4 items-center">
         <h1 class="text-2xl text-center font-bold">
-            Approve Payment - {amount.toFixed(2)}{$business.currency.symbol}
+            Approve Payment - {amount.toFixed(2)}{$businessStore.currency.symbol}
         </h1>
 
         <div class="flex flex-col items-center gap-3">

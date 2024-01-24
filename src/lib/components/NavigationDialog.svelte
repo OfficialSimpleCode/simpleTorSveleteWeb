@@ -1,18 +1,18 @@
 <script lang="ts">
+    import { businessStore } from "$lib/stores/Business.js";
     import { _ } from "svelte-i18n";
-    import { business } from "$lib/stores/Business.js";
 
     export let dialog: HTMLDialogElement;
 
     function openMaps() {
         window.open(
-            `https://www.google.com/maps/search/?api=1&query=${$business.adress}`,
+            `https://www.google.com/maps/search/?api=1&query=${$businessStore.adress}`,
             "_blank",
         );
     }
 
     function openWaze() {
-        window.open(`waze://?q=${$business.adress}&navigate=yes`, "_blank");
+        window.open(`waze://?q=${$businessStore.adress}&navigate=yes`, "_blank");
     }
 </script>
 

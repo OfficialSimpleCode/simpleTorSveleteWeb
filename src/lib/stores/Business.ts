@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
 import BusinessModel from "$lib/models/business/business_model";
+import { writable } from "svelte/store";
 
-export let business = writable<BusinessModel>();
+export let businessStore = writable<BusinessModel>();

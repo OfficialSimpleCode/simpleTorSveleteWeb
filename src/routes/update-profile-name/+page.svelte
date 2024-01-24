@@ -1,10 +1,10 @@
 <script lang="ts">
+    import { userStore } from "$lib/stores/User";
     import { _ } from "svelte-i18n";
-    import { user } from "$lib/stores/User";
 
     import UpdatePageHeader from "$lib/components/UpdatePageHeader.svelte";
 
-    let name: string = $user.name;
+    let name: string = $userStore.name;
 
     function updateName() {}
 </script>

@@ -1,10 +1,8 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import ToastManager from "$lib/components/ToastManager.svelte";
     import "../app.css";
 
     import { firebaseConfig } from "$lib/firebase_config";
-    import BusinessInitializer from "$lib/initializers/business_initializer";
     import { getApp, getApps, initializeApp } from "firebase/app";
 
     import { page } from "$app/stores";
@@ -12,17 +10,14 @@
     import LinksHelper from "$lib/helpers/links_helper";
     import { LoadAppHelper } from "$lib/helpers/load_app_helper";
     import { handleLocaleChanges } from "$lib/language/loader";
-    import { business } from "$lib/stores/Business";
+    import { businessStore } from "$lib/stores/Business";
     import { loadAppState } from "$lib/stores/LoadApp";
-    import { workers } from "$lib/stores/Workers";
-    import UserInitializer from "$lib/initializers/user_initializer";
-    import { user } from "$lib/stores/User";
 
     async function loadBusiness() {
         console.log("svelte loaded");
         handleLocaleChanges(localStorage, document);
 
-        if ($business) {
+        if ($businessStore) {
             return;
         }
         $loadAppState = LoadingStatuses.loading;
@@ -38,24 +33,16 @@
             getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
         await LoadAppHelper.GI().loadApp();
 
-        const b = BusinessInitializer.GI().business;
-        business.set(b);
-
-        const w = BusinessInitializer.GI().workers;
-        workers.set(w);
+       
     }
 
-    onMount(() => {
-        const u = UserInitializer.GI().user;
-        user.set(u);
-    });
-
-    let businessLoading = loadBusiness();
+    const loadingBusiness = loadBusiness();
+    
 </script>
 
 <ToastManager />
 <div class="h-screen w-screen">
-    {#await businessLoading}
+    {#await loadingBusiness}
         <div
             class="h-full w-full flex flex-col items-center justify-center gap-8 bg-black"
         >

@@ -5,7 +5,7 @@
     import InfoCircle from "$lib/components/InfoCircle.svelte";
     import { Gender } from "$lib/consts/gender";
     import Google from "$lib/images/google.svg";
-    import { user } from "$lib/stores/User";
+    import { userStore } from "$lib/stores/User";
     import { dateToDateStr } from "$lib/utils/times_utils/times_utils";
     import {
       ArrowRightOnRectangle,
@@ -24,7 +24,7 @@
     } from "svelte-hero-icons";
     import { _ } from "svelte-i18n";
     import InfoTooltipButton from "../InfoTooltipButton.svelte";
-    import CustomArrow from "../custom_components/CustomArrow.svelte";
+    import CustomArrow from "../custom_components/custom_arrow.svelte";
 
     export let dialog: HTMLDialogElement;
     
@@ -55,9 +55,9 @@
                     ring={false}
                     img="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
                 />
-                <h1 class="text-xl">{$user.name}</h1>
+                <h1 class="text-xl">{$userStore.name}</h1>
                 <h5 class="text-sm text-gray-500">
-                    {$_("since")}: {dateToDateStr($user.createdAt)}
+                    {$_("since")}: {dateToDateStr($userStore.createdAt)}
                 </h5>
             </section>
 
@@ -72,7 +72,7 @@
                         {$_("name")}
                     </div>
                     <div class="flex items-center text-gray-500">
-                        {$user.name}
+                        {$userStore.name}
                         <Icon src={ChevronRight} size="18px" />
                     </div>
                 </button>
@@ -86,7 +86,7 @@
                         {$_("phoneNumber")}
                     </div>
                     <div class="flex items-center text-gray-500">
-                        {$user.phoneNumber}
+                        {$userStore.phoneNumber}
                         <Icon src={ChevronRight} size="18px" />
                     </div>
                 </button>
@@ -100,7 +100,7 @@
                         {$_("email")}
                     </div>
                     <div class="flex items-center text-gray-500">
-                        {$user.userPublicData.email}
+                        {$userStore.userPublicData.email}
                         <CustomArrow />
                     </div>
                 </button>
@@ -113,7 +113,7 @@
                         {$_("userId")}
                     </div>
                     <div class="flex items-center text-gray-500">
-                        {$user.id}
+                        {$userStore.id}
                         <CustomArrow />
                     </div>
                 </button>
@@ -129,7 +129,7 @@
                 <button
                     id="male"
                     class="flex flex-col items-center"
-                    class:text-gray-500={$user.gender !== Gender.male}
+                    class:text-gray-500={$userStore.gender !== Gender.male}
                     on:click={() => updateGender(Gender.male)}
                 >
                     <Icon src={HandThumbUp} size="35px" />
@@ -138,7 +138,7 @@
                 <button
                     id="female"
                     class="flex flex-col items-center"
-                    class:text-gray-500={$user.gender !== Gender.female}
+                    class:text-gray-500={$userStore.gender !== Gender.female}
                     on:click={() => updateGender(Gender.female)}
                 >
                     <Icon src={HandThumbDown} size="35px" />
@@ -147,7 +147,7 @@
                 <button
                     id="other"
                     class="flex flex-col items-center"
-                    class:text-gray-500={$user.gender !== Gender.anonymous}
+                    class:text-gray-500={$userStore.gender !== Gender.anonymous}
                     on:click={() => updateGender(Gender.anonymous)}
                 >
                     <Icon src={Moon} size="35px" />

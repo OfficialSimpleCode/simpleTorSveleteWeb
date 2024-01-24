@@ -1,12 +1,12 @@
 <script lang="ts">
     import { base } from "$app/paths";
+    import { userStore } from "$lib/stores/User";
     import { _ } from "svelte-i18n";
-    import { user } from "$lib/stores/User";
 
-    import UpdatePageHeader from "$lib/components/UpdatePageHeader.svelte";
     import { goto } from "$app/navigation";
+    import UpdatePageHeader from "$lib/components/UpdatePageHeader.svelte";
 
-    let phoneNumber: string = $user.phoneNumber;
+    let phoneNumber: string = $userStore.phoneNumber;
 
     function updatePhoneNumber() {
         goto(`${base}/verify-phone-number`);

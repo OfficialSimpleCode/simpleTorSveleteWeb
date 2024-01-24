@@ -7,7 +7,7 @@
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import UserInitializer from "$lib/initializers/user_initializer";
   import { LoginType } from "$lib/services/external_services/firebase_auth_service";
-  import { user } from "$lib/stores/User";
+  import { userStore } from "$lib/stores/User";
   
     // Assets
     async function handleClick(authProvider:AuthProvider){
@@ -22,7 +22,7 @@
         console.log(UserInitializer.GI().user);
 
         const u = UserInitializer.GI().user;
-        user.set(u);
+        userStore.set(u);
 
         goto(`${base}/business`);
         

@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { _ } from "svelte-i18n";
-    import { Icon, ChevronRight } from "svelte-hero-icons";
     import { page } from "$app/stores";
-    import { business } from "$lib/stores/Business.js";
     import { ProductModel } from "$lib/models/business/product_model";
+    import { businessStore } from "$lib/stores/Business.js";
+    import { ChevronRight, Icon } from "svelte-hero-icons";
+    import { _ } from "svelte-i18n";
 
-    let product: ProductModel = $business.design.products.get(
+    let product: ProductModel = $businessStore.design.products.get(
         $page.params.slug,
     )!;
 </script>

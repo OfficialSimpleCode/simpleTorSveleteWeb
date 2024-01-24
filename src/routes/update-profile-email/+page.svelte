@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { user } from "$lib/stores/User";
+    import { userStore } from "$lib/stores/User";
     import { _ } from "svelte-i18n";
 
     import UpdatePageHeader from "$lib/components/UpdatePageHeader.svelte";
 
-    let email: string = $user.userPublicData.email;
-    console.log($user);
+    let email: string = $userStore.userPublicData.email;
+    console.log($userStore);
     let loading:boolean = false;
     function updateEmail() {
         loading = true;

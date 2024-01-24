@@ -6,8 +6,7 @@
 
     import { Icon, MapPin, Share } from "svelte-hero-icons";
     import { _ } from "svelte-i18n";
-
-    // Models
+// Models
     import type { ProductModel } from "$lib/models/business/ProductModel";
 
     // Components
@@ -16,28 +15,27 @@
     import ImageDisplayDialog from "./components/ImageDisplayDialog.svelte";
     import ShareDialog from "./components/ShareDialog.svelte";
     import SocialLinks from "./components/SocialLinks.svelte";
-
-    // other (utils / stores)
+// other (utils / stores)
     import Navbar from "$lib/components/navbar/Navbar.svelte";
     import UserInitializer from "$lib/initializers/user_initializer";
-    import { business } from "$lib/stores/Business.js";
-    import { workers } from "$lib/stores/Workers.js";
+    import { businessStore } from "$lib/stores/Business.js";
+    import { workersStore } from "$lib/stores/Workers.js";
     import Footer from "./components/Footer.svelte";
 
-    let workersStories: Map<string, string> = Object.values($workers)
+    let workersStories: Map<string, string> = Object.values($workersStore)
         .map((w) => w.storyImages)
         .reduce(
             (result, currentMap) => new Map([...result, ...currentMap]),
             new Map(),
         );
-    let storyHearts: Map<string, number> = Object.values($workers)
+    let storyHearts: Map<string, number> = Object.values($workersStore)
         .map((w) => w.storylikesAmount)
         .reduce(
             (result, currentMap) =>
                 new Map([...result, ...Object.entries(currentMap)]),
             new Map(),
         );
-    let products: Map<string, ProductModel> = $business.design.products;
+    let products: Map<string, ProductModel> = $businessStore.design.products;
 
     onMount(() => {
         // console.log($business);
@@ -107,8 +105,8 @@
 {#if $page.state.showModal}
     <ShareDialog
         bind:dialog={shareDialog}
-        name={$business.shopName}
-        address={$business.adress}
+        name={$businessStore.shopName}
+        address={$businessStore.adress}
     />
     <ImageDisplayDialog
         bind:dialog={imageDisplayDialog}
@@ -125,7 +123,7 @@
     <!-- background image -->
     <img
         class="h-1/2 w-full object-cover"
-        src={$business.design.changingImages[0]}
+        src={$businessStore.design.changingImages[0]}
         alt="backgroud"
     />
 
@@ -136,7 +134,7 @@
                 id="profile-row"
                 class="flex justify-between items-center gap-5 sm:gap-10"
             >
-                <Avatar img={$business.design.shopIconUrl} />
+                <Avatar img={$businessStore.design.shopIconUrl} />
 
                 <!-- Order now and Share buttons -->
                 <div class="flex gap-5 items-center">
@@ -156,12 +154,12 @@
             >
                 <!-- Name and Geo -->
                 <div>
-                    <h1 class="text-4xl">{$business.shopName}</h1>
+                    <h1 class="text-4xl">{$businessStore.shopName}</h1>
                     <button
                         class="flex items-center gap-2 link link-neutral"
                         on:click={openNavigationDialog}
                     >
-                        <h4 class="text-lg">{$business.adress}</h4>
+                        <h4 class="text-lg">{$businessStore.adress}</h4>
                         <Icon src={MapPin} size="20px" />
                     </button>
                 </div>

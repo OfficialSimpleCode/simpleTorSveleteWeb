@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { business } from "$lib/stores/Business.js";
+    import { businessStore } from "$lib/stores/Business.js";
     import ChoosePaymentCardDialog from "./ChoosePaymentCardDialog.svelte";
 
     export let dialog: HTMLDialogElement;
@@ -30,7 +30,7 @@
 >
     <div class="modal-box bg-base-200 flex flex-col gap-4">
         <h1 class="text-xl text-center">
-            Pay - {totalAmount.toFixed(2)}{$business.currency.symbol}
+            Pay - {totalAmount.toFixed(2)}{$businessStore.currency.symbol}
         </h1>
         <div
             class="bg-base-300 rounded-lg w-full p-3 flex flex-col items-center gap-4"

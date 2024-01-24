@@ -1,6 +1,6 @@
 <script lang="ts">
     import type WorkerModel from "$lib/models/worker/worker_model";
-    import { business } from "$lib/stores/Business.js";
+    import { businessStore } from "$lib/stores/Business.js";
     import { _ } from "svelte-i18n";
 
     import { createEventDispatcher } from "svelte";
@@ -24,7 +24,7 @@
 
     function isManager(employee: WorkerModel): boolean {
         return (
-            $business.businessId.slice(0, employee.id.length - 1) ==
+            $businessStore.businessId.slice(0, employee.id.length - 1) ==
             employee.id.slice(1)
         );
     }

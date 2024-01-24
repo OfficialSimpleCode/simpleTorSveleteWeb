@@ -1,19 +1,19 @@
 <script lang="ts">
-    import { page } from "$app/stores";
     import { pushState } from "$app/navigation";
+    import { page } from "$app/stores";
 
-    import { _ } from "svelte-i18n";
-    import { business } from "$lib/stores/Business.js";
+    import { businessStore } from "$lib/stores/Business.js";
     import {
-        Icon,
-        Link,
-        XCircle,
-        CheckCircle,
-        Clipboard,
+      CheckCircle,
+      Clipboard,
+      Icon,
+      Link,
+      XCircle,
     } from "svelte-hero-icons";
+    import { _ } from "svelte-i18n";
 
-    import NavigationDialog from "$lib/components/NavigationDialog.svelte";
     import Avatar from "$lib/components/Avatar.svelte";
+    import NavigationDialog from "$lib/components/NavigationDialog.svelte";
 
     export let dialog: HTMLDialogElement;
     export let name: string;
@@ -68,7 +68,7 @@
                 <Avatar
                     small={true}
                     ring={false}
-                    img={$business.design.shopIconUrl}
+                    img={$businessStore.design.shopIconUrl}
                 />
                 <h3 class="w-full text-center text-lg font-semibold">{name}</h3>
                 <button

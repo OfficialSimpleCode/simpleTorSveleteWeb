@@ -4,19 +4,20 @@
 
     import { GlobeAlt, Icon } from "svelte-hero-icons";
 
-    import { business } from "$lib/stores/Business.js";
     import GuestProfile from "./GuestProfile.svelte";
     import LanguageBoard from "./LanguageBoard.svelte";
-    import LoggedInProfile from "./LoggedInProfile.svelte";
+    
     import NotificationsBoard from "./NotificationsBoard.svelte";
     // Assets
     import ILFlag from "$lib/images/flags/il.svg";
     import USFlag from "$lib/images/flags/us.svg";
     import UserInitializer from "$lib/initializers/user_initializer";
+    import { businessStore } from "$lib/stores/Business";
+    import LoggedInProfile from "./LoggedInProfile.svelte";
     // import RUFlag from "$lib/images/flags/ru.svg";
 
     let notifications: Array<Record<string, any>> = Object.values(
-        $business.design.updates,
+        $businessStore.design.updates,
     );
     let unreadNotifications: Boolean = false;
     $: unreadNotifications = notifications.filter((n) => !n.viewed).length > 0;
@@ -44,7 +45,7 @@
 >
     <div>
         <a
-            href="{base}/business?BusinessId={$business.businessId}"
+            href="{base}/business?BusinessId={$businessStore.businessId}"
             class="btn btn-ghost text-xl">SimpleTor</a
         >
     </div>

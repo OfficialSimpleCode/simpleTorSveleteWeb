@@ -1,23 +1,20 @@
 <script lang="ts">
-    import { _ } from "svelte-i18n";
-    import { workers } from "$lib/stores/Workers";
+    import Navbar from "$lib/components/navbar/Navbar.svelte";
     import type WorkerModel from "$lib/models/worker/worker_model";
     import { ShowToast } from "$lib/stores/ToastManager";
-    import Navbar from "$lib/components/navbar/Navbar.svelte";
+    import { workersStore } from "$lib/stores/Workers";
+    import { _ } from "svelte-i18n";
 
+    import type Treatment from "$lib/models/general/treatment_model";
+    import SyncfusionSchedualer from "./components/SyncfusionSchedualer.svelte";
     import ChooseEmployee from "./steps/ChooseEmployee.svelte";
     import ChooseService from "./steps/ChooseService.svelte";
-    import ChooseDateAndTime from "./steps/ChooseDateAndTime.svelte";
     import VerifyDetails from "./steps/VerifyDetails.svelte";
-    import { sumDurations, multiplyAndSumDurations } from "./durationUtils";
-    import SyncfusionSchedualer from "./components/SyncfusionSchedualer.svelte";
-    import type TreatmentSubject from "$lib/models/worker/treatment_subject";
-    import type Treatment from "$lib/models/general/treatment_model";
 
     let steps: string[] = ["worker", "treatment", "dateAndTime", "confirmNow"];
     let currentStep: number = 1;
 
-    let employees: Array<WorkerModel> = Object.values($workers);
+    let employees: Array<WorkerModel> = Object.values($workersStore);
     let selectedEmployee: WorkerModel;
     let selectedDateAndTime: Record<string, string> = {
         date: "05-11-2025",

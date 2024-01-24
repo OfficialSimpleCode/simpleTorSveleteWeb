@@ -1,10 +1,13 @@
 import { logger } from "$lib/consts/application_general";
+import { usersCollection } from "$lib/consts/db";
 import AppErrorsHelper from "$lib/helpers/app_errors";
+import GeneralRepo from "$lib/helpers/general/general_repo";
 import { GeneralData } from "$lib/helpers/general_data";
 //import UserRepo from "$lib/helpers/user/user_repo";
 
 import VerificationRepo from "$lib/helpers/verification/verification_repo";
 import UserModel from "$lib/models/user/user_model";
+import { userStore } from "$lib/stores/User";
 import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
 
 export default class UserInitializer {
@@ -57,34 +60,48 @@ export default class UserInitializer {
     logoutIfDosentExist?: boolean;
   }): Promise<boolean> {
     try {
+      console.log(
+        "Eeeeeeeeee11111111111111111111111111111111111111111111111111111111111111111hhhhhhhhhhhheeeeeeeeeeeeeeeeeeee"
+      );
       logger.info(`The user id is -> ${newUserId}`);
       if (newUserId.length < 5) {
         await this.verificationRepo.logout();
         return true; // to not display an error
       }
-
+      console.log(
+        "Eeeeeeeeee11111111111111111111111111111111111111111111111111111111111111111hhhhhhhhhhhheeeeeeeeeeeeeeeeeeee"
+      );
       /*If user came from logging his doc already in the userDoc 
       and there is no need to read again from the db*/
-      // if (this.userDoc === undefined) {
-      //   this.userDoc = await this.userRepo.getDocSRV({
-      //     path: usersCollection,
-      //     docId: newUserId,
-      //   });
-      // }
-
+      if (this.userDoc === undefined) {
+        this.userDoc = await new GeneralRepo().getDocSRV({
+          path: usersCollection,
+          docId: newUserId,
+        });
+      }
+      console.log(
+        "Eeeeeeeeee11111111111111111111111111111111111111111111111111111111111111111hhhhhhhhhhhheeeeeeeeeeeeeeeeeeee"
+      );
       if (
         !logoutIfDosentExist &&
-        (this.userDoc == undefined || !this.userDoc.exists())
+        (this.userDoc === undefined || !this.userDoc.exists())
       ) {
         this.userDoc = undefined;
         return true; // new user log-in and not registered yet -> leave him logged-in
       }
 
       this.user = UserModel.fromUserDocJson(this.userDoc?.data()!);
-
+      console.log(
+        "Eeeeeeeeee11111111111111111111111111111111111111111111111111111111111111111hhhhhhhhhhhheeeeeeeeeeeeeeeeeeee"
+      );
       /*No need to take the user public data the startListening 
         func will take it*/
       this.startPublicDataListening();
+      console.log(
+        "Eeeeeeeeee11111111111111111111111111111111111111111111111111111111111111111hhhhhhhhhhhheeeeeeeeeeeeeeeeeeee"
+      );
+      console.log(this.user);
+      userStore.set(this.user);
 
       return true;
     } catch (e) {

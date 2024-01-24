@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
 import UserModel from "$lib/models/user/user_model";
+import { writable } from "svelte/store";
 
-export let user = writable<UserModel>();
+export let userStore = writable<UserModel>();

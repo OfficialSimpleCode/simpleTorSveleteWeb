@@ -2,17 +2,17 @@
     import { pushState } from "$app/navigation";
     import { page } from "$app/stores";
 
-    import { _ } from "svelte-i18n";
-    import { Icon, MapPin, Phone, DocumentText } from "svelte-hero-icons";
-    import type { IconSource } from "svelte-hero-icons";
+    import { businessStore } from "$lib/stores/Business";
     import { ShowToast } from "$lib/stores/ToastManager";
-    import { business } from "$lib/stores/Business";
+    import type { IconSource } from "svelte-hero-icons";
+    import { DocumentText, Icon, MapPin, Phone } from "svelte-hero-icons";
+    import { _ } from "svelte-i18n";
 
     import NavigationDialog from "$lib/components/NavigationDialog.svelte";
 
     // Assets
-    import WhatsappLogo from "$lib/images/whatsapp.svg";
     import InsagramLogo from "$lib/images/instagram.svg";
+    import WhatsappLogo from "$lib/images/whatsapp.svg";
 
     let navigationDialog: HTMLDialogElement;
 
@@ -24,11 +24,11 @@
     }
 
     let socialLinks: Object = {
-        call: `tel:${$business.shopPhone}`,
-        instagram: $business.instagramAccount,
-        whatsapp: `whatsapp://send?phone=${$business.shopPhone}`,
+        call: `tel:${$businessStore.shopPhone}`,
+        instagram: $businessStore.instagramAccount,
+        whatsapp: `whatsapp://send?phone=${$businessStore.shopPhone}`,
         navigate: openNavigationDialog,
-        policy: $business.previewDoc,
+        policy: $businessStore.previewDoc,
     };
 
     let socialIcons: { [key: string]: string } = {

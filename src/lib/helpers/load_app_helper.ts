@@ -3,11 +3,9 @@ import { LoadingStatuses } from "$lib/consts/loading_statuses";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import { Developer } from "$lib/models/developers/developer";
-import { business } from "$lib/stores/Business";
 import { loadAppState } from "$lib/stores/LoadApp";
-import { user } from "$lib/stores/User";
-import { workers } from "$lib/stores/Workers";
-import { delay, isNetworkConnected } from "$lib/utils/general_utils";
+
+import { isNetworkConnected } from "$lib/utils/general_utils";
 import { Timestamp } from "firebase/firestore";
 import AppErrorsHelper from "./app_errors";
 import DeveloperHelper from "./developer_helper";
@@ -27,16 +25,9 @@ export class LoadAppHelper {
   public preLoading: any[] = [];
   public cachedBusinessId: string | null = null;
   public firstTime: boolean = true;
+  public userLoaded = false;
 
-  public async loadApp(): Promise<void> {
-    if (VerificationHelper.GI().canUseAuthVars) {
-      VerificationHelper.GI().startUserAuthListener(this.loadAppData);
-    } else {
-      this.loadAppData();
-    }
-  }
-
-  private async loadAppData(): Promise<void> {
+  async loadApp(): Promise<void> {
     if (this.status !== LoadingStatuses.loading) {
       return;
     }
@@ -52,12 +43,9 @@ export class LoadAppHelper {
       }
     });
     try {
-      const resp = await Promise.all([
-        this.loadInitialBusiness(),
-        this.loadUserData(),
-      ]);
-
-      if (resp.includes(false)) {
+      this.loadUserData();
+      const resp = await this.loadInitialBusiness();
+      if (resp) {
         return;
       }
     } catch (e) {
@@ -98,15 +86,6 @@ export class LoadAppHelper {
 
     GeneralData.hasPaddingFromTop = GeneralData.paddingFromTop > 0;
     this.updateStatus(LoadingStatuses.success);
-    const b = BusinessInitializer.GI().business;
-    business.set(b);
-
-    const u = UserInitializer.GI().user;
-
-    user.set(u);
-
-    const w = BusinessInitializer.GI().workers;
-    workers.set(w);
   }
 
   parseDevelopers(): Record<string, Developer> {
@@ -141,30 +120,27 @@ export class LoadAppHelper {
     return null;
   }
 
-  private async loadUserData(): Promise<boolean> {
-    await delay(2000);
+  private loadUserData() {
+    if (!VerificationHelper.GI().canUseAuthVars) {
+      VerificationHelper.GI().startUserAuthListener(() => this.loadUser());
+    } else {
+      this.loadUser();
+    }
+  }
+
+  private async loadUser(): Promise<void> {
     console.log(`user -> ${UserInitializer.GI().userId}`);
-    console.log(
-      "111111111111111111111111111222222222222222222222222222" +
-        UserInitializer.GI().userId
-    );
-
-    await setTimeout;
     if (!UserInitializer.GI().isConnected) {
-      return true;
+      return;
     }
-
-    if (
-      !(await this.executeFuture(
-        async () =>
-          await UserInitializer.GI().setupUser({
-            newUserId: UserInitializer.GI().userId,
-          })
-      ))
-    ) {
-      return false;
+    const resp = await UserInitializer.GI().setupUser({
+      newUserId: UserInitializer.GI().userId,
+    });
+    if (!resp) {
+      this.updateStatus(LoadingStatuses.unknownError);
+      this.userLoaded = false;
     }
-    return true;
+    this.userLoaded = true;
   }
 
   updateStatus(status: LoadingStatuses): void {
