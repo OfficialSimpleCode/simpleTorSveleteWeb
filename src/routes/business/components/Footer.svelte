@@ -1,24 +1,22 @@
 <script lang="ts">
-    // Assets
-    import InsagramLogo from "$lib/images/instagram.svg";
+  // Assets
+  import InsagramLogo from "$lib/images/instagram.svg";
 </script>
 
 <footer
-    class="footer items-center p-4 bg-base-100 text-base-content"
-    style="direction: ltr;"
+  class="footer items-center p-4 bg-base-100 text-base-content"
+  style="direction: ltr;"
 >
-    <aside class="items-center grid-flow-col">
-        <div
-            class="h-12 w-12 bg-black flex items-center justify-center rounded-full"
-        >
-            <h1 class="text-xl font-bold font-mono text-white text-center">
-                ST
-            </h1>
-        </div>
-        <p>Copyright © 2024 - All right reserved</p>
-    </aside>
-    <nav class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
-        <!-- <a
+  <aside class="items-center grid-flow-col">
+    <div
+      class="h-12 w-12 bg-black flex items-center justify-center rounded-full"
+    >
+      <h1 class="text-xl font-bold font-mono text-white text-center">ST</h1>
+    </div>
+    <p>Copyright © 2024 - All right reserved</p>
+  </aside>
+  <nav class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
+    <!-- <a
             ><svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -30,22 +28,20 @@
                 ></path></svg
             >
         </a> -->
-        <a href="https://www.instagram.com/simpletor.official/" target="_blank">
-            <img src={InsagramLogo} alt="instagram" class="w-6 h-6" />
-        </a>
-        <a
-            href="https://www.facebook.com/SimpleTor?mibextid=LQQJ4d"
-            target="_blank"
-            ><svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                class="fill-current"
-                ><path
-                    d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"
-                ></path></svg
-            ></a
-        >
-    </nav>
+    <a href="https://www.instagram.com/simpletor.official/" target="_blank">
+      <img src={InsagramLogo} alt="instagram" class="w-6 h-6" />
+    </a>
+    <a href="https://www.facebook.com/SimpleTor?mibextid=LQQJ4d" target="_blank"
+      ><svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        class="fill-current"
+        ><path
+          d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"
+        ></path></svg
+      ></a
+    >
+  </nav>
 </footer>
