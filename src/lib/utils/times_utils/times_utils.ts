@@ -14,6 +14,8 @@ import { Errors } from "$lib/services/errors/messages.js";
 import { isHoliday } from "../dates_utils.js";
 import { addDuration, durationStrikings } from "../duration_utils.js";
 
+import TreatmentTime from "$lib/models/general/treatment_time.js";
+import Event from "../../models/schedule/calendar_event.js";
 import { translate } from "../string_utils.js";
 import type { TimeSegment } from "./models.js";
 /**
@@ -43,7 +45,7 @@ function shouldSkip(
  * @param bookingDate - The booking date in the format 'dd-MM-yyyy'.
  * @returns Whether the time has already passed.
  */
-export function timeIsAlreadyPassed(time: Date, bookingDate: string): boolean {
+function timeIsAlreadyPassed(time: Date, bookingDate: string): boolean {
   const currentTime: string = format(new Date(), "HH:mm");
   const isToday: boolean = bookingDate === format(new Date(), "dd-MM-yyyy");
   const timePassed: boolean = time < parse(currentTime, "HH:mm", new Date());
@@ -57,7 +59,7 @@ export function timeIsAlreadyPassed(time: Date, bookingDate: string): boolean {
  * @param startTime - The start time for the segments.
  * @returns The map of time segments.
  */
-export function generateTimeSegmentsMap(
+function generateTimeSegmentsMap(
   booking: Booking,
   startTime: Date
 ): Map<string, TimeSegment> {
@@ -88,7 +90,7 @@ export function generateTimeSegmentsMap(
  * @param endTime - The end time for the segments.
  * @returns The reversed map of time segments.
  */
-export function generateReversedTimeSegmentsMap(
+function generateReversedTimeSegmentsMap(
   booking: Booking,
   endTime: Date
 ): Map<string, TimeSegment> {
@@ -122,7 +124,7 @@ export function generateReversedTimeSegmentsMap(
  * @param forbiddenTimes - List of forbidden times.
  * @returns The minutes to jump over forbidden times.
  */
-export function minutesToJumpOverForbbiden(
+function minutesToJumpOverForbbiden(
   forbiddenTimesPointers: number[],
   timeSegments: Map<string, TimeSegment>,
   forbiddenTimes: Date[]
@@ -172,7 +174,7 @@ export function minutesToJumpOverForbbiden(
  * @param forbiddenTimes - List of forbidden times.
  * @returns The minutes to jump over forbidden times in reverse order.
  */
-export function minutesToJumpOverForbbidenReverse(
+function minutesToJumpOverForbbidenReverse(
   forbiddenTimesPointers: number[],
   timeSegments: Map<string, TimeSegment>,
   forbiddenTimes: Date[]
@@ -354,17 +356,27 @@ export function relevantMultiEventTime({
  * @param options - Optional parameters for customization.
  * @returns List of relevant hours.
  */
-function relevantHoures(
-  worker: WorkerModel | null | undefined,
-  booking: Booking,
-  isUpdate: boolean = false,
-  oldBooking: Booking | null = null,
-  workerSheet: boolean = false,
-  reverse: boolean = false,
-  workerAction: boolean = false,
-  amoutLimit?: number,
-  recurrenceSkipDate?: Date
-): TimePickerObj[] {
+export function relevantHoures({
+  worker,
+  booking,
+  isUpdate = false,
+  oldBooking = null,
+  workerSheet = false,
+  reverse = false,
+  workerAction = false,
+  amoutLimit,
+  recurrenceSkipDate,
+}: {
+  worker: WorkerModel | null | undefined;
+  booking: Booking;
+  isUpdate: boolean;
+  oldBooking: Booking | null;
+  workerSheet: boolean;
+  reverse: boolean;
+  workerAction: boolean;
+  amoutLimit?: number;
+  recurrenceSkipDate?: Date;
+}): TimePickerObj[] {
   const finalTimes: TimePickerObj[] = [];
 
   // Return empty array if worker is null or undefined
@@ -382,7 +394,9 @@ function relevantHoures(
     worker.shiftsFor({ day: booking.bookingDate })
   );
 
-  const takenHoures = alreadyTakenHoures(worker, bookingDate, {
+  const takenHoures = alreadyTakenHoures({
+    worker: worker,
+    bookingDate: bookingDate,
     isUpdate: isUpdate,
     workerAction: workerAction,
     oldBooking: oldBooking,
@@ -397,16 +411,16 @@ function relevantHoures(
 
   // Call the reverse algorithm if specified
   if (reverse) {
-    return reverseRelevantHoures(
-      worker,
-      work,
-      forbbidenTimes,
-      bookingDate,
-      treatment,
-      Booking.fromBooking(booking),
-      workerSheet,
-      amoutLimit
-    );
+    return reverseRelevantHoures({
+      worker: worker,
+      work: work,
+      forbbidenTimes: forbbidenTimes,
+      bookingDate: bookingDate,
+      treatment: treatment,
+      booking: Booking.fromBooking(booking),
+      workerSheet: workerSheet,
+      amoutLimit: amoutLimit,
+    });
   }
 
   const forbiddenTimesPointers: number[] = Array.from(
@@ -415,7 +429,7 @@ function relevantHoures(
   );
 
   // Calculate the current legal time (end with 0 or 5)
-  let currentTime = getTimeDevideByFive(new Date(), { inCheckFormat: true });
+  let currentTime = getTimeDevideByFive(new Date(), true);
 
   // Iterate over the work times
   let i = 0;
@@ -578,16 +592,25 @@ function isAllDayTaken(
  * @param options - Optional parameters for customization.
  * @returns List of relevant hours in reverse order.
  */
-function reverseRelevantHoures(
-  worker: WorkerModel,
-  work: Date[],
-  forbbidenTimes: Date[],
-  bookingDate: string,
-  treatment: Treatment,
-  booking: Booking,
-  workerSheet: boolean = false,
-  amoutLimit?: number
-): TimePickerObj[] {
+function reverseRelevantHoures({
+  worker,
+  work,
+  forbbidenTimes,
+  bookingDate,
+  treatment,
+  booking,
+  workerSheet = false,
+  amoutLimit,
+}: {
+  worker: WorkerModel;
+  work: Date[];
+  forbbidenTimes: Date[];
+  bookingDate: string;
+  treatment: Treatment;
+  booking: Booking;
+  workerSheet: boolean;
+  amoutLimit?: number;
+}): TimePickerObj[] {
   const finalTimes: TimePickerObj[] = [];
 
   // Check if all day is taken
@@ -826,20 +849,29 @@ export function overlapingDates(
  * @param options - Optional parameters for customization.
  * @returns True if the time is optional, false otherwise.
  */
-export function isOptionalTimeForBooking(
-  worker: WorkerModel | null,
-  booking: Booking,
-  timeToOrderOn1970Format: Date,
-  isUpdate: boolean = false,
-  oldBooking?: Booking | null,
-  recurrenceSkipDate?: Date | null,
-  defaultWork?: Date[] | null,
-  defaultVacations?: Date[] | null,
-  defaultBreaks?: Date[] | null,
-  defaultTakenHoures?: Date[] | null,
-  defaultForbbidenTimes?: Date[] | null,
-  allowAllDay: boolean = false
-): boolean {
+export function isOptionalTimeForBooking({
+  worker,
+  booking,
+  timeToOrderOn1970Format,
+  oldBooking,
+  recurrenceSkipDate,
+  defaultWork,
+  defaultTakenHoures,
+  defaultForbbidenTimes,
+  isUpdate = false,
+  allowAllDay = false,
+}: {
+  worker: WorkerModel | null;
+  booking: Booking;
+  timeToOrderOn1970Format: Date;
+  oldBooking: Booking | null;
+  recurrenceSkipDate?: Date | null;
+  defaultWork?: Date[] | null;
+  defaultTakenHoures?: Date[] | null;
+  defaultForbbidenTimes?: Date[] | null;
+  isUpdate: boolean;
+  allowAllDay: boolean;
+}): boolean {
   if (!worker) return false;
 
   // Free day -> holiday
@@ -875,11 +907,13 @@ export function isOptionalTimeForBooking(
     convertStringToTime(worker.shiftsFor({ day: booking.bookingDate }));
   const takenHoures =
     defaultTakenHoures ??
-    alreadyTakenHoures(worker, bookingDate, {
-      recurrenceSkipDate: recurrenceSkipDate,
-      workerAction: allowAllDay,
+    alreadyTakenHoures({
+      worker: worker,
+      bookingDate: bookingDate,
       isUpdate: isUpdate,
+      workerAction: allowAllDay,
       oldBooking: oldBooking,
+      recurrenceSkipDate: recurrenceSkipDate,
     });
   let forbbidenTimes: Date[] = defaultForbbidenTimes ?? takenHoures;
 
@@ -936,7 +970,7 @@ export function isOptionalTimeForBooking(
     const timeSegments = generateTimeSegmentsMap(booking, pointerWork);
 
     // Getting time to jump if one or more time segments striking with forbidden
-    const minutesToJump = minutesToJumpOverForbidden(
+    const minutesToJump = minutesToJumpOverForbbiden(
       forbiddenTimesPointers,
       timeSegments,
       forbbidenTimes
@@ -1000,7 +1034,7 @@ export function isBlockFromMiddlePaymentUser(
   timeToOrder: Date,
   date: string,
   worker: WorkerModel,
-  timeSegments: Map<string, Map<string, any>>
+  timeSegments: Map<string, TimeSegment>
 ): boolean {
   // Day isn't on middle payment times
   if (!worker.workerPublicData.duringPaymentBookingsTime[date]) {
@@ -1033,7 +1067,7 @@ export function isBlockFromMiddlePaymentUser(
   );
 
   // Getting time to jump if one or more time segments striking with forbidden
-  const minutesToJump = minutesToJumpOverForbidden(
+  const minutesToJump = minutesToJumpOverForbbiden(
     forbiddenTimesPointers,
     timeSegments,
     forbiddenTimes
@@ -1065,14 +1099,22 @@ export function getOnlyEqualOrAfter(times: Date[], startTime: Date): Date[] {
  * @param options - Options for customization.
  * @returns List of already taken hours.
  */
-export function alreadyTakenHoures(
-  worker: WorkerModel,
-  bookingDate: string,
-  isUpdate: boolean = false,
-  workerAction: boolean = false,
-  oldBooking: Booking | null,
-  recurrenceSkipDate?: Date | null
-): Date[] {
+export function alreadyTakenHoures({
+  worker,
+  bookingDate,
+  oldBooking,
+  recurrenceSkipDate,
+  isUpdate = false,
+  workerAction = false,
+}: {
+  worker: WorkerModel;
+  bookingDate: string;
+
+  oldBooking: Booking | null;
+  recurrenceSkipDate?: Date | null;
+  isUpdate: boolean;
+  workerAction: boolean;
+}): Date[] {
   const taken: Date[] = [];
   const dateToBook = new Date(format("dd-MM-yyyy", bookingDate));
 
@@ -1138,7 +1180,10 @@ export function alreadyTakenHoures(
           const hourTime = new Date(format("HH:mm", hour));
           const dateToCheck = addDuration(
             dateToBook,
-            new Duration({ hours: hourTime.hour, minutes: hourTime.minute })
+            new Duration({
+              hours: hourTime.getHours(),
+              minutes: hourTime.getMinutes(),
+            })
           );
 
           if (datesToSkipRecurrence.has(dateToCheck.toString())) {
@@ -1212,253 +1257,127 @@ export function alreadyTakenHoures(
   return taken;
 }
 
-/**
- * Gets all free times for a worker on a specific date.
- * @param worker - The worker model.
- * @param dateToCheck - The date to check.
- * @returns List of all free times.
- */
-// export function allFreeTimes(worker: WorkerModel, dateToCheck: Date): Date[] {
-//   const allDayTimes: Date[] = [];
-//   const freeTimes: Date[] = [];
-//   const shifts = convertStringToTime(worker.shiftsFor({ day: dateToCheck }));
-//   const shiftsStarts = new Set<Date>();
-//   const shiftsEnds = new Set<Date>();
-
-//   shifts.forEach((time, index) => {
-//     allDayTimes.push(time);
-
-//     if (index % 2 === 0) {
-//       shiftsStarts.add(time);
-//     } else {
-//       shiftsEnds.add(time);
-//     }
-//   });
-
-//   const taken = eventsTimes(worker, dateToCheck);
-//   const takenStarts = new Set<Date>();
-//   const takenEnds = new Set<Date>();
-
-//   taken.forEach((time, index) => {
-//     allDayTimes.push(time);
-
-//     if (index % 2 === 0) {
-//       takenStarts.add(time);
-//     } else {
-//       takenEnds.add(time);
-//     }
-//   });
-
-//   allDayTimes.sort();
-
-//   let isBlock = false;
-//   let insideShift = false;
-
-//   allDayTimes.forEach((time) => {
-//     if (takenStarts.has(time)) {
-//       if (!isBlock && insideShift) {
-//         freeTimes.push(time);
-//       }
-//       isBlock = true;
-//     }
-
-//     if (takenEnds.has(time)) {
-//       isBlock = false;
-//       if (!isBlock && insideShift) {
-//         freeTimes.push(time);
-//       }
-//     }
-
-//     if (shiftsStarts.has(time)) {
-//       insideShift = true;
-//       if (!isBlock && insideShift) {
-//         freeTimes.push(time);
-//       }
-//     }
-
-//     if (shiftsEnds.has(time)) {
-//       if (!isBlock && insideShift) {
-//         freeTimes.push(time);
-//       }
-//       insideShift = false;
-//     }
-//   });
-
-//   return freeTimes;
-// }
-
-/**
- * Gets the list of breaks for today based on the worker's breaks.
- * @param day - The day to check.
- * @param breaks - The worker's breaks.
- * @param options - Options for customization.
- * @returns List of breaks for today.
- */
-// export function getTodayListOfBreaks(
-//   day: string,
-//   breaks: Map<string, BreakModel>,
-//   options: { isUpdate?: boolean; breakModel?: BreakModel } = {}
-// ): Date[] {
-//   const todayBreaks: Date[] = [];
-//   const dateToCheck = DateFormat('dd-MM-yyyy').parse(day);
-
-//   breaks.forEach((key, breakModel) => {
-//     // Adding the recurrence breaks
-//     const isAccureReccurnece =
-//       breakModel.recurrenceEvent &&
-//       breakModel.recurrenceEvent.isAccureInDate(date: dateToCheck);
-
-//     // Adding the "break times" from the "breaks list"
-//     if (breakModel.day === day || isAccureReccurnece) {
-//       const start = DateFormat('HH:mm').parse(breakModel.start);
-//       todayBreaks.push(start, start.add(breakModel.duration));
-//     }
-//   });
-
-//   if (options.isUpdate) {
-//     const start = DateFormat('HH:mm').parse(options.breakModel!.start);
-//     todayBreaks.splice(todayBreaks.indexOf(start), 2);
-//   }
-
-//   return todayBreaks;
-// }
-
 // /// Get `time` and return the same time rounded up to 5 minutes
-// export function getTimeDevideByFive(time: Date, inCheckFormat: boolean = false): Date {
-//   const minutes = time.getMinutes();
-//   const tens = Math.floor(minutes / 10);
-//   const ones = minutes % 10;
-//   const amountOfFives = Math.ceil(ones / 5);
+export function getTimeDevideByFive(
+  time: Date,
+  inCheckFormat: boolean = false
+): Date {
+  const minutes = time.getMinutes();
+  const tens = Math.floor(minutes / 10);
+  const ones = minutes % 10;
+  const amountOfFives = Math.ceil(ones / 5);
 
-//   if (inCheckFormat) {
-//     return new Date(1970, 0, 1, time.getHours(), tens * 10 + amountOfFives * 5);
-//   }
+  if (inCheckFormat) {
+    return new Date(1970, 0, 1, time.getHours(), tens * 10 + amountOfFives * 5);
+  }
 
-//   return new Date(
-//     time.getFullYear(),
-//     time.getMonth(),
-//     time.getDate(),
-//     time.getHours(),
-//     tens * 10 + amountOfFives * 5
-//   );
-// }
+  return new Date(
+    time.getFullYear(),
+    time.getMonth(),
+    time.getDate(),
+    time.getHours(),
+    tens * 10 + amountOfFives * 5
+  );
+}
 
-// export function getValidDataTimeToCheck(time: Date): Date {
-//   const minutes = parseInt(time.toLocaleTimeString().slice(3, 5));
-//   const hours = parseInt(time.toLocaleTimeString().slice(0, 2));
-//   return new Date(1970, 0, 1, hours, minutes);
-// }
+export function getValidDataTimeToCheck(time: Date): Date {
+  const minutes = parseInt(time.toLocaleTimeString().slice(3, 5));
+  const hours = parseInt(time.toLocaleTimeString().slice(0, 2));
+  return new Date(1970, 0, 1, hours, minutes);
+}
 
-// export function getFakeBookingToCheck(
-//   treatmentName: string,
-//   treatment: Treatment,
-//   date: Date
-// ): Booking {
-//   const newTreatment = new Treatment(
-//     treatmentName,
-//     treatment.price,
-//     Object.assign({}, treatment.times)
-//   );
+export function getFakeBookingToCheck(
+  treatmentName: string,
+  treatment: Treatment,
+  date: Date
+): Booking {
+  const newTreatment = new Treatment({
+    name: treatmentName,
+    price: treatment.price,
+    times: Object.assign({}, treatment.times),
+  });
+  const booking = new Booking({});
+  booking.bookingDate = date;
+  booking.treatments = new Map([["", newTreatment]]);
+  return booking;
+}
 
-//   return new Booking({ userFcms: {}, debts: {} })
-//     .setBookingDate(date)
-//     .setTreatments({ "": newTreatment });
-// }
+export function getFakeBookingFromTime(
+  day: string,
+  start: string,
+  end: string,
+  workerId: string = ""
+): Booking {
+  const startEvent = new Date(`1970-01-01T${start}`);
+  const endEvent = new Date(`1970-01-01T${end}`);
+  const totalMinutes = Math.floor(
+    (endEvent.getTime() - startEvent.getTime()) / (60 * 1000)
+  );
 
-// export function getFakeBookingFromTime(day: string, start: string, end: string, workerId: string = ""): Booking {
-//   const startEvent = new Date(`1970-01-01T${start}`);
-//   const endEvent = new Date(`1970-01-01T${end}`);
-//   const totalMinutes = Math.floor((endEvent.getTime() - startEvent.getTime()) / (60 * 1000));
-
-//   const treatment = new Treatment({
-//     times: { 0: new TreatmentTime({ workMinutes: totalMinutes }) },
-//   });
-
-//   return new Booking({ userFcms: {}, debts: {} })
-//     .setBookingDate(new Date(day))
-//     .setWorkerId(workerId)
-//     .setTreatments({ "": treatment });
-// }
+  const treatment = new Treatment({
+    times: new Map([["0", new TreatmentTime({ workMinutes: totalMinutes })]]),
+  });
+  const booking = new Booking({});
+  booking.bookingDate = new Date(day);
+  booking.workerId = workerId;
+  booking.treatments = new Map([["", treatment]]);
+  return booking;
+}
 
 /// Get `closestEvent` and `event` Return if the event is after
 /// in less than 10 minutes
-// export function isRightAfterEvent(
-//   event: Event,
-//   closestEvent: Event | null
-// ): boolean {
-//   if (closestEvent === null) {
-//     return false;
-//   }
+export function isRightAfterEvent(
+  event: Event,
+  closestEvent: Event | null
+): boolean {
+  if (closestEvent === null) {
+    return false;
+  }
 
-//   return (
-//     closestEvent.to.getTime() - event.from.getTime() < 10 * 60 * 1000 &&
-//     closestEvent.to.getTime() - event.from.getTime() >= 0
-//   );
-// }
-
-export function dateToTimeStr(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-  }).format(date);
+  return (
+    closestEvent.to.getTime() - event.from.getTime() < 10 * 60 * 1000 &&
+    closestEvent.to.getTime() - event.from.getTime() >= 0
+  );
 }
 
-export function dateToStrAccoridngToFormat(date: Date, format: string): string {
-  console.log("TODO LanguageHelper().currentLaguageCode");
-  return new Intl.DateTimeFormat("he", {
-    hour: "numeric",
-    minute: "numeric",
-  }).format(date);
+export function dateToTimeStr(date: Date): string {
+  return format(date, "HH:mm");
+}
+
+export function dateToStrAccoridngToFormat(
+  date: Date,
+  stringFormat: string
+): string {
+  return format(date, stringFormat, {
+    //locale: LanguageHelper().currentLaguageCode
+  });
 }
 
 export function dateToDayStr(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", { day: "2-digit" }).format(date);
+  return format(date, "dd");
 }
 
 export function dateToMonthStr(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "2-digit",
-    year: "numeric",
-  }).format(date);
+  return format(date, "MM-yyyy");
 }
 
 export function dateToCustomDayAndMonthStr(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    day: "2-digit",
-    month: "numeric",
-  }).format(date);
+  return format(date, "dd/M");
 }
 
 export function dateToCustomDayAndMonthAndHourStr(
   date: Date,
   showHours: boolean
 ): string {
-  const options: Intl.DateTimeFormatOptions = {
-    day: "2-digit",
-    month: "numeric",
-    hour: showHours ? "numeric" : undefined,
-    minute: showHours ? "numeric" : undefined,
-  };
-  return new Intl.DateTimeFormat("en-US", options).format(date);
+  return showHours ? format(date, "dd/M H:mm") : format(date, "dd/M");
 }
 
-function dateToCustomYearAndDayAndMonthAndHourStr(date: Date): string {
-  const options: Intl.DateTimeFormatOptions = {
-    day: "2-digit",
-    month: "numeric",
-    year: "2-digit",
-    hour: "numeric",
-    minute: "numeric",
-  };
-  return new Intl.DateTimeFormat("en-US", options).format(date);
+export function dateToCustomYearAndDayAndMonthAndHourStr(date: Date): string {
+  return format(date, "dd/M/yy H:mm");
 }
 
 export function dateToDateStr(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).format(date);
+  return format(date, "dd-MM-yyyy");
 }
 
 export function timeStrToDate(date: string): Date {
@@ -1526,22 +1445,6 @@ export function firstDate(date1: Date | null, date2: Date | null): Date | null {
   return date2;
 }
 
-// export function getFakeBookingFromBreak(breakModel: BreakModel): Booking {
-//   const treatment = new Treatment({
-//     times: { 0: new TreatmentTime({ workMinutes: breakModel.duration }) },
-//   });
-//   const date = new Date(breakModel.day);
-//   const time = new Date(breakModel.start);
-
-//   return new Booking({ userFcms: {}, debts: {} })
-//     .setRecurrenceEvent(breakModel.recurrenceEvent)
-//     .setBookingDate(
-//       new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes())
-//     )
-//     .setWorkerId(breakModel.workerId)
-//     .setTreatments({ "": treatment });
-// }
-
 export function partOfDay(date: Date): string {
   if (
     (date.getHours() >= 19 && date.getHours() <= 23) ||
@@ -1606,87 +1509,43 @@ export function getStartOfWeek(date: Date): Date {
   return new Date(date.setDate(diff));
 }
 
-/**
- * Get `start` and `end` Return the end date of
- * the event that overlapping with this range
- */
-// export function findOverlapingEvent(
-//   worker: WorkerModel,
-//   start: Date,
-//   end: Date
-// ): Date {
-//   // Find which event is overlapping with the date range
-//   const day = dateToDayStr(start);
-//   const month = dateToMonthStr(start);
+// export function testDateFunctions() {
+//   const currentDate = new Date();
+//   const formattedTime = dateToTimeStr(currentDate);
+//   console.log("Formatted Time (HH:mm):", formattedTime);
 
-//   // Find the recurrence event that happened that day
-//   const eventsFromRecurrence: Event[] = [];
-//   worker.recurrence.recurrenceEvents.forEach((day, dayEvents) => {
-//     dayEvents.forEach((time, event) => {
-//       if (
-//         event.recurrenceEvent !== null &&
-//         event.recurrenceEvent.isAccureInDate({ date: start })
-//       ) {
-//         const eventStart = new Date(
-//           start.getFullYear(),
-//           start.getMonth(),
-//           start.getDate(),
-//           event.from.hour,
-//           event.from.minute
-//         );
-//         const eventEnd = new Date(
-//           start.getFullYear(),
-//           start.getMonth(),
-//           start.getDate(),
-//           event.to.hour,
-//           event.to.minute
-//         );
-//         eventsFromRecurrence.push({ ...event, from: eventStart, to: eventEnd });
-//       }
-//     });
-//   });
+//   const formattedDate = dateToStrAccoridngToFormat(currentDate, "yyyy-MM-dd");
+//   console.log("Formatted Date (yyyy-MM-dd):", formattedDate);
 
-//   let todayEvents: Event[] = [];
-//   if (
-//     worker.events.allEvents[month] !== null &&
-//     worker.events.allEvents[month]![day] !== null
-//   ) {
-//     todayEvents = Object.values(worker.events.allEvents[month]![day]!);
-//   }
+//   const dayStr = dateToDayStr(currentDate);
+//   console.log("Day String (dd):", dayStr);
 
-//   if (
-//     todayEvents.length === 0 &&
-//     Object.keys(worker.events.breakEvents).length === 0 &&
-//     eventsFromRecurrence.length === 0
-//   ) {
-//     return start;
-//   }
+//   const monthStr = dateToMonthStr(currentDate);
+//   console.log("Month String (MM-yyyy):", monthStr);
 
-//   const events = [
-//     ...todayEvents,
-//     ...eventsFromRecurrence,
-//     ...Object.values(worker.events.breakEvents),
-//   ];
-//   events = events.filter(
-//     (event) => dateToDateStr(event.from) === dateToDateStr(start)
+//   const customDayAndMonthStr = dateToCustomDayAndMonthStr(currentDate);
+//   console.log("Custom Day and Month String (dd/M):", customDayAndMonthStr);
+
+//   const customDayAndMonthAndHourStr = dateToCustomDayAndMonthAndHourStr(
+//     currentDate,
+//     true
 //   );
-//   events.sort((a, b) => a.from.getTime() - b.from.getTime());
+//   console.log(
+//     "Custom Day, Month, and Hour String (dd/M H:mm):",
+//     customDayAndMonthAndHourStr
+//   );
 
-//   let newDate = start;
-//   let closestToStartEvent: Event | undefined;
+//   const customYearAndDayAndMonthAndHourStr =
+//     dateToCustomYearAndDayAndMonthAndHourStr(currentDate);
+//   console.log(
+//     "Custom Year, Day, Month, and Hour String (dd/M/yy H:mm):",
+//     customYearAndDayAndMonthAndHourStr
+//   );
 
-//   for (const event of events) {
-//     // Take the end of the event that overlaps with the time
-//     if (
-//       (isRightAfterEvent(event, closestToStartEvent) ||
-//         !event.from.getTime() > start.getTime()) &&
-//       event.to.getTime() > start.getTime() &&
-//       event.to.getTime() < end.getTime()
-//     ) {
-//       closestToStartEvent = event;
-//       newDate = event.to;
-//     }
-//   }
+//   const dateStr = dateToDateStr(currentDate);
+//   console.log("Date String (dd-MM-yyyy):", dateStr);
 
-//   return newDate;
+//   const monthStrToTest = "10-2020"; // Replace with your own month string
+//   const parsedMonthDate = monthStrToDate(monthStrToTest);
+//   console.log("Parsed Month Date (MM-yyyy):", parsedMonthDate);
 // }
