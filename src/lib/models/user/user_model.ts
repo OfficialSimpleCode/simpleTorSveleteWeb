@@ -26,10 +26,10 @@ export default class UserModel {
   cardPaymentsPass: string = "";
   lastTimeUpdatePhone: Date = new Date(0);
   lastTimeUpdateEmail: Date = new Date(0);
-  authProviders: { [key in AuthProvider]?: Date } = {};
+  authProviders: Map<AuthProvider, Date> = new Map();
   businessesInfo: { [key: string]: BusinessInfo } = {};
   storyLikes: string[] = [];
-  paymentCards: { [key: string]: { [key: string]: PaymentCard } } = {};
+  paymentCards: Record<string, Record<string, PaymentCard>> = {}; //{businessId: {cardId: PaymentCard()}}
   lastVisitedBuisnesses: string[] = [];
   lastVisitedBuisnessesRemoved: string[] = [];
   lastCleanDate: Timestamp = Timestamp.fromDate(new Date());
@@ -162,14 +162,12 @@ export default class UserModel {
       customerUuid: this.id,
       phoneNumber: this.phoneNumber,
       isVerifiedPhone: this.isVerifiedPhone,
-      userFirstBookingsDate: this.bookings.firstBookingForBusiness(
-        booking.buisnessId,
-        booking.workerId,
-        {
-          exclude: needDelete ? booking.bookingDate : exclude,
-          initDate: needDelete ? initDate : booking.bookingDate,
-        }
-      ),
+      userFirstBookingsDate: this.bookings.firstBookingForBusiness({
+        businessId: booking.buisnessId,
+        workerId: booking.workerId,
+        exclude: needDelete ? booking.bookingDate : exclude,
+        initDate: needDelete ? initDate : booking.bookingDate,
+      }),
       lastBookingsDate: this.bookings.lastBookingForBusiness({
         businessId: booking.buisnessId,
         workerId: booking.workerId,
@@ -393,12 +391,15 @@ export default class UserModel {
         ([provider, date]) => {
           if (authProviderFromStr[provider]) {
             const authProvider = authProviderFromStr[provider];
-            user.authProviders[authProvider] = new Date(date) || new Date(2023);
+            user.authProviders.set(
+              authProvider,
+              new Date(date) || new Date(2023)
+            );
           }
         }
       );
     } else {
-      user.authProviders = { [AuthProvider.Phone]: user.createdAt };
+      user.authProviders = new Map([[AuthProvider.Phone, user.createdAt]]);
     }
 
     if (user.id === user.phoneNumber) {
@@ -531,7 +532,7 @@ export default class UserModel {
     });
     data["businessTopics"] = Array.from(this.businessTopics);
     data["authProviders"] = {};
-    Object.entries<Date>(this.authProviders).forEach(([provider, date]) => {
+    this.authProviders.forEach((date, provider) => {
       data["authProviders"][provider] = date.toISOString();
     });
     data["paymentCards"] = {};

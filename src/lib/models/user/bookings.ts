@@ -99,13 +99,19 @@ export default class UserBookings {
     }
   }
 
-  lastBookingForBusiness(
-    businessId: string,
-    workerId: string,
-    includePast: boolean = false,
-    initDate?: Date,
-    exclude?: Date
-  ): Date | undefined {
+  lastBookingForBusiness({
+    businessId,
+    workerId,
+    includePast = false,
+    initDate,
+    exclude,
+  }: {
+    businessId: string;
+    workerId: string;
+    includePast?: boolean;
+    initDate?: Date;
+    exclude?: Date;
+  }): Date | undefined {
     let lastDate: Date | undefined = initDate;
     Object.entries(this.futureBookings).forEach(([_, bookingsDoc]) => {
       Object.entries(bookingsDoc).forEach(([_, booking]) => {
@@ -130,5 +136,77 @@ export default class UserBookings {
       });
     });
     return lastDate;
+  }
+
+  firstBookingForBusiness({
+    businessId,
+    workerId,
+    includePast,
+    initDate,
+    exclude,
+  }: {
+    businessId: string;
+    workerId: string;
+
+    includePast?: boolean;
+    initDate?: Date;
+    exclude?: Date;
+  }): Date | undefined {
+    let firstDate: Date | undefined = initDate;
+
+    // pass over the user future bookings
+    for (const [id, bookings] of Object.entries(this.futureBookings)) {
+      for (const [key, booking] of Object.entries(bookings)) {
+        if (
+          businessId !== booking.buisnessId ||
+          workerId !== booking.workerId
+        ) {
+          continue;
+        }
+
+        if (
+          exclude != undefined &&
+          exclude.getTime() === booking.bookingDate.getTime()
+        ) {
+          continue;
+        }
+
+        if (
+          firstDate === undefined ||
+          booking.bookingDate.getTime() < firstDate.getTime()
+        ) {
+          firstDate = booking.bookingDate;
+        }
+      }
+    }
+
+    // not found any date
+    if (firstDate === undefined && includePast) {
+      // pass over the past bookings
+      for (const [id, bookings] of Object.entries(this.passedBookings)) {
+        for (const [key, booking] of Object.entries(bookings)) {
+          if (
+            businessId !== booking.buisnessId ||
+            workerId !== booking.workerId
+          ) {
+            continue;
+          }
+          if (
+            exclude !== undefined &&
+            exclude.getTime() === booking.bookingDate.getTime()
+          ) {
+            continue;
+          }
+          if (
+            firstDate === undefined ||
+            booking.bookingDate.getTime() < firstDate.getTime()
+          ) {
+            firstDate = booking.bookingDate;
+          }
+        }
+      }
+    }
+
+    return firstDate;
   }
 }

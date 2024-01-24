@@ -1,11 +1,17 @@
 import { BookingStatuses } from "$lib/consts/booking";
-import UserRepo from "$lib/helpers/user/user_repo";
+import {
+  notifcationsCollection,
+  scheduleNotificationDoc,
+} from "$lib/consts/db";
+import GeneralRepo from "$lib/helpers/general/general_repo";
 import UserInitializer from "$lib/initializers/user_initializer";
 import type Booking from "$lib/models/booking/booking_model";
 import { Price } from "$lib/models/general/price";
+import type BusinessPayloadData from "$lib/models/notifications/business_data_payload";
 import NotificationPayload, {
   EnterAction,
 } from "$lib/models/notifications/notification_payload";
+import type NotificationTopic from "$lib/models/notifications/notification_topic";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { getFormatedTime, translate } from "$lib/utils/string_utils";
 import NotificationsRepo from "./notifications_repo";
@@ -17,7 +23,7 @@ export default class NotificationsHelper {
     return NotificationsHelper._singleton;
   }
 
-  userRepo: UserRepo = new UserRepo();
+  generalRepo: GeneralRepo = new GeneralRepo();
   notificationRepo: NotificationsRepo = new NotificationsRepo();
 
   // -- notifications to worker about user actions [order, delete, update] --
@@ -205,7 +211,7 @@ export default class NotificationsHelper {
   }
 
   /// Get: `booking` and notify the booking's worker about change that happened
-  public async notifyWorkerThatUserChangeBooking(
+  async notifyWorkerThatUserChangeBooking(
     newBooking: Booking,
     oldBooking: Booking,
     worker: WorkerModel,
@@ -234,7 +240,7 @@ export default class NotificationsHelper {
   }
 
   /// Get: `booking` and notify the booking's worker about change that happened
-  public async notifyWorkerThatUserChngeTreatmentsOfBooking(
+  async notifyWorkerThatUserChngeTreatmentsOfBooking(
     newBooking: Booking,
     oldBooking: Booking,
     worker: WorkerModel,
@@ -259,6 +265,118 @@ export default class NotificationsHelper {
       }),
       isSilent: true,
     });
+  }
+
+  //-------------------------------------- waiting list -------------------------------
+
+  async notifyWaitingListTopic(
+    topic: NotificationTopic,
+    businessData: BusinessPayloadData
+  ): Promise<void> {
+    await this.notificationRepo.notifyWaitingList({
+      payload: new NotificationPayload({
+        action: EnterAction.openBusiness,
+        businessData: businessData,
+      }),
+      topic: topic,
+    });
+  }
+
+  //-------------------------------------- schedule message --------------------------------
+  // EXPLAIN: Upload the FutureNotification Object to the ScheduleNotifications
+  // Collection to the correct time and the server will notify for all the
+  // FutureNotification we uploaded
+
+  // Get booking and make new schedule notification for it
+  async makeScheduleBookingNotification({
+    booking,
+  }: {
+    booking: Booking;
+  }): Promise<boolean> {
+    const notifications: Record<string, Record<string, any>> = {};
+    const reminders = booking.remindersToFutureNotifications;
+
+    reminders.forEach((reminder) => {
+      notifications[reminder.dateToNotify.toISOString()] ??= {};
+      notifications[reminder.dateToNotify.toISOString()]![reminder.id] =
+        reminder.toJson();
+    });
+
+    const futures: Promise<boolean>[] = [];
+
+    for (const [dateStr, data] of Object.entries(notifications)) {
+      const dateToNotify = new Date(dateStr);
+
+      const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${dateToNotify.getMonth()}/${dateToNotify.getDay()}/${dateToNotify.getHours()}`;
+
+      futures.push(
+        this.generalRepo.setAsMapWithMergeRepo({
+          insideEnviroments: false,
+          path: path,
+          docId: dateToNotify.getMinutes().toString(),
+          valueAsJson: data,
+        })
+      );
+    }
+
+    const resp = await Promise.all(futures);
+
+    return !resp.includes(false);
+  }
+
+  // Get oldBooking and newBooking and update the oldBooking schedule
+  // notification to the new one
+  async updateScheduleBookingNotification({
+    oldBooking,
+    newBooking,
+  }: {
+    oldBooking: Booking;
+    newBooking: Booking;
+  }): Promise<boolean> {
+    const deleteResp = await this.deleteAllScheduleBookingsNotifications({
+      bookings: [oldBooking],
+    });
+
+    if (!deleteResp) {
+      return false;
+    }
+
+    return await this.makeScheduleBookingNotification({ booking: newBooking });
+  }
+
+  async deleteAllScheduleBookingsNotifications({
+    bookings,
+  }: {
+    bookings: Booking[];
+  }): Promise<boolean> {
+    // Collect all the notifications to delete
+    const datesToDelete: Record<string, Record<string, any>> = {};
+
+    bookings.forEach((booking) => {
+      const remindersOnBooking = booking.remindersOnBooking;
+
+      for (const [dateToNotify, data] of Object.entries(remindersOnBooking)) {
+        datesToDelete[dateToNotify] = data;
+      }
+    });
+
+    const futures: Promise<boolean>[] = [];
+    for (const [dateStr, data] of Object.entries(datesToDelete)) {
+      const dateToNotify = new Date(dateStr);
+      const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${dateToNotify.getMonth()}/${dateToNotify.getDay()}/${dateToNotify.getHours()}`;
+
+      futures.push(
+        this.generalRepo.updateMultipleFieldsInsideDocAsMapRepo({
+          insideEnviroments: false,
+          path: path,
+          docId: dateToNotify.getMinutes().toString(),
+          data: data,
+        })
+      );
+    }
+
+    const results = await Promise.all(futures);
+    return !results.includes(false);
   }
 
   private _notifyToWorker(

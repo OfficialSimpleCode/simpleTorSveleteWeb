@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { _ } from "svelte-i18n";
-    import { business } from "$lib/stores/Business.js";
     import type WorkerModel from "$lib/models/worker/worker_model";
+    import { business } from "$lib/stores/Business.js";
+    import { _ } from "svelte-i18n";
 
     import { createEventDispatcher } from "svelte";
     const dispatch = createEventDispatcher();
@@ -28,6 +28,7 @@
             employee.id.slice(1)
         );
     }
+
 </script>
 
 <section id="employee-step" class="w-full flex flex-col items-center gap-10">

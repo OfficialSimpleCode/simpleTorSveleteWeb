@@ -1,32 +1,37 @@
 <script lang="ts">
-    import { base } from "$app/paths";
-    import { _ } from "svelte-i18n";
-    import Google from "$lib/images/google.svg";
-    import {
-        Icon,
-        XCircle,
-        Identification,
-        Envelope,
-        Phone,
-        User,
-        ChevronRight,
-        ArrowRightOnRectangle,
-        Trash,
-        HandThumbUp,
-        HandThumbDown,
-        Moon,
-        Plus,
-    } from "svelte-hero-icons";
-    import InfoCircle from "$lib/components/InfoCircle.svelte";
-    import Avatar from "$lib/components/Avatar.svelte";
-    import InfoTooltipButton from "../InfoTooltipButton.svelte";
     import { goto } from "$app/navigation";
+    import { base } from "$app/paths";
+    import Avatar from "$lib/components/Avatar.svelte";
+    import InfoCircle from "$lib/components/InfoCircle.svelte";
+    import { Gender } from "$lib/consts/gender";
+    import Google from "$lib/images/google.svg";
+    import { user } from "$lib/stores/User";
+    import { dateToDateStr } from "$lib/utils/times_utils/times_utils";
+    import {
+      ArrowRightOnRectangle,
+      ChevronRight,
+      Envelope,
+      HandThumbDown,
+      HandThumbUp,
+      Icon,
+      Identification,
+      Moon,
+      Phone,
+      Plus,
+      Trash,
+      User,
+      XCircle,
+    } from "svelte-hero-icons";
+    import { _ } from "svelte-i18n";
+    import InfoTooltipButton from "../InfoTooltipButton.svelte";
+    import CustomArrow from "../custom_components/CustomArrow.svelte";
 
+    export let profile:Record<string,any>;
     export let dialog: HTMLDialogElement;
-    export let profile: Record<string, string>;
+    
 
-    function updateGender(newGender: string) {
-        profile.gender = newGender;
+    function updateGender(newGender: Gender) {
+        
     }
 </script>
 
@@ -51,9 +56,9 @@
                     ring={false}
                     img="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
                 />
-                <h1 class="text-xl">{profile.name}</h1>
+                <h1 class="text-xl">{$user.name}</h1>
                 <h5 class="text-sm text-gray-500">
-                    {$_("since")}: {profile.joinDate}
+                    {$_("since")}: {dateToDateStr($user.createdAt)}
                 </h5>
             </section>
 
@@ -68,7 +73,7 @@
                         {$_("name")}
                     </div>
                     <div class="flex items-center text-gray-500">
-                        {profile.name}
+                        {$user.name}
                         <Icon src={ChevronRight} size="18px" />
                     </div>
                 </button>
@@ -82,7 +87,7 @@
                         {$_("phoneNumber")}
                     </div>
                     <div class="flex items-center text-gray-500">
-                        {profile.phoneNumber}
+                        {$user.phoneNumber}
                         <Icon src={ChevronRight} size="18px" />
                     </div>
                 </button>
@@ -96,8 +101,8 @@
                         {$_("email")}
                     </div>
                     <div class="flex items-center text-gray-500">
-                        {profile.emailAddress}
-                        <Icon src={ChevronRight} size="18px" />
+                        {$user.userPublicData.email}
+                        <CustomArrow />
                     </div>
                 </button>
                 <div class="divider h-[1px]" />
@@ -109,8 +114,8 @@
                         {$_("userId")}
                     </div>
                     <div class="flex items-center text-gray-500">
-                        {profile.userID}
-                        <Icon src={ChevronRight} size="18px" />
+                        {$user.id}
+                        <CustomArrow />
                     </div>
                 </button>
             </section>
@@ -125,8 +130,8 @@
                 <button
                     id="male"
                     class="flex flex-col items-center"
-                    class:text-gray-500={profile.gender !== "male"}
-                    on:click={() => updateGender("male")}
+                    class:text-gray-500={$user.gender !== Gender.male}
+                    on:click={() => updateGender(Gender.male)}
                 >
                     <Icon src={HandThumbUp} size="35px" />
                     <div>{$_("male")}</div>
@@ -134,8 +139,8 @@
                 <button
                     id="female"
                     class="flex flex-col items-center"
-                    class:text-gray-500={profile.gender !== "female"}
-                    on:click={() => updateGender("female")}
+                    class:text-gray-500={$user.gender !== Gender.female}
+                    on:click={() => updateGender(Gender.female)}
                 >
                     <Icon src={HandThumbDown} size="35px" />
                     <span>{$_("female")}</span>
@@ -143,8 +148,8 @@
                 <button
                     id="other"
                     class="flex flex-col items-center"
-                    class:text-gray-500={profile.gender !== "other"}
-                    on:click={() => updateGender("other")}
+                    class:text-gray-500={$user.gender !== Gender.anonymous}
+                    on:click={() => updateGender(Gender.anonymous)}
                 >
                     <Icon src={Moon} size="35px" />
                     <span>{$_("other")}</span>
@@ -173,7 +178,7 @@
                         {$_("logout")}
                     </div>
                     <div class="flex items-center text-gray-500">
-                        <Icon src={ChevronRight} size="18px" />
+                        <CustomArrow />
                     </div>
                 </button>
                 <div class="divider h-[1px]" />
@@ -185,7 +190,7 @@
                         {$_("deleteUser")}
                     </div>
                     <div class="flex items-center text-gray-500">
-                        <Icon src={ChevronRight} size="18px" />
+                        <CustomArrow />
                     </div>
                 </button>
             </section>

@@ -6,7 +6,7 @@
 /* eslint-disable max-len */
 
 import { logger } from "$lib/consts/application_general";
-import { envKey } from "$lib/consts/db";
+import { ArrayCommands, envKey } from "$lib/consts/db";
 import { firebaseConfig } from "$lib/firebase_config";
 import AppErrorsHelper from "$lib/helpers/app_errors";
 import { getApp, getApps, initializeApp } from "firebase/app";
@@ -16,6 +16,8 @@ import {
   Timestamp,
   Transaction,
   WriteBatch,
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteField,
   doc,
@@ -58,7 +60,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     path: string;
     docId: string;
     insideEnviroments?: boolean;
-  }): Promise<DocumentSnapshot<DocumentData, DocumentData> | undefined> {
+  }): Promise<DocumentSnapshot<DocumentData, DocumentData>> {
     try {
       const collectionRef = collection(
         this._firestore,
@@ -73,8 +75,8 @@ export default class FirestoreDataBase extends RealTimeDatabase {
           error: Errors.serverError,
           details: e.message,
         });
-        throw e;
       }
+      throw e;
     }
   }
 
@@ -222,6 +224,33 @@ export default class FirestoreDataBase extends RealTimeDatabase {
           details: e.toString(),
         });
       }
+      throw e;
+    }
+  }
+
+  async getAllDocsAndIdsInsideCollection({
+    path,
+  }: {
+    path: string;
+  }): Promise<Record<string, Record<string, any>>> {
+    try {
+      const ref = collection(this._firestore, `$envKey/${path}`);
+      const docs = await getDocs(ref);
+
+      const docsResult: Record<string, Record<string, any>> = {};
+      docs.docs.forEach((doc) => {
+        docsResult[doc.id] = doc.data();
+      });
+
+      return docsResult;
+    } catch (e) {
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
+
       throw e;
     }
   }
@@ -385,7 +414,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     path: string;
     docId: string;
     valueAsJson: any;
-    insideEnviroments: boolean;
+    insideEnviroments?: boolean;
     mergeIfExist?: boolean;
   }) {
     try {
@@ -475,6 +504,41 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       batch.update(docRef, this.organizeData(data));
     } catch (e) {
       logger.error("Error while updating the batch -->", e);
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
+      throw new Error(`Server Error: ${e}`);
+    }
+  }
+
+  updateFieldInsideDocAsArray({
+    batch,
+    path,
+    docId,
+    fieldName,
+    value,
+    command = ArrayCommands.add,
+  }: {
+    batch: WriteBatch;
+    path: string;
+    docId: string;
+    fieldName: string;
+    value: any;
+    command?: ArrayCommands;
+  }): void {
+    try {
+      const collectionRef = collection(this._firestore, `${envKey}/${path}`);
+      const docRef = doc(collectionRef, docId);
+      batch.update(docRef, {
+        [fieldName]:
+          command === ArrayCommands.remove
+            ? arrayRemove([value])
+            : arrayUnion([value]),
+      });
+    } catch (e) {
       if (e instanceof Error) {
         AppErrorsHelper.GI().addError({
           error: Errors.serverError,

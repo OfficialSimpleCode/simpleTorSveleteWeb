@@ -3,7 +3,7 @@ import { LoadingStatuses } from "$lib/consts/loading_statuses";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import { Developer } from "$lib/models/developers/developer";
-import { isNetworkConnected } from "$lib/utils/general_utils";
+import { delay, isNetworkConnected } from "$lib/utils/general_utils";
 import { Timestamp } from "firebase/firestore";
 import AppErrorsHelper from "./app_errors";
 import DeveloperHelper from "./developer_helper";
@@ -120,7 +120,14 @@ export class LoadAppHelper {
   }
 
   private async loadUserData(): Promise<boolean> {
+    await delay(2000);
     console.log(`user -> ${UserInitializer.GI().userId}`);
+    console.log(
+      "111111111111111111111111111222222222222222222222222222" +
+        UserInitializer.GI().userId
+    );
+
+    await setTimeout;
     if (!UserInitializer.GI().isConnected) {
       return true;
     }

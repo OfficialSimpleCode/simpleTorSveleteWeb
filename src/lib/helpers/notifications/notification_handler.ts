@@ -4,7 +4,6 @@ import Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { subDuration } from "$lib/utils/duration_utils";
-import { sendMessage } from "$lib/utils/notifications_utils";
 import { dateToDateStr } from "$lib/utils/times_utils/times_utils";
 import MessagesHelper from "./messages/messages_helper";
 import NotificationsHelper from "./notifications/notification_helper";
@@ -110,21 +109,10 @@ export default class NotificationHandler {
     }
 
     // Notify the waiting list if the deleted booking opens new possible times
-    if (booking.recurrenceEvent === undefined) {
-      NotificationsHelper.GI().notifyWaitingListTopic(
-        booking.notificationTopic,
-        booking.businessPayloadData
-      );
-    } else {
-      // Notify the waiting list that there are available times
-      NotificationsHelper.GI().notifyWaitingListAboutRecurrenceBookingDeletion({
-        booking,
-        startDate: booking.recurrenceEvent!.nearestFutureAccurenceDate(
-          new Date()
-        ),
-        count: 7,
-      });
-    }
+    NotificationsHelper.GI().notifyWaitingListTopic(
+      booking.notificationTopic,
+      booking.businessPayloadData
+    );
   }
 
   async afterUpdateBooking({
@@ -173,16 +161,7 @@ export default class NotificationHandler {
       workerAction,
       isOldBoookingPassed,
     });
-    this._handleUserNotification({
-      newBooking,
-      oldBooking: oldBookingTemp,
-      newWorker,
-      oldWorker,
-      workerChange,
-      userChange,
-      dateChange,
-      treatmentsChange,
-    });
+
     this._handleCustomerAlert({
       newBooking,
       oldBooking, //send oldBooking on puporse
@@ -240,7 +219,7 @@ export default class NotificationHandler {
       newBooking.status === BookingStatuses.approved &&
       newBooking.notificationType === NotificationType.message
     ) {
-      const oldBookingTemp = { ...oldBooking };
+      const oldBookingTemp = Booking.fromBooking(oldBooking);
       if (
         oldBooking.recurrenceEvent != null &&
         oldBookingDateForReccurence != null
@@ -251,8 +230,7 @@ export default class NotificationHandler {
       }
       MessagesHelper.GI().updateBookingScheduleMessage(
         oldBookingTemp,
-        newBooking,
-        newWorker
+        newBooking
       );
       return;
     } else if (
@@ -301,102 +279,6 @@ export default class NotificationHandler {
     }
   }
 
-  _handleUserNotification({
-    newBooking,
-    oldBooking,
-    newWorker,
-    oldWorker,
-
-    userChange,
-    dateChange,
-    treatmentsChange,
-  }: {
-    newBooking: Booking;
-    oldBooking: Booking;
-    newWorker: WorkerModel;
-    oldWorker: WorkerModel;
-
-    workerChange: boolean;
-    userChange: boolean;
-    dateChange: boolean;
-    treatmentsChange: boolean;
-  }): void {
-    if (userChange) {
-      if (
-        sendMessage({ booking: oldBooking, worker: oldWorker }) ===
-        NotificationType.message
-      ) {
-        MessagesHelper.GI().messageAboutCancelBooking(oldBooking, oldWorker);
-      } else if (
-        sendMessage({ booking: oldBooking, worker: oldWorker }) ===
-        NotificationType.push
-      ) {
-        NotificationsHelper.GI().notifyWorkerDeletedBooking(
-          oldBooking,
-          oldWorker
-        );
-      }
-      if (
-        sendMessage({ booking: oldBooking, worker: oldWorker }) ===
-        NotificationType.message
-      ) {
-        MessagesHelper.GI().messageAboutNewBooking(newBooking, newWorker);
-      } else if (
-        sendMessage({ booking: oldBooking, worker: oldWorker }) ===
-        NotificationType.push
-      ) {
-        NotificationsHelper.GI().notifyWorkerOrderedBooking(
-          newBooking,
-          newWorker
-        );
-      }
-    } else {
-      if (treatmentsChange && !dateChange) {
-        if (
-          sendMessage({ booking: oldBooking, worker: oldWorker }) ===
-          NotificationType.message
-        ) {
-          MessagesHelper.GI().messageAboutUpdateTreatmetnsBooking({
-            oldBooking,
-            newBooking,
-            worker: newWorker,
-          });
-        } else if (
-          sendMessage({ booking: oldBooking, worker: oldWorker }) ===
-          NotificationType.push
-        ) {
-          NotificationsHelper.GI().notifyCustomerThatWorkerChangedTreatmentsBooking(
-            {
-              newBooking,
-              oldBooking,
-              worker: newWorker,
-            }
-          );
-        }
-      } else if (dateChange) {
-        if (
-          sendMessage({ booking: oldBooking, worker: oldWorker }) ===
-          NotificationType.message
-        ) {
-          MessagesHelper.GI().messageAboutUpdateBooking({
-            oldBooking,
-            newBooking,
-            worker: newWorker,
-          });
-        } else if (
-          sendMessage({ booking: oldBooking, worker: oldWorker }) ===
-          NotificationType.push
-        ) {
-          NotificationsHelper.GI().notifyWorkerChangedBooking({
-            newBooking,
-            oldBooking,
-            worker: newWorker,
-          });
-        }
-      }
-    }
-  }
-
   _handleWorkerNotification({
     newBooking,
     oldBooking,
@@ -422,18 +304,18 @@ export default class NotificationHandler {
   }): void {
     if (workerChange) {
       if (workerAction) {
-        if (oldWorker.id != UserInitializer.GI().user.id) {
-          NotificationsHelper.GI().notifyWorkerThatManagerDeleteHisBooking({
-            worker: oldWorker,
-            booking: oldBooking,
-            managerName: UserInitializer.GI().user.name,
-          });
-          NotificationsHelper.GI().notifyWorkerThatManagerMakeHimNewBooking({
-            worker: newWorker,
-            booking: newBooking,
-            managerName: UserInitializer.GI().user.name,
-          });
-        }
+        // if (oldWorker.id != UserInitializer.GI().user.id) {
+        //   NotificationsHelper.GI().notifyWorkerThatManagerDeleteHisBooking({
+        //     worker: oldWorker,
+        //     booking: oldBooking,
+        //     managerName: UserInitializer.GI().user.name,
+        //   });
+        //   NotificationsHelper.GI().notifyWorkerThatManagerMakeHimNewBooking({
+        //     worker: newWorker,
+        //     booking: newBooking,
+        //     managerName: UserInitializer.GI().user.name,
+        //   });
+        // }
       } else {
         NotificationsHelper.GI().notifyWorkerAboutUserBookingDeletion(
           oldBooking,

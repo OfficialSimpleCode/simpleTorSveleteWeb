@@ -1,4 +1,5 @@
 import {
+  ArrayCommands,
   buisnessCollection,
   dataCollection,
   dataDoc,
@@ -74,30 +75,30 @@ export default class GeneralRepo
     return await this.commmitBatch(batch);
   }
 
-  // async updateFieldInsideDocAsArrayRepo({
-  //   path,
-  //   docId,
-  //   fieldName,
-  //   value,
-  //   command,
-  // }: {
-  //   path: string;
-  //   docId: string;
-  //   fieldName: string;
-  //   value: any;
-  //   command: ArrayCommands;
-  // }): Promise<boolean> {
-  //   const batch = getBatch;
-  //   super.updateFieldInsideDocAsArray({
-  //     batch,
-  //     path,
-  //     docId,
-  //     fieldName,
-  //     value,
-  //     command,
-  //   });
-  //   return await commmitBatch({ batch });
-  // }
+  async updateFieldInsideDocAsArrayRepo({
+    path,
+    docId,
+    fieldName,
+    value,
+    command,
+  }: {
+    path: string;
+    docId: string;
+    fieldName: string;
+    value: any;
+    command: ArrayCommands;
+  }): Promise<boolean> {
+    const batch = this.getBatch;
+    super.updateFieldInsideDocAsArray({
+      batch,
+      path,
+      docId,
+      fieldName,
+      value,
+      command,
+    });
+    return await this.commmitBatch(batch);
+  }
 
   // async updateMultipleFieldsInsideDocAsArrayRepo({
   //   path,
@@ -250,11 +251,11 @@ export default class GeneralRepo
     workerId: string;
     businessModel?: BusinessModel;
     needMultiDoc?: boolean;
-  }): Promise<WorkerModel | null> {
+  }): Promise<WorkerModel | undefined> {
     const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
     const workerDoc = await this.transactionGet(transaction, path, workerId);
     if (!workerDoc.exists()) {
-      return null;
+      return undefined;
     }
     const firestoreDataBaseWorker = WorkerModel.fromWorkerDocJson(
       workerDoc!.data()

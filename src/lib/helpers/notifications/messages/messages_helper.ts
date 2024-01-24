@@ -1,4 +1,7 @@
-import type { BookingReminderType } from "$lib/consts/booking";
+import {
+  NotificationType,
+  type BookingReminderType,
+} from "$lib/consts/booking";
 import { NumericCommands } from "$lib/consts/db";
 import { emojisRegex } from "$lib/consts/string";
 import DbPathesHelper from "$lib/helpers/db_paths_helper";
@@ -18,72 +21,6 @@ export default class MessagesHelper {
   private generalRepo: GeneralRepo = new GeneralRepo();
 
   messageRepo: MessageRepo = new MessageRepo();
-
-  // ///Get `bookings` and schedule them with message
-  // async  scheduleMultiBookingMessagesToUsers(
-  //     multiBooking: MultiBooking,
-  //     multiBookingUsers: Map<string, MultiBookingUser>
-  //   ): Promise<boolean> {
-  //     if (multiBookingUsers.size === 0) {
-  //       return true;
-  //     }
-  //     const messages: ScheduleMessage[] = [];
-  //     const businessToDecrease: Map<string, number> = new Map();
-  //     multiBookingUsers.forEach((bookingId, multiBookingUser) => {
-  //       const reminders = multiBooking.remindersToScheduleMessages(multiBookingUser);
-  //       messages.push(...reminders);
-  //       if (!businessToDecrease.has(multiBooking.buisnessId)) {
-  //         businessToDecrease.set(multiBooking.buisnessId, 0);
-  //       }
-  //       businessToDecrease.set(
-  //         multiBooking.buisnessId,
-  //         businessToDecrease.get(multiBooking.buisnessId)! + reminders.length
-  //       );
-  //     });
-  //     // no possibility to Non-valid data
-  //     return await this.messageRepo.sendMultipleScheduleAccordingToPlatfrom({ messages: messages })
-  //       .then((value) => {
-  //         if (value !== "") {
-  //           businessToDecrease.forEach((businessId, value) => {
-  //             decreaseMessageCounter(businessId, { count: value });
-  //           });
-  //         }
-  //         return value;
-  //       });
-  //   }
-
-  //   ///Get `bookings` and cancel all the bookings schedule messages
-  //   async  cancelScheduleMultiBookingMessagesToUsers(
-  //     multiBooking: MultiBooking,
-  //     multiBookingUsers: Map<string, MultiBookingUser>
-  //   ): Promise<boolean> {
-  //     if (multiBookingUsers.size === 0) {
-  //       return true;
-  //     }
-  //     const messages: Map<string, string> = new Map();
-  //     const businessToDecrease: Map<string, number> = new Map();
-  //     multiBookingUsers.forEach((bookingId, multiBookingUser) => {
-  //       const reminders = multiBooking.messageRemindersOnUser(multiBookingUser);
-  //       messages.forEach((key, value) => {});
-  //       if (!businessToDecrease.has(multiBooking.buisnessId)) {
-  //         businessToDecrease.set(multiBooking.buisnessId, 0);
-  //       }
-  //       businessToDecrease.set(
-  //         multiBooking.buisnessId,
-  //         businessToDecrease.get(multiBooking.buisnessId)! + reminders.length
-  //       );
-  //     });
-  //     // no possibility to Non-valid data
-  //     return await _cancelMultipleScheduleAccordingToPlatfrom({ messages: messages })
-  //       .then((value) => {
-  //         if (value !== "") {
-  //           businessToDecrease.forEach((businessId, value) => {
-  //             increaseMessageCounter(businessId, { count: value });
-  //           });
-  //         }
-  //         return value;
-  //       });
-  //   }
 
   ///Get `bookings` and schedule them with message
   async scheduleMessageToMultipleBookings(
@@ -116,6 +53,29 @@ export default class MessagesHelper {
         });
       }
       return value;
+    });
+  }
+  async updateBookingScheduleMessage(
+    oldBooking: Booking,
+    newBooking: Booking
+  ): Promise<boolean> {
+    if (
+      oldBooking.notificationType !== NotificationType.message ||
+      newBooking.notificationType !== NotificationType.message
+    ) {
+      return false;
+    }
+
+    const cancelResp = await this.cancelScheduleMessageToMultipleBookings({
+      [oldBooking.bookingId]: oldBooking,
+    });
+
+    if (!cancelResp) {
+      return false;
+    }
+
+    return await this.scheduleMessageToMultipleBookings({
+      [newBooking.bookingId]: newBooking,
     });
   }
 

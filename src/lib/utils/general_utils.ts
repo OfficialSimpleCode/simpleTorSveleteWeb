@@ -78,3 +78,7 @@ export function setEquals<T>(a: Set<T> | null, b: Set<T> | null): boolean {
 export async function isNetworkConnected() {
   return true;
 }
+
+export async function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

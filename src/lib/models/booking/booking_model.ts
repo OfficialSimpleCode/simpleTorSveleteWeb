@@ -27,6 +27,7 @@ import {
   subDuration,
 } from "$lib/utils/duration_utils";
 import { sendMessage } from "$lib/utils/notifications_utils";
+import { formatedPhone } from "$lib/utils/string_utils";
 import {
   dateToDateStr,
   dateToMonthStr,
@@ -43,6 +44,7 @@ import Treatment from "../general/treatment_model";
 import type MultiBooking from "../multi_booking/multi_booking";
 import BookingNotificationPayload from "../notifications/booking_notification_payload";
 import BusinessPayloadData from "../notifications/business_data_payload";
+import FutureNotification from "../notifications/future_notification";
 import NotificationTopic from "../notifications/notification_topic";
 import BookingReferencePaymentObj from "../payment_hyp/booking_reference";
 import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
@@ -569,6 +571,109 @@ export default class Booking extends ScheduleItem {
     }
 
     return types;
+  }
+
+  get remindersToFutureNotifications(): FutureNotification[] {
+    const reminders: FutureNotification[] = [];
+
+    for (const [type, _] of this.remindersTypes) {
+      const reminderTemp = this.reminder(type);
+
+      if (reminderTemp !== null) {
+        reminders.push(reminderTemp);
+      }
+    }
+
+    return reminders;
+  }
+
+  reminder(type: BookingReminderType): FutureNotification | null {
+    if (this.notificationType !== NotificationType.push) {
+      return null;
+    }
+
+    const minutes = this.remindersTypes.get(type);
+
+    if (minutes === undefined || minutes === 0) {
+      return null;
+    }
+
+    const dateToNotify = dateToRemindBooking(this, minutes);
+
+    // No need to notify on past bookings
+    //TODO UTC
+    if (dateToNotify < new Date()) {
+      return null;
+    }
+
+    if (this.userFcms.size === 0) {
+      return null;
+    }
+
+    return new FutureNotification({
+      businessName: this.businessName,
+      shopIcon: this.shopIcon,
+      address: this.showAdressAlert ? this.adress : "",
+      isMulti: this.isMultiRef,
+      isRecurrence:
+        this.recurrenceEvent !== null || this.recurrenceRef !== null,
+      id: this.reminderId(type),
+      dateToNotify,
+      phoneToContact: this.showPhoneAlert
+        ? formatedPhone(this.workerPhone)
+        : "",
+      businessId: this.buisnessId,
+      type: this.treatmentsToStringNotDetailed,
+      minutesToAdd: this.utcDeltaMinutes() + minutes,
+      totalEventMinutes: this.totalMinutes,
+      fcms: { ...this.userFcms },
+    });
+  }
+
+  utcDeltaMinutes(): number {
+    const utcTime: Date = new Date();
+    const utc: Date = new Date(
+      utcTime.getUTCFullYear(),
+      utcTime.getUTCMonth(),
+      utcTime.getUTCDate(),
+      utcTime.getUTCHours(),
+      utcTime.getUTCMinutes()
+    );
+
+    return Math.floor((Date.now() - utc.getTime()) / (60 * 1000));
+  }
+
+  get remindersOnBooking(): Record<string, Record<string, any>> {
+    const reminders: Record<string, Record<string, any>> = {};
+
+    if (this.cancelDate !== null) {
+      return {};
+    }
+
+    if (this.userFcms.size === 0) {
+      return {};
+    }
+
+    if (this.notificationType === NotificationType.message) {
+      return {};
+    }
+
+    this.remindersTypes.forEach((minutes, type) => {
+      if (minutes <= 0) {
+        return;
+      }
+
+      const dateToNotify = dateToRemindBooking(this, minutes);
+      //TODO UTC
+      if (dateToNotify >= new Date()) {
+        reminders[dateToNotify.toISOString()] ??= {};
+        reminders[dateToNotify.toISOString()] = {
+          [this.reminderId(type)]: null,
+        };
+      }
+    });
+
+    return reminders;
   }
 
   get bookingsEventsAsJson(): Map<string, any> {

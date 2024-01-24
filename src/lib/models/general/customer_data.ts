@@ -390,19 +390,20 @@ export default class CustomerData {
     return this;
   }
 
-  fromMinimalJson(json: { [key: string]: any }): CustomerData {
-    this.workerNaming = json["N"] ?? "";
-    this.name = json["N"] ?? "";
+  static fromMinimalJson(json: { [key: string]: any }): CustomerData {
+    const newObj = new CustomerData({});
+    newObj.workerNaming = json["N"] ?? "";
+    newObj.name = json["N"] ?? "";
     if (json["G"] != null) {
-      this.gender = this.getGenderFromStr(json["gender"]);
+      newObj.gender = newObj.getGenderFromStr(json["gender"]);
     }
-    this.addedManually = json["AM"] ?? false;
-    this.phoneNumber = json["P"] ?? "";
-    this.customerUuid = json["CU"] ?? json["P"] ?? "";
-    this.email = json["E"] ?? "";
-    this.id = json["ID"] ?? "";
+    newObj.addedManually = json["AM"] ?? false;
+    newObj.phoneNumber = json["P"] ?? "";
+    newObj.customerUuid = json["CU"] ?? json["P"] ?? "";
+    newObj.email = json["E"] ?? "";
+    newObj.id = json["ID"] ?? "";
 
-    return this;
+    return newObj;
   }
 
   get publicCustomer(): PublicCustomer {

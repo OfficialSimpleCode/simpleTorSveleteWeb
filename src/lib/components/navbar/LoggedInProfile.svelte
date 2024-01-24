@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { base } from "$app/paths";
     import { goto, pushState } from "$app/navigation";
+    import { base } from "$app/paths";
     import { page } from "$app/stores";
 
     import { _ } from "svelte-i18n";
 
+    import UserInitializer from "$lib/initializers/user_initializer";
     import ProfileDialog from "./ProfileDialog.svelte";
     import PurchesesDialog from "./PurchesesDialog.svelte";
 
@@ -14,6 +15,8 @@
     let purchasesDialog: HTMLDialogElement;
 
     function openProfileDialog() {
+        console.log("0000000000000000000000000000000000000000000000"+UserInitializer.GI().isConnected);
+        console.log(UserInitializer.GI().user);
         pushState("", {
             showModal: true,
         });
