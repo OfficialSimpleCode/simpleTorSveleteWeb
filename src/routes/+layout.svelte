@@ -13,9 +13,9 @@
     import { businessStore } from "$lib/stores/Business";
     import { loadAppState } from "$lib/stores/LoadApp";
 
-    async function loadBusiness() {
-        console.log("svelte loaded");
-        handleLocaleChanges(localStorage, document);
+  async function loadBusiness() {
+    console.log("svelte loaded");
+    handleLocaleChanges(localStorage, document);
 
         if ($businessStore) {
             return;

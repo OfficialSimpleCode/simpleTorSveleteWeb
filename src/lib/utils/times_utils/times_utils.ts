@@ -1388,6 +1388,8 @@ export function dateStrToDate(date: string): Date {
 }
 
 export function monthStrToDate(date: string): Date {
+  const toDate = new Date(`01-${date}`);
+  //toDate.setDate(1);
   return new Date(`01-${date}`);
 }
 
@@ -1506,6 +1508,12 @@ export function getStartOfWeek(date: Date): Date {
   const diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Adjust when the day is Sunday
 
   return new Date(date.setDate(diff));
+}
+
+export function fixDateMonth(date: Date): Date {
+  const dateMonth = date.getMonth();
+  date.setMonth(dateMonth + 1);
+  return date;
 }
 
 // export function testDateFunctions() {
