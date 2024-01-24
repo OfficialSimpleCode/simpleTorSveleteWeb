@@ -31,9 +31,6 @@
         const firebaseApp =
             getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
          LoadAppHelper.GI().loadApp();
-
-        
-
         
     }
 
