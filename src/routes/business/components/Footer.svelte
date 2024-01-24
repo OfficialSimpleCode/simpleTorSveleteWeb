@@ -1,8 +1,8 @@
 <script>
-  import { business } from "$lib/stores/Business";
+  import { businessStore } from "$lib/stores/Business";
 
   function downloadSimpleTor() {
-    const dynamicLink = $business.dynamicLink;
+    const dynamicLink = $businessStore.dynamicLink;
 
     // Check if dynamicLink is empty
     if (dynamicLink) {
