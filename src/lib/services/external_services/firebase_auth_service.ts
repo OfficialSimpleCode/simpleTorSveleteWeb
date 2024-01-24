@@ -18,6 +18,7 @@ import {
   getAuth,
   linkWithCredential,
   linkWithPopup,
+  onAuthStateChanged,
   reauthenticateWithCredential,
   reauthenticateWithPopup,
   signInWithCredential,
@@ -26,6 +27,8 @@ import {
   updatePhoneNumber,
   updateProfile,
   type Auth,
+  type CompleteFn,
+  type Unsubscribe,
   type User,
 } from "firebase/auth";
 import { verificationErrors } from "../errors/interpeters/verification_errors_interpeter";
@@ -213,6 +216,10 @@ export class FirebaseAuthService {
         this._auth.currentUser?.displayName
     );
     return this._auth.currentUser != null;
+  }
+
+  onAuthUserStateChangedSRV(completed: CompleteFn): Unsubscribe {
+    return onAuthStateChanged(this._auth, completed);
   }
 
   async updateUserNameSRV(name: string): Promise<void> {

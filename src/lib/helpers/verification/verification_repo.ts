@@ -2,7 +2,12 @@ import {
   FirebaseAuthService,
   LoginType,
 } from "$lib/services/external_services/firebase_auth_service";
-import type { PhoneAuthCredential, User } from "firebase/auth";
+import type {
+  CompleteFn,
+  PhoneAuthCredential,
+  Unsubscribe,
+  User,
+} from "firebase/auth";
 import type { VerificationApi } from "./verification_api";
 
 // Define the VerificationRepo class implementing the VerificationApi interface
@@ -25,6 +30,10 @@ export class VerificationRepo
 
   async signInWithFacebook(loginType: LoginType): Promise<boolean> {
     return await this.signInWithFacebookSRV(loginType);
+  }
+
+  onAuthUserStateChanged(completed: CompleteFn): Unsubscribe {
+    return this.onAuthUserStateChangedSRV(completed);
   }
 
   async signInWithOtp({
