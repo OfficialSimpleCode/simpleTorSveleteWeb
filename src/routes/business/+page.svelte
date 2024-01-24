@@ -16,8 +16,10 @@
     import ShareDialog from "./components/ShareDialog.svelte";
     import SocialLinks from "./components/SocialLinks.svelte";
 // other (utils / stores)
+    import Navbar from "$lib/components/navbar/Navbar.svelte";
     import { business } from "$lib/stores/Business.js";
     import { workers } from "$lib/stores/Workers.js";
+    import Footer from "./components/Footer.svelte";
 
     let loggedIn: boolean = true;
     let workersStories: Map<string, string> = Object.values($workers)
