@@ -3,7 +3,6 @@ import { LoadingStatuses } from "$lib/consts/loading_statuses";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import { Developer } from "$lib/models/developers/developer";
-import { loadAppState } from "$lib/stores/LoadApp";
 
 import { isNetworkConnected } from "$lib/utils/general_utils";
 import { Timestamp } from "firebase/firestore";

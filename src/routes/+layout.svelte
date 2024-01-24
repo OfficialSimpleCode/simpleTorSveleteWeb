@@ -11,7 +11,6 @@
     import { LoadAppHelper } from "$lib/helpers/load_app_helper";
     import { handleLocaleChanges } from "$lib/language/loader";
     import { businessStore } from "$lib/stores/Business";
-    import { loadAppState } from "$lib/stores/LoadApp";
 
   async function loadBusiness() {
     console.log("svelte loaded");
@@ -20,7 +19,7 @@
         if ($businessStore) {
             return;
         }
-        $loadAppState = LoadingStatuses.loading;
+       
 
         LinksHelper.GI().linkedBuisnessId =
             $page.data.businessID ||
