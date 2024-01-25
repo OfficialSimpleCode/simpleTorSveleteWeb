@@ -13,11 +13,11 @@ export class VerificationHelper {
   }
 
   public signInUserId: string = "";
-  public currentAuthProvider: AuthProvider | null = null;
+  public currentAuthProvider?: AuthProvider;
   public verificationID: string = "";
   public submitedPhone: string = "";
   public lastVerificationUnix: number = 0;
-  public currentCredential: PhoneAuthCredential | null = null;
+  public currentCredential?: PhoneAuthCredential;
   public phoneVerificationWithFirebase: boolean = true;
   public canUseAuthVars = false;
 
@@ -50,8 +50,8 @@ export class VerificationHelper {
 
   public setupLoggin(): void {
     this.verificationID = "";
-    this.currentAuthProvider = null;
-    this.currentCredential = null;
+    this.currentAuthProvider = undefined;
+    this.currentCredential = undefined;
     this.submitedPhone = "";
     this.phoneVerificationWithFirebase = true;
   }

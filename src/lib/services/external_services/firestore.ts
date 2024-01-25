@@ -6,7 +6,7 @@
 /* eslint-disable max-len */
 
 import { logger } from "$lib/consts/application_general";
-import { ArrayCommands, envKey } from "$lib/consts/db";
+import { ArrayCommands, NumericCommands, envKey } from "$lib/consts/db";
 import { firebaseConfig } from "$lib/firebase_config";
 import AppErrorsHelper from "$lib/helpers/app_errors";
 import { getApp, getApps, initializeApp } from "firebase/app";
@@ -33,11 +33,6 @@ import {
 } from "firebase/firestore";
 import { Errors } from "../errors/messages";
 import RealTimeDatabase from "./real_time_data_base";
-
-enum NumericCommands {
-  decrement,
-  increment,
-}
 
 export default class FirestoreDataBase extends RealTimeDatabase {
   _firestore: Firestore;

@@ -11,9 +11,10 @@ import TimePickerObj from "$lib/models/ui/booking/time_picker_obj.js";
 import type WorkerModel from "$lib/models/worker/worker_model.js";
 import { AppErrors } from "$lib/services/errors/app_errors.js";
 import { Errors } from "$lib/services/errors/messages.js";
-import { isHoliday } from "../dates_utils.js";
+
 import { addDuration, durationStrikings } from "../duration_utils.js";
 
+import { Religion, holidays } from "$lib/consts/worker_schedule.js";
 import TreatmentTime from "$lib/models/general/treatment_time.js";
 import Event from "../../models/schedule/calendar_event.js";
 import { translate } from "../string_utils.js";
@@ -1514,6 +1515,26 @@ export function fixDateMonth(date: Date): Date {
   const dateMonth = date.getMonth();
   date.setMonth(dateMonth + 1);
   return date;
+}
+
+export function isHoliday(worker: WorkerModel, date: Date): boolean {
+  let isHoliday = false;
+  worker.religions.forEach((religion) => {
+    let dateString = format(date, "dd-MM-yyyy");
+    switch (religion) {
+      case Religion.christian:
+        dateString = dateString.substring(0, dateString.length - 4) + "0000";
+        isHoliday =
+          (isHoliday || holidays[Religion.christian]?.[dateString] != null) ??
+          false;
+        break;
+      default:
+        isHoliday =
+          (isHoliday || holidays[religion]?.[dateString] != null) ?? false;
+        break;
+    }
+  });
+  return isHoliday;
 }
 
 // export function testDateFunctions() {

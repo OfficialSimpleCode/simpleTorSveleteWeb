@@ -9,6 +9,7 @@ import { Timestamp } from "firebase/firestore";
 import AppErrorsHelper from "./app_errors";
 import DeveloperHelper from "./developer_helper";
 import { GeneralData } from "./general_data";
+// import LinksHelper from "./links_helper";
 import LinksHelper from "./links_helper";
 import ThemeHelper from "./theme_helper";
 import { VerificationHelper } from "./verification/verification_helper";
@@ -153,12 +154,10 @@ export class LoadAppHelper {
     }
     logger.info("Status is updated to --> $status");
     this.status = status;
-    loadAppState.set(status);
   }
 
   private async loadInitialBusiness(): Promise<boolean> {
     try {
-      await LinksHelper.GI().handleOpenAppLink();
       let businessId = LinksHelper.GI().linkedBuisnessId;
 
       // if (businessId === "") {
@@ -174,7 +173,7 @@ export class LoadAppHelper {
         );
         businessId = GeneralData.currentBusinesssId;
       } else {
-        LinksHelper.GI().linkedBuisnessId = "";
+        //LinksHelper.GI().linkedBuisnessId = "";
       }
       if (businessId === "") {
         return true;

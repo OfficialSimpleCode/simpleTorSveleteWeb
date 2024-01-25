@@ -7,10 +7,19 @@
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import UserInitializer from "$lib/initializers/user_initializer";
   import { LoginType } from "$lib/services/external_services/firebase_auth_service";
-  import { isConnectedStore, userStore } from "$lib/stores/User";
-  
-    // Assets
+  import { ShowToast } from "$lib/stores/ToastManager";
+  import { isConnectedStore } from "$lib/stores/User";
+
+  import { _ } from "svelte-i18n";
     async function handleClick(authProvider:AuthProvider){
+        //facebook is will be active soon 
+        if(AuthProvider.Facebook === authProvider){
+            ShowToast({
+                text: $_("soon"),
+                status: "info",
+            });
+            return;
+        }
         const resp = await VerificationHelper.GI().handleLogin({
             provider:authProvider,
             loginType:LoginType.login
@@ -24,11 +33,6 @@
             return;
         }
 
-        console.log(UserInitializer.GI().user);
-
-        const u = UserInitializer.GI().user;
-        userStore.set(u);
-
         goto(`${base}/business`);
         
     };
@@ -41,10 +45,11 @@
         src="https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?cs=srgb&dl=action-athlete-barbell-841130.jpg&fm=jpg"
         alt="simpletor"
     />
+
     <div class="flex-[1] flex flex-col justify-center items-center gap-8" >
         <h1 class="text-4xl">Login Or Signup</h1>
         {#each  googleOrder as authProvider, i}
-            <button on:click = {()=>handleClick(authProvider)} class="btn sm:btn-lg btn-outline w-full">
+            <button on:click = {()=>handleClick(authProvider)} class="btn sm:btn-lg btn-outline w-full" class:text-gray-500={authProvider === AuthProvider.Facebook}>
                 <img class="w-10 h-10" src={authProviderToImage[authProvider]} alt={authProviderToStr[authProvider]} />
                 Signin with {authProviderToStr[authProvider]}
             </button>

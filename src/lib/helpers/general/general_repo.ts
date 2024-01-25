@@ -1,35 +1,19 @@
-import {
-  ArrayCommands,
-  buisnessCollection,
-  dataCollection,
-  dataDoc,
-  multiEventsTimesDoc,
-  recurrenceEventsDoc,
-  workersCollection,
-  type NumericCommands,
-} from "$lib/consts/db";
+import { ArrayCommands, type NumericCommands } from "$lib/consts/db";
 import {
   eventFilterTypeToStr,
   type EventFilterType,
 } from "$lib/consts/worker_schedule";
-import BusinessModel from "$lib/models/business/business_model";
-import type CustomerData from "$lib/models/general/customer_data";
-import WorkerModel from "$lib/models/worker/worker_model";
+//import CustomerData from "$lib/models/general/customer_data";
+// import WorkerModel from "$lib/models/worker/worker_model";
 import FirestoreDataBase from "$lib/services/external_services/firestore";
 import {
-  Transaction,
   type DocumentData,
   type DocumentSnapshot,
   type Unsubscribe,
 } from "firebase/firestore";
 import DbPathesHelper from "../db_paths_helper";
-import { GeneralData } from "../general_data";
-import { GeneralApi } from "./general_api";
 
-export default class GeneralRepo
-  extends FirestoreDataBase
-  implements GeneralApi
-{
+export default class GeneralRepo extends FirestoreDataBase {
   constructor() {
     super();
   }
@@ -43,6 +27,8 @@ export default class GeneralRepo
     docId: string;
     insideEnviroments?: boolean;
   }): Promise<DocumentSnapshot<DocumentData, DocumentData> | undefined> {
+    // const obj = BusinessModel.empty();
+    // const c = new CustomerData({});
     return await super.getDocSRV({
       path: path,
       docId: docId,
@@ -241,132 +227,132 @@ export default class GeneralRepo
     });
   }
 
-  async getWorkerFromTransactionRepo({
-    transaction,
-    workerId,
-    businessModel,
-    needMultiDoc = false,
-  }: {
-    transaction: Transaction;
-    workerId: string;
-    businessModel?: BusinessModel;
-    needMultiDoc?: boolean;
-  }): Promise<WorkerModel | undefined> {
-    const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
-    const workerDoc = await this.transactionGet(transaction, path, workerId);
-    if (!workerDoc.exists()) {
-      return undefined;
-    }
-    const firestoreDataBaseWorker = WorkerModel.fromWorkerDocJson(
-      workerDoc!.data()
-    );
+  // async getWorkerFromTransactionRepo({
+  //   transaction,
+  //   workerId,
+  //   businessModel,
+  //   needMultiDoc = false,
+  // }: {
+  //   transaction: Transaction;
+  //   workerId: string;
+  //   businessModel?: BusinessModel;
+  //   needMultiDoc?: boolean;
+  // }): Promise<WorkerModel | undefined> {
+  //   const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
+  //   const workerDoc = await this.transactionGet(transaction, path, workerId);
+  //   if (!workerDoc.exists()) {
+  //     return undefined;
+  //   }
+  //   const firestoreDataBaseWorker = WorkerModel.fromWorkerDocJson(
+  //     workerDoc!.data()
+  //   );
 
-    await super
-      .transactionGet(
-        transaction,
-        `${path}/${workerId}/${dataCollection}`,
-        dataDoc
-      )
-      .then((json) => {
-        if (json.exists()) {
-          firestoreDataBaseWorker.workerPublicData.setWorkerPublicData(
-            json.data()
-          );
-        }
-      });
+  //   await super
+  //     .transactionGet(
+  //       transaction,
+  //       `${path}/${workerId}/${dataCollection}`,
+  //       dataDoc
+  //     )
+  //     .then((json) => {
+  //       if (json.exists()) {
+  //         firestoreDataBaseWorker.workerPublicData.setWorkerPublicData(
+  //           json.data()
+  //         );
+  //       }
+  //     });
 
-    if (
-      firestoreDataBaseWorker.hasRecurrenceEvents &&
-      firestoreDataBaseWorker.isCustomersNeedRecurrence
-    ) {
-      await super
-        .transactionGet(
-          transaction,
-          `${path}/${workerId}/${dataCollection}`,
-          recurrenceEventsDoc
-        )
-        .then((json) => {
-          if (json.exists() && json.data() != null) {
-            firestoreDataBaseWorker.recurrence.setRecurrenceEvents(
-              json.data(),
-              workerId,
-              businessModel ?? BusinessModel.empty()
-            );
-          }
-        });
-    }
-    if (needMultiDoc) {
-      await super
-        .transactionGet(
-          transaction,
-          `${path}/${workerId}/${dataCollection}`,
-          multiEventsTimesDoc
-        )
-        .then((json) => {
-          if (json.exists()) {
-            firestoreDataBaseWorker.multiEventsTimes.setData(json.data());
-          }
-        });
-    }
-    return firestoreDataBaseWorker;
-  }
+  //   if (
+  //     firestoreDataBaseWorker.hasRecurrenceEvents &&
+  //     firestoreDataBaseWorker.isCustomersNeedRecurrence
+  //   ) {
+  //     await super
+  //       .transactionGet(
+  //         transaction,
+  //         `${path}/${workerId}/${dataCollection}`,
+  //         recurrenceEventsDoc
+  //       )
+  //       .then((json) => {
+  //         if (json.exists() && json.data() != null) {
+  //           // firestoreDataBaseWorker.recurrence.setRecurrenceEvents(
+  //           //   json.data(),
+  //           //   workerId,
+  //           //   businessModel ?? BusinessModel.empty()
+  //           // );
+  //         }
+  //       });
+  //   }
+  //   if (needMultiDoc) {
+  //     await super
+  //       .transactionGet(
+  //         transaction,
+  //         `${path}/${workerId}/${dataCollection}`,
+  //         multiEventsTimesDoc
+  //       )
+  //       .then((json) => {
+  //         if (json.exists()) {
+  //           firestoreDataBaseWorker.multiEventsTimes.setData(json.data());
+  //         }
+  //       });
+  //   }
+  //   return firestoreDataBaseWorker;
+  // }
 
   toFormatedCustomerData({
-    customerData,
+    //customerData,
     amountOfBookingsCommand,
     useUserFirstBookingsDate = false,
     saveExtraData = false,
   }: {
-    customerData: CustomerData;
+    //customerData: CustomerData;
     amountOfBookingsCommand: any;
     useUserFirstBookingsDate?: boolean;
     saveExtraData?: boolean;
   }): Record<string, any> {
-    const customerDataJson = customerData.toJson();
-    customerDataJson["amoutOfBookings"] = amountOfBookingsCommand;
+    // const customerDataJson = customerData.toJson();
+    // customerDataJson["amoutOfBookings"] = amountOfBookingsCommand;
     const formatedCustomrsData: Record<string, any> = {};
-    formatedCustomrsData[`data.${customerData.customerUuid}.amoutOfBookings`] =
-      customerDataJson["amoutOfBookings"];
-    if (customerDataJson["lastBookingsDate"] != null) {
-      formatedCustomrsData[
-        `data.${customerData.customerUuid}.lastBookingsDate`
-      ] = customerDataJson["lastBookingsDate"];
-    }
-    if (useUserFirstBookingsDate) {
-      if (customerDataJson["userFirstBookingsDate"] != null) {
-        formatedCustomrsData[
-          `data.${customerData.customerUuid}.userFirstBookingsDate`
-        ] = customerDataJson["userFirstBookingsDate"];
-      }
-    } else {
-      if (customerDataJson["firstBookingsDate"] != null) {
-        formatedCustomrsData[
-          `data.${customerData.customerUuid}.firstBookingsDate`
-        ] = customerDataJson["firstBookingsDate"];
-      }
-    }
-    if (saveExtraData) {
-      if (customerDataJson["gender"] != null) {
-        formatedCustomrsData[`data.${customerData.customerUuid}.gender`] =
-          customerDataJson["gender"];
-      }
-      if (customerDataJson["name"] != null) {
-        formatedCustomrsData[`data.${customerData.customerUuid}.name`] =
-          customerDataJson["name"];
-      }
-      if (customerDataJson["workerNaming"] != null) {
-        formatedCustomrsData[`data.${customerData.customerUuid}.name`] =
-          customerDataJson["workerNaming"];
-      }
-      if (customerDataJson["email"] != null) {
-        formatedCustomrsData[`data.${customerData.customerUuid}.email`] =
-          customerDataJson["email"];
-      }
-      if (customerDataJson["id"] != null) {
-        formatedCustomrsData[`data.${customerData.customerUuid}.id`] =
-          customerDataJson["id"];
-      }
-    }
+    // formatedCustomrsData[`data.${customerData.customerUuid}.amoutOfBookings`] =
+    //   customerDataJson["amoutOfBookings"];
+    // if (customerDataJson["lastBookingsDate"] != null) {
+    //   formatedCustomrsData[
+    //     `data.${customerData.customerUuid}.lastBookingsDate`
+    //   ] = customerDataJson["lastBookingsDate"];
+    // }
+    // if (useUserFirstBookingsDate) {
+    //   if (customerDataJson["userFirstBookingsDate"] != null) {
+    //     formatedCustomrsData[
+    //       `data.${customerData.customerUuid}.userFirstBookingsDate`
+    //     ] = customerDataJson["userFirstBookingsDate"];
+    //   }
+    // } else {
+    //   if (customerDataJson["firstBookingsDate"] != null) {
+    //     formatedCustomrsData[
+    //       `data.${customerData.customerUuid}.firstBookingsDate`
+    //     ] = customerDataJson["firstBookingsDate"];
+    //   }
+    // }
+    // if (saveExtraData) {
+    //   if (customerDataJson["gender"] != null) {
+    //     formatedCustomrsData[`data.${customerData.customerUuid}.gender`] =
+    //       customerDataJson["gender"];
+    //   }
+    //   if (customerDataJson["name"] != null) {
+    //     formatedCustomrsData[`data.${customerData.customerUuid}.name`] =
+    //       customerDataJson["name"];
+    //   }
+    //   if (customerDataJson["workerNaming"] != null) {
+    //     formatedCustomrsData[`data.${customerData.customerUuid}.name`] =
+    //       customerDataJson["workerNaming"];
+    //   }
+    //   if (customerDataJson["email"] != null) {
+    //     formatedCustomrsData[`data.${customerData.customerUuid}.email`] =
+    //       customerDataJson["email"];
+    //   }
+    //   if (customerDataJson["id"] != null) {
+    //     formatedCustomrsData[`data.${customerData.customerUuid}.id`] =
+    //       customerDataJson["id"];
+    //   }
+    // }
     return formatedCustomrsData;
   }
 

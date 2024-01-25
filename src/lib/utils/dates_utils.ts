@@ -32,26 +32,6 @@ export function setToStartOfYear(dateTime: Date): Date {
   return new Date(dateTime.getFullYear(), 0, 1);
 }
 
-export function isHoliday(worker: WorkerModel, date: Date): boolean {
-  let isHoliday = false;
-  worker.religions.forEach((religion) => {
-    let dateString = format(date, "dd-MM-yyyy");
-    switch (religion) {
-      case Religion.christian:
-        dateString = dateString.substring(0, dateString.length - 4) + "0000";
-        isHoliday =
-          (isHoliday || holidays[Religion.christian]?.[dateString] != null) ??
-          false;
-        break;
-      default:
-        isHoliday =
-          (isHoliday || holidays[religion]?.[dateString] != null) ?? false;
-        break;
-    }
-  });
-  return isHoliday;
-}
-
 export function getHolidayNames(
   worker: WorkerModel,
   date: Date

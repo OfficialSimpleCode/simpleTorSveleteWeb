@@ -462,7 +462,7 @@ export default class UserModel {
     this.gender = genderFromStr[dataJson["gender"]];
     this.phoneNumber = dataJson["phoneNumber"];
     this.id = dataJson["id"] || dataJson["phoneNumber"];
-    this.userPublicData.setUserPublicData(dataJson, this);
+    this.userPublicData.setUserPublicData(dataJson, this.bookings);
   }
 
   firstEnterance(businessId: string): boolean {

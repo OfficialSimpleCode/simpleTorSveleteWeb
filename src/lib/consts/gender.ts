@@ -1,3 +1,6 @@
+import ManProfile from "$lib/images/man_profile.svg";
+import WomanProfile from "$lib/images/woman_profile.svg";
+
 export enum Gender {
   male,
   female,
@@ -83,6 +86,12 @@ export const genderToStr: { [key in Gender]: string } = {
   [Gender.anonymous]: "anonymous",
 };
 
+export const genderToImage: { [key in Gender]: string } = {
+  [Gender.male]: ManProfile,
+  [Gender.female]: WomanProfile,
+  [Gender.anonymous]: ManProfile,
+};
+
 export const genderFromStr: { [key: string]: Gender } = {
   male: Gender.male,
   female: Gender.female,
@@ -94,3 +103,9 @@ export const genderColors: { [key in Gender]: string } = {
   [Gender.female]: "pink",
   [Gender.anonymous]: "white",
 };
+
+export const genderList: Gender[] = [
+  Gender.male,
+  Gender.female,
+  Gender.anonymous,
+];

@@ -760,7 +760,6 @@ export default class Booking extends ScheduleItem {
   }: {
     worker: WorkerModel;
     user: UserModel;
-
     needToHoldOn: boolean;
     business: BusinessModel;
     noteText: string;
@@ -776,6 +775,8 @@ export default class Booking extends ScheduleItem {
     this.addToClientAt =
       !clientAt.hasOwnProperty(business.businessId) ||
       !clientAt.get(business.businessId)?.has(worker.id);
+    this.userFcms = user.fcmsTokens;
+    this.isVerifiedPhone = user.isVerifiedPhone;
 
     this.orderingOptions = OrderingOptions.web;
 
@@ -784,7 +785,7 @@ export default class Booking extends ScheduleItem {
     this.wasWaiting = false;
     this.note = noteText;
     this.shopIcon = business.design.shopIconData;
-    this.userFcms = user.fcmsTokens;
+
     if (
       diffDuration(this.bookingDate, new Date()).inMinutes < 60 &&
       !needToHoldOn
@@ -834,8 +835,6 @@ export default class Booking extends ScheduleItem {
     } else {
       this.status = BookingStatuses.approved;
     }
-
-    this.isVerifiedPhone = user.isVerifiedPhone;
 
     this.notificationType = sendMessage({ booking: this, worker: worker });
   }

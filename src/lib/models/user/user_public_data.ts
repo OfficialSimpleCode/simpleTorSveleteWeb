@@ -10,7 +10,7 @@ import CustomerData from "../general/customer_data";
 import Device from "../general/device";
 import LocalDocReference from "../general/local_doc_reference";
 import BookingsPreview from "./booking_month_preview";
-import type UserModel from "./user_model";
+import type UserBookings from "./bookings";
 
 export default class UserPublicData {
   email: string = "";
@@ -68,7 +68,7 @@ export default class UserPublicData {
 
   static fromJson(
     dataJson: { [key: string]: any },
-    user?: UserModel
+    bookings?: UserBookings
   ): UserPublicData {
     const userPublicData = new UserPublicData({
       email: dataJson["email"],
@@ -79,7 +79,7 @@ export default class UserPublicData {
       id: dataJson["id"],
       gender: dataJson["gender"],
     });
-    userPublicData.setUserPublicData(dataJson, user);
+    userPublicData.setUserPublicData(dataJson, bookings);
     return userPublicData;
   }
 
@@ -105,7 +105,10 @@ export default class UserPublicData {
   //   });
   // }
 
-  setUserPublicData(dataJson: Record<string, any>, user?: UserModel): void {
+  setUserPublicData(
+    dataJson: Record<string, any>,
+    bookings?: UserBookings
+  ): void {
     this.permission = new Map();
     this.myBuisnessesIds = [];
     this.isVerifiedEmail = dataJson["isVerifiedEmail"] || false;
@@ -189,7 +192,7 @@ export default class UserPublicData {
             preview.lastUpdateTime &&
           (docId === recurrenceBookingsDoc ||
             monthStrToDate(docId) >= setToStartOfMonth(new Date()) ||
-            (user?.bookings.passedBookings?.hasOwnProperty(docId) ?? false))
+            (bookings?.passedBookings?.hasOwnProperty(docId) ?? false))
         ) {
           this.bookingsDocsToLoad.add(docId);
         }

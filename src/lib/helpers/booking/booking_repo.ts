@@ -18,7 +18,7 @@ import {
 import { EventFilterType } from "$lib/consts/worker_schedule";
 import Booking from "$lib/models/booking/booking_model";
 import type CustomerData from "$lib/models/general/customer_data";
-import type WorkerModel from "$lib/models/worker/worker_model";
+import WorkerModel from "$lib/models/worker/worker_model";
 import { Errors } from "$lib/services/errors/messages";
 import { addDuration } from "$lib/utils/duration_utils";
 import { sendMessage } from "$lib/utils/notifications_utils";
@@ -190,10 +190,12 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       let allowedTime = false;
 
       if (!afterPayment) {
-        firestoreDataBaseWorker = await this.getWorkerFromTransactionRepo({
-          transaction: transaction,
-          workerId: booking.workerId,
-        });
+        firestoreDataBaseWorker = new WorkerModel({});
+
+        // await this.getWorkerFromTransactionRepo({
+        //   transaction: transaction,
+        //   workerId: booking.workerId,
+        // });
 
         if (firestoreDataBaseWorker === null) {
           return false;
@@ -326,7 +328,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     });
     const formatedCustomrsData: { [key: string]: any } =
       this.toFormatedCustomerData({
-        customerData: customerData,
+        // customerData: customerData,
         amountOfBookingsCommand: NumericCommands.decrement,
       });
     const transacionCommands: (transaction: any) => Promise<any> = async (
@@ -434,10 +436,12 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         oldBooking.isUserExist = oldBooking.isUserExist;
       }
 
-      const firestoreDataBaseWorker = await this.getWorkerFromTransactionRepo({
-        transaction: transaction,
-        workerId: newBooking.workerId,
-      });
+      const firestoreDataBaseWorker = new WorkerModel({});
+
+      // await this.getWorkerFromTransactionRepo({
+      //   transaction: transaction,
+      //   workerId: newBooking.workerId,
+      // });
 
       const isTreatmentsUpdate =
         oldBooking.bookingDate.getTime() === newBooking.bookingDate.getTime() &&
@@ -578,7 +582,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     if (newBooking.workerId !== oldBooking.workerId) {
       const formatedNewCustomrsData: Record<string, any> =
         this.toFormatedCustomerData({
-          customerData: newBookingCustomerData,
+          //customerData: newBookingCustomerData,
           amountOfBookingsCommand: NumericCommands.increment,
           useUserFirstBookingsDate: true,
           saveExtraData: true,
@@ -591,7 +595,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       });
       const formatedOldCustomrsData: Record<string, any> =
         this.toFormatedCustomerData({
-          customerData: oldBookingCustomerData,
+          //customerData: oldBookingCustomerData,
           amountOfBookingsCommand: NumericCommands.decrement,
         });
       this.transactionUpdateMultipleFieldsAsMap({
@@ -605,12 +609,12 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     if (newBooking.customerId !== oldBooking.customerId) {
       const formatedNewCustomrsData: Record<string, any> =
         this.toFormatedCustomerData({
-          customerData: newBookingCustomerData,
+          //customerData: newBookingCustomerData,
           amountOfBookingsCommand: NumericCommands.increment,
         });
       let formatedOldCustomrsData: Record<string, any> =
         this.toFormatedCustomerData({
-          customerData: oldBookingCustomerData,
+          //customerData: oldBookingCustomerData,
           amountOfBookingsCommand: NumericCommands.decrement,
         });
       formatedOldCustomrsData = {

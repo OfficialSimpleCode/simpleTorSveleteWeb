@@ -6,7 +6,7 @@
 
   import { Icon, MapPin, Share } from "svelte-hero-icons";
   import { _ } from "svelte-i18n";
-  // Models
+// Models
   import type { ProductModel } from "$lib/models/business/ProductModel";
 
   // Components
@@ -15,7 +15,7 @@
   import ImageDisplayDialog from "./components/ImageDisplayDialog.svelte";
   import ShareDialog from "./components/ShareDialog.svelte";
   import SocialLinks from "./components/SocialLinks.svelte";
-  // other (utils / stores)
+// other (utils / stores)
   import Navbar from "$lib/components/navbar/Navbar.svelte";
   import { businessStore } from "$lib/stores/Business.js";
   import { isConnectedStore } from "$lib/stores/User";

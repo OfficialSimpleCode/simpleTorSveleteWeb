@@ -101,6 +101,7 @@ export default class BusinessInitializer {
       fromSearch = false,
     }: { fromLoading?: boolean; fromSearch?: boolean } = {}
   ): Promise<boolean> {
+    console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
     // Clean business data
     // ScreenController.getInstance().initOffsets();
     // BusinessUIController.getInstance().changingPhotoIndex = 0;
@@ -158,10 +159,9 @@ export default class BusinessInitializer {
       //     BusinessInitializer.getInstance().business.design.pickedThemeKey,
       //     { needOverlayHandling: !fromSearch }
       //   );
-      const w = BusinessInitializer.GI().workers;
-      workersStore.set(w);
-      const b = BusinessInitializer.GI().business;
-      businessStore.set(b);
+
+      workersStore.set(BusinessInitializer.GI().workers);
+      businessStore.set(BusinessInitializer.GI().business);
       //   UiManager.insertUpdate(Providers.settings);
       return true;
     } catch (e) {
@@ -218,7 +218,7 @@ export default class BusinessInitializer {
   async _loadBusinessWorkers(businessId: string): Promise<boolean> {
     try {
       const workersPath = `${buisnessCollection}/${businessId}/${workersCollection}`;
-      console.log("eewwwwwwwww");
+
       const workersJsonsList =
         await this.generalRepo.getAllDocsInsideCollection(workersPath);
 
