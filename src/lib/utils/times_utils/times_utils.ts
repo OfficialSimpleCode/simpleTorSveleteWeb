@@ -16,9 +16,11 @@ import { addDuration, durationStrikings } from "../duration_utils.js";
 
 import { Religion, holidays } from "$lib/consts/worker_schedule.js";
 import TreatmentTime from "$lib/models/general/treatment_time.js";
+import moment from "moment";
 import Event from "../../models/schedule/calendar_event.js";
 import { translate } from "../translate.js";
 import type { TimeSegment } from "./models.js";
+
 /**
  * Checks if the given time should be skipped based on the booking date and optional todayCheck.
  * @param pointerWork - The time to check.
@@ -368,13 +370,13 @@ export function relevantHoures({
   amoutLimit,
   recurrenceSkipDate,
 }: {
-  worker: WorkerModel | null | undefined;
+  worker: WorkerModel | undefined;
   booking: Booking;
-  isUpdate: boolean;
+  isUpdate?: boolean;
   oldBooking?: Booking;
-  workerSheet: boolean;
-  reverse: boolean;
-  workerAction: boolean;
+  workerSheet?: boolean;
+  reverse?: boolean;
+  workerAction?: boolean;
   amoutLimit?: number;
   recurrenceSkipDate?: Date;
 }): TimePickerObj[] {
@@ -1385,13 +1387,11 @@ export function timeStrToDate(date: string): Date {
 }
 
 export function dateStrToDate(date: string): Date {
-  return new Date(date);
+  return moment(date, "dd-MM-yyyy").toDate();
 }
 
 export function monthStrToDate(date: string): Date {
-  const toDate = new Date(`01-${date}`);
-  //toDate.setDate(1);
-  return new Date(`01-${date}`);
+  return moment(date, "MM-yyyy").toDate();
 }
 
 export function conversStrToDateTime(day: Date, strTime: string): Date {

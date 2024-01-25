@@ -5,7 +5,8 @@ import UserInitializer from "$lib/initializers/user_initializer";
 import Booking from "$lib/models/booking/booking_model";
 import type { PaymentTypes } from "$lib/models/booking/booking_transaction";
 import Treatment from "$lib/models/general/treatment_model";
-import type WorkerModel from "$lib/models/worker/worker_model";
+import type TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
+import WorkerModel from "$lib/models/worker/worker_model";
 import { ShowToast } from "$lib/stores/ToastManager";
 import { sendMessage } from "$lib/utils/notifications_utils";
 import { translate } from "$lib/utils/translate";
@@ -22,10 +23,15 @@ interface BookingMaker {
   currentPaymentType?: PaymentTypes;
   hasMultiTreatment: boolean;
   isBookingWithPaymentUpdate: boolean;
+  currentStep: number;
+  isMultiEvent: boolean;
 }
-export default class BookingController {
-  static bookingMakerStore = writable<BookingMaker>();
+export const bookingMakerStore = writable<BookingMaker>();
 
+export default class BookingController {
+  static timePickerObjects: TimePickerObj[] = [];
+  static visibleDates: Date[] = [];
+  static firstDateToShow: Date | undefined;
   static initializeBookingMaker({ isUpdate = false }: { isUpdate?: boolean }) {
     console.log("initializeBookingMaker");
     const initialBookingMaker: BookingMaker = {
@@ -39,12 +45,22 @@ export default class BookingController {
       pickMultipleServices: false,
       hasMultiTreatment: false,
       isBookingWithPaymentUpdate: false,
+      currentStep: 1,
+      isMultiEvent: false,
     };
-    BookingController.bookingMakerStore.set(initialBookingMaker);
+    bookingMakerStore.set(initialBookingMaker);
+  }
+
+  static get worker(): WorkerModel {
+    const bookingMaker = get(bookingMakerStore);
+    return (
+      BusinessInitializer.GI().workers[bookingMaker.workerId ?? ""] ??
+      new WorkerModel({})
+    );
   }
 
   static setWorkerId(newWorkerId: string) {
-    const bookingMaker = get(BookingController.bookingMakerStore);
+    const bookingMaker = get(bookingMakerStore);
     if (newWorkerId === bookingMaker.workerId) {
       return;
     }
@@ -64,12 +80,12 @@ export default class BookingController {
     }
 
     bookingMaker.workerId = newWorkerId;
-
-    BookingController.bookingMakerStore.set(bookingMaker);
+    bookingMaker.currentStep += 1;
+    bookingMakerStore.set(bookingMaker);
   }
 
   static updateWorkerData(workerObj: WorkerModel) {
-    const bookingMaker = get(BookingController.bookingMakerStore);
+    const bookingMaker = get(bookingMakerStore);
     logger.debug("Getting new data for the worker");
 
     // If treatments had changed
@@ -99,11 +115,11 @@ export default class BookingController {
         showPhoneVerificationAlert(currentWorker);
     }
 
-    BookingController.bookingMakerStore.set(bookingMaker);
+    bookingMakerStore.set(bookingMaker);
   }
 
-  get bookingFromValues(): Booking {
-    const bookingMaker = get(BookingController.bookingMakerStore);
+  static get bookingFromValues(): Booking {
+    const bookingMaker = get(bookingMakerStore);
     const booking = new Booking({
       workerId: bookingMaker.workerId,
     });
@@ -128,8 +144,7 @@ export default class BookingController {
   }
 
   static onTapService(treatment: Treatment): void {
-    console.log("rrrrrrrrrrrrrrrrrrrrrr");
-    const bookingMaker = get(BookingController.bookingMakerStore);
+    const bookingMaker = get(bookingMakerStore);
     if (
       bookingMaker.isBookingWithPaymentUpdate &&
       !bookingMaker.services.hasOwnProperty(treatment.id)
@@ -195,7 +210,8 @@ export default class BookingController {
       treatment.isMulti,
       treatment.amountInAdvance > 0
     );
-    BookingController.bookingMakerStore.set(bookingMaker);
+    bookingMaker.currentStep += 1;
+    bookingMakerStore.set(bookingMaker);
   }
 
   static removeService(bookingMaker: BookingMaker, treatment: Treatment) {
@@ -206,7 +222,7 @@ export default class BookingController {
     bookingMaker.services[treatment.id].count = 1;
     delete bookingMaker.services[treatment.id];
 
-    BookingController.bookingMakerStore.set(bookingMaker);
+    bookingMakerStore.set(bookingMaker);
   }
 
   static addService(bookingMaker: BookingMaker, treatment: Treatment) {
@@ -280,8 +296,51 @@ export default class BookingController {
       bookingMaker.services = {
         [treatment.id]: treatment,
       };
+      bookingMaker.currentStep += 1;
     }
-    BookingController.bookingMakerStore.set(bookingMaker);
+    bookingMakerStore.set(bookingMaker);
+  }
+
+  static onRemoveTreatmentCount(treatment: Treatment) {
+    const bookingMaker = get(bookingMakerStore);
+    if (bookingMaker.services[treatment!.id] === undefined) {
+      return;
+    }
+    if (bookingMaker.services[treatment!.id]?.count === 1) {
+      this.removeService(bookingMaker, treatment);
+    } else {
+      bookingMaker.services[treatment.id].count = -1;
+      bookingMakerStore.set(bookingMaker);
+    }
+  }
+
+  static onAddTreatmentCount(treatment: Treatment) {
+    const bookingMaker = get(bookingMakerStore);
+    if (bookingMaker.services[treatment!.id] != undefined) {
+      return;
+    }
+    let treatmentsAmount = 0;
+    Object.entries(bookingMaker.services).forEach(
+      ([treatmentId, treatment]) => {
+        if (bookingMaker.services.value.hasOwnProperty(treatmentId)) {
+          const treatment = bookingMaker.services[treatmentId];
+          treatmentsAmount += treatment.count;
+        }
+      }
+    );
+
+    if (treatmentsAmount >= BookingController.worker.maxTreatments) {
+      ShowToast({
+        text: translate("userMaxTreatments").replaceAll(
+          "AMOUNT",
+          BookingController.worker.maxTreatments.toString()
+        ),
+        status: "warning",
+      });
+      return;
+    }
+
+    bookingMakerStore.set(bookingMaker);
   }
 }
 function showPhoneVerificationAlert(worker: WorkerModel): boolean {

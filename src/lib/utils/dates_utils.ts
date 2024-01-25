@@ -164,6 +164,27 @@ export function allMonthBetween(date1: Date, date2: Date): Set<string> {
   return months;
 }
 
+export function getWeekdayFromDate(date: Date): string {
+  // Get the day of the week (0-6)
+  var dayOfWeek = date.getDay();
+
+  // Define an array of weekday names
+  var weekdays = [
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+  ];
+
+  // Get the weekday name
+  var weekdayName = weekdays[dayOfWeek];
+
+  return weekdayName;
+}
+
 // enum CustomDurationOptions {
 //   last30Days,
 //   last7Days,

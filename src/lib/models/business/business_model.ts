@@ -9,8 +9,9 @@ import {
 import { hypPathFromStr, type HypPaths } from "$lib/consts/hyp_pathes";
 import { BusinessData } from "./business_data";
 import { BusinessDesign } from "./business_design";
-import { ProductModel } from "./ProductModel";
+import { ProductModel } from "./product_model";
 import { Update } from "./update_model";
+import WorkersPermissions from "./workers_permission";
 
 export default class BusinessModel {
   businesseType: BusinessesTypes = BusinessesTypes.Other;
@@ -23,6 +24,7 @@ export default class BusinessModel {
   workersIds: Map<string, string> = new Map();
   hypPath?: HypPaths;
   expiredDate: Date = new Date();
+  workersPermissions: WorkersPermissions = new WorkersPermissions();
   shopPhone: string = "";
   ownersName: string = "";
   companyNumber: string = "";
@@ -149,6 +151,11 @@ export default class BusinessModel {
         json["changingImagesSwapSeconds"] ?? 6;
       this.design.shopIconUrl = json["shopIcon"] ?? "";
     }
+    if (json["workersPermissions"] != null) {
+      this.workersPermissions = WorkersPermissions.fromJson(
+        json["workersPermissions"]
+      );
+    }
 
     this.previewDoc = json["previewDoc"] ?? "";
     this.workersProductsId = json["workersProductsId"] ?? "";
@@ -272,6 +279,7 @@ export default class BusinessModel {
     data.instagramAccount = this.instagramAccount;
     data.adress = this.adress;
     data.shopPhone = this.shopPhone;
+    data.workersPermissions = this.workersPermissions.toJson();
 
     data.workersIds = this.workersIds;
     data.createdAt = this.createdAt;
