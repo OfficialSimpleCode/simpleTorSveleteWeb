@@ -88,9 +88,9 @@
   }
 </script>
 
-<main class="h-screen w-screen flex flex-col items-center gap-8 bg-base-100">
+<main class="h-screen w-screen flex flex-col items-center gap-2 bg-base-100">
   <Navbar />
-  <ul class="steps min-h-20 w-[90%] sm:w-[60%] mt-5">
+  <ul class="steps min-h-24 w-[90%] sm:w-[60%] mt-1">
     {#each steps as step, i}
       <button
         class="step hover:step-neutral"
@@ -131,7 +131,7 @@
       on:edit-services={() => (currentStep = 2)}
     />
   {/if}
-  <div class="pb-4 w-[90%]">
+  <div class="pb-4 w-[90%] mt-3">
     <button
       class="btn btn-outline sm:hidden w-full"
       on:click={() => history.back()}

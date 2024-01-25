@@ -5,7 +5,6 @@
 
   import BookingController from "$lib/controllers/booking_controller";
   import { ShowToast } from "$lib/stores/ToastManager";
-  import { translate } from "$lib/utils/translate";
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
 
@@ -108,16 +107,16 @@
             </h1>
             <div class="flex items-center h-full">
               <div class="divider divider-horizontal border-black" />
-              <div>
-                <p class="text-gray-500">
-                  {service.price} ₪
+              <div class="flex flex-col">
+                <p class="text-gray-500 whitespace-nowrap" dir="ltr">
+                  {service.price}
                 </p>
                 <p class="text-gray-500">
                   {service.totalMinutes}
                 </p>
               </div>
-            </div>
-          </button>
+            </div></button
+          >
           {#if serviceCount(service, selectedServices) > 0}
             <div class="join self-end">
               <button
@@ -152,7 +151,7 @@
       <button
         class="btn btn-primary max-w-[90%] sm:max-w-sm w-full"
         on:click={continuetoNextStep}
-        >{translate("continue")}
+        >{$_("continue")}
       </button>
     </div>
   {/if}

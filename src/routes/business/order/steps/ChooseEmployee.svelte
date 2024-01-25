@@ -53,10 +53,16 @@
           <h1 class="text-2xl sm:text-4xl text-start">
             {employee.name}
           </h1>
-          <p class="text-gray-500">
-            {$_(isManager(employee) ? "manager" : "worker")}
-            {$_("since")}: {dateToDDMMYYFormat(employee.createdAt)}
-          </p>
+          {#if employee.about === ""}
+            <p class="text-gray-500">
+              {$_(isManager(employee) ? "manager" : "worker")}
+              {$_("since")}: {dateToDDMMYYFormat(employee.createdAt)}
+            </p>
+          {:else}
+            <p class="text-gray-500">
+              {employee.about}
+            </p>
+          {/if}
         </div>
       </button>
     {/each}
