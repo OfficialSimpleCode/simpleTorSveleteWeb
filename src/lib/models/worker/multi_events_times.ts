@@ -1,4 +1,5 @@
 import type { Unsubscribe } from "firebase/firestore";
+import MultiBookingTime from "../multi_booking/multi_booking_time";
 
 export default class MultiEventsTimes {
   times: Record<string, Record<string, MultiBookingTime>> = {};

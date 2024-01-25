@@ -1,4 +1,4 @@
-import { translate } from "./string_utils";
+import { translate } from "./translate";
 
 export function emailValidation(email: string | null): string | null {
   if (email === null || email === "") return null;

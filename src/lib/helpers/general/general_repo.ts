@@ -26,9 +26,9 @@ export default class GeneralRepo extends FirestoreDataBase {
     path: string;
     docId: string;
     insideEnviroments?: boolean;
-  }): Promise<DocumentSnapshot<DocumentData, DocumentData> | undefined> {
+  }): Promise<DocumentSnapshot<DocumentData, DocumentData>> {
     // const obj = BusinessModel.empty();
-    // const c = new CustomerData({});
+    //const c = new CustomerData({});
     return await super.getDocSRV({
       path: path,
       docId: docId,

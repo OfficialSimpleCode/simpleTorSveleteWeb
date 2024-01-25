@@ -38,26 +38,15 @@ export default class MultiBookingTime {
   }
 
   static fromMultiBookingTime(other: MultiBookingTime): MultiBookingTime {
-    const {
-      treatmentId,
-      currentParticipants,
-      minutes,
-      showWaitingList,
-      maxParticipants,
-      expiredDate,
-      paymentRequestId,
-      index,
-    } = other;
-
     return new MultiBookingTime({
-      treatmentId,
-      currentParticipants,
-      minutes,
-      showWaitingList,
-      maxParticipants,
-      expiredDate,
-      paymentRequestId,
-      index,
+      treatmentId: other.treatmentId,
+      currentParticipants: other.currentParticipants,
+      minutes: other.minutes,
+      showWaitingList: other.showWaitingList,
+      maxParticipants: other.maxParticipants,
+      expiredDate: other.expiredDate,
+      paymentRequestId: other.paymentRequestId,
+      index: other.index,
     });
   }
 

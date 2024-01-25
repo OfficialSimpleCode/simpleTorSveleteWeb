@@ -2,11 +2,10 @@ import {
   businessTypeFromStr,
   type BusinessesTypes,
 } from "$lib/consts/business_types";
-import { Gender, maleToFemaleMap } from "$lib/consts/gender";
 import { weekDays } from "$lib/consts/worker_schedule";
-import UserInitializer from "$lib/initializers/user_initializer";
 import type { Duration } from "$lib/models/core/duration";
 import { addDays, format } from "date-fns";
+import { translate } from "./translate";
 
 export function durationToString(
   duration: Duration,
@@ -122,24 +121,6 @@ export function durationFormated(duration: Duration): string {
   const twoDigits = (n: number) => n.toString().padStart(2, "0");
   const twoDigitMinutes = twoDigits(duration.minutes % 60);
   return `${twoDigits(duration.hours)}:${twoDigitMinutes}`;
-}
-
-export function textAccordingToGender(txt: string): string {
-  const userGender = UserInitializer.GI().user.gender;
-  const isMale = userGender === Gender.male || userGender === Gender.anonymous;
-  if (!isMale) {
-    Object.keys(maleToFemaleMap).forEach((key) => {
-      txt = txt.replaceAll(key, maleToFemaleMap[key]);
-    });
-  }
-  return txt;
-}
-
-export function translate(strName: string, needGender: boolean = true): string {
-  // const translatedStr = ApplicationLocalizations.translate(strName);
-  // if (LanguageHelper().currentLaguageCode === "he" && needGender)
-  //   return textAccordingToGender(translatedStr);
-  return strName;
 }
 
 export function shortName(longName: string): string {

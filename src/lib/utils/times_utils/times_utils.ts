@@ -17,7 +17,7 @@ import { addDuration, durationStrikings } from "../duration_utils.js";
 import { Religion, holidays } from "$lib/consts/worker_schedule.js";
 import TreatmentTime from "$lib/models/general/treatment_time.js";
 import Event from "../../models/schedule/calendar_event.js";
-import { translate } from "../string_utils.js";
+import { translate } from "../translate.js";
 import type { TimeSegment } from "./models.js";
 /**
  * Checks if the given time should be skipped based on the booking date and optional todayCheck.
@@ -293,8 +293,8 @@ export function relevantMultiEventTime({
           signedPaymentRequestId: timeObj.paymentRequestId,
           displayDate,
           maxParticipants,
-          isWaitingList: maxParticipants <= timeObj.currentPaticipants,
-          currentParticipants: timeObj.currentPaticipants,
+          isWaitingList: maxParticipants <= timeObj.currentParticipants,
+          currentParticipants: timeObj.currentParticipants,
           showParticipants: treatment.showParticipants,
         })
       );

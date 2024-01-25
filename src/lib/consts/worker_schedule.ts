@@ -121,7 +121,7 @@ export const eventFilterTypeToIcon: Record<EventFilterType, string> = {
 };
 
 export const eventFilterWithCountersTypeToStr: {
-  [key in EventFilterType]: string;
+  [key in EventFilterType]?: string;
 } = {
   [EventFilterType.onHold]: "waitingsForApproval",
   [EventFilterType.needCancel]: "waitingsForCancel",

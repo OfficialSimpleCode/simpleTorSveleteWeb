@@ -1,7 +1,7 @@
 import { monthDifference } from "$lib/utils/dates_utils";
 import { addDuration } from "$lib/utils/duration_utils";
 import { setEquals } from "$lib/utils/general_utils";
-import { durationToString, translate } from "$lib/utils/string_utils";
+import { durationToString } from "$lib/utils/string_utils";
 import {
   addMonths,
   dateStrToDate,
@@ -9,6 +9,7 @@ import {
   getStartOfWeek,
   setToMidNight,
 } from "$lib/utils/times_utils/times_utils";
+import { translate } from "$lib/utils/translate";
 import { format } from "date-fns";
 import { Duration } from "../core/duration";
 import { SplayTreeSet } from "../general/splay_tree_set";

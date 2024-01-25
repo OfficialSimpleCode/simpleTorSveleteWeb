@@ -1,12 +1,9 @@
 import { Gender } from "$lib/consts/gender";
-import { laterDate } from "$lib/utils/dates_utils";
 import { hashId } from "$lib/utils/encryptions";
-import { firstDate } from "$lib/utils/times_utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
 import MultiBookingUser from "../multi_booking/multi_booking_user";
 import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
 import PublicCustomer from "../worker/public_customer";
-import type WorkerModel from "../worker/worker_model";
 
 export const minBookingCountToRegular: number = 3;
 
@@ -214,27 +211,6 @@ export default class CustomerData {
     return JSON.stringify(jsonB) === JSON.stringify(jsonA);
   }
 
-  getType({
-    bookingInMonthForRegularClient,
-    worker,
-  }: {
-    bookingInMonthForRegularClient: number;
-    worker: WorkerModel;
-  }): CustomerTypes {
-    if (worker.id === this.customerUuid) {
-      return CustomerTypes.self;
-    }
-    if (this.isDeleted) {
-      return CustomerTypes.deleted;
-    }
-    if (this.amoutOfBookings <= minBookingCountToRegular) {
-      return CustomerTypes.fresh;
-    }
-    return this.amountOfBookingsInMonth() < bookingInMonthForRegularClient
-      ? CustomerTypes.returned
-      : CustomerTypes.regular;
-  }
-
   getGenderFromStr(genderStr: string | undefined): Gender {
     if (genderStr == null || genderStr == "A") {
       return Gender.anonymous;
@@ -361,35 +337,6 @@ export default class CustomerData {
     return data;
   }
 
-  merge(other: CustomerData): CustomerData {
-    if (!other.addedManually && this.addedManually) {
-      this.email = other.email !== "" ? other.email : this.email;
-      this.name = other.name !== "" ? other.name : this.name;
-      this.addedManually = false;
-      this.customerUuid = other.customerUuid;
-    }
-    if (this.workerNaming === "") {
-      this.workerNaming = other.workerNaming;
-    }
-    this.isVerifiedPhone = other.isVerifiedPhone || this.isVerifiedPhone;
-    this.gender = this.gender;
-    this.blocked = other.blocked || this.blocked;
-    this.lastBookingsDate = laterDate(
-      other.lastBookingsDate,
-      this.lastBookingsDate
-    );
-    this.firstBookingsDate = firstDate(
-      other.firstBookingsDate,
-      this.firstBookingsDate
-    );
-    this.userFirstBookingsDate = firstDate(
-      other.userFirstBookingsDate,
-      this.userFirstBookingsDate
-    );
-    this.amoutOfBookings += other.amoutOfBookings;
-    return this;
-  }
-
   static fromMinimalJson(json: { [key: string]: any }): CustomerData {
     const newObj = new CustomerData({});
     newObj.workerNaming = json["N"] ?? "";
@@ -414,12 +361,6 @@ export default class CustomerData {
     });
   }
 
-  belongingsNames(workers: Map<string, WorkerModel>): string {
-    return Array.from(this.belongings)
-      .map((workerId) => workers.get(workerId)?.name ?? "")
-      .join(", ");
-  }
-
   get forUpdate(): CustomerData {
     const customerData: CustomerData = new CustomerData({});
     customerData.name = this.name;
@@ -442,15 +383,6 @@ export default class CustomerData {
 
     return customerData;
   }
-
-  // toCustomerStatisticsData(): CustomerStatisticsData {
-  //   return {
-  //     phoneNumber: this.phoneNumber,
-  //     userId: this.customerUuid,
-  //     name: this.nameForWorker,
-  //     gender: this.gender,
-  //   };
-  // }
 
   toString(): string {
     return JSON.stringify(this.toJson(), null, "  ");

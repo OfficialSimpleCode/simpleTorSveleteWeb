@@ -20,12 +20,12 @@ import {
   shiftsFromStrList,
 } from "$lib/utils/shifts_utils";
 
-import { translate } from "$lib/utils/string_utils";
 import {
   dateStrToDate,
   dateToDateStr,
   setToMidNight,
 } from "$lib/utils/times_utils/times_utils";
+import { translate } from "$lib/utils/translate";
 import { format } from "date-fns";
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
 import Device from "../general/device";

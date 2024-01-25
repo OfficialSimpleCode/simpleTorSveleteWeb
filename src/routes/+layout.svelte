@@ -10,7 +10,6 @@
   import { LoadAppHelper } from "$lib/helpers/load_app_helper";
   import { handleLocaleChanges } from "$lib/language/loader";
   import { businessStore } from "$lib/stores/Business";
-
   async function loadBusiness() {
     console.log("svelte loaded");
     handleLocaleChanges(localStorage, document);

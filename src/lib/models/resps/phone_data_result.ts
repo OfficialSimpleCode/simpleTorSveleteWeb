@@ -1,4 +1,4 @@
-import { translate } from "$lib/utils/string_utils";
+import { translate } from "$lib/utils/translate";
 import type Booking from "../booking/booking_model";
 import type Invoice from "../payment_hyp/invoice/invoice";
 import type PaymentRequest from "../payment_hyp/payment_request/payment_request";

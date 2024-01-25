@@ -17,18 +17,17 @@ import {
   notificationOptionFromStr,
 } from "$lib/consts/notification";
 import { EventFilterType } from "$lib/consts/worker_schedule";
-import BusinessInitializer from "$lib/initializers/business_initializer";
-import UserInitializer from "$lib/initializers/user_initializer";
+
 import { sendMessageForMulti } from "$lib/utils/notifications_utils";
 import { phoneToDocId } from "$lib/utils/user";
 import BookingInvoiceData from "../booking/booking_invoice_data";
 import BookingTransactionModel, {
   PaymentTypes,
 } from "../booking/booking_transaction";
-import CustomerData from "../general/customer_data";
+import type BusinessModel from "../business/business_model";
 import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
 import Debt from "../schedule/debt";
-
+import type UserModel from "../user/user_model";
 import type WorkerModel from "../worker/worker_model";
 
 export default class MultiBookingUser {
@@ -66,23 +65,25 @@ export default class MultiBookingUser {
 
   constructor() {}
 
-  copyDataToOrder(params: {
+  copyDataToOrder({
+    worker,
+    needToHoldOn,
+    workerAction,
+    bookingDate,
+    addToCalendar,
+    business,
+    user,
+    noteText = "",
+  }: {
     worker: WorkerModel;
     needToHoldOn: boolean;
     workerAction: boolean;
     bookingDate: Date;
     addToCalendar: boolean;
+    business: BusinessModel;
+    user: UserModel;
     noteText?: string;
   }): void {
-    const {
-      worker,
-      needToHoldOn,
-      workerAction,
-      bookingDate,
-      addToCalendar,
-      noteText = "",
-    } = params;
-
     this.clientNote = noteText;
     if (needToHoldOn) {
       this.status = BookingStatuses.waiting;
@@ -132,16 +133,12 @@ export default class MultiBookingUser {
 
     this.isUserExist = true;
 
-    this.userFcms = new Set(
-      UserInitializer.GI().user.userPublicData.fcmsTokens
-    );
-    this.isVerifiedPhone = UserInitializer.GI().user.isVerifiedPhone;
-    const clientAt = UserInitializer.GI().user.userPublicData.clientAt;
+    this.userFcms = new Set(user.userPublicData.fcmsTokens);
+    this.isVerifiedPhone = user.isVerifiedPhone;
+    const clientAt = user.userPublicData.clientAt;
     this.addToClientAt =
-      !clientAt.has(BusinessInitializer.GI().business.businessId) ||
-      !clientAt
-        .get(BusinessInitializer.GI().business.businessId)!
-        .has(worker.id);
+      !clientAt.has(business.businessId) ||
+      !clientAt.get(business.businessId)!.has(worker.id);
 
     if (this.createdAt.getTime() === new Date(0).getTime()) {
       this.createdAt = new Date();
@@ -150,17 +147,6 @@ export default class MultiBookingUser {
       //this.userBookingId = uuid();
     }
     this.notificationType = sendMessageForMulti(this, worker);
-  }
-
-  get toCustomerData(): CustomerData {
-    return new CustomerData({
-      name: this.customerName,
-      phoneNumber: this.customerPhone,
-      isVerifiedPhone: this.isVerifiedPhone,
-      email: this.clientMail,
-      customerUuid: this.customerId,
-      gender: this.userGender,
-    });
   }
 
   get isDepositTransaction(): boolean {
