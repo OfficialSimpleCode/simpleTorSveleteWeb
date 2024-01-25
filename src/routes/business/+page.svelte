@@ -17,8 +17,8 @@
   import SocialLinks from "./components/SocialLinks.svelte";
   // other (utils / stores)
   import Navbar from "$lib/components/navbar/Navbar.svelte";
-  import UserInitializer from "$lib/initializers/user_initializer";
   import { businessStore } from "$lib/stores/Business.js";
+  import { isConnectedStore } from "$lib/stores/User";
   import { workersStore } from "$lib/stores/Workers.js";
   import Footer from "./components/Footer.svelte";
 
@@ -80,7 +80,7 @@
   );
 
   function orderNow() {
-    if (!UserInitializer.GI().isConnected) {
+    if (!$isConnectedStore) {
       goto(`${base}/login`);
     }
 

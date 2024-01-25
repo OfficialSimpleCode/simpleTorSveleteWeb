@@ -7,7 +7,7 @@ import { GeneralData } from "$lib/helpers/general_data";
 
 import VerificationRepo from "$lib/helpers/verification/verification_repo";
 import UserModel from "$lib/models/user/user_model";
-import { userStore } from "$lib/stores/User";
+import { isConnectedStore, userStore } from "$lib/stores/User";
 import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
 
 export default class UserInitializer {
@@ -60,6 +60,7 @@ export default class UserInitializer {
     logoutIfDosentExist?: boolean;
   }): Promise<boolean> {
     try {
+      isConnectedStore.set(false);
       console.log(
         "Eeeeeeeeee11111111111111111111111111111111111111111111111111111111111111111hhhhhhhhhhhheeeeeeeeeeeeeeeeeeee"
       );
@@ -108,6 +109,7 @@ export default class UserInitializer {
       );
       console.log(this.user);
       userStore.set(this.user);
+      isConnectedStore.set(true);
 
       return true;
     } catch (e) {
@@ -185,17 +187,26 @@ export default class UserInitializer {
     // });
   }
 
-  async loadBookingsDocs(docs: Set<string>) {
-    const futures: Promise<void>[] = [];
+  // async loadBookingsDocs(docs: Set<string>) {
+  //   const futures: Promise<void>[] = [];
 
-    docs.forEach((docId) => {
-      futures.push(this.loadBookingDoc(docId));
+  //   docs.forEach((docId) => {
+  //     futures.push(this.loadBookingDoc(docId));
+  //   });
+
+  //   await Promise.all(futures);
+  // }
+
+  async logout(): Promise<boolean> {
+    return this.verificationRepo.logout().then(async (value: boolean) => {
+      if (value) {
+        this.user = new UserModel({});
+        userStore.set(this.user);
+        isConnectedStore.set(false);
+      }
+      return value;
     });
-
-    await Promise.all(futures);
-  }
-
-  async loadBookingDoc(docId: string): Promise<void> {
+    //async loadBookingDoc(docId: string): Promise<void> {
     // try {
     //   const bookingsDoc = await this.userRepo.getDocSRV({
     //     path: DbPathesHelper.GI().userBookingsPathByUser(this.user.id),
