@@ -1,4 +1,5 @@
 import {
+  dateStrToDate,
   dateToDateStr,
   dateToDayStr,
   dateToMonthStr,
@@ -47,7 +48,8 @@ export default class RecurrenceEvents {
     Object.entries(json).forEach(([dateString, times]) => {
       this.recurrenceEvents[dateString] = {};
 
-      const date = new Date(dateString);
+      const date = dateStrToDate(dateString);
+
       Object.entries<Record<string, any>>(times).forEach(
         ([timeId, eventJson]) => {
           let recurrenceTimeId: string = "";
@@ -85,12 +87,12 @@ export default class RecurrenceEvents {
     });
   }
 
-  vacationInDate(date: Date): Vacation | null {
+  vacationInDate(date: Date): Vacation | undefined {
     for (const event of Object.values(this.vacationsEvents)) {
       if (event.recurrenceEvent?.isAccureInDate({ date })) {
         return Vacation.fromEvent(event);
       }
     }
-    return null;
+    return undefined;
   }
 }

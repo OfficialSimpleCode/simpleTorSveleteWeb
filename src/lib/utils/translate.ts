@@ -5,9 +5,10 @@ import { get } from "svelte/store";
 
 export function translate(strName: string, needGender: boolean = true): string {
   const translatedStr = get(_)(strName);
-  if (get(locale) === "he" && needGender)
+  if (get(locale) === "he" && needGender) {
     return textAccordingToGender(translatedStr);
-  return strName;
+  }
+  return translatedStr;
 }
 
 export function textAccordingToGender(txt: string): string {

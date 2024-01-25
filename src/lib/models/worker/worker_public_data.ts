@@ -1,3 +1,4 @@
+import { dayLightSavingTimes } from "$lib/consts/schedule";
 import {
   dateToDateStr,
   dateToTimeStr,

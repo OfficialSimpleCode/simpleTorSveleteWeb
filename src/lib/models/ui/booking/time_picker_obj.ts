@@ -1,14 +1,15 @@
+import { Duration } from "$lib/models/core/duration";
 import RecurrenceEvent from "$lib/models/schedule/recurrence_event";
 
 export default class TimePickerObj {
   displayDate?: Date;
   from: Date = new Date(0);
-  duration: number = 0;
   maxParticipants: number = 0;
   currentParticipants: number = 0;
   showParticipants: boolean = true;
   isWaitingList: boolean = false;
   showMultiWaitingList: boolean = true;
+  duration: Duration = new Duration({});
   isMulti: boolean = false;
   recurrenceMultiEvent?: RecurrenceEvent;
   fatherRecurrenceMultiEventDate?: Date;
@@ -22,6 +23,7 @@ export default class TimePickerObj {
     displayDate,
     maxParticipants = 1,
     currentParticipants = 0,
+
     isMulti = false,
     isHoliday = false,
     signedPaymentRequestId,
@@ -68,12 +70,10 @@ export default class TimePickerObj {
   static fromTimePickerObj(other: TimePickerObj): TimePickerObj {
     const clonedTimePickerObj = new TimePickerObj({
       displayDate: other.displayDate,
-      from: other.from,
       recurrenceTimeId: other.recurrenceTimeId,
       showMultiWaitingList: other.showMultiWaitingList,
       isVacation: other.isVacation,
       isHoliday: other.isHoliday,
-      duration: other.duration,
       isMulti: other.isMulti,
       signedPaymentRequestId: other.signedPaymentRequestId,
       maxParticipants: other.maxParticipants,
@@ -83,7 +83,8 @@ export default class TimePickerObj {
       recurrenceMultiEvent: other.recurrenceMultiEvent,
       fatherRecurrenceMultiEventDate: other.fatherRecurrenceMultiEventDate,
     });
-
+    clonedTimePickerObj.from = other.from;
+    clonedTimePickerObj.duration = other.duration;
     return clonedTimePickerObj;
   }
 
