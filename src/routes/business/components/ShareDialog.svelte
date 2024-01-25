@@ -1,14 +1,16 @@
 <script lang="ts">
+    import { QRCodeImage } from "svelte-qrcode-image";
+
     import { pushState } from "$app/navigation";
     import { page } from "$app/stores";
 
     import { businessStore } from "$lib/stores/Business.js";
     import {
-      CheckCircle,
-      Clipboard,
-      Icon,
-      Link,
-      XCircle,
+        CheckCircle,
+        Clipboard,
+        Icon,
+        Link,
+        XCircle,
     } from "svelte-hero-icons";
     import { _ } from "svelte-i18n";
 
@@ -78,11 +80,12 @@
                     {address}
                 </button>
             </div>
-            <img
+            <!-- <img
                 class="w-[80%] mx-auto pb-12"
                 src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpngimg.com%2Fuploads%2Fqr_code%2Fqr_code_PNG4.png&f=1&nofb=1&ipt=2976bf9cd3f598cf1f8ef49eabca13fcc580abd4bcdd11fc1436bb8c9a2c0db9&ipo=images"
                 alt="qr"
-            />
+            /> -->
+            <QRCodeImage text="hi" />
         </div>
 
         <p class="text-gray-500 mt-4 text-sm text-center">
