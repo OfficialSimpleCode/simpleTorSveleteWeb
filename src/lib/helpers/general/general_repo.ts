@@ -5,6 +5,7 @@ import {
 } from "$lib/consts/worker_schedule";
 //import CustomerData from "$lib/models/general/customer_data";
 // import WorkerModel from "$lib/models/worker/worker_model";
+import CustomerData from "$lib/models/general/customer_data";
 import FirestoreDataBase from "$lib/services/external_services/firestore";
 import {
   type DocumentData,
@@ -28,7 +29,7 @@ export default class GeneralRepo extends FirestoreDataBase {
     insideEnviroments?: boolean;
   }): Promise<DocumentSnapshot<DocumentData, DocumentData> | undefined> {
     // const obj = BusinessModel.empty();
-    // const c = new CustomerData({});
+    const c = new CustomerData({});
     return await super.getDocSRV({
       path: path,
       docId: docId,
