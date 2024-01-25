@@ -82,6 +82,12 @@ export default class UserInitializer {
       console.log(
         "Eeeeeeeeee11111111111111111111111111111111111111111111111111111111111111111hhhhhhhhhhhheeeeeeeeeeeeeeeeeeee"
       );
+
+      console.log(
+        !logoutIfDosentExist,
+        this.userDoc === undefined,
+        !this.userDoc.exists()
+      );
       if (
         !logoutIfDosentExist &&
         (this.userDoc === undefined || !this.userDoc.exists())
