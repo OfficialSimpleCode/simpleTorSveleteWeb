@@ -5,7 +5,6 @@
   import { onMount } from "svelte";
 
   import { Icon, MapPin, Share } from "svelte-hero-icons";
-  import { _ } from "svelte-i18n";
   // Models
   import type { ProductModel } from "$lib/models/business/ProductModel";
 
@@ -20,6 +19,7 @@
   import { businessStore } from "$lib/stores/Business.js";
   import { isConnectedStore } from "$lib/stores/User";
   import { workersStore } from "$lib/stores/Workers.js";
+  import { translate } from "$lib/utils/translate";
   import Footer from "./components/Footer.svelte";
 
   let workersStories: Map<string, string> = Object.values($workersStore)
@@ -162,7 +162,7 @@
         <!-- Order now and Share buttons -->
         <div class="flex gap-5 items-center">
           <button class="btn btn-primary" on:click={orderNow}>
-            {$_("setBooking")}
+            {translate("setBooking")}
           </button>
           <button class="btn btn-primary" on:click={openShareDialog}>
             <Icon src={Share} size="26px" />
@@ -225,7 +225,7 @@
                 <div class="card-body">
                   <h2 class="card-title">{product.name}</h2>
                   <p>
-                    {$_("price")}: {product.price}
+                    {translate("price")}: {product.price}
                   </p>
                   <div class="card-actions justify-end">
                     <button
@@ -233,7 +233,7 @@
                       on:click={() =>
                         goto(`${base}/business/product/${productId}`)}
                     >
-                      {$_("details")}
+                      {translate("details")}
                     </button>
                   </div>
                 </div>

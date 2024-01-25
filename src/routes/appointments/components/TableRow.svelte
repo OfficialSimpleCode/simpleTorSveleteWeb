@@ -1,64 +1,53 @@
 <script lang="ts">
+  import { pushState } from "$app/navigation";
+  import { page } from "$app/stores";
   import type Booking from "$lib/models/booking/booking_model";
+  import BookingActions from "./BookingActions.svelte";
+  import BookingDateAndTime from "./BookingDateAndTime.svelte";
+  import BookingPriceAndDuration from "./BookingPriceAndDuration.svelte";
+  import CircleIcons from "./CircleIcons.svelte";
+  import BookingSheet from "./booking-sheet/BookingSheet.svelte";
 
   export let booking: Booking;
+
+  let bookingDialog: HTMLDialogElement;
+  function openBookingSheet() {
+    pushState("", {
+      showModal: true,
+    });
+    setTimeout(() => bookingDialog.showModal(), 100);
+  }
 </script>
 
-<tr class="group hover:bg-base-200">
-  <td>
-    <div class="flex items-center gap-3">
-      <div class="avatar">
-        <div class="mask mask-squircle w-12 h-12">
-          <img
-            src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-            alt="business profile"
-          />
-        </div>
-      </div>
-      <div>
-        <div class="font-bold">
-          {booking.businessPayloadData}
-        </div>
-      </div>
-    </div>
+<!-- booking shhet and dialog -->
+{#if $page.state.showModal}
+  <BookingSheet bind:dialog={bookingDialog} {booking} />
+{/if}
+
+<tr on:click={openBookingSheet} class="group hover:bg-base-200">
+  <td class="flex flex-row justify-start items-center">
+    <CircleIcons {booking}></CircleIcons>
+    <h1 class="text-xl text-nowrap">{booking.businessName}</h1>
   </td>
-  <td>
-    <div class="flex flex-col items-start gap-2">
-      <div class="font-bold">
-        {booking.workerName}
-      </div>
-      <span class="badge badge-ghost badge-sm">
-        {booking.workerPhone}
-      </span>
-    </div>
+
+  <td class="text-xl">
+    {booking.workerName}
   </td>
+
   <td class="min-w-[145px]">
-    <div class="flex flex-col items-start gap-2">
-      {booking.customerName}
-      <div class="flex items-center gap-1">
-        <span class="badge badge-ghost badge-sm">
-          {booking.adress}
-        </span>
-        <span class="badge badge-ghost badge-sm">
-          {booking.totalMinutes}
-        </span>
-      </div>
-    </div>
+    <!-- svelte-ignore missing-declaration -->
+    <BookingPriceAndDuration {booking} isRow={false}></BookingPriceAndDuration>
   </td>
+
   <td>
-    <h3 class="text-primary">
-      {booking.bookingDate}
-    </h3>
-    <h3 class="text-primary">
-      {booking.bookingDate}
-    </h3>
+    <BookingDateAndTime {booking}></BookingDateAndTime>
   </td>
-  <td>
-    <label>
-      <input type="checkbox" class="checkbox checkbox-success" />
-    </label>
+
+  <td class="text-nowrap">
+    <BookingActions {booking}></BookingActions>
   </td>
-  <th class="sm:opacity-0 sm:group-hover:opacity-100">
+
+  <!-- <th class="sm:opacity-0 sm:group-hover:opacity-100">
     <div class="dropdown dropdown-hover dropdown-left">
       <div tabindex="0" role="button" class="btn btn-outline m-1">Actions</div>
       <ul
@@ -75,5 +64,5 @@
         </li>
       </ul>
     </div>
-  </th>
+  </th> -->
 </tr>

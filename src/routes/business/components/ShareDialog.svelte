@@ -10,7 +10,6 @@
     Link,
     XCircle,
   } from "svelte-hero-icons";
-  import { _ } from "svelte-i18n";
 
   import Avatar from "$lib/components/Avatar.svelte";
   import NavigationDialog from "$lib/components/NavigationDialog.svelte";
@@ -18,6 +17,7 @@
     BUSINESS_LINK_END_POINT,
     SERVER_BASE_URL,
   } from "$lib/consts/server_variables";
+  import { translate } from "$lib/utils/translate";
   import clipboard from "clipboardy";
   import { QRCodeImage } from "svelte-qrcode-image";
 
@@ -67,7 +67,7 @@
       >
         <Icon src={copied ? CheckCircle : Link} size="24px" />
       </button>
-      <h3 class="font-bold text-lg">{$_("Share")}</h3>
+      <h3 class="font-bold text-lg">{translate("Share")}</h3>
       <button class="btn btn-ghost" on:click={() => dialog.close()}>
         <Icon src={XCircle} size="24px" />
       </button>
@@ -105,7 +105,7 @@
     </div>
 
     <p class="text-gray-500 mt-4 text-sm text-center">
-      {$_("featureExplianShareBusiness")}
+      {translate("featureExplianShareBusiness")}
     </p>
 
     <button
@@ -113,9 +113,9 @@
       on:click={copyToClipboard}
     >
       {#if copied}
-        {$_("Copied")}
+        {translate("Copied")}
       {:else}
-        {$_("CopyLink")}
+        {translate("CopyLink")}
       {/if}
       <Icon src={copied ? CheckCircle : Clipboard} size="28px" />
     </button>
