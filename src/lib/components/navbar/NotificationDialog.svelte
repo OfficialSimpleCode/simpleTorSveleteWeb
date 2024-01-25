@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { Update } from "$lib/models/business/update_model";
   import { Icon, XCircle } from "svelte-hero-icons";
 
   export let dialog: HTMLDialogElement;
-  export let notification: Update;
+  export let notification: Record<string, string>;
 </script>
 
 <dialog bind:this={dialog} class="modal modal-bottom sm:modal-middle">

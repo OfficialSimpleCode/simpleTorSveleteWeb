@@ -2,16 +2,14 @@
   import { createEventDispatcher } from "svelte";
   const dispath = createEventDispatcher();
 
-  import { Update } from "$lib/models/business/update_model";
-  import type { businessStore } from "$lib/stores/Business";
   import { translate } from "$lib/utils/translate";
   import NotificationDialog from "./NotificationDialog.svelte";
-  export let notifications = $businessStore.design.updates.values();
+  export let notifications: Array<Record<string, string>>;
 
   let dialog: HTMLDialogElement;
-  let selectedNotification: Update;
+  let selectedNotification: Record<string, string>;
 
-  function showNotification(notification: Update) {
+  function showNotification(notification: Record<string, string>) {
     selectedNotification = notification;
     dialog.showModal();
     dispath("notification-opend", selectedNotification);
@@ -32,9 +30,9 @@
           <h1 class="font-semibold text-start">
             {notification.title}
           </h1>
-          <!-- {#if !notification.viewed}
+          {#if !notification.viewed}
             <span class="badge badge-xs badge-error indicator-item" />
-          {/if} -->
+          {/if}
         </div>
         <p class="text-ellipsis max-h-[24px] overflow-hidden text-center">
           {notification.content}
@@ -43,7 +41,7 @@
     </li>
     <div class="divider h-2 last:hidden"></div>
   {/each}
-  {#if Object.entries(notifications).length === 0}
+  {#if notifications.length == 0}
     <div class="font-bold text-center">{translate("notifications")}</div>
   {/if}
 </ul>
