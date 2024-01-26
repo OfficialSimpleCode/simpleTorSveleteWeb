@@ -12,7 +12,11 @@ import type WorkerModel from "$lib/models/worker/worker_model.js";
 import { AppErrors } from "$lib/services/errors/app_errors.js";
 import { Errors } from "$lib/services/errors/messages.js";
 
-import { addDuration, durationStrikings } from "../duration_utils.js";
+import {
+  addDuration,
+  diffDuration,
+  durationStrikings,
+} from "../duration_utils.js";
 
 import { Religion, holidays } from "$lib/consts/worker_schedule.js";
 import TreatmentTime from "$lib/models/general/treatment_time.js";
@@ -68,11 +72,15 @@ function generateTimeSegmentsMap(
 ): Map<string, TimeSegment> {
   const timesSegments: Map<string, TimeSegment> = new Map();
   let lastTime: Date = startTime;
+
   const treatment: Treatment = Treatment.fromTreatmentsMap(booking.treatments);
 
   treatment.times.forEach((timeData, timeIndex) => {
     // Adding the break before the treatment
-    lastTime = new Date(lastTime.getTime() + timeData.breakMinutes * 60000);
+    lastTime = addDuration(
+      lastTime,
+      new Duration({ minutes: timeData.breakMinutes })
+    );
 
     // Adding the break before - start of the treatment
     timesSegments.set(timeIndex, {
@@ -81,7 +89,10 @@ function generateTimeSegmentsMap(
     });
 
     // Adding the time of the treatment
-    lastTime = new Date(lastTime.getTime() + timeData.workMinutes * 60000);
+    lastTime = addDuration(
+      lastTime,
+      new Duration({ minutes: timeData.workMinutes })
+    );
   });
 
   return timesSegments;
@@ -134,12 +145,14 @@ function minutesToJumpOverForbbiden(
 ): number {
   let minutesToJump: number = 0; // 0 represents allowed time
   let segmentIndex: number = 0;
-  const segments: TimeSegment[] = Object.values(timeSegments);
+
+  const segments: TimeSegment[] = Array.from(timeSegments.values());
 
   forbiddenTimesPointers.forEach((pointer) => {
     const startSegment: Date = segments[segmentIndex].start;
-    const endSegment: Date = new Date(
-      startSegment.getTime() + segments[segmentIndex].duration.minutes * 60000
+    const endSegment: Date = addDuration(
+      startSegment,
+      segments[segmentIndex].duration
     );
 
     for (pointer; pointer < forbiddenTimes.length; pointer += 2) {
@@ -153,10 +166,12 @@ function minutesToJumpOverForbbiden(
 
       if (status === "STRIKE") {
         // If strike, the end of forbidden time must be after the start of the segment
-        const currentDifference: number =
-          endSegment.getTime() - forbiddenTimes[pointer + 1].getTime();
+        const currentDifference: Duration = diffDuration(
+          endSegment,
+          forbiddenTimes[pointer + 1]
+        );
         // Set the jump to the highest option
-        minutesToJump = Math.max(minutesToJump, currentDifference / 60000);
+        minutesToJump = Math.max(minutesToJump, currentDifference.inMinutes);
         break;
       }
 
@@ -383,7 +398,7 @@ export function relevantHoures({
   const finalTimes: TimePickerObj[] = [];
 
   // Return empty array if worker is null or undefined
-  if (!worker) {
+  if (worker === undefined) {
     return finalTimes;
   }
 
@@ -463,6 +478,7 @@ export function relevantHoures({
 
     // Generate optional treatment starting at 'pointerWork'
     const timeSegments = generateTimeSegmentsMap(booking, pointerWork);
+
     // saves the last and first
     const valuesArr = Array.from(timeSegments.values());
     const lastTimeSegment = valuesArr[valuesArr.length - 1];
@@ -567,7 +583,7 @@ function isAllDayTaken(
   }
 
   // All day is taken if it's not a worker action and there is a vacation on the date
-  if (!workerAction && worker.recurrence.vacationInDate(date) !== null) {
+  if (!workerAction && worker.recurrence.vacationInDate(date) != undefined) {
     logger.debug(
       "Vacation is a free day for this worker -> don't generate times"
     );
@@ -1118,13 +1134,13 @@ export function alreadyTakenHoures({
   workerAction: boolean;
 }): Date[] {
   const taken: Date[] = [];
-  const dateToBook = new Date(format("dd-MM-yyyy", bookingDate));
+  const dateToBook = dateStrToDate(bookingDate);
 
   // Adding all the "booking times" to the "taken hours" list
   if (worker.workerPublicData.bookingsTimes[bookingDate]) {
     Object.entries(worker.workerPublicData.bookingsTimes[bookingDate]!).forEach(
       ([key, details]) => {
-        const start = new Date(format("HH:mm", key));
+        const start = timeStrToDate(key);
         taken.push(
           start,
           addDuration(start, new Duration({ minutes: details }))
@@ -1142,7 +1158,7 @@ export function alreadyTakenHoures({
     recurrenceSkipDate
   ) {
     oldBooking.bookingsEventsAsEvents.forEach((event, time) => {
-      const timeDate = new Date(format("HH:mm", time));
+      const timeDate = timeStrToDate(time);
       datesToSkipRecurrence.add(
         new Date(
           recurrenceSkipDate!.getFullYear(),
@@ -1179,7 +1195,7 @@ export function alreadyTakenHoures({
         }
 
         if (isUpdate && oldBooking && oldBooking.recurrenceEvent) {
-          const hourTime = new Date(format("HH:mm", hour));
+          const hourTime = timeStrToDate(hour);
           const dateToCheck = addDuration(
             dateToBook,
             new Duration({
@@ -1199,7 +1215,7 @@ export function alreadyTakenHoures({
         }
 
         if (event.recurrenceEvent.isAccureInDate({ date: dateToBook })) {
-          const start = new Date(format("HH:mm", hour));
+          const start = timeStrToDate(hour);
 
           // If the event is vacation, no need to keep all the events;
           // the entire day is taken
@@ -1382,8 +1398,12 @@ export function dateToDateStr(date: Date): string {
   return format(date, "dd-MM-yyyy");
 }
 
-export function timeStrToDate(date: string): Date {
-  return new Date(`1970-01-01T${date}`);
+export function timeStrToDate(dateStr: string): Date {
+  const date = moment(dateStr, "HH:mm").toDate();
+  date.setFullYear(1970);
+  date.setMonth(0);
+  date.setDate(1);
+  return date;
 }
 
 export function dateStrToDate(date: string): Date {

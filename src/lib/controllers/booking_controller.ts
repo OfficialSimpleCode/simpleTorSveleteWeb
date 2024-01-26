@@ -5,7 +5,6 @@ import UserInitializer from "$lib/initializers/user_initializer";
 import Booking from "$lib/models/booking/booking_model";
 import type { PaymentTypes } from "$lib/models/booking/booking_transaction";
 import Treatment from "$lib/models/general/treatment_model";
-import type TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
 import WorkerModel from "$lib/models/worker/worker_model";
 import { ShowToast } from "$lib/stores/ToastManager";
 import { sendMessage } from "$lib/utils/notifications_utils";
@@ -29,11 +28,10 @@ interface BookingMaker {
 export const bookingMakerStore = writable<BookingMaker>();
 
 export default class BookingController {
-  static timePickerObjects: TimePickerObj[] = [];
+  static timePickerObjects: Record<string, any>[] = [];
   static visibleDates: Date[] = [];
   static firstDateToShow: Date | undefined;
   static initializeBookingMaker({ isUpdate = false }: { isUpdate?: boolean }) {
-    console.log("initializeBookingMaker");
     const initialBookingMaker: BookingMaker = {
       workerId: undefined,
       showVerificationAlert: false,
@@ -62,6 +60,8 @@ export default class BookingController {
   static setWorkerId(newWorkerId: string) {
     const bookingMaker = get(bookingMakerStore);
     if (newWorkerId === bookingMaker.workerId) {
+      bookingMaker.currentStep += 1;
+      bookingMakerStore.set(bookingMaker);
       return;
     }
 
@@ -135,7 +135,7 @@ export default class BookingController {
 
     const services: Map<string, Treatment> = new Map();
     let index = 0;
-    Object.entries(services).forEach(([id, service]) => {
+    Object.entries(bookingMaker.services).forEach(([id, service]) => {
       services.set(index.toString(), service);
       index += 1;
     });

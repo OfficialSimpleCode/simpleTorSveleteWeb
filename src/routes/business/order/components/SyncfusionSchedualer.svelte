@@ -20,30 +20,6 @@
   const { WorkWeek } = schedule;
 
   loadData([new Date(2024, 1, 29)], BookingController.worker, [60]);
-  console.log(BookingController.timePickerObjects);
-
-  let data: object[] = [
-    {
-      Subject: "Paris",
-      StartTime: new Date(2018, 1, 15, 10, 0),
-      EndTime: new Date(2018, 1, 15, 10, 50),
-    },
-    {
-      Subject: "Paris",
-      StartTime: new Date(2018, 1, 15, 10, 0),
-      EndTime: new Date(2018, 1, 15, 10, 50),
-    },
-    {
-      Subject: "Paris",
-      StartTime: new Date(2018, 1, 15, 10, 0),
-      EndTime: new Date(2018, 1, 15, 10, 50),
-    },
-    {
-      Subject: "Paris",
-      StartTime: new Date(2018, 1, 15, 10, 0),
-      EndTime: new Date(2018, 1, 15, 10, 50),
-    },
-  ];
 
   onMount(() => {
     sync.registerLicense(
@@ -54,15 +30,26 @@
     let scheduleObj = new schedule.Schedule({
       width: "100%",
       height: "100%",
-      selectedDate: new Date(2018, 1, 15),
+      selectedDate: new Date(2024, 1, 29),
       views: ["WorkWeek"],
-      enablePersistence: true,
+      workHours: { highlight: false },
+      showQuickInfo: false,
+      timeScale: {
+        enable: false,
+      },
       eventSettings: {
-        dataSource: data,
+        dataSource: BookingController.timePickerObjects,
         allowAdding: false,
-
+        enableMaxHeight: true,
         allowDeleting: false,
         allowEditing: false,
+
+        fields: {
+          id: "id",
+          subject: { name: "displayDate" },
+          startTime: { name: "from" },
+          endTime: { name: "to" },
+        },
       },
     });
     scheduleObj.appendTo("#schedule");

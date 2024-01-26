@@ -1,14 +1,10 @@
 import Shift from "$lib/models/general/shift";
-import { format } from "date-fns";
 import { durationStrikings } from "./duration_utils";
-
-export function setTo1970(date: Date): Date {
-  const newDate = new Date(date);
-  newDate.setFullYear(1970);
-  newDate.setMonth(0);
-  newDate.setDate(1);
-  return newDate;
-}
+import {
+  dateToTimeStr,
+  setTo1970,
+  timeStrToDate,
+} from "./times_utils/times_utils";
 
 ///  in case of after we finish the building of the current shift because we iterating like this
 ///      ["shift1","shift2","shift3"], "shift1" -> check on "shift2"
@@ -30,6 +26,7 @@ export function combinedShuffleShifts(combinedShifts: Shift[]): string[] {
 
     for (j = i + 1; j < combinedShifts.length; j++) {
       const currentShift = combinedShifts[j];
+
       const status = durationStrikings(
         setTo1970(addedShift.start),
         setTo1970(addedShift.end),
@@ -59,8 +56,8 @@ export function combinedShuffleShifts(combinedShifts: Shift[]): string[] {
 
   const timesToReturn: string[] = [];
   combinedOrderdShifts.forEach((shift) => {
-    timesToReturn.push(format(shift.start, "HH:mm"));
-    timesToReturn.push(format(shift.end, "HH:mm"));
+    timesToReturn.push(dateToTimeStr(shift.start));
+    timesToReturn.push(dateToTimeStr(shift.end));
   });
 
   return timesToReturn;
@@ -70,8 +67,8 @@ export function shiftsFromStrList(strShifts: string[]): Shift[] {
   const combinedShifts: Shift[] = [];
 
   for (let i = 0; i < strShifts.length; i += 2) {
-    const startS = new Date(strShifts[i]);
-    const endS = new Date(strShifts[i + 1]);
+    const startS = timeStrToDate(strShifts[i]);
+    const endS = timeStrToDate(strShifts[i + 1]);
     combinedShifts.push(new Shift({ start: startS, end: endS }));
   }
 

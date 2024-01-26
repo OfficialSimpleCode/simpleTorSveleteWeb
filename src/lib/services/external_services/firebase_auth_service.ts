@@ -211,10 +211,6 @@ export class FirebaseAuthService {
   }
 
   get isLoggedInSRV(): boolean {
-    console.log(
-      "5555555555555555555555555555555555555555555555555555" +
-        this._auth.currentUser?.displayName
-    );
     return this._auth.currentUser != null;
   }
 

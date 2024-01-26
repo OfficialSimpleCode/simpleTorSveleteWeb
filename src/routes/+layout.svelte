@@ -12,7 +12,6 @@
   import { businessStore } from "$lib/stores/Business";
 
   async function loadBusiness() {
-    console.log("svelte loaded");
     handleLocaleChanges(localStorage, document);
 
     if ($businessStore) {

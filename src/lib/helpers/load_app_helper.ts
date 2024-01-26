@@ -178,8 +178,6 @@ export class LoadAppHelper {
       if (businessId === "") {
         return true;
       }
-
-      console.log("33333333333");
       if (
         !(await this.executeFuture(() =>
           BusinessInitializer.GI().loadBusiness(

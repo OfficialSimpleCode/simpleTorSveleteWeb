@@ -4,7 +4,6 @@
   import { _ } from "svelte-i18n";
   import TableRow from "./components/TableRow.svelte";
   import OrderCard from "./components/order-card/OrderCard.svelte";
-  console.log("cvdfsvfvddsvds", $userStore.bookings.futureBookings);
   let ordersByDate = Object.entries($userStore.bookings.futureBookings);
 </script>
 

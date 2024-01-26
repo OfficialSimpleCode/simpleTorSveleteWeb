@@ -112,7 +112,7 @@ export class Duration {
   }
 
   public get inMilliseconds(): number {
-    return Math.floor(this._duration);
+    return Math.floor(this._duration / Duration.microsecondsPerMillisecond);
   }
 
   public get inMicroseconds(): number {

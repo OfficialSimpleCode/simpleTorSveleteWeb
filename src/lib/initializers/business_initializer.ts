@@ -111,7 +111,6 @@ export default class BusinessInitializer {
       fromSearch = false,
     }: { fromLoading?: boolean; fromSearch?: boolean } = {}
   ): Promise<boolean> {
-    console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
     // Clean business data
     // ScreenController.getInstance().initOffsets();
     // BusinessUIController.getInstance().changingPhotoIndex = 0;
@@ -185,7 +184,6 @@ export default class BusinessInitializer {
 
   async _loadSettingsDoc(businessId: string): Promise<boolean> {
     try {
-      console.log("eeeeeeedddddddddddddd");
       const doc = await this.generalRepo.getDocRepo({
         path: buisnessCollection,
         docId: businessId,
@@ -269,7 +267,6 @@ export default class BusinessInitializer {
       callback: (snapshot) => {
         if (snapshot.exists()) {
           this.business.businessData.setBusinessData(snapshot);
-          console.log(this.business.businessData);
         }
       },
     });
@@ -288,7 +285,6 @@ export default class BusinessInitializer {
 
     try {
       if (!worker.workerDocListner) {
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         // Make a listener for the worker object doc
         worker.workerDocListner = this.generalRepo.docListenerRepo({
           path: `${buisnessCollection}/${this.business.businessId}/${workersCollection}`,
@@ -310,7 +306,6 @@ export default class BusinessInitializer {
 
       // Get the customer public to get data on the customer
       if (worker.publicCustomers.publicCustomersData === null) {
-        console.log("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
         this.generalRepo
           .getDocRepo({
             path: `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}/${worker.id}/${dataCollection}`,
@@ -342,9 +337,8 @@ export default class BusinessInitializer {
       delete this.workers[workerId];
       return;
     }
-    workersStore.set(this.workers);
 
-    console.log(
+    logger.info(
       `Get new worker for the current worker updateWorkerObj--> ${workerId}`
     );
   }
@@ -390,7 +384,6 @@ export default class BusinessInitializer {
     isMulti: boolean,
     workerAction: boolean
   ) {
-    console.log("startTimesListening");
     // AppErrors.addError({ code: settingsCodeToInt[SettingsErrorCodes.startTimesListening] });
     // const updateTitle = translate("realTimeUpdateRecivedTitle", { needGender: false }) + '!';
     // const updateContet = translate("realTimeUpdateRecived", { needGender: false });
@@ -404,7 +397,6 @@ export default class BusinessInitializer {
         path: `${buisnessCollection}/${this.business.businessId}/${workersCollection}/${worker.id}/${dataCollection}`,
         docId: dataDoc,
         onChanged: (workerBookingsListenerJson) => {
-          console.log("workerPublicData");
           // workerPublicDocUpdates++;
 
           // if (workerPublicDocUpdates > 2) {
@@ -429,7 +421,6 @@ export default class BusinessInitializer {
         path: `${buisnessCollection}/${this.business.businessId}/${workersCollection}/${worker.id}/${dataCollection}`,
         docId: recurrenceEventsDoc,
         onChanged: (recurrenceEventsJson) => {
-          console.log("recurrence");
           // workerReccurenceDocUpdates++;
 
           // if (workerReccurenceDocUpdates > 2) {

@@ -1,3 +1,4 @@
+import { logger } from "$lib/consts/application_general";
 import { serverSignature } from "$lib/consts/secrets";
 import { SERVER_BASE_URL } from "$lib/consts/server_variables";
 import fetch from "node-fetch";
@@ -49,15 +50,15 @@ export default class MakeRequest {
         headers: headers,
         body: body,
       });
-      console.log(`request resp body -->\n${response.data}`);
+      logger.info(`request resp body -->\n${response.data}`);
 
       if (response.status === 200) {
         // request succeeded
-        console.log("request status -- > Success!");
+        logger.info("request status -- > Success!");
         return response.data;
       }
     } catch (error) {
-      console.error(`request Failed --> ${error}`);
+      logger.info(`request Failed --> ${error}`);
     }
     return onFail;
   }

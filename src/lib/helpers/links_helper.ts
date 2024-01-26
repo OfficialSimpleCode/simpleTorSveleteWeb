@@ -1,3 +1,4 @@
+import { logger } from "$lib/consts/application_general";
 import { LoadingStatuses } from "$lib/consts/loading_statuses";
 import { LoadAppHelper } from "./load_app_helper";
 
@@ -18,12 +19,12 @@ export default class LinksHelper {
   }
 
   public async handleOpenAppLink(): Promise<void> {
-    console.log(`AppFirstTime: ${this.appFirstTime}`);
+    logger.info(`AppFirstTime: ${this.appFirstTime}`);
     try {
       if (this.appFirstTime) {
         this.appFirstTime = false;
         const link: string = "";
-        console.log(`The link of the first time --> ${link}`);
+        logger.info(`The link of the first time --> ${link}`);
         if (link) {
           if (link.includes("PaymentId")) {
             const paymentId = this.getPaymentId(link);
@@ -41,14 +42,13 @@ export default class LinksHelper {
         }
       }
     } catch (e) {
-      console.error(`Link general error ${e}`);
+      logger.error(`Link general error ${e}`);
     }
   }
 
   public async linksAfterResumeApp(): Promise<void> {
-    console.log(`LinkedHasChanged ---->  ${this.linkedHasChanged}`);
+    logger.debug(`LinkedHasChanged ---->  ${this.linkedHasChanged}`);
     if (this.linkedHasChanged) {
-      console.log("Link update screen");
       this.linkedHasChanged = false;
       // Assuming LoadAppHelper and UiManager classes
       LoadAppHelper.GI().status = LoadingStatuses.loading;
@@ -58,16 +58,16 @@ export default class LinksHelper {
 
   private getPaymentId(initialLink: string): string {
     const link = new URL(initialLink);
-    console.log(`Query params --> ${JSON.stringify(link.searchParams)}`);
-    console.log(`Segments --> ${JSON.stringify(link.pathname.split("/"))}`);
+    logger.debug(`Query params --> ${JSON.stringify(link.searchParams)}`);
+    logger.debug(`Segments --> ${JSON.stringify(link.pathname.split("/"))}`);
 
     return link.searchParams.get("PaymentId") || "";
   }
 
   private getBuisnessId(initialLink: string): string {
     const link = new URL(initialLink);
-    console.log(`Query params --> ${JSON.stringify(link.searchParams)}`);
-    console.log(`Segments --> ${JSON.stringify(link.pathname.split("/"))}`);
+    logger.debug(`Query params --> ${JSON.stringify(link.searchParams)}`);
+    logger.debug(`Segments --> ${JSON.stringify(link.pathname.split("/"))}`);
 
     let buisnesId = link.searchParams.get("BusinessId") || "";
     // Change only for liel

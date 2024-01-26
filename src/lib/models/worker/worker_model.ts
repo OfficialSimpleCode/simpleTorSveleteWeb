@@ -175,6 +175,7 @@ export default class WorkerModel {
         return specifiRangeObj.combineShifts(defaultShifts);
       }
     }
+
     return combinedShuffleShifts(shiftsFromStrList(defaultShifts));
   }
 

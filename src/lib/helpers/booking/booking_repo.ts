@@ -22,13 +22,13 @@ import WorkerModel from "$lib/models/worker/worker_model";
 import { Errors } from "$lib/services/errors/messages";
 import { addDuration } from "$lib/utils/duration_utils";
 import { sendMessage } from "$lib/utils/notifications_utils";
-import { setTo1970 } from "$lib/utils/shifts_utils";
 import {
   dateToDateStr,
   dateToDayStr,
   dateToMonthStr,
   dateToTimeStr,
   isOptionalTimeForBooking,
+  setTo1970,
   setToMidNight,
 } from "$lib/utils/times_utils/times_utils";
 import { Timestamp, increment, type Transaction } from "firebase/firestore";
@@ -459,13 +459,13 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
 
       if (!allowedTime) {
         if (AppErrorsHelper.GI().error === Errors.currentlyOrderingForTime) {
-          console.log(
+          logger.debug(
             "Cant order the booking to this time currently someone pay for it"
           );
         } else {
           AppErrorsHelper.GI().error = Errors.takenBooking;
 
-          console.log("Cant order the booking to this time already taken");
+          logger.debug("Cant order the booking to this time already taken");
         }
         return false;
       }

@@ -12,11 +12,14 @@ import {
   reportsCollection,
   usersCollection,
 } from "$lib/consts/db";
+
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import type ReportModel from "$lib/models/general/report";
 import UserPublicData from "$lib/models/user/user_public_data";
 import { dateToMonthStr } from "$lib/utils/times_utils/times_utils";
 import { Timestamp } from "firebase/firestore";
+import pkg from "uuid";
+const { v4 } = pkg;
 // import { v4 as uuid } from "uuid";
 import GeneralRepo from "./general/general_repo";
 import { GeneralData } from "./general_data";
@@ -105,10 +108,10 @@ export default class DeveloperHelper {
     if (strIssue) {
       error.strIssue = strIssue;
     }
-    console.log("TO DO uuid");
+
     error.device = "web";
     const data: { [key: string]: any } = {
-      [userId]: { ["ssssssssssssssss"]: error },
+      [userId]: { [v4()]: error },
     };
 
     await this.generalRepo

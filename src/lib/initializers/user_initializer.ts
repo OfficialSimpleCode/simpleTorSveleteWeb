@@ -95,7 +95,6 @@ export default class UserInitializer {
       /*No need to take the user public data the startListening 
         func will take it*/
       this.startPublicDataListening();
-      console.log(this.user);
       userStore.set(this.user);
       isConnectedStore.set(true);
 
@@ -123,9 +122,7 @@ export default class UserInitializer {
         try {
           if (dataJson.exists()) {
             this.user.setUserPublicData(dataJson.data()!);
-            console.log(
-              `bookings to load ->  ${this.user.userPublicData.bookingsDocsToLoad}`
-            );
+
             await this.loadBookingsDocs(
               this.user.userPublicData.bookingsDocsToLoad
             );
@@ -135,7 +132,7 @@ export default class UserInitializer {
             // transaferBookingsIfNeeded(this.user);
             // _deleteDocsFromLocal();
 
-            console.log("Getting new user data from database");
+            logger.info("Getting new user data from database");
             this.user.userPublicData.reminders = {};
 
             if (GeneralData.currentBusinesssId !== "") {

@@ -1,5 +1,6 @@
 import { Duration } from "$lib/models/core/duration";
 import RecurrenceEvent from "$lib/models/schedule/recurrence_event";
+import { addDuration } from "$lib/utils/duration_utils";
 
 export default class TimePickerObj {
   displayDate?: Date;
@@ -99,6 +100,60 @@ export default class TimePickerObj {
     return this.recurrenceTimeId
       ? `${this.dateToTimeStr(this.displayDate)}_${this.recurrenceTimeId}`
       : this.dateToTimeStr(this.displayDate);
+  }
+
+  toJson(): Record<string, any> {
+    const data: Record<string, any> = {};
+    data["id"] = this.from.toISOString();
+    data["from"] = this.from;
+    data["duration"] = this.duration.inMinutes;
+
+    data["to"] = addDuration(this.from, this.duration);
+
+    data["displayDate"] = this.displayDate ?? "";
+    if (this.recurrenceTimeId != undefined) {
+      data["recurrenceTimeId"] = this.recurrenceTimeId;
+    }
+    if (this.recurrenceFatherBookingId != undefined) {
+      data["recurrenceFatherBookingId"] = this.recurrenceFatherBookingId;
+    }
+
+    if (this.fatherRecurrenceMultiEventDate != undefined) {
+      data["fatherRecurrenceMultiEventDate"] =
+        this.fatherRecurrenceMultiEventDate;
+    }
+
+    if (this.recurrenceMultiEvent != undefined) {
+      data["recurrenceMultiEvent"] = this.recurrenceMultiEvent!.toJson({});
+    }
+
+    if (!this.showMultiWaitingList) {
+      data["showMultiWaitingList"] = this.showMultiWaitingList;
+    }
+
+    if (this.isVacation) {
+      data["isVacation"] = this.isVacation;
+    }
+    if (this.isHoliday) {
+      data["isHoliday"] = this.isHoliday;
+    }
+    if (this.isMulti) {
+      data["isMulti"] = this.isMulti;
+    }
+    if (this.signedPaymentRequestId != undefined) {
+      data["signedPaymentRequestId"] = this.signedPaymentRequestId;
+    }
+    if (this.maxParticipants != 0) {
+      data["maxParticipants"] = this.maxParticipants;
+    }
+    if (this.currentParticipants != 0) {
+      data["currentParticipants"] = this.currentParticipants;
+    }
+    if (!this.showParticipants) {
+      data["showParticipants"] = this.showParticipants;
+    }
+
+    return data;
   }
 
   private dateToTimeStr(date: Date): string {
