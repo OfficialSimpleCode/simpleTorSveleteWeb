@@ -1,5 +1,6 @@
 <script>
   import { businessStore } from "$lib/stores/Business";
+  import Logo from "$lib/components/Logo.svelte";
 
   function downloadSimpleTor() {
     const dynamicLink = $businessStore.dynamicLink;
@@ -53,19 +54,16 @@
   class="footer px-10 py-4 border-t bg-base-200 text-base-content border-base-300"
 >
   <aside class="items-center grid-flow-col">
-    <div
-      class="h-12 w-12 bg-black flex items-center justify-center rounded-full"
-    >
-      <h1 class="text-lg font-bold font-mono text-white text-center">ST</h1>
-    </div>
+    <Logo />
     <p>SA SIMPLE CODE Ltd. <br />This page has created by Simple Tor system</p>
   </aside>
 
   <button
     on:click={downloadSimpleTor}
-    class="hover:bg-slate-800 bg-slate-400 text-white rounded-xl h-auto text-lg p-3 duration-200"
-    >Download Simple Tor</button
+    class="btn md:btn-lg btn-info flex items-center justify-center"
   >
+    Download Simple Tor
+  </button>
 
   <nav class="md:place-self-center md:justify-self-end">
     <div class="grid grid-flow-col gap-4">
