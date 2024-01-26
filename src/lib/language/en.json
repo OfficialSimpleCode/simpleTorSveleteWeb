@@ -3048,5 +3048,6 @@
   "updateTheWaitingList": "Updates customers on the waiting list...",
   "invalid Phone Number": "The phone number is invalid",
   "terminalNumber": "Terminal number",
-  "DealDosntExistsOrAlreadyCommitted": "The transaction does not exist or is already committed"
+  "DealDosntExistsOrAlreadyCommitted": "The transaction does not exist or is already committed",
+  "status": "status"
 }

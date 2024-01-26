@@ -1,11 +1,7 @@
-
-
 <script lang="ts">
-  import { ChevronRight, Icon } from "svelte-hero-icons";
-
-
+  import { ChevronLeft, ChevronRight, Icon } from "svelte-hero-icons";
 </script>
 
-<div class= "icon">
-    <Icon src={ChevronRight} size="18px" />
+<div class="icon">
+  <Icon src={document.dir == "ltr" ? ChevronRight : ChevronLeft} size="20px" />
 </div>

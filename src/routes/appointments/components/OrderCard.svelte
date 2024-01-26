@@ -1,18 +1,37 @@
 <script lang="ts">
+  import { pushState } from "$app/navigation";
+  import { page } from "$app/stores";
   import type Booking from "$lib/models/booking/booking_model";
   import { businessStore } from "$lib/stores/Business";
+  import { translate } from "$lib/utils/translate";
   import { ChevronLeft, ChevronRight, Icon } from "svelte-hero-icons";
-  import { _ } from "svelte-i18n";
-  import BookingActions from "../BookingActions.svelte";
-  import BookingDetails from "../BookingDetails.svelte";
-  import CircleIcons from "../CircleIcons.svelte";
+  import BookingActions from "../components/BookingActions.svelte";
+  import BookingDetails from "../components/BookingDetails.svelte";
+  import CircleIcons from "../components/CircleIcons.svelte";
+  import BookingSheet from "../components/booking-sheet/BookingSheet.svelte";
 
   export let booking: Booking;
 
   let onlyWorker = $businessStore.businessId !== booking.buisnessId;
+  let bookingDialog: HTMLDialogElement;
+
+  function openBookingSheet() {
+    pushState("", {
+      showModal: true,
+    });
+    setTimeout(() => bookingDialog.showModal(), 100);
+  }
 </script>
 
-<button class="card bg-base-200 w-full hover:bg-base-300 px-3 py-2">
+<!-- booking shhet and dialog -->
+{#if $page.state.showModal}
+  <BookingSheet bind:dialog={bookingDialog} {booking} />
+{/if}
+
+<button
+  on:click={openBookingSheet}
+  class="card bg-base-200 w-full hover:bg-base-300 px-3 py-2"
+>
   <!-- icons, name, arrow (above the divider)  -->
   <div class="flex flex-row w-full justify-between items-center">
     <!-- like a listTile widget -->
@@ -22,10 +41,10 @@
       <div class="flex flex-col items-start">
         <h1>
           {booking.treatmentsToStringNotDetailed +
-            (onlyWorker ? "" : ` ${$_("to")} ${booking.businessName}`)}
+            (onlyWorker ? "" : ` ${translate("to")} ${booking.businessName}`)}
         </h1>
         <h1>
-          {`${$_("with")} ${booking.workerName}`}
+          {`${translate("with")} ${booking.workerName}`}
         </h1>
       </div>
     </div>
@@ -42,7 +61,7 @@
   <!-- booking details and actions (below the divider) -->
   <div class="flex flex-row justify-between w-full items-center">
     <BookingDetails {booking}></BookingDetails>
-
+    <div class="w-2"></div>
     <BookingActions {booking}></BookingActions>
   </div>
 </button>

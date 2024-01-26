@@ -3029,5 +3029,6 @@
   "updateTheWaitingList": "מעדכן את הלקוחות ברשימת ההמתנה...",
   "invalidPhoneNumber": "מספר הפלאפון אינו תקין",
   "terminalNumber": "מספר מסוף",
-  "DealDosntExistsOrAlreadyCommited": "העסקה לא קיימת או כבר מחויבת"
+  "DealDosntExistsOrAlreadyCommited": "העסקה לא קיימת או כבר מחויבת",
+  "status": "סטטוס"
 }
