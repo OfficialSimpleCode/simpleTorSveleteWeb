@@ -1,6 +1,8 @@
 <script lang="ts">
+  import DateString from "$lib/components/DateString.svelte";
   import Booking from "$lib/models/booking/booking_model";
   import BookingTreatmentsList from "./components/BookingTreatmentsList.svelte";
+  import CreatedAtIndicator from "./components/CreatedAtIndicator.svelte";
   import IconsRow from "./components/IconsRow.svelte";
   import PaymentsContainer from "./components/PaymentsContainer.svelte";
   import SummaryTable from "./components/SummaryTable.svelte";
@@ -28,9 +30,12 @@
       <!-- table about the time, date and other informations -->
       <div class="w-full">
         <!-- created at indicator -->
-        {booking.createdAt}
+        <CreatedAtIndicator {booking}></CreatedAtIndicator>
+
+        <!-- summary of times, price and duration -->
         <div class="flex flex-col bg-slate-300 rounded-lg py-4 px-5 gap-6">
-          <p class="text-center">{booking.bookingDate}</p>
+          <DateString date={booking.currentDisplayDate}></DateString>
+
           <SummaryTable {booking}></SummaryTable>
         </div>
       </div>

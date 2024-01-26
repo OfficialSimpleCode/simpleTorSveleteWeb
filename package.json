@@ -35,10 +35,12 @@
   "dependencies": {
     "@lottiefiles/svelte-lottie-player": "^0.3.1",
     "@syncfusion/ej2-schedule": "^24.1.41",
+    "@types/intl": "^1.2.2",
     "clipboardy": "^4.0.0",
     "crypto-js": "^4.2.0",
     "date-fns": "^3.2.0",
     "firebase": "^10.7.1",
+    "intl": "^1.2.5",
     "lodash-es": "^4.17.21",
     "moment": "^2.30.1",
     "node-fetch": "^3.3.2",

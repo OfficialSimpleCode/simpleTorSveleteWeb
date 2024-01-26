@@ -6,13 +6,13 @@
   import { ShowToast } from "$lib/stores/ToastManager";
   import type { IconSource } from "svelte-hero-icons";
   import { DocumentText, Icon, MapPin, Phone } from "svelte-hero-icons";
-  import { _ } from "svelte-i18n";
 
   import NavigationDialog from "$lib/components/NavigationDialog.svelte";
 
   // Assets
   import InsagramLogo from "$lib/images/instagram.svg";
   import WhatsappLogo from "$lib/images/whatsapp.svg";
+  import { translate } from "$lib/utils/translate";
 
   let navigationDialog: HTMLDialogElement;
 
@@ -63,21 +63,25 @@
   <NavigationDialog bind:dialog={navigationDialog} />
 {/if}
 
-<!-- Social Links -->
-<ul class="flex items-center gap-6 sm:gap-8">
-  {#each Object.entries(socialLinks) as [name, link]}
-    <div class="flex flex-col items-center">
-      <button
-        on:click={() => activateLink(link, name)}
-        class="btn btn-ghost btn-square w-6 h-6 sm:w-10 sm:h-10"
-      >
-        {#if socialIcons[name]}
-          <img src={socialIcons[name]} alt={name} />
-        {:else}
-          <Icon src={socialHeroIcons[name]} size="100%" />
-        {/if}
-      </button>
-      <h5 class="text-sm text-gray-500 select-none">{$_(name)}</h5>
-    </div>
-  {/each}
-</ul>
+<section class="flex pt-1 justify-center relative top-[-1rem]">
+  <!-- Social Links -->
+  <ul
+    class="flex items-center gap-6 sm:gap-8 bg-slate-400 py-2 px-5 rounded-xl mx-6 sm:mx-16 bg-opacity-20"
+  >
+    {#each Object.entries(socialLinks) as [name, link]}
+      <div class="flex flex-col items-center">
+        <button
+          on:click={() => activateLink(link, name)}
+          class="btn btn-ghost btn-square w-6 h-6 sm:w-10 sm:h-10"
+        >
+          {#if socialIcons[name]}
+            <img src={socialIcons[name]} alt={name} />
+          {:else}
+            <Icon src={socialHeroIcons[name]} size="100%" />
+          {/if}
+        </button>
+        <h5 class="text-sm text-gray-500 select-none">{translate(name)}</h5>
+      </div>
+    {/each}
+  </ul>
+</section>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type Booking from "$lib/models/booking/booking_model";
+  import { translate } from "$lib/utils/translate";
   import TableItem from "./TableItem.svelte";
 
   export let booking: Booking;
@@ -15,6 +16,8 @@
   ></TableItem>
   <TableItem
     fieldTranslateKey="treatments"
-    value={booking.totalPrice.toString()}
+    value={booking.treatments.size === 1
+      ? booking.treatments.values().next().value.nameForBooking
+      : `${booking.treatmentLength} ${translate("treatments")}`}
   ></TableItem>
 </div>
