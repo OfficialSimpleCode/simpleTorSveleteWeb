@@ -24,7 +24,7 @@
   <BookingSheet bind:dialog={bookingDialog} {booking} />
 {/if}
 
-<tr on:click={openBookingSheet} class="group hover:bg-base-200">
+<tr on:click={openBookingSheet} class="group hover:bg-base-200 cursor-pointer">
   <td class="flex flex-row justify-start items-center">
     <CircleIcons {booking}></CircleIcons>
     <h1 class="text-xl text-nowrap">{booking.businessName}</h1>
