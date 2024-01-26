@@ -407,7 +407,7 @@ export function relevantHoures({
     return finalTimes;
   }
 
-  const bookingDate = format(booking.bookingDate, "dd-MM-yyyy");
+  const bookingDate = dateToDateStr(booking.bookingDate);
   const work = convertStringToTime(
     worker.shiftsFor({ day: booking.bookingDate })
   );
@@ -483,6 +483,7 @@ export function relevantHoures({
     const valuesArr = Array.from(timeSegments.values());
     const lastTimeSegment = valuesArr[valuesArr.length - 1];
     const firstTimeSegment = valuesArr[0];
+
     // Pass over the current time stamp
     while (
       addDuration(lastTimeSegment.start, lastTimeSegment.duration) <= endWork
