@@ -24,10 +24,10 @@ export function isManager(userId: string): boolean {
 }
 
 export function isLight(color: number) {
-  const hex = color.toString();
-  const c_r = parseInt(hex.substr(0, 2), 16);
-  const c_g = parseInt(hex.substr(2, 2), 16);
-  const c_b = parseInt(hex.substr(4, 2), 16);
+  const hex = color.toString(16);
+  const c_r = parseInt(hex.slice(2, 4), 16);
+  const c_g = parseInt(hex.slice(4, 6), 16);
+  const c_b = parseInt(hex.slice(6, 8), 16);
   const brightness = (c_r * 299 + c_g * 587 + c_b * 114) / 1000;
   return brightness > 155;
 }

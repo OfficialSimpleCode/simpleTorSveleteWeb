@@ -45,7 +45,7 @@
     );
 
     let html: HTMLHtmlElement = document.getElementsByTagName("html")[0];
-    html.setAttribute("data-theme", theme.brightness == 1 ? "dark" : "light");
+    html.setAttribute("data-theme", theme.brightness == 0 ? "dark" : "light");
   });
 
   // Dialogs
