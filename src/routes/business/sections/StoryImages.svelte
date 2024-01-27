@@ -49,7 +49,7 @@
       <button on:click={() => openImageDisplayDialog(storyId)}>
         <!-- h-[${storyImagesHeigth}px] w-[${storyImagesWidth}px] -->
         <img
-          class="object-cover md:h-[530px] md:w-[300px] xs:h-[284px] xs:w-[160px] h-[249px] w-[140px] rounded-xl hover:scale-[1.01]"
+          class="object-cover md:h-[530px] md:w-[300px] xs:h-[284px] xs:w-[160px] h-[248px] w-[140px] rounded-xl hover:scale-[1.01]"
           src={image}
           alt="gym"
         />
