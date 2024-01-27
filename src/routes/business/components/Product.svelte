@@ -18,7 +18,7 @@
 >
   <!-- product card -->
   <div
-    class="card card-compact bg-base-100 shadow-xl md:w-[280px] sm:w-[180px] w-[200px]"
+    class="card card-compact bg-base-100 shadow-xl md:w-[280px] xs:w-[180px] w-[200px]"
   >
     <!-- card image -->
     <figure>

@@ -12,13 +12,13 @@
   import { LoginType } from "$lib/services/external_services/firebase_auth_service";
   import { ShowToast } from "$lib/stores/ToastManager";
   import { isConnectedStore } from "$lib/stores/User";
+  import { translate } from "$lib/utils/translate";
 
-  import { _ } from "svelte-i18n";
   async function handleClick(authProvider: AuthProvider) {
     //facebook is will be active soon
     if (AuthProvider.Facebook === authProvider) {
       ShowToast({
-        text: $_("soon"),
+        text: translate("soon"),
         status: "info",
       });
       return;
@@ -48,8 +48,10 @@
     alt="simpletor"
   />
 
-  <div class="flex-[1] flex flex-col justify-center items-center gap-8">
-    <h1 class="text-4xl">Login Or Signup</h1>
+  <div
+    class="flex-[1] flex flex-col justify-center items-center sm:gap-8 gap-5 sm:mx-[70px] mx-3 my-[100px]"
+  >
+    <h1 class="text-3xl text-center">Login Or Signup</h1>
     {#each googleOrder as authProvider, i}
       <button
         on:click={() => handleClick(authProvider)}
@@ -66,12 +68,3 @@
     {/each}
   </div>
 </main>
-
-<style>
-  div {
-    margin-top: 100px;
-    margin-bottom: 100px;
-    margin-right: 100px;
-    margin-left: 80px;
-  }
-</style>
