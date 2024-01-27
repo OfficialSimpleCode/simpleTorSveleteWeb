@@ -24,31 +24,30 @@
     let themes = $businessStore.design.businessThemes;
     document.documentElement.style.setProperty(
       "--p",
-      getOklachValues(loadColorFromTheme("primary", themeKey, themes)),
+      getOklachValues(loadColorFromTheme("primary", themeKey, themes))
     );
     document.documentElement.style.setProperty(
       "--b1",
-      getOklachValues(loadColorFromTheme("background", themeKey, themes)),
+      getOklachValues(loadColorFromTheme("background", themeKey, themes))
     );
     document.documentElement.style.setProperty(
       "--b2",
-      getOklachValues(loadColorFromTheme("surface", themeKey, themes)),
+      getOklachValues(loadColorFromTheme("surface", themeKey, themes))
     );
     document.documentElement.style.setProperty(
       "--b3",
-      getOklachValues(loadColorFromTheme("tertiary", themeKey, themes)),
+      getOklachValues(loadColorFromTheme("tertiary", themeKey, themes))
     );
   });
 
   // Dialogs
-
   let screenHeight = window.innerHeight;
   const storyImagesRatioX = 9;
   const storyImagesRatioY = 16;
 
   $: storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
   $: storyImagesWidth = Math.floor(
-    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
+    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
   );
 
   // Update screenWidth on window resize
@@ -57,7 +56,7 @@
 
     storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
     storyImagesWidth = Math.floor(
-      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
+      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
     );
 
     console.log("screenHeight", screenHeight);
@@ -71,7 +70,7 @@
 
   <!-- background image -->
   <img
-    class="md:h-1/2 w-full object-cover {`h-${changingImagesHeight}`}"
+    class="md:h-1/2 w-full object-cover h-[{changingImagesHeight}px] min-h-[270px]"
     src={$businessStore.design.changingImages[0]}
     alt="backgroud"
   />

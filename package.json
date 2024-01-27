@@ -33,6 +33,9 @@
   },
   "type": "module",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/svelte-fontawesome": "^0.2.1",
     "@lottiefiles/svelte-lottie-player": "^0.3.1",
     "@syncfusion/ej2-schedule": "^24.1.41",
     "@types/intl": "^1.2.2",
@@ -41,6 +44,7 @@
     "crypto-js": "^4.2.0",
     "date-fns": "^3.2.0",
     "firebase": "^10.7.1",
+    "fortawesome": "^0.0.1-security",
     "intl": "^1.2.5",
     "lodash-es": "^4.17.21",
     "moment": "^2.30.1",
@@ -49,6 +53,7 @@
     "svelte-hero-icons": "^5.0.0",
     "svelte-i18n": "^4.0.0",
     "svelte-icons": "^2.1.0",
+    "svelte-icons-pack": "^2.1.0",
     "svelte-qrcode-image": "^1.0.0-rc.2",
     "tslog": "^4.9.2",
     "uuid": "^3.3.3"

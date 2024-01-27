@@ -7,10 +7,11 @@
   import { businessStore } from "$lib/stores/Business";
   import { isConnectedStore } from "$lib/stores/User";
   import { translate } from "$lib/utils/translate";
-  import { Icon, MapPin, Share } from "svelte-hero-icons";
+  import { Icon, MapPin, Share, Trash } from "svelte-hero-icons";
 
   import NavigationDialog from "$lib/components/NavigationDialog.svelte";
 
+  import { isAppleUser } from "$lib/consts/platform";
   import ShareDialog from "../components/ShareDialog.svelte";
 
   let shareDialog: HTMLDialogElement;
@@ -77,7 +78,7 @@
         {translate("setBooking")}
       </button>
       <button class="btn btn-primary" on:click={openShareDialog}>
-        <Icon src={Share} size="26px" />
+        <Icon src={isAppleUser() ? Trash : Share} size="26px" />
       </button>
     </div>
   </div>

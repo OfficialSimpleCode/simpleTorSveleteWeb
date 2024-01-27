@@ -80,7 +80,9 @@
             <Icon src={socialHeroIcons[name]} size="100%" />
           {/if}
         </button>
-        <h5 class="text-sm text-gray-500 select-none">{translate(name)}</h5>
+        <h5 class="xs:text-sm text-xs text-gray-500 select-none">
+          {translate(name)}
+        </h5>
       </div>
     {/each}
   </ul>
