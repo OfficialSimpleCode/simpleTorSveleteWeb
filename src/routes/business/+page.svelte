@@ -3,9 +3,11 @@
   // Models
   // Components
   import SocialLinks from "./sections/SocialLinks.svelte";
+
   // other (utils / stores)
   import Navbar from "$lib/components/navbar/Navbar.svelte";
   import { businessStore } from "$lib/stores/Business.js";
+  import { getOklachValues, loadColorFromTheme } from "$lib/utils/colors";
 
   import Footer from "./sections/Footer.svelte";
   import IconAndTopButtons from "./sections/IconAndTopButtons.svelte";
@@ -18,29 +20,24 @@
     window.innerHeight * (changingImagesRatioY / changingImagesRatioX);
 
   onMount(() => {
-    // console.log($business);
-    // document.documentElement.style.setProperty(
-    //     "--p",
-    //     hexToXyY(
-    //         numberToHex(
-    //             Object.values($business.design.businessThemes)[0].primary,
-    //         ),
-    //     ),
-    // );
-    // document.documentElement.style.setProperty(
-    //     "--b1",
-    //     hexToXyY(
-    //         numberToHex(
-    //             $business.design.businessThemes[
-    //                 "7c123ea0-3b35-11ee-8d1b-954dea4c29c7"
-    //             ].background,
-    //         ),
-    //     ),
-    // );
-    // document.documentElement.style.setProperty(
-    //     "--pc",
-    //     hexToXyY("#ffadff2f"),
-    // );
+    let themeKey: string = $businessStore.design.pickedThemeKey;
+    let themes = $businessStore.design.businessThemes;
+    document.documentElement.style.setProperty(
+      "--p",
+      getOklachValues(loadColorFromTheme("primary", themeKey, themes)),
+    );
+    document.documentElement.style.setProperty(
+      "--b1",
+      getOklachValues(loadColorFromTheme("background", themeKey, themes)),
+    );
+    document.documentElement.style.setProperty(
+      "--b2",
+      getOklachValues(loadColorFromTheme("surface", themeKey, themes)),
+    );
+    document.documentElement.style.setProperty(
+      "--b3",
+      getOklachValues(loadColorFromTheme("tertiary", themeKey, themes)),
+    );
   });
 
   // Dialogs
@@ -51,7 +48,7 @@
 
   $: storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
   $: storyImagesWidth = Math.floor(
-    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
+    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
   );
 
   // Update screenWidth on window resize
@@ -60,7 +57,7 @@
 
     storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
     storyImagesWidth = Math.floor(
-      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
+      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
     );
 
     console.log("screenHeight", screenHeight);
