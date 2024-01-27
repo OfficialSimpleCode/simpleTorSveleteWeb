@@ -37,6 +37,14 @@
       getOklachValues(loadColorFromTheme("background", themeKey, themes)),
     );
     document.documentElement.style.setProperty(
+      "--bc",
+      getOklachValues(theme.brightness == 0 ? "#fff" : "#000"),
+    );
+    document.documentElement.style.setProperty(
+      "--pc",
+      getOklachValues(theme.brightness == 0 ? "#fff" : "#000"),
+    );
+    document.documentElement.style.setProperty(
       "--b2",
       getOklachValues(loadColorFromTheme("surface", themeKey, themes)),
     );
