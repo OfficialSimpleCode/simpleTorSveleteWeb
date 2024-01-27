@@ -7,7 +7,11 @@
   // other (utils / stores)
   import Navbar from "$lib/components/navbar/Navbar.svelte";
   import { businessStore } from "$lib/stores/Business.js";
-  import { getOklachValues, loadColorFromTheme } from "$lib/utils/colors";
+  import {
+    getOklachValues,
+    loadColorFromTheme,
+    getTheme,
+  } from "$lib/utils/colors";
 
   import Footer from "./sections/Footer.svelte";
   import IconAndTopButtons from "./sections/IconAndTopButtons.svelte";
@@ -22,6 +26,7 @@
   onMount(() => {
     let themeKey: string = $businessStore.design.pickedThemeKey;
     let themes = $businessStore.design.businessThemes;
+    let theme = getTheme(themeKey, themes);
     document.documentElement.style.setProperty(
       "--p",
       getOklachValues(loadColorFromTheme("primary", themeKey, themes)),
@@ -38,6 +43,9 @@
       "--b3",
       getOklachValues(loadColorFromTheme("tertiary", themeKey, themes)),
     );
+
+    let html: HTMLHtmlElement = document.getElementsByTagName("html")[0];
+    html.setAttribute("data-theme", theme.brightness == 1 ? "dark" : "light");
   });
 
   // Dialogs
