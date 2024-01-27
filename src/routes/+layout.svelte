@@ -19,8 +19,6 @@
       return;
     }
 
-    console.log($page.data.businessID);
-
     LinksHelper.GI().linkedBuisnessId =
       $page.data.businessID ||
       "972-525656377--50ab63a0-a192-11ed-950c-3ba22fe40036";

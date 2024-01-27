@@ -21,6 +21,5 @@ export function loadColorFromTheme(key: string, themeKey: string, themes: Map<st
 
 export function getOklachValues(hex: string): string {
     let color = better.from(hex);
-    console.log(color.oklchVal);
     return `${color.oklchVal[0]} ${color.oklchVal[1]} ${color.oklchVal[2]}`;
 }
