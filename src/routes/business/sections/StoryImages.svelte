@@ -40,7 +40,7 @@
   />
 {/if}
 
-<div class="mt-10 bg-slate-200 w-full pb-14 px-6 pt-10 sm:px-16">
+<div class="mt-10 bg-base-200 w-full pb-14 px-6 pt-10 sm:px-16">
   <h1 class="text-center font-bold text-2xl pb-6">Our Works</h1>
   <div
     class="w-full self-center flex items-center mt-1 justify-center gap-6 gap-y-6 flex-wrap"
