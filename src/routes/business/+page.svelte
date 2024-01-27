@@ -23,29 +23,31 @@
   const changingImagesHeight =
     window.innerHeight * (changingImagesRatioY / changingImagesRatioX);
 
+  let themeKey: string = $businessStore.design.pickedThemeKey;
+  let themes = $businessStore.design.businessThemes;
+  let theme = getTheme(themeKey, themes);
+
   onMount(() => {
-    let themeKey: string = $businessStore.design.pickedThemeKey;
-    let themes = $businessStore.design.businessThemes;
-    let theme = getTheme(themeKey, themes);
     document.documentElement.style.setProperty(
       "--p",
-      getOklachValues(loadColorFromTheme("primary", themeKey, themes))
+      getOklachValues(loadColorFromTheme("primary", themeKey, themes)),
     );
     document.documentElement.style.setProperty(
       "--b1",
-      getOklachValues(loadColorFromTheme("background", themeKey, themes))
+      getOklachValues(loadColorFromTheme("background", themeKey, themes)),
     );
     document.documentElement.style.setProperty(
       "--b2",
-      getOklachValues(loadColorFromTheme("surface", themeKey, themes))
+      getOklachValues(loadColorFromTheme("surface", themeKey, themes)),
     );
     document.documentElement.style.setProperty(
       "--b3",
-      getOklachValues(loadColorFromTheme("tertiary", themeKey, themes))
+      getOklachValues(loadColorFromTheme("tertiary", themeKey, themes)),
     );
 
     let html: HTMLHtmlElement = document.getElementsByTagName("html")[0];
     html.setAttribute("data-theme", theme.brightness == 0 ? "dark" : "light");
+    html.style.setProperty("font-family", theme.fontName);
   });
 
   // Dialogs
@@ -55,7 +57,7 @@
 
   $: storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
   $: storyImagesWidth = Math.floor(
-    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
+    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
   );
 
   // Update screenWidth on window resize
@@ -64,7 +66,7 @@
 
     storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
     storyImagesWidth = Math.floor(
-      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
+      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
     );
 
     console.log("screenHeight", screenHeight);
@@ -72,6 +74,13 @@
     console.log(`h-[${storyImagesHeigth}px]`, `w-[${storyImagesWidth}px]`);
   });
 </script>
+
+<svelte:head>
+  <link
+    href="https://fonts.googleapis.com/css?family={theme.fontName}"
+    rel="stylesheet"
+  />
+</svelte:head>
 
 <main class="w-full h-full" style="">
   <Navbar />
