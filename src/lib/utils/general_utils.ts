@@ -23,13 +23,35 @@ export function isManager(userId: string): boolean {
     : GeneralData.currentBusinesssId.startsWith(userId);
 }
 
-export function isLight(color: number) {
+export function computeLuminance(color: number): number {
+  function _linearizeColorComponent(component: number): number {
+    if (component <= 0.03928) {
+      return component / 12.92;
+    }
+    return Math.pow((component + 0.055) / 1.055, 2.4);
+  }
+
+  let hex: string = color.toString(16);
+  let red: number = parseInt(hex.slice(2, 4), 16);
+  let green: number = parseInt(hex.slice(4, 6), 16);
+  let blue: number = parseInt(hex.slice(6, 8), 16);
+
+  // See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
+  const R = _linearizeColorComponent(red / 0xFF);
+  const G = _linearizeColorComponent(green / 0xFF);
+  const B = _linearizeColorComponent(blue / 0xFF);
+  return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+}
+
+export function isLight(color: number, treshhold: number = 155) {
+  console.log(color);
   const hex = color.toString(16);
   const c_r = parseInt(hex.slice(2, 4), 16);
   const c_g = parseInt(hex.slice(4, 6), 16);
   const c_b = parseInt(hex.slice(6, 8), 16);
   const brightness = (c_r * 299 + c_g * 587 + c_b * 114) / 1000;
-  return brightness > 155;
+  console.log(brightness);
+  return brightness > treshhold;
 }
 
 export async function checkTime(lookupAddress: string): Promise<Error | null> {

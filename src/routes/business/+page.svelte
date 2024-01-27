@@ -17,6 +17,7 @@
   import IconAndTopButtons from "./sections/IconAndTopButtons.svelte";
   import ProductsSection from "./sections/ProductsSection.svelte";
   import StoryImages from "./sections/StoryImages.svelte";
+  import { isLight, computeLuminance } from "$lib/utils/general_utils";
 
   const changingImagesRatioX = 5;
   const changingImagesRatioY = 4;
@@ -42,7 +43,7 @@
     );
     document.documentElement.style.setProperty(
       "--pc",
-      getOklachValues(theme.brightness == 0 ? "#fff" : "#000"),
+      getOklachValues(computeLuminance(theme.primary) > 0.5 ? "#000" : "#fff"),
     );
     document.documentElement.style.setProperty(
       "--b2",
