@@ -7,41 +7,43 @@ import type WorkerModel from "$lib/models/worker/worker_model";
 import { Errors } from "$lib/services/errors/messages";
 import { needToHoldOn } from "$lib/utils/booking_utils";
 import AppErrorsHelper from "../app_errors";
-import NotificationHandler from "../notifications/notification_handler";
 import { BookingRepo } from "./booking_repo";
 
 export default class BookingHelper {
   private static _singleton: BookingHelper = new BookingHelper();
   private constructor() {}
-  public static getInstance(): BookingHelper {
+  public static GI(): BookingHelper {
     return BookingHelper._singleton;
   }
   private bookingRepo: BookingRepo = new BookingRepo();
-  async addBooking(
-    booking: Booking,
-    worker: WorkerModel,
-    {
-      clientNote = "",
-      noteText = "",
-      needPayInAdvance = false,
-      filledBooking = false,
-    }: {
-      clientNote?: string;
-      noteText?: string;
-      needPayInAdvance?: boolean;
-      ignoreLocalWorker?: boolean;
-      filledBooking?: boolean;
-    }
-  ): Promise<any> {
+  async addBooking({
+    booking,
+    worker,
+    clientNote = "",
+
+    needPayInAdvance = false,
+    filledBooking = false,
+  }: {
+    booking: Booking;
+    worker: WorkerModel;
+    clientNote?: string;
+
+    needPayInAdvance?: boolean;
+    ignoreLocalWorker?: boolean;
+    filledBooking?: boolean;
+  }): Promise<Booking | undefined> {
     if (!UserInitializer.GI().isConnected) {
       AppErrorsHelper.GI().error = Errors.notLogedIn;
-      return false;
+      return undefined;
     }
+    console.log("22222222222222222");
     if (booking.treatments.size === 0) {
       AppErrorsHelper.GI().error = Errors.noTreatment;
-      return false;
+      return undefined;
     }
-
+    console.log("1111111111111111");
+    booking.bookingDate = new Date(2024, 1, 5, 11, 50);
+    console.log(booking.bookingDate);
     if (!filledBooking) {
       await booking.copyDataToOrder({
         worker: worker,
@@ -49,9 +51,10 @@ export default class BookingHelper {
         needToHoldOn: needToHoldOn(booking.bookingDate, worker),
         business: BusinessInitializer.GI().business,
         clientNoteText: clientNote,
-        noteText: noteText,
       });
     }
+
+    console.log("eeeeeeeeeeeeeeeeeeee");
     const newCustomerData = UserInitializer.GI().user.customerDataFromBooking({
       booking: booking,
     });
@@ -68,6 +71,7 @@ export default class BookingHelper {
         customerData: newCustomerData,
       })
       .then(async (value) => {
+        console.log(value);
         if (needPayInAdvance) {
           return value;
         }
@@ -79,10 +83,10 @@ export default class BookingHelper {
           //   newCustomerData,
           //   needPayInAdvance,
           // });
-          NotificationHandler.GI().afterAddBooking({
-            booking,
-            worker,
-          });
+          // NotificationHandler.GI().afterAddBooking({
+          //   booking,
+          //   worker,
+          // });
         }
         return value;
       });
@@ -143,12 +147,11 @@ export default class BookingHelper {
         //   deleteAllBooking,
         //   cancelDate,
         // });
-
         // Handle notification for the deleted booking
-        NotificationHandler.GI().afterDeleteBooking({
-          booking: deletedBooking,
-          worker,
-        });
+        // NotificationHandler.GI().afterDeleteBooking({
+        //   booking: deletedBooking,
+        //   worker,
+        // });
       });
 
       return resp;
@@ -268,16 +271,16 @@ export default class BookingHelper {
           //     needPayInAdvance: false,
           //     fromUpdate: true,
           //   });
-          NotificationHandler.GI().afterUpdateBooking({
-            newBooking,
-            oldBooking,
-            newWorker,
-            keepRecurrence,
-            oldWorker,
-            workerAction,
-            isOldBoookingPassed,
-            oldBookingDateForReccurence,
-          });
+          // NotificationHandler.GI().afterUpdateBooking({
+          //   newBooking,
+          //   oldBooking,
+          //   newWorker,
+          //   keepRecurrence,
+          //   oldWorker,
+          //   workerAction,
+          //   isOldBoookingPassed,
+          //   oldBookingDateForReccurence,
+          // });
         }
 
         return value;

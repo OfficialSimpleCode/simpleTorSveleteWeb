@@ -80,7 +80,7 @@ export default class TreatmentSubject {
   }
 
   containTreatment(treatmentId: string): boolean {
-    for (const treatment of Object.values(this.treatments)) {
+    for (const [index, treatment] of this.treatments) {
       if (treatment.id === treatmentId) {
         return true;
       }

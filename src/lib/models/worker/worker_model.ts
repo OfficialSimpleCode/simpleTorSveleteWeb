@@ -209,7 +209,7 @@ export default class WorkerModel {
   }
 
   hasTreatemnt(treatmentId: string): boolean {
-    for (const subject of Object.values(this.treatmentsSubjects)) {
+    for (const [index, subject] of this.treatmentsSubjects) {
       if (subject.containTreatment(treatmentId)) {
         return true;
       }

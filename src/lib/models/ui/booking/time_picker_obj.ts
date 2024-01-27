@@ -20,6 +20,7 @@ export default class TimePickerObj {
   isHoliday: boolean = false;
   signedPaymentRequestId?: string;
 
+  constructor({});
   constructor({
     displayDate,
     maxParticipants = 1,
@@ -102,9 +103,35 @@ export default class TimePickerObj {
       : this.dateToTimeStr(this.displayDate);
   }
 
+  static fromScheduleEvent(event: Record<string, any>): TimePickerObj {
+    const clonedTimePickerObj = new TimePickerObj({});
+    clonedTimePickerObj.displayDate = event.displayDate;
+    clonedTimePickerObj.recurrenceTimeId = event.recurrenceTimeId;
+    clonedTimePickerObj.showMultiWaitingList = event.showMultiWaitingList;
+    clonedTimePickerObj.isVacation = event.isVacation ?? false;
+    clonedTimePickerObj.isHoliday = event.isHoliday ?? false;
+    clonedTimePickerObj.isMulti = event.isMulti ?? false;
+    clonedTimePickerObj.signedPaymentRequestId = event.signedPaymentRequestId;
+    clonedTimePickerObj.maxParticipants = event.maxParticipants ?? 0;
+    clonedTimePickerObj.currentParticipants = event.currentParticipants ?? 0;
+    clonedTimePickerObj.showParticipants = event.showParticipants ?? true;
+    clonedTimePickerObj.recurrenceFatherBookingId =
+      event.recurrenceFatherBookingId;
+    if (event.recurrenceMultiEvent != undefined) {
+      clonedTimePickerObj.recurrenceMultiEvent = RecurrenceEvent.fromJson(
+        event.recurrenceMultiEvent
+      );
+    }
+
+    clonedTimePickerObj.fatherRecurrenceMultiEventDate =
+      event.fatherRecurrenceMultiEventDate;
+    clonedTimePickerObj.from = event.from;
+    clonedTimePickerObj.duration = event.duration;
+    return clonedTimePickerObj;
+  }
+
   toJson(): Record<string, any> {
     const data: Record<string, any> = {};
-    data["id"] = this.from.toISOString();
     data["from"] = this.from;
     data["duration"] = this.duration.inMinutes;
 

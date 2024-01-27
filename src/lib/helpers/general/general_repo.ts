@@ -1,17 +1,30 @@
-import { ArrayCommands, type NumericCommands } from "$lib/consts/db";
+import {
+  ArrayCommands,
+  buisnessCollection,
+  dataCollection,
+  dataDoc,
+  multiEventsTimesDoc,
+  recurrenceEventsDoc,
+  workersCollection,
+  type NumericCommands,
+} from "$lib/consts/db";
 import {
   eventFilterTypeToStr,
   type EventFilterType,
 } from "$lib/consts/worker_schedule";
 //import CustomerData from "$lib/models/general/customer_data";
 // import WorkerModel from "$lib/models/worker/worker_model";
+import BusinessModel from "$lib/models/business/business_model";
+import WorkerModel from "$lib/models/worker/worker_model";
 import FirestoreDataBase from "$lib/services/external_services/firestore";
 import {
+  Transaction,
   type DocumentData,
   type DocumentSnapshot,
   type Unsubscribe,
 } from "firebase/firestore";
 import DbPathesHelper from "../db_paths_helper";
+import { GeneralData } from "../general_data";
 
 export default class GeneralRepo extends FirestoreDataBase {
   constructor() {
@@ -227,75 +240,75 @@ export default class GeneralRepo extends FirestoreDataBase {
     });
   }
 
-  // async getWorkerFromTransactionRepo({
-  //   transaction,
-  //   workerId,
-  //   businessModel,
-  //   needMultiDoc = false,
-  // }: {
-  //   transaction: Transaction;
-  //   workerId: string;
-  //   businessModel?: BusinessModel;
-  //   needMultiDoc?: boolean;
-  // }): Promise<WorkerModel | undefined> {
-  //   const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
-  //   const workerDoc = await this.transactionGet(transaction, path, workerId);
-  //   if (!workerDoc.exists()) {
-  //     return undefined;
-  //   }
-  //   const firestoreDataBaseWorker = WorkerModel.fromWorkerDocJson(
-  //     workerDoc!.data()
-  //   );
+  async getWorkerFromTransactionRepo({
+    transaction,
+    workerId,
+    businessModel,
+    needMultiDoc = false,
+  }: {
+    transaction: Transaction;
+    workerId: string;
+    businessModel?: BusinessModel;
+    needMultiDoc?: boolean;
+  }): Promise<WorkerModel | undefined> {
+    const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
+    const workerDoc = await this.transactionGet(transaction, path, workerId);
+    if (!workerDoc.exists()) {
+      return undefined;
+    }
+    const firestoreDataBaseWorker = WorkerModel.fromWorkerDocJson(
+      workerDoc!.data()
+    );
 
-  //   await super
-  //     .transactionGet(
-  //       transaction,
-  //       `${path}/${workerId}/${dataCollection}`,
-  //       dataDoc
-  //     )
-  //     .then((json) => {
-  //       if (json.exists()) {
-  //         firestoreDataBaseWorker.workerPublicData.setWorkerPublicData(
-  //           json.data()
-  //         );
-  //       }
-  //     });
+    await super
+      .transactionGet(
+        transaction,
+        `${path}/${workerId}/${dataCollection}`,
+        dataDoc
+      )
+      .then((json) => {
+        if (json.exists()) {
+          firestoreDataBaseWorker.workerPublicData.setWorkerPublicData(
+            json.data()
+          );
+        }
+      });
 
-  //   if (
-  //     firestoreDataBaseWorker.hasRecurrenceEvents &&
-  //     firestoreDataBaseWorker.isCustomersNeedRecurrence
-  //   ) {
-  //     await super
-  //       .transactionGet(
-  //         transaction,
-  //         `${path}/${workerId}/${dataCollection}`,
-  //         recurrenceEventsDoc
-  //       )
-  //       .then((json) => {
-  //         if (json.exists() && json.data() != null) {
-  //           // firestoreDataBaseWorker.recurrence.setRecurrenceEvents(
-  //           //   json.data(),
-  //           //   workerId,
-  //           //   businessModel ?? BusinessModel.empty()
-  //           // );
-  //         }
-  //       });
-  //   }
-  //   if (needMultiDoc) {
-  //     await super
-  //       .transactionGet(
-  //         transaction,
-  //         `${path}/${workerId}/${dataCollection}`,
-  //         multiEventsTimesDoc
-  //       )
-  //       .then((json) => {
-  //         if (json.exists()) {
-  //           firestoreDataBaseWorker.multiEventsTimes.setData(json.data());
-  //         }
-  //       });
-  //   }
-  //   return firestoreDataBaseWorker;
-  // }
+    if (
+      firestoreDataBaseWorker.hasRecurrenceEvents &&
+      firestoreDataBaseWorker.isCustomersNeedRecurrence
+    ) {
+      await super
+        .transactionGet(
+          transaction,
+          `${path}/${workerId}/${dataCollection}`,
+          recurrenceEventsDoc
+        )
+        .then((json) => {
+          if (json.exists() && json.data() != null) {
+            firestoreDataBaseWorker.recurrence.setRecurrenceEvents(
+              json.data(),
+              workerId,
+              businessModel ?? BusinessModel.empty()
+            );
+          }
+        });
+    }
+    if (needMultiDoc) {
+      await super
+        .transactionGet(
+          transaction,
+          `${path}/${workerId}/${dataCollection}`,
+          multiEventsTimesDoc
+        )
+        .then((json) => {
+          if (json.exists()) {
+            firestoreDataBaseWorker.multiEventsTimes.setData(json.data());
+          }
+        });
+    }
+    return firestoreDataBaseWorker;
+  }
 
   toFormatedCustomerData({
     //customerData,

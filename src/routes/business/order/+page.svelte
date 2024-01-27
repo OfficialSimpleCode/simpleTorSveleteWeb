@@ -1,16 +1,14 @@
 <script lang="ts">
   import Navbar from "$lib/components/navbar/Navbar.svelte";
   import { ShowToast } from "$lib/stores/ToastManager";
-  import { _ } from "svelte-i18n";
 
   import BookingController, {
     bookingMakerStore,
   } from "$lib/controllers/booking_controller";
   import { translate } from "$lib/utils/translate";
-  import SyncfusionSchedualer from "./components/SyncfusionSchedualer.svelte";
   import FinishScreen from "./steps/finish_screen/FinishScreen.svelte";
   import ServicePicker from "./steps/service_picker/ServicePicker.svelte";
-  import WorkerPicker from "./steps/worker_picker/WorkerPicker.svelte";
+  import TimePickerSchedule from "./steps/time_picker/components/TimePickerSchedule.svelte";
 
   let steps: string[] = ["worker", "treatment", "dateAndTime", "confirmNow"];
 
@@ -40,13 +38,13 @@
       return;
     }
 
-    if (stepNumber === 4 && $bookingMakerStore.date === undefined) {
-      ShowToast({
-        text: translate("firstPickDate"),
-        status: "warning",
-      });
-      return;
-    }
+    // if (stepNumber === 4 && $bookingMakerStore.date === undefined) {
+    //   ShowToast({
+    //     text: translate("firstPickDate"),
+    //     status: "warning",
+    //   });
+    //   return;
+    // }
 
     $bookingMakerStore.currentStep = stepNumber;
   }
@@ -64,22 +62,17 @@
           : (i + 1).toString()}
         on:click={() => clickedOnStep(i + 1)}
       >
-        {$_(step)}
+        {translate(step)}
       </button>
     {/each}
   </ul>
 
   {#if $bookingMakerStore.currentStep == 1}
-    <WorkerPicker />
+    <TimePickerSchedule />
   {:else if $bookingMakerStore.currentStep == 2}
     <ServicePicker />
   {:else if $bookingMakerStore.currentStep == 3}
-    <!-- <ChooseDateAndTime
-            bind:selectedDateAndTime
-            duration={totalServicesDuration}
-            on:dateAndTime={(event) => dateAndTimeSelected(event.detail)}
-        /> -->
-    <SyncfusionSchedualer />
+    <TimePickerSchedule />
   {:else if $bookingMakerStore.currentStep == 4}
     <FinishScreen />
   {/if}

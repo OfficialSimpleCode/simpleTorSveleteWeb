@@ -13,7 +13,8 @@ import NotificationPayload, {
 } from "$lib/models/notifications/notification_payload";
 import type NotificationTopic from "$lib/models/notifications/notification_topic";
 import type WorkerModel from "$lib/models/worker/worker_model";
-import { getFormatedTime, translate } from "$lib/utils/string_utils";
+import { getFormatedTime } from "$lib/utils/string_utils";
+import { translate } from "$lib/utils/translate";
 import NotificationsRepo from "./notifications_repo";
 
 export default class NotificationsHelper {

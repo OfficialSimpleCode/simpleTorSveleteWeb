@@ -755,14 +755,14 @@ export default class Booking extends ScheduleItem {
     worker,
     needToHoldOn,
     business,
-    noteText = "",
+
     clientNoteText = "",
   }: {
     worker: WorkerModel;
     user: UserModel;
     needToHoldOn: boolean;
     business: BusinessModel;
-    noteText: string;
+
     clientNoteText: string;
   }): Promise<void> {
     this.customerName = user.name;
@@ -783,7 +783,7 @@ export default class Booking extends ScheduleItem {
     this.adress = business.adress;
     this.clientNote = clientNoteText;
     this.wasWaiting = false;
-    this.note = noteText;
+
     this.shopIcon = business.design.shopIconData;
 
     if (
