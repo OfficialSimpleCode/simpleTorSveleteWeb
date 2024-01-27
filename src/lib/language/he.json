@@ -3030,5 +3030,9 @@
   "invalidPhoneNumber": "מספר הפלאפון אינו תקין",
   "terminalNumber": "מספר מסוף",
   "DealDosntExistsOrAlreadyCommited": "העסקה לא קיימת או כבר מחויבת",
-  "status": "סטטוס"
+  "status": "סטטוס",
+  "createdBySimpleTor": "עמוד זה נוצר באמצעות מערכת Simple Tor",
+  "ourCompanyName": "אס איי קוד פשוט בע״מ",
+  "downloadSimpleTor": "הורד את אפליקציית Simple Tor",
+  "companySite": "אתר החברה"
 }

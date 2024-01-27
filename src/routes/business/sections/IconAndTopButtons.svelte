@@ -56,7 +56,7 @@
 
 <section
   id="profile-row"
-  class="flex justify-between items-start gap-3 mx-6 sm:mx-16 relative top-[-3rem] text-center"
+  class="flex justify-between items-start gap-3 mx-4 sm:mx-16 relative top-[-3rem] text-center"
 >
   <!-- icon business name and address -->
   <div class="flex flex-col justify-center items-center">
