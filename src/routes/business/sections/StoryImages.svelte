@@ -40,7 +40,7 @@
   />
 {/if}
 
-<div class="mt-10 bg-slate-200 w-full pb-14 px-6 pt-10 sm:px-16">
+<div class="mt-10 bg-slate-200 w-full pb-14 px-6 pt-10 xs:px-16">
   <h1 class="text-center font-bold text-2xl pb-6">Our Works</h1>
   <div
     class="w-full self-center flex items-center mt-1 justify-center gap-6 gap-y-6 flex-wrap"
@@ -49,7 +49,7 @@
       <button on:click={() => openImageDisplayDialog(storyId)}>
         <!-- h-[${storyImagesHeigth}px] w-[${storyImagesWidth}px] -->
         <img
-          class="object-cover md:h-[530px] md:w-[300px] h-[284px] w-[160px] rounded-xl hover:scale-[1.01]"
+          class="object-cover md:h-[530px] md:w-[300px] xs:h-[284px] xs:w-[160px] h-[249px] w-[140px] rounded-xl hover:scale-[1.01]"
           src={image}
           alt="gym"
         />
