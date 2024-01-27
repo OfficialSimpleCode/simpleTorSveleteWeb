@@ -10,6 +10,9 @@
   <!-- date and time of the booking -->
   <BookingDateAndTime {booking}></BookingDateAndTime>
 
+  <!-- padding -->
+  <div class="h-2"></div>
+
   <!-- data: durstion, price -->
   <BookingPriceAndDuration {booking}></BookingPriceAndDuration>
 </div>

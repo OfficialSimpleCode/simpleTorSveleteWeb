@@ -475,6 +475,14 @@ export default class Booking extends ScheduleItem {
       );
     }
   }
+
+  ///Return the display date of the booking - recurrnce booking date can
+  ///be trasted because the date is the father's date so we use
+  ///recurrenceChildDate incase of recurrence
+  get currentDisplayDate(): Date {
+    return this.recurrenceChildDate ?? this.bookingDate;
+  }
+
   get totalMinutes(): number {
     let minutes = 0;
     this.treatments.forEach((treatment, _) => {
