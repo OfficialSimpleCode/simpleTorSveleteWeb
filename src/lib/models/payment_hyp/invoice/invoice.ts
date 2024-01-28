@@ -4,7 +4,11 @@ import { defaultCurrency } from "$lib/models/general/currency_model";
 import CustomerData from "$lib/models/general/customer_data";
 import { Price } from "$lib/models/general/price";
 import InvoiceNotificationPayload from "$lib/models/notifications/invoice_notification_payload";
-import { dateToDayStr, dateToMonthStr } from "$lib/utils/times_utils";
+import {
+  dateIsoStr,
+  dateToDayStr,
+  dateToMonthStr,
+} from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
 import { PaymentObject } from "../payment_object";
 import InvoiceBusinessInfo from "./invoice_business_info";
@@ -140,7 +144,7 @@ export default class Invoice extends PaymentObject {
     }
     data["BI"] = this.businessInfo.toJson();
     data["WIN"] = this.workerInfo.toJson();
-    data["RD"] = this.createdAt.toISOString();
+    data["RD"] = dateIsoStr(this.createdAt);
     data["CD"] = this.customerData.toMinimalJson();
 
     data["I"] = {};

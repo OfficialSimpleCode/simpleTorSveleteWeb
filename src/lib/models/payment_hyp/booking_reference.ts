@@ -1,3 +1,5 @@
+import { dateIsoStr } from "$lib/utils/times_utils";
+
 export default class BookingReferencePaymentObj {
   id: string = "";
   date: Date = new Date(0);
@@ -29,7 +31,7 @@ export default class BookingReferencePaymentObj {
     const data: Record<string, any> = {};
 
     data["I"] = this.id;
-    data["D"] = this.date.toISOString();
+    data["D"] = dateIsoStr(this.date);
     data["WI"] = this.workerId;
     if (this.isMultiBooking) {
       data["IMB"] = this.isMultiBooking;

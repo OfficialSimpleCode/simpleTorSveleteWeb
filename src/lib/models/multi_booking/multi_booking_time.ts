@@ -1,3 +1,5 @@
+import { dateIsoStr } from "$lib/utils/times_utils";
+
 export default class MultiBookingTime {
   treatmentId: string = "";
   currentParticipants: number = 0;
@@ -106,7 +108,7 @@ export default class MultiBookingTime {
     }
 
     if (this.expiredDate !== undefined) {
-      data["ED"] = this.expiredDate.toISOString();
+      data["ED"] = dateIsoStr(this.expiredDate);
     }
 
     return data;

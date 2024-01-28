@@ -1,13 +1,14 @@
 <script lang="ts">
   import Navbar from "$lib/components/navbar/Navbar.svelte";
-  import { userStore } from "$lib/stores/User";
+  import type Booking from "$lib/models/booking/booking_model";
   import { translate } from "$lib/utils/translate";
+  import { sortMyBookings } from "./helpers/sort_bookings";
   import BookingList from "./pages/BookingList.svelte";
   import BookingsTable from "./pages/BookingsTable.svelte";
   import EmptyBookingPage from "./pages/EmptyBookingPage.svelte";
 
-  let ordersByDate = Object.entries($userStore.bookings.futureBookings);
   const emptyBookins = false;
+  let bookings: Booking[] = sortMyBookings();
 </script>
 
 <main class=" h-full">
@@ -19,14 +20,14 @@
     {#if !emptyBookins}
       <!-- table object in widge screens -->
       <div class="overflow-x-auto w-full hidden md:block min-h-[400px] mx-10">
-        <BookingsTable {ordersByDate}></BookingsTable>
+        <BookingsTable {bookings}></BookingsTable>
       </div>
 
       <!-- list of booking in small screens -->
       <div
         class="flex flex-col md:hidden max-w-[95%] sm:max-w-[80%] w-full gap-3"
       >
-        <BookingList {ordersByDate}></BookingList>
+        <BookingList {bookings}></BookingList>
       </div>
     {:else}
       <EmptyBookingPage></EmptyBookingPage>

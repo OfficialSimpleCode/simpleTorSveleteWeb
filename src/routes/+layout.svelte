@@ -7,12 +7,11 @@
   import { getApp, getApps, initializeApp } from "firebase/app";
 
   import { page } from "$app/stores";
-  import { Gender, genderToStr } from "$lib/consts/gender";
   import LinksHelper from "$lib/helpers/links_helper";
   import { LoadAppHelper } from "$lib/helpers/load_app_helper";
   import { handleLocaleChanges } from "$lib/language/loader";
   import { businessStore } from "$lib/stores/Business";
-  console.log(genderToStr[Gender.female]);
+
   async function loadBusiness() {
     handleLocaleChanges(localStorage, document);
 

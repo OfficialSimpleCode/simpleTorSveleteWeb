@@ -1,3 +1,5 @@
+import { dateIsoStr } from "$lib/utils/times_utils";
+
 export default class ReportModel {
   createdAt: Date = new Date(0);
   name: string = "";
@@ -46,7 +48,7 @@ export default class ReportModel {
   toJson(): Record<string, any> {
     const data: Record<string, any> = {};
     if (this.createdAt.getTime() !== new Date(0).getTime()) {
-      data["createdAt"] = this.createdAt.toISOString();
+      data["createdAt"] = dateIsoStr(this.createdAt);
     }
     if (this.name !== "") {
       data["name"] = this.name;

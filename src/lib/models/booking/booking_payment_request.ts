@@ -2,6 +2,7 @@ import {
   PAYMENT_REQUEST_END_POINT,
   SERVER_BASE_URL,
 } from "$lib/consts/server_variables";
+import { dateIsoStr } from "$lib/utils/times_utils";
 
 export default class BookingPaymentRequestData {
   id: string = "";
@@ -39,7 +40,7 @@ export default class BookingPaymentRequestData {
     const data: { [key: string]: any } = {};
 
     if (this.createdAt.getTime() !== new Date(0).getTime()) {
-      data["createdAt"] = this.createdAt.toISOString();
+      data["createdAt"] = dateIsoStr(this.createdAt);
     }
 
     if (!this.signNewMultiBookingUsers) {

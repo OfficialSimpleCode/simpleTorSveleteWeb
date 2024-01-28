@@ -1,4 +1,5 @@
 import MessagesService from "$lib/services/external_services/message_service";
+import { dateIsoStr } from "$lib/utils/times_utils";
 
 export default class MessageRepo extends MessagesService {
   constructor() {
@@ -11,7 +12,7 @@ export default class MessageRepo extends MessagesService {
     messageId: string,
     timeToSend: Date
   ): Promise<boolean> {
-    const strTimeToSend = timeToSend.toISOString();
+    const strTimeToSend = dateIsoStr(timeToSend);
     return this.sendScheduleSmsSRV({
       destNumber,
       message,
@@ -47,7 +48,7 @@ export default class MessageRepo extends MessagesService {
     oldMessageId: string,
     timeToSend: Date
   ): Promise<boolean> {
-    const strTimeToSend = timeToSend.toISOString();
+    const strTimeToSend = dateIsoStr(timeToSend);
     return this.updateScheduleSmsSRV({
       oldPhoneNumber,
       newPhoneNumber,

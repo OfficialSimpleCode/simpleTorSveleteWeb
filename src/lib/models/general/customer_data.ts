@@ -1,5 +1,6 @@
 import { Gender } from "$lib/consts/gender";
 import { hashId } from "$lib/utils/encryptions";
+import { dateIsoStr } from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
 import MultiBookingUser from "../multi_booking/multi_booking_user";
 import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
@@ -289,13 +290,13 @@ export default class CustomerData {
       data["phoneNumber"] = this.phoneNumber;
     }
     if (this.firstBookingsDate != null) {
-      data["firstBookingsDate"] = this.firstBookingsDate.toISOString();
+      data["firstBookingsDate"] = dateIsoStr(this.firstBookingsDate);
     }
     if (this.userFirstBookingsDate != null) {
-      data["userFirstBookingsDate"] = this.userFirstBookingsDate.toISOString();
+      data["userFirstBookingsDate"] = dateIsoStr(this.userFirstBookingsDate);
     }
     if (this.lastBookingsDate != null) {
-      data["lastBookingsDate"] = this.lastBookingsDate.toISOString();
+      data["lastBookingsDate"] = dateIsoStr(this.lastBookingsDate);
     }
     if (this.amoutOfBookings !== 0) {
       data["amoutOfBookings"] = this.amoutOfBookings;

@@ -1,5 +1,5 @@
 import { hypValidCurrencies } from "$lib/consts/hyp";
-import { dateToDateStr, setTo1970 } from "$lib/utils/times_utils";
+import { dateIsoStr, dateToDateStr, setTo1970 } from "$lib/utils/times_utils";
 import BookingTransactionModel, {
   PaymentTypes,
 } from "../booking/booking_transaction";
@@ -189,11 +189,11 @@ export default class TransactionModel extends PaymentObject {
 
     data["UN"] = this.userName;
     data["I"] = this.info;
-    data["CA"] = this.createdAt.toISOString();
+    data["CA"] = dateIsoStr(this.createdAt);
     data["BN"] = this.businessName;
     data["TR"] = this.transactionReference;
     if (this.refundTransactionCreatedAt != null) {
-      data["RTCA"] = this.refundTransactionCreatedAt.toISOString();
+      data["RTCA"] = dateIsoStr(this.refundTransactionCreatedAt);
     }
     if (this.isDeposit) {
       data["ID"] = this.isDeposit;

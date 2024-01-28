@@ -19,7 +19,9 @@ import {
 import { EventFilterType } from "$lib/consts/worker_schedule";
 
 import { sendMessageForMulti } from "$lib/utils/notifications_utils";
+import { dateIsoStr } from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
+import pkg from "uuid";
 import BookingInvoiceData from "../booking/booking_invoice_data";
 import BookingTransactionModel, {
   PaymentTypes,
@@ -29,7 +31,7 @@ import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_u
 import Debt from "../schedule/debt";
 import type UserModel from "../user/user_model";
 import type WorkerModel from "../worker/worker_model";
-
+const { v4 } = pkg;
 export default class MultiBookingUser {
   customerName: string = "";
   customerPhone: string = "";
@@ -144,7 +146,7 @@ export default class MultiBookingUser {
       this.createdAt = new Date();
     }
     if (this.userBookingId === "") {
-      //this.userBookingId = uuid();
+      this.userBookingId = v4();
     }
     this.notificationType = sendMessageForMulti(this, worker);
   }
@@ -403,7 +405,7 @@ export default class MultiBookingUser {
       data["wasWaiting"] = this.wasWaiting;
     }
     if (this.cancelDate) {
-      data["cancelDate"] = this.cancelDate.toISOString();
+      data["cancelDate"] = dateIsoStr(this.cancelDate);
     }
     data["remindersTypes"] = {};
     this.remindersTypes.forEach((minutes, reminder) => {
@@ -443,7 +445,7 @@ export default class MultiBookingUser {
       });
     }
     if (this.lastTimeNotifyOnDebt) {
-      data["lastTimeNotifyOnDebt"] = this.lastTimeNotifyOnDebt.toISOString();
+      data["lastTimeNotifyOnDebt"] = dateIsoStr(this.lastTimeNotifyOnDebt);
     }
     if (!this.isUserExist) {
       data["isUserExist"] = this.isUserExist;
@@ -473,7 +475,7 @@ export default class MultiBookingUser {
     if (this.userFcms.size > 0) {
       data["userFcms"] = Array.from(this.userFcms);
     }
-    data["createdAt"] = this.createdAt.toISOString();
+    data["createdAt"] = dateIsoStr(this.createdAt);
     if (this.transactions.size > 0) {
       data["transactions"] = {};
       this.transactions.forEach((transaction, id) => {

@@ -252,7 +252,8 @@ export function fixDateMonth(date: Date): Date {
 export function isHoliday(worker: WorkerModel, date: Date): boolean {
   let isHoliday = false;
   worker.religions.forEach((religion) => {
-    let dateString = format(date, "dd-MM-yyyy");
+    console.log(date);
+    let dateString = dateToDateStr(date);
     switch (religion) {
       case Religion.christian:
         dateString = dateString.substring(0, dateString.length - 4) + "0000";
@@ -267,6 +268,10 @@ export function isHoliday(worker: WorkerModel, date: Date): boolean {
     }
   });
   return isHoliday;
+}
+
+export function dateIsoStr(date: Date) {
+  return `${format(date, "yyyy-MM-dd")}T${format(date, "HH:mm:ss")}.000Z`;
 }
 
 // export function testDateFunctions() {

@@ -18,7 +18,6 @@
   import "@syncfusion/ej2-schedule/styles/material.css";
   import "@syncfusion/ej2-splitbuttons/styles/material.css";
   import { onMount } from "svelte";
-  import { loadBookingMakerTimeData } from "../helpers/load_data";
   import { onEventClick } from "../helpers/on_tap_time_obj";
   const { Week } = schedule;
 
@@ -71,32 +70,32 @@
 
     scheduleObj.appendTo("#schedule");
 
-    loadBookingMakerTimeData(
-      scheduleObj.getCurrentViewDates(),
-      BookingController.worker,
-      [60]
-    );
-    scheduleObj.addEvent(BookingController.timePickerObjects);
-    scheduleObj.actionComplete = (args) => {
-      if (
-        args.requestType === "viewNavigate" ||
-        args.requestType === "dateNavigate"
-      ) {
-        console.log(scheduleObj.getCurrentViewDates());
+    // loadBookingMakerTimeData(
+    //   scheduleObj.getCurrentViewDates(),
+    //   BookingController.worker,
+    //   [60]
+    // );
+    // scheduleObj.addEvent(BookingController.timePickerObjects);
+    // scheduleObj.actionComplete = (args) => {
+    //   if (
+    //     args.requestType === "viewNavigate" ||
+    //     args.requestType === "dateNavigate"
+    //   ) {
+    //     console.log(scheduleObj.getCurrentViewDates());
 
-        loadBookingMakerTimeData(
-          scheduleObj.getCurrentViewDates(),
-          BookingController.worker,
-          [60]
-        );
-        console.log(
-          "BookingController.timePickerObjects",
-          BookingController.timePickerObjects
-        );
-        scheduleObj.addEvent(BookingController.timePickerObjects);
-      }
-    };
-    console.log(BookingController.timePickerObjects);
+    //     loadBookingMakerTimeData(
+    //       scheduleObj.getCurrentViewDates(),
+    //       BookingController.worker,
+    //       [60]
+    //     );
+    //     console.log(
+    //       "BookingController.timePickerObjects",
+    //       BookingController.timePickerObjects
+    //     );
+    //     scheduleObj.addEvent(BookingController.timePickerObjects);
+    //   }
+    // };
+    // console.log(BookingController.timePickerObjects);
   });
   function add() {
     console.log(new Date());

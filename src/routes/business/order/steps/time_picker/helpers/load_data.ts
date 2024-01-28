@@ -17,7 +17,7 @@ import { relevantHoures } from "$lib/utils/available_times_utils/relevant_hours"
 import { relevantMultiEventTime } from "$lib/utils/available_times_utils/relevant_multi_event_times";
 import { setToMidNight } from "$lib/utils/dates_utils";
 import { addDuration } from "$lib/utils/duration_utils";
-import { isHoliday } from "$lib/utils/times_utils";
+import { dateToDateStr, isHoliday } from "$lib/utils/times_utils";
 import { get } from "svelte/store";
 
 export function loadBookingMakerTimeData(
@@ -116,15 +116,15 @@ export function loadBookingMakerTimeData(
     }
     // no times founded
     if (dayTimes.length <= 0) {
-      daysTimes[visibleDate.toISOString()] = [];
+      daysTimes[dateToDateStr(visibleDate)] = [];
 
       return;
     }
     // save the times list for this day
-    daysTimes[visibleDate.toISOString()] = dayTimes;
+    daysTimes[dateToDateStr(visibleDate)] = dayTimes;
 
     // save the length if is higher then current
-    maxLen = Math.max(maxLen, daysTimes[visibleDate.toISOString()].length);
+    maxLen = Math.max(maxLen, daysTimes[dateToDateStr(visibleDate)].length);
   });
 
   // normalize the len to not cause heigth of 0 or very low like 20

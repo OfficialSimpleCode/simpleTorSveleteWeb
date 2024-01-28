@@ -29,6 +29,7 @@ import {
 import { sendMessage } from "$lib/utils/notifications_utils";
 import { formatedPhone } from "$lib/utils/string_utils";
 import {
+  dateIsoStr,
   dateToDateStr,
   dateToMonthStr,
   dateToTimeStr,
@@ -68,6 +69,7 @@ export default class Booking extends ScheduleItem {
   isUserExist: boolean = true;
   notificationType: NotificationType = NotificationType.none;
   workerNotificationOption: NotificationOption = NotificationOption.PushOrSMS;
+  remindersTypes: Map<BookingReminderType, number> = new Map();
   workerRemindersTypes: Map<BookingReminderType, number> = new Map();
   workerDeleted: boolean = false;
   clientMail: string = "";
@@ -93,7 +95,6 @@ export default class Booking extends ScheduleItem {
 
   shopIcon: IconData = new IconData();
 
-  remindersTypes: Map<BookingReminderType, number> = new Map();
   createdAt: Date = new Date();
 
   finishInvoices: boolean = false;
@@ -176,16 +177,16 @@ export default class Booking extends ScheduleItem {
     newBooking.needCancel = booking.needCancel;
     newBooking.userGender = booking.userGender;
     newBooking.bookingDate = booking.bookingDate;
-    // if (booking.recurrenceEventRefInfo !== undefined) {
-    //   newBooking.recurrenceEventRefInfo = RecurrenceEvent.fromRecurrenceEvent(
-    //     booking.recurrenceEventRefInfo!
-    //   );
-    // }
-    // if (booking.recurrenceEvent !== undefined) {
-    //   newBooking.recurrenceEvent = RecurrenceEvent.fromRecurrenceEvent(
-    //     booking.recurrenceEvent!
-    //   );
-    // }
+    if (booking.recurrenceEventRefInfo !== undefined) {
+      newBooking.recurrenceEventRefInfo = RecurrenceEvent.fromRecurrenceEvent(
+        booking.recurrenceEventRefInfo!
+      );
+    }
+    if (booking.recurrenceEvent !== undefined) {
+      newBooking.recurrenceEvent = RecurrenceEvent.fromRecurrenceEvent(
+        booking.recurrenceEvent!
+      );
+    }
     newBooking.recurrenceNotificationsLastDate =
       booking.recurrenceNotificationsLastDate;
     newBooking.cancelDate = booking.cancelDate;
@@ -509,10 +510,10 @@ export default class Booking extends ScheduleItem {
     const bookingWorkTimesMap: Map<string, number> = new Map();
     let lastTime = this.bookingDate;
 
-    Object.values(this.treatments).forEach((treatment: any) => {
+    this.treatments.forEach((treatment, _) => {
       // Generate the treatment as time as the counter
       Array.from({ length: treatment.count }).forEach(() => {
-        Object.values(treatment.times).forEach((timeData: any) => {
+        treatment.times.forEach((timeData, __) => {
           // Adding the break before the segment
           lastTime = addDuration(
             lastTime,
@@ -684,8 +685,8 @@ export default class Booking extends ScheduleItem {
       const dateToNotify = dateToRemindBooking(this, minutes);
       //TODO UTC
       if (dateToNotify >= new Date()) {
-        reminders[dateToNotify.toISOString()] ??= {};
-        reminders[dateToNotify.toISOString()] = {
+        reminders[dateIsoStr(dateToNotify)] ??= {};
+        reminders[dateIsoStr(dateToNotify)] = {
           [this.reminderId(type)]: null,
         };
       }
@@ -694,8 +695,8 @@ export default class Booking extends ScheduleItem {
     return reminders;
   }
 
-  get bookingsEventsAsJson(): Map<string, any> {
-    const bookingsEventsMap: Map<string, any> = new Map();
+  get bookingsEventsAsJson(): Map<string, Record<string, any>> {
+    const bookingsEventsMap: Map<string, Record<string, any>> = new Map();
     let lastTime = this.bookingDate;
     let totalEventsOnBooking = this.totalEventsCount;
     let eventIndex = 0;
@@ -812,7 +813,7 @@ export default class Booking extends ScheduleItem {
     }
 
     this.workerNotificationOption = worker.notifications.notificationOption;
-    this.workerRemindersTypes = { ...worker.notifications.remindersTypes };
+    this.workerRemindersTypes = new Map(worker.notifications.remindersTypes);
     for (const [type, minutes] of worker.notifications.remindersTypes) {
       if (this.isPassed) {
         continue;
@@ -909,7 +910,7 @@ export default class Booking extends ScheduleItem {
       this.clientNote = oldBooking.clientNote;
     }
     this.workerNotificationOption = worker.notifications.notificationOption;
-    this.workerRemindersTypes = { ...worker.notifications.remindersTypes };
+    this.workerRemindersTypes = new Map(worker.notifications.remindersTypes);
     worker.notifications.remindersTypes.forEach((minutes, type) => {
       if (
         subDuration(this.bookingDate, new Duration({ minutes: minutes })) <
@@ -1345,18 +1346,14 @@ export default class Booking extends ScheduleItem {
       data["cancelDate"] = this.cancelDate.toString();
     }
     data["remindersTypes"] = {};
-    // Object.entries<number>(this.remindersTypes).forEach(
-    //   ([reminder, minutes]) => {
-    //     data["remindersTypes"][bookingReminderTypeToStr[reminder]] = minutes;
-    //   }
-    // );
-    // data["workerRemindersTypes"] = {};
-    // Object.entries<number>(this.workerRemindersTypes).forEach(
-    //   (reminder, minutes) => {
-    //     data["workerRemindersTypes"][bookingReminderTypeToStr[reminder as ]] =
-    //       minutes;
-    //   }
-    // );
+    this.remindersTypes.forEach((minutes, reminder) => {
+      data["remindersTypes"][bookingReminderTypeToStr[reminder]] = minutes;
+    });
+    data["workerRemindersTypes"] = {};
+    this.workerRemindersTypes.forEach((minutes, reminder) => {
+      data["workerRemindersTypes"][bookingReminderTypeToStr[reminder]] =
+        minutes;
+    });
     if (this.clientNote != "") {
       data["clientNote"] = this.clientNote;
     }
@@ -1426,7 +1423,7 @@ export default class Booking extends ScheduleItem {
     data["customerPhone"] = this.customerPhone;
     data["status"] = bookingsMassage[this.status];
     data["confirmedArrival"] = this.confirmedArrival;
-    data["bookingDate"] = this.bookingDate.toISOString();
+    data["bookingDate"] = dateIsoStr(this.bookingDate);
     data["workerId"] = this.workerId.toString();
     data["workerName"] = this.workerName;
     data["buisnessId"] = this.buisnessId;
@@ -1439,17 +1436,17 @@ export default class Booking extends ScheduleItem {
     data["workerNotificationOption"] =
       notificationOptionToStr[this.workerNotificationOption];
     data["userFcms"] = Array.from(this.userFcms);
-    data["createdAt"] = this.createdAt.toISOString();
-    // if (this.recurrenceEvent != null) {
-    //   data["RE"] = this.recurrenceEvent.toJson({});
-    // }
-    // if (this.recurrenceEventRefInfo != null) {
-    //   data["RERI"] = this.recurrenceEventRefInfo.toJson({
-    //     saveStartDate: true,
-    //     saveException: false,
-    //     saveEnd: false,
-    //   });
-    // }
+    data["createdAt"] = dateIsoStr(this.createdAt);
+    if (this.recurrenceEvent != null) {
+      data["RE"] = this.recurrenceEvent.toJson({});
+    }
+    if (this.recurrenceEventRefInfo != null) {
+      data["RERI"] = this.recurrenceEventRefInfo.toJson({
+        saveStartDate: true,
+        saveException: false,
+        saveEnd: false,
+      });
+    }
     data["transactions"] = {};
     this.transactions.forEach((transaction, id) => {
       data["transactions"][id] = transaction.toJson();

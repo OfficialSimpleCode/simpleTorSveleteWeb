@@ -11,6 +11,7 @@ import {
   addDuration,
   diffDuration,
   durationStrikings,
+  subDuration,
 } from "../duration_utils";
 
 import {
@@ -141,8 +142,9 @@ export function minutesToJumpOverForbbidenReverse(
 
   forbiddenTimesPointers.forEach((pointer) => {
     const startSegment: Date = segments[segmentIndex].start;
-    const endSegment: Date = new Date(
-      startSegment.getTime() + segments[segmentIndex].duration.minutes * 60000
+    const endSegment: Date = addDuration(
+      startSegment,
+      segments[segmentIndex].duration
     );
 
     for (pointer; pointer >= 0; pointer -= 2) {
@@ -156,10 +158,12 @@ export function minutesToJumpOverForbbidenReverse(
 
       if (status === "STRIKE") {
         // If strike, the start of forbidden time must be before the end of the segment
-        const currentDifference: number =
-          endSegment.getTime() - forbiddenTimes[pointer - 1].getTime();
+        const currentDifference: number = diffDuration(
+          endSegment,
+          forbiddenTimes[pointer - 1]
+        ).inMinutes;
         // Set the jump to the highest option
-        minutesToJump = Math.max(minutesToJump, currentDifference / 60000);
+        minutesToJump = Math.max(minutesToJump, currentDifference);
         break;
       }
 
@@ -214,7 +218,10 @@ export function getJump(
 
   /* If the default jump is passing over the next forbidden - 
     coming back to end forbidden to save holes in schedule */
-  const afterAdding = new Date(currentTime.getTime() + defaultAdding * 60000);
+  const afterAdding = addDuration(
+    currentTime,
+    new Duration({ minutes: defaultAdding })
+  );
   if (
     indexesInForbidden.length <= 0 ||
     indexesInForbidden[0] + 1 >= forbbidenTimes.length
@@ -257,7 +264,10 @@ export function getJumpReversed(
 
   /* If the default jump is passing over the next forbidden - 
     coming back to end forbidden to save holes in schedule */
-  const afterAdding = new Date(currentTime.getTime() - defaultAdding * 60000);
+  const afterAdding = subDuration(
+    currentTime,
+    new Duration({ minutes: defaultAdding })
+  );
   if (
     indexesInForbidden.length <= 0 ||
     indexesInForbidden[0] + 1 >= forbbidenTimes.length
@@ -546,13 +556,17 @@ export function generateReversedTimeSegmentsMap(
 ): Map<string, TimeSegment> {
   const timesSegments: Map<string, TimeSegment> = new Map();
   const treatment: Treatment = Treatment.fromTreatmentsMap(booking.treatments);
-  let lastTime: Date = new Date(
-    endTime.getTime() - treatment.totalMinutes * 60000
+  let lastTime: Date = subDuration(
+    endTime,
+    new Duration({ minutes: treatment.totalMinutes })
   );
 
   treatment.times.forEach((timeData, timeIndex) => {
     // Adding the break before the treatment
-    lastTime = new Date(lastTime.getTime() + timeData.breakMinutes * 60000);
+    lastTime = addDuration(
+      lastTime,
+      new Duration({ minutes: timeData.breakMinutes })
+    );
 
     // Adding the break before - start of the treatment
     timesSegments.set(timeIndex, {
@@ -561,7 +575,10 @@ export function generateReversedTimeSegmentsMap(
     });
 
     // Adding the time of the treatment
-    lastTime = new Date(lastTime.getTime() + timeData.workMinutes * 60000);
+    lastTime = addDuration(
+      lastTime,
+      new Duration({ minutes: timeData.workMinutes })
+    );
   });
 
   return timesSegments;

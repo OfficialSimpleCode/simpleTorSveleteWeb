@@ -24,6 +24,7 @@ import { isOptionalTimeForBooking } from "$lib/utils/available_times_utils/is_op
 import { addDuration } from "$lib/utils/duration_utils";
 import { sendMessage } from "$lib/utils/notifications_utils";
 import {
+  dateIsoStr,
   dateToDateStr,
   dateToDayStr,
   dateToMonthStr,
@@ -166,7 +167,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     }
 
     const bookingsEventsData: Record<string, Record<string, any>> = {};
-    booking.bookingsEventsAsJson.forEach((time, event) => {
+    booking.bookingsEventsAsJson.forEach((event, time) => {
       bookingsEventsData[strBookingDay] ??= {};
       bookingsEventsData[strBookingDay][time] = event;
     });
@@ -232,7 +233,8 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         });
       }
 
-      if (booking.recurrenceEvent == null) {
+      if (booking.recurrenceEvent === undefined) {
+        console.log("timesData", timesData);
         this.transactionUpdateMultipleFieldsAsMap({
           transaction: transaction,
           path: `${path}/${worker.id}/${dataCollection}`,
@@ -245,7 +247,8 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         return true;
       }
 
-      if (booking.recurrenceEvent == null) {
+      if (booking.recurrenceEvent === undefined) {
+        console.log("bookingsEventsData", bookingsEventsData);
         this.transactionSetAsMap({
           transaction: transaction,
           path: `${path}/${worker.id}/${dataCollection}/${dataDoc}/${bookingsEventsCollection}`,
@@ -253,14 +256,14 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           data: bookingsEventsData,
         });
       }
-
+      console.log("4444444444");
       this.transactionSetAsMap({
         transaction: transaction,
         path: `${path}/${worker.id}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`,
         docId: strBookingDate,
         data: { [booking.bookingId]: booking.toJson() },
       });
-
+      console.log("33333333333");
       this.updateUserBooking({
         transaction: transaction,
         booking: booking,
@@ -268,16 +271,16 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         command: NumericCommands.increment,
         data: { [booking.bookingId]: booking.toJson() },
       });
-
+      console.log("wwwwwwwwwwwwwwwwwww");
       this.transactionSetAsMap({
         transaction: transaction,
-        path: `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}/${booking.workerId}/${dataCollection}`,
+        path: `${buisnessCollection}/${booking.buisnessId}/${workersCollection}/${booking.workerId}/${dataCollection}`,
         docId: customersDataDoc,
         data: {
           data: { [customerData.customerUuid]: customerDataJson },
         },
       });
-
+      console.log("rr");
       return true;
     };
 
@@ -632,17 +635,17 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     if (newBookingCustomerData.lastBookingsDate !== null) {
       formatedNewCustomrsData[
         `data.${newBookingCustomerData.customerUuid}.lastBookingsDate`
-      ] = newBookingCustomerData.lastBookingsDate.toISOString();
+      ] = dateIsoStr(newBookingCustomerData.lastBookingsDate);
     }
     if (newBookingCustomerData.firstBookingsDate !== null) {
       formatedNewCustomrsData[
         `data.${newBookingCustomerData.customerUuid}.firstBookingsDate`
-      ] = newBookingCustomerData.firstBookingsDate.toISOString();
+      ] = dateIsoStr(newBookingCustomerData.firstBookingsDate);
     }
     if (newBookingCustomerData.userFirstBookingsDate !== null) {
       formatedNewCustomrsData[
         `data.${newBookingCustomerData.customerUuid}.userFirstBookingsDate`
-      ] = newBookingCustomerData.userFirstBookingsDate.toISOString();
+      ] = dateIsoStr(newBookingCustomerData.userFirstBookingsDate);
     }
     this.transactionUpdateMultipleFieldsAsMap({
       transaction: transaction,
@@ -682,7 +685,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         docId: recurrenceEventsDoc,
         data: recurrenceData,
       });
-      newBooking.bookingsEventsAsJson.forEach((time, event) => {
+      newBooking.bookingsEventsAsJson.forEach((event, time) => {
         if (!newBookingsEventsData[newBookingDay]) {
           newBookingsEventsData[newBookingDay] = {};
         }
@@ -710,7 +713,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         docId: oldBookingMonth,
         data: oldBookingsEventsData,
       });
-      newBooking.bookingsEventsAsJson.forEach((time, event) => {
+      newBooking.bookingsEventsAsJson.forEach((event, time) => {
         if (newBookingsEventsData[newBookingDay]) {
           newBookingsEventsData[newBookingDay][time] = event;
         } else {

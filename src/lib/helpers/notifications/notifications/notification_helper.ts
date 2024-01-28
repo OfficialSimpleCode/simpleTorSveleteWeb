@@ -14,6 +14,7 @@ import NotificationPayload, {
 import type NotificationTopic from "$lib/models/notifications/notification_topic";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { getFormatedTime } from "$lib/utils/string_utils";
+import { dateIsoStr } from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
 import NotificationsRepo from "./notifications_repo";
 
@@ -298,8 +299,8 @@ export default class NotificationsHelper {
     const reminders = booking.remindersToFutureNotifications;
 
     reminders.forEach((reminder) => {
-      notifications[reminder.dateToNotify.toISOString()] ??= {};
-      notifications[reminder.dateToNotify.toISOString()]![reminder.id] =
+      notifications[dateIsoStr(reminder.dateToNotify)] ??= {};
+      notifications[dateIsoStr(reminder.dateToNotify)]![reminder.id] =
         reminder.toJson();
     });
 
