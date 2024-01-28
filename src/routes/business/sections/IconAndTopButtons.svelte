@@ -56,7 +56,7 @@
 
 <section
   id="profile-row"
-  class="flex justify-between items-start gap-3 mx-4 sm:mx-16 relative top-[-3rem] text-center"
+  class="flex justify-between items-start gap-3 mx-4 sm:mx-16 relative xs:top-[-3rem] top-[-73px] text-center"
 >
   <!-- icon business name and address -->
   <div class="flex flex-col justify-center items-center">
@@ -66,8 +66,8 @@
       class="flex items-center gap-1 link link-neutral"
       on:click={openNavigationDialog}
     >
-      <h4 class="text-lg">{$businessStore.adress}</h4>
-      <Icon src={MapPin} size="20px" />
+      <h4 class="text-sm">{$businessStore.adress}</h4>
+      <Icon src={MapPin} size="16px" />
     </button>
   </div>
 

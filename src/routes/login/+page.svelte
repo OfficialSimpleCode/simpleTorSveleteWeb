@@ -49,14 +49,16 @@
   />
 
   <div
-    class="flex-[1] flex flex-col justify-center items-center sm:gap-8 gap-5 sm:mx-[70px] mx-3 my-[100px]"
+    class="flex-[1] flex flex-col justify-center items-center xs:gap-8 gap-5 sm:mx-[70px] mx-3 my-[100px]"
   >
     <h1 class="text-3xl text-center">Login Or Signup</h1>
     {#each googleOrder as authProvider, i}
       <button
         on:click={() => handleClick(authProvider)}
-        class="btn sm:btn-lg btn-outline w-full"
-        class:text-gray-500={authProvider === AuthProvider.Facebook}
+        class="btn xs:btn-lg btn-outline w-full {authProvider ===
+        AuthProvider.Facebook
+          ? 'opacity-50'
+          : ''}"
       >
         <img
           class="w-10 h-10"
