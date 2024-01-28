@@ -17,6 +17,7 @@
   import "@syncfusion/ej2-schedule/styles/material.css";
   import "@syncfusion/ej2-splitbuttons/styles/material.css";
   import { onMount } from "svelte";
+  import { applyCategoryColor } from "../helpers/event_renderer";
   import { loadBookingMakerTimeData } from "../helpers/load_data";
   import { onEventClick } from "../helpers/on_tap_time_obj";
   const { Week } = schedule;
@@ -24,24 +25,10 @@
   sync.registerLicense(
     "Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCfEx0Q3xbf1x0ZFRHallSTnZYUiweQnxTdEFjWH1ZcXVQRWBbWUxxWg=="
   );
-  var data = [
-    {
-      Id: 1,
-      Subject: "Testing",
-      StartTime: addDuration(new Date(), new Duration({ minutes: 200 })),
-      EndTime: addDuration(new Date(), new Duration({ minutes: 220 })),
-    },
-    {
-      Id: 2,
-      Subject: "Vacation",
-      StartTime: new Date(),
-      EndTime: addDuration(new Date(), new Duration({ minutes: 60 })),
-    },
-  ];
-  let scheduleObj: schedule.Schedule;
+
   onMount(() => {
     Schedule.Inject(Week);
-    scheduleObj = new schedule.Schedule({
+    BookingController.scheduleObj = new schedule.Schedule({
       width: "100%",
       height: "100%",
       views: ["Week"],
@@ -57,33 +44,43 @@
 
       eventSettings: {
         fields: {
+          id: "id",
           subject: { name: "displayDate" },
           startTime: { name: "from" },
           endTime: { name: "to" },
         },
-        allowDeleting: false,
+        enableMaxHeight: true,
+
         allowEditing: false,
       },
+      eventRendered: (args: schedule.EventRenderedArgs) =>
+        applyCategoryColor(args),
     });
 
-    scheduleObj.appendTo("#schedule");
-
+    BookingController.scheduleObj.appendTo("#schedule");
+    BookingController.scheduleObj.deleteEvent(
+      Object.values(BookingController.timePickerObjects)
+    );
     loadBookingMakerTimeData(
-      scheduleObj.getCurrentViewDates(),
+      BookingController.scheduleObj.getCurrentViewDates(),
       BookingController.worker,
       [60]
     );
-    scheduleObj.addEvent(BookingController.timePickerObjects);
+    BookingController.scheduleObj.addEvent(
+      Object.values(BookingController.timePickerObjects)
+    );
 
-    scheduleObj.actionComplete = (args) => {
+    BookingController.scheduleObj.actionComplete = (args) => {
       if (
         args.requestType === "viewNavigate" ||
         args.requestType === "dateNavigate"
       ) {
-        console.log(scheduleObj.getCurrentViewDates());
-
+        console.log(BookingController.scheduleObj.getCurrentViewDates());
+        BookingController.scheduleObj.deleteEvent(
+          Object.values(BookingController.timePickerObjects)
+        );
         loadBookingMakerTimeData(
-          scheduleObj.getCurrentViewDates(),
+          BookingController.scheduleObj.getCurrentViewDates(),
           BookingController.worker,
           [60]
         );
@@ -91,85 +88,14 @@
           "BookingController.timePickerObjects",
           BookingController.timePickerObjects
         );
-        scheduleObj.addEvent(BookingController.timePickerObjects);
+
+        BookingController.scheduleObj.addEvent(
+          Object.values(BookingController.timePickerObjects)
+        );
       }
     };
     console.log(BookingController.timePickerObjects);
   });
-  function add() {
-    console.log(new Date());
-    console.log(addDuration(new Date(), new Duration({ minutes: 60 })));
-    let Data = [
-      {
-        Id: 3,
-        Subject: "",
-        StartTime: new Date(),
-        EndTime: addDuration(new Date(), new Duration({ minutes: 60 })),
-      },
-      {
-        Id: 4,
-        Subject: "",
-        StartTime: new Date(),
-        EndTime: addDuration(new Date(), new Duration({ minutes: 60 })),
-      },
-    ];
-    scheduleObj.addEvent(Data);
-    scheduleObj.refresh();
-  }
-  // var data = [
-  //   {
-  //     Id: 1,
-  //     Subject: "Testing",
-  //     StartTime: new Date(2018, 1, 11, 9, 0),
-  //     EndTime: new Date(2018, 1, 11, 10, 0),
-  //     IsAllDay: false,
-  //   },
-  //   {
-  //     Id: 2,
-  //     Subject: "Vacation",
-  //     StartTime: new Date(2018, 1, 13, 9, 0),
-  //     EndTime: new Date(2018, 1, 13, 10, 0),
-  //     IsAllDay: false,
-  //   },
-  // ];
-  // Schedule.Inject(Week);
-  // const scheduleObj = new schedule.Schedule({
-  //   width: "100%",
-  //   height: "550px",
-  //   views: ["Week"],
-  //   selectedDate: new Date(2018, 1, 15),
-  //   eventSettings: { dataSource: data },
-  // });
-  // onMount(() => {
-  //   scheduleObj.appendTo("#schedule");
-  // });
-
-  // function onclick() {
-  //   let Data = [
-  //     {
-  //       Id: 3,
-  //       Subject: "Conference",
-  //       StartTime: new Date(2018, 1, 12, 9, 0),
-  //       EndTime: new Date(2018, 1, 12, 10, 0),
-  //       IsAllDay: false,
-  //     },
-  //     {
-  //       Id: 4,
-  //       Subject: "Meeting",
-  //       StartTime: new Date(2018, 1, 15, 10, 0),
-  //       EndTime: new Date(2018, 1, 15, 11, 30),
-  //       IsAllDay: false,
-  //     },
-  //   ];
-  //   scheduleObj.addEvent(Data);
-  // }
 </script>
 
 <div id="schedule"></div>
-<div
-  role="button"
-  tabindex="0"
-  class="btn btn-ghost btn-circle"
-  on:click={() => {}}
-  on:keypress={() => {}}
-></div>
