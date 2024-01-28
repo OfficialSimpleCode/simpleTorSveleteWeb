@@ -35,7 +35,7 @@ export function loadBookingMakerTimeData(
   const bookingMaker = get(bookingMakerStore);
   BookingController.visibleDates = visibleDates;
   console.log(bookingMaker);
-  if (worker === null) {
+  if (worker == null) {
     return;
   }
   // empty the current events

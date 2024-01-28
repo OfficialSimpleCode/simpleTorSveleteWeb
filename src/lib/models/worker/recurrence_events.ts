@@ -55,13 +55,11 @@ export default class RecurrenceEvents {
           let recurrenceTimeId: string = "";
           let timeStr = "";
 
-          if (typeof timeId === "string") {
-            const timeSplited = timeId.split("_");
-            if (timeSplited.length === 2) {
-              recurrenceTimeId = timeSplited[1];
-            }
-            timeStr = timeSplited[0];
+          const timeSplited = timeId.split("_");
+          if (timeSplited.length === 2) {
+            recurrenceTimeId = timeSplited[1];
           }
+          timeStr = timeSplited[0];
 
           const event = Event.fromJson({
             json: eventJson,

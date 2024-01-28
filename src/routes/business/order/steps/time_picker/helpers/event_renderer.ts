@@ -7,6 +7,5 @@ export function applyCategoryColor(args: EventRenderedArgs): void {
   console.log(
     "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
   );
-  args.element.style.backgroundColor = "red";
-  args.element.style.color = "yellow";
+  args.element.style.backgroundColor = "blue";
 }

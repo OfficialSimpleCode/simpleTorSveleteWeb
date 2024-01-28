@@ -39,7 +39,7 @@ export const bookingMakerStore = writable<BookingMaker>();
 
 export default class BookingController {
   static timePickerObjects: Record<string, Record<string, any>> = {};
-  static alreadyLoadedDates: Set<string> = new Set();
+
   static visibleDates: Date[] = [];
   static scheduleObj: schedule.Schedule;
   static firstDateToShow: Date | undefined;
@@ -58,7 +58,7 @@ export default class BookingController {
       currentStep: 1,
       isMultiEvent: false,
     };
-    BookingController.alreadyLoadedDates = new Set();
+
     bookingMakerStore.set(initialBookingMaker);
   }
 
@@ -137,7 +137,7 @@ export default class BookingController {
       loadBookingMakerTimeData(
         BookingController.scheduleObj.getCurrentViewDates(),
         BookingController.worker,
-        [60]
+        [30]
       );
       BookingController.scheduleObj.addEvent(
         Object.values(BookingController.timePickerObjects)

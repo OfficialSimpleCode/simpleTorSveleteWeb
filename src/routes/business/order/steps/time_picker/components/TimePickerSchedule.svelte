@@ -50,7 +50,6 @@
           endTime: { name: "to" },
         },
         enableMaxHeight: true,
-
         allowEditing: false,
       },
       eventRendered: (args: schedule.EventRenderedArgs) =>
@@ -58,35 +57,36 @@
     });
 
     BookingController.scheduleObj.appendTo("#schedule");
+    //delete the exsit events
     BookingController.scheduleObj.deleteEvent(
       Object.values(BookingController.timePickerObjects)
     );
+
+    //load the initial dates to the schedule
     loadBookingMakerTimeData(
       BookingController.scheduleObj.getCurrentViewDates(),
       BookingController.worker,
-      [60]
+      [30]
     );
     BookingController.scheduleObj.addEvent(
       Object.values(BookingController.timePickerObjects)
     );
 
+    //when the user interact with the schedule and navigate between
+    //dates need to load the new dates
     BookingController.scheduleObj.actionComplete = (args) => {
       if (
         args.requestType === "viewNavigate" ||
         args.requestType === "dateNavigate"
       ) {
-        console.log(BookingController.scheduleObj.getCurrentViewDates());
+        //delete the exsit events
         BookingController.scheduleObj.deleteEvent(
           Object.values(BookingController.timePickerObjects)
         );
         loadBookingMakerTimeData(
           BookingController.scheduleObj.getCurrentViewDates(),
           BookingController.worker,
-          [60]
-        );
-        console.log(
-          "BookingController.timePickerObjects",
-          BookingController.timePickerObjects
+          [30]
         );
 
         BookingController.scheduleObj.addEvent(
