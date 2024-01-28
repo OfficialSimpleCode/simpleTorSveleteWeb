@@ -2,7 +2,7 @@
   import { createEventDispatcher } from "svelte";
   const dispath = createEventDispatcher();
 
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
   import NotificationDialog from "./NotificationDialog.svelte";
   export let notifications: Array<Record<string, string>>;
 
@@ -42,6 +42,6 @@
     <div class="divider h-2 last:hidden"></div>
   {/each}
   {#if notifications.length == 0}
-    <div class="font-bold text-center">{translate("notifications")}</div>
+    <div class="font-bold text-center">{translate("notifications", $_)}</div>
   {/if}
 </ul>

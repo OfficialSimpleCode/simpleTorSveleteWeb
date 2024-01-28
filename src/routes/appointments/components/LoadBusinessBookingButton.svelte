@@ -1,7 +1,6 @@
 <script lang="ts">
   import Booking from "$lib/models/booking/booking_model";
-  import { translate } from "$lib/utils/translate";
-  import { ArrowUpCircle } from "svelte-hero-icons";
+  import { translate, _ } from "$lib/utils/translate";
   import ActionsContainer from "./ActionsContainer.svelte";
 
   export let bgColor: string = "bg-base-300";
@@ -12,8 +11,8 @@
 </script>
 
 <ActionsContainer
-  text={translate("loadBuisness")}
-  icon={ArrowUpCircle}
+  text={translate("loadBuisness", $_)}
+  icon="mdi:reload"
   onClick={loadBusiness}
   {bgColor}
 ></ActionsContainer>

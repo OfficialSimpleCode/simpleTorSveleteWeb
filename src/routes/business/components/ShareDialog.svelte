@@ -17,7 +17,7 @@
     BUSINESS_LINK_END_POINT,
     SERVER_BASE_URL,
   } from "$lib/consts/server_variables";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
   import clipboard from "clipboardy";
   import { QRCodeImage } from "svelte-qrcode-image";
 
@@ -113,9 +113,9 @@
       on:click={copyToClipboard}
     >
       {#if copied}
-        {translate("Copied")}
+        {translate("Copied", $_)}
       {:else}
-        {translate("CopyLink")}
+        {translate("CopyLink", $_)}
       {/if}
       <Icon src={copied ? CheckCircle : Clipboard} size="28px" />
     </button>

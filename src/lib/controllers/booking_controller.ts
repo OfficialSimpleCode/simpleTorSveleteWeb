@@ -189,6 +189,7 @@ export default class BookingController {
           bookingMaker.hasMultiTreatment
             ? "noMultiWithMulti"
             : "noMultiWithRegular",
+          undefined,
           false
         ),
         status: "warning",

@@ -2,7 +2,7 @@
   import Logo from "$lib/components/Logo.svelte";
   import { isAppleUser } from "$lib/consts/platform";
   import { businessStore } from "$lib/stores/Business";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
   import FooterSocialIcons from "../components/FooterSocialIcons.svelte";
 
   function downloadSimpleTor() {
@@ -35,36 +35,38 @@
   <!-- services -->
   <nav>
     <header class="footer-title">
-      {translate("treatments").toLocaleUpperCase()}
+      {translate("treatments", $_).toLocaleUpperCase()}
     </header>
     <button on:click={downloadSimpleTor} class="link link-hover"
-      >{translate("queueSystem")}</button
+      >{translate("queueSystem", $_)}</button
     >
-    <button class="link link-hover">{translate("systemsDevelopment")}</button>
+    <button class="link link-hover"
+      >{translate("systemsDevelopment", $_)}</button
+    >
   </nav>
 
   <!-- comany -->
   <nav>
     <header class="footer-title">
-      {translate("company").toLocaleUpperCase()}
+      {translate("company", $_).toLocaleUpperCase()}
     </header>
     <a
       target="_blank"
       href="https://officialsimplecode.github.io/SimpleCodeWeb/"
-      class="link link-hover">{translate("companySite")}</a
+      class="link link-hover">{translate("companySite", $_)}</a
     >
   </nav>
 
   <!-- legal -->
   <nav>
     <header class="footer-title">
-      {translate("legal").toLocaleUpperCase()}
+      {translate("legal", $_).toLocaleUpperCase()}
     </header>
     <a href="https.google.com" target="_blank" class="link link-hover"
-      >{translate("term")}</a
+      >{translate("term", $_)}</a
     >
     <a href="https.google.com" target="_blank" class="link link-hover"
-      >{translate("policy")}</a
+      >{translate("policy", $_)}</a
     >
   </nav>
 </footer>
@@ -76,7 +78,7 @@
   <!-- logo and company details -->
   <aside class="items-center grid-flow-col">
     <Logo />
-    <p>{translate("ourCompanyName")}<br />{translate("createdBySimpleTor")}</p>
+    <p>{translate("ourCompanyName", $_)}<br />{translate("createdBySimpleTor", $_)}</p>
   </aside>
 
   <!-- download simple tor app -->
@@ -84,7 +86,7 @@
     on:click={downloadSimpleTor}
     class="btn lg:btn-lg bg-primary btn-primary flex items-center justify-center"
   >
-    {translate("downloadSimpleTor")}
+    {translate("downloadSimpleTor", $_)}
   </button>
 
   <!-- social links -->

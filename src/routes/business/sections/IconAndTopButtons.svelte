@@ -6,12 +6,13 @@
   import Avatar from "$lib/components/Avatar.svelte";
   import { businessStore } from "$lib/stores/Business";
   import { isConnectedStore } from "$lib/stores/User";
-  import { translate } from "$lib/utils/translate";
-  import { Icon, MapPin, Share, Trash } from "svelte-hero-icons";
+  import { translate, _ } from "$lib/utils/translate";
 
   import NavigationDialog from "$lib/components/NavigationDialog.svelte";
 
+  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import { isAppleUser } from "$lib/consts/platform";
+  import "iconify-icon";
   import ShareDialog from "../components/ShareDialog.svelte";
 
   let shareDialog: HTMLDialogElement;
@@ -67,7 +68,7 @@
       on:click={openNavigationDialog}
     >
       <h4 class="text-sm">{$businessStore.adress}</h4>
-      <Icon src={MapPin} size="16px" />
+      <GeneralIcon icon="mdi:map-marker-outline" size={16}></GeneralIcon>
     </button>
   </div>
 
@@ -75,10 +76,13 @@
   <div class="flex h-24 items-center">
     <div class="flex gap-5 items-center">
       <button class="btn btn-primary" on:click={orderNow}>
-        {translate("setBooking")}
+        {translate("setBooking", $_)}
       </button>
       <button class="btn btn-primary" on:click={openShareDialog}>
-        <Icon src={isAppleUser() ? Trash : Share} size="26px" />
+        <!-- <Icon src={isAppleUser() ? Trash : Share} size="26px" /> -->
+        <GeneralIcon
+          icon={isAppleUser() ? "mdi:ios-share" : "mdi:share-variant"}
+        ></GeneralIcon>
       </button>
     </div>
   </div>

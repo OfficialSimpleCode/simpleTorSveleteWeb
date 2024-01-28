@@ -3,8 +3,7 @@
   import Booking from "$lib/models/booking/booking_model";
   import { Duration } from "$lib/models/core/duration";
   import { addDuration } from "$lib/utils/duration_utils";
-  import { translate } from "$lib/utils/translate";
-  import { CheckCircle, PlayCircle } from "svelte-hero-icons";
+  import { translate, _ } from "$lib/utils/translate";
   import ActionsContainer from "./ActionsContainer.svelte";
 
   export let booking: Booking;
@@ -48,11 +47,11 @@
 {#if booking.status === BookingStatuses.approved}
   <ActionsContainer
     text={booking.confirmedArrival && booking.recurrenceEvent !== null
-      ? translate("ConfirmedArrival")
-      : translate("ConfirmArrival")}
+      ? translate("ConfirmedArrival", $_)
+      : translate("ConfirmArrival", $_)}
     icon={booking.confirmedArrival && booking.recurrenceEvent !== null
-      ? CheckCircle
-      : PlayCircle}
+      ? "mdi:check-circle-outline"
+      : "mdi:checkbox-blank-circle-outline"}
     onClick={confirmArrival}
     {bgColor}
   ></ActionsContainer>

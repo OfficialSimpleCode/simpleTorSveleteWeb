@@ -1,7 +1,12 @@
 <script lang="ts">
-  import { ChevronLeft, ChevronRight, Icon } from "svelte-hero-icons";
+  import GeneralIcon from "../GeneralIcon.svelte";
 </script>
 
-<div class="icon">
-  <Icon src={document.dir == "ltr" ? ChevronRight : ChevronLeft} size="20px" />
+<div class="flex items-center icon">
+  <GeneralIcon
+    icon={document.dir == "ltr"
+      ? "mdi:keyboard-arrow-right"
+      : "mdi:keyboard-arrow-left"}
+    size={20}
+  ></GeneralIcon>
 </div>
