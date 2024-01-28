@@ -1,10 +1,10 @@
 <script lang="ts">
   import { pushState } from "$app/navigation";
   import { page } from "$app/stores";
+  import CustomArrow from "$lib/components/custom_components/custom_arrow.svelte";
   import type Booking from "$lib/models/booking/booking_model";
   import { businessStore } from "$lib/stores/Business";
   import { _, translate } from "$lib/utils/translate";
-  import { ChevronLeft, ChevronRight, Icon } from "svelte-hero-icons";
   import BookingActions from "../components/BookingActions.svelte";
   import BookingDetails from "../components/BookingDetails.svelte";
   import CircleIcons from "../components/CircleIcons.svelte";
@@ -56,10 +56,7 @@
       </div>
     </div>
     <!-- arrow icon -->
-    <Icon
-      src={document.dir == "ltr" ? ChevronRight : ChevronLeft}
-      size="26px"
-    />
+    <CustomArrow></CustomArrow>
   </div>
 
   <!-- divider -->

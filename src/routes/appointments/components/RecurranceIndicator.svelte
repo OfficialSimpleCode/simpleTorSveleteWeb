@@ -1,7 +1,9 @@
 <script lang="ts">
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import type Booking from "$lib/models/booking/booking_model";
-  import RecurrenceEvent from "$lib/models/schedule/recurrence_event";
+  import RecurrenceEvent, {
+    RecurrenceEventEnd,
+  } from "$lib/models/schedule/recurrence_event";
 
   import { _, translate } from "$lib/utils/translate";
 
@@ -16,8 +18,8 @@
     recurrenceEvent != null
       ? RecurrenceEvent.fromRecurrenceEvent(recurrenceEvent!)
       : new RecurrenceEvent({});
-  // recurrenceInfo.exceptionDates = SplayTreeSet.from({});
-  // recurrenceInfo.endOption = RecurrenceEventEnd.endless;
+  recurrenceInfo.exceptionDates = new Set();
+  recurrenceInfo.endOption = RecurrenceEventEnd.endless;
 </script>
 
 {#if recurrenceEvent != null}
