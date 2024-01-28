@@ -274,6 +274,10 @@ export function dateIsoStr(date: Date) {
   return `${format(date, "yyyy-MM-dd")}T${format(date, "HH:mm:ss")}.000Z`;
 }
 
+export function dateToUtc(date: Date) {
+  return new Date(new Date().toISOString());
+}
+
 // export function testDateFunctions() {
 //   const currentDate = new Date();
 //   const formattedTime = dateToTimeStr(currentDate);

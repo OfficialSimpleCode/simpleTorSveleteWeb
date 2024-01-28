@@ -33,6 +33,7 @@ import {
   dateToDateStr,
   dateToMonthStr,
   dateToTimeStr,
+  dateToUtc,
 } from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
 import pkg from "uuid";
@@ -466,7 +467,7 @@ export default class Booking extends ScheduleItem {
       }
       const end = this.recurrenceEvent.endOfTheEvent;
 
-      return end !== null && end < setToMidNight(new Date());
+      return end !== undefined && end < setToMidNight(new Date());
     } else {
       return (
         addDuration(
@@ -610,8 +611,7 @@ export default class Booking extends ScheduleItem {
     const dateToNotify = dateToRemindBooking(this, minutes);
 
     // No need to notify on past bookings
-    //TODO UTC
-    if (dateToNotify < new Date()) {
+    if (dateToNotify < dateToUtc(new Date())) {
       return null;
     }
 
@@ -673,8 +673,7 @@ export default class Booking extends ScheduleItem {
       }
 
       const dateToNotify = dateToRemindBooking(this, minutes);
-      //TODO UTC
-      if (dateToNotify >= new Date()) {
+      if (dateToNotify >= dateToUtc(new Date())) {
         reminders[dateIsoStr(dateToNotify)] ??= {};
         reminders[dateIsoStr(dateToNotify)] = {
           [this.reminderId(type)]: null,

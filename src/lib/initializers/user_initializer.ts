@@ -122,7 +122,8 @@ export default class UserInitializer {
         try {
           if (dataJson.exists()) {
             this.user.setUserPublicData(dataJson.data()!);
-
+            console.log("eeeeeeeeeeeeeeee");
+            console.log(this.user.userPublicData.bookingsDocsToLoad);
             await this.loadBookingsDocs(
               this.user.userPublicData.bookingsDocsToLoad
             );
