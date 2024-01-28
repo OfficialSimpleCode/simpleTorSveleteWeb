@@ -20,6 +20,7 @@ import Booking from "$lib/models/booking/booking_model";
 import type CustomerData from "$lib/models/general/customer_data";
 import WorkerModel from "$lib/models/worker/worker_model";
 import { Errors } from "$lib/services/errors/messages";
+import { isOptionalTimeForBooking } from "$lib/utils/available_times_utils/is_optional_time_for_booking";
 import { addDuration } from "$lib/utils/duration_utils";
 import { sendMessage } from "$lib/utils/notifications_utils";
 import {
@@ -27,7 +28,6 @@ import {
   dateToDayStr,
   dateToMonthStr,
   dateToTimeStr,
-  isOptionalTimeForBooking,
   setTo1970,
   setToMidNight,
 } from "$lib/utils/times_utils/times_utils";
@@ -135,7 +135,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     needPayInAdvance: boolean;
     afterPayment: boolean;
     customerData: CustomerData;
-  }): Promise<Booking | boolean> {
+  }): Promise<Booking | undefined> {
     const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
     const strBookingDate = dateToDateStr(booking.bookingDate);
     const strBookingDay = dateToDayStr(booking.bookingDate);
@@ -192,10 +192,10 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       if (!afterPayment) {
         firestoreDataBaseWorker = new WorkerModel({});
 
-        // await this.getWorkerFromTransactionRepo({
-        //   transaction: transaction,
-        //   workerId: booking.workerId,
-        // });
+        await this.getWorkerFromTransactionRepo({
+          transaction: transaction,
+          workerId: booking.workerId,
+        });
 
         if (firestoreDataBaseWorker === null) {
           return false;
@@ -209,12 +209,12 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
 
         if (!allowedTime) {
           if (AppErrorsHelper.GI().error === Errors.currentlyOrderingForTime) {
-            logger.debug(
+            logger.error(
               "Cant order the booking to this time currently someone pay for it"
             );
           } else {
             AppErrorsHelper.GI().error = Errors.takenBooking;
-            logger.debug("Cant order the booking to this time already taken");
+            logger.error("Cant order the booking to this time already taken");
           }
 
           return false;
@@ -285,6 +285,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
 
     return await this.runTransaction(transacionCommands).then((value) => {
       if (!value) {
+        return undefined;
       } else if (booking.recurrenceEvent == null && !needPayInAdvance) {
         this.realTimeEventsCounterHandler({
           workerId: booking.workerId,

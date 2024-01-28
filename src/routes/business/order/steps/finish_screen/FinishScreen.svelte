@@ -23,6 +23,7 @@
   } from "$lib/utils/times_utils/times_utils";
   import { translate } from "$lib/utils/translate";
   import TipDialog from "../../components/TipDialog.svelte";
+  import { addBooking } from "./helpers/add_booking";
 
   let paymentDialog: HTMLDialogElement;
   let amount: number;
@@ -160,6 +161,6 @@
 
   <button
     class="btn sm:btn-lg btn-primary"
-    on:click={() => paymentDialog.showModal()}>Confirm Appointment</button
+    on:click={() => addBooking({ clientNote: "" })}>Confirm Appointment</button
   >
 </section>

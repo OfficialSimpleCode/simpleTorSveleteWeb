@@ -13,16 +13,14 @@ import Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
 import TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
 import type WorkerModel from "$lib/models/worker/worker_model";
+import { relevantHoures } from "$lib/utils/available_times_utils/relevant_hours";
+import { relevantMultiEventTime } from "$lib/utils/available_times_utils/relevant_multi_event_times";
 import { setToMidNight } from "$lib/utils/dates_utils";
 import { addDuration } from "$lib/utils/duration_utils";
-import {
-  isHoliday,
-  relevantHoures,
-  relevantMultiEventTime,
-} from "$lib/utils/times_utils/times_utils";
+import { isHoliday } from "$lib/utils/times_utils/times_utils";
 import { get } from "svelte/store";
 
-export function loadData(
+export function loadBookingMakerTimeData(
   visibleDates: Date[],
   worker: WorkerModel | undefined,
   timeIntervalHeight: number[],
@@ -32,6 +30,7 @@ export function loadData(
 ): void {
   const bookingMaker = get(bookingMakerStore);
   BookingController.visibleDates = visibleDates;
+  console.log(bookingMaker);
   if (worker === null) {
     return;
   }

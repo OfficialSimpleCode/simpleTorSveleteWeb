@@ -51,10 +51,7 @@ export default class BookingController {
 
   static get worker(): WorkerModel {
     const bookingMaker = get(bookingMakerStore);
-    return (
-      BusinessInitializer.GI().workers[bookingMaker.workerId ?? ""] ??
-      new WorkerModel({})
-    );
+    return BusinessInitializer.GI().workers[bookingMaker.workerId ?? ""];
   }
 
   static setWorkerId(newWorkerId: string) {
@@ -175,6 +172,9 @@ export default class BookingController {
     } else {
       if (bookingMaker.pickMultipleServices) {
         this.removeService(bookingMaker, treatment);
+      } else {
+        bookingMaker.currentStep += 1;
+        bookingMakerStore.set(bookingMaker);
       }
     }
   }
@@ -226,6 +226,7 @@ export default class BookingController {
   }
 
   static addService(bookingMaker: BookingMaker, treatment: Treatment) {
+    console.log("addService");
     let treatmentsAmount = 0;
     Object.values(bookingMaker.services).forEach((treatment) => {
       treatmentsAmount += treatment.count;
@@ -290,14 +291,11 @@ export default class BookingController {
       bookingMaker.currentPaymentType = treatment.paymentType;
     }
 
-    if (bookingMaker.pickMultipleServices) {
-      bookingMaker.services[treatment.id] = treatment;
-    } else {
-      bookingMaker.services = {
-        [treatment.id]: treatment,
-      };
+    if (!bookingMaker.pickMultipleServices) {
+      bookingMaker.services = {};
       bookingMaker.currentStep += 1;
     }
+    bookingMaker.services[treatment.id] = treatment;
     bookingMakerStore.set(bookingMaker);
   }
 
