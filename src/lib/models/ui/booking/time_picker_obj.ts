@@ -1,7 +1,8 @@
 import { Duration } from "$lib/models/core/duration";
 import RecurrenceEvent from "$lib/models/schedule/recurrence_event";
 import { addDuration } from "$lib/utils/duration_utils";
-
+import pkg from "uuid";
+const { v4 } = pkg;
 export default class TimePickerObj {
   displayDate?: Date;
   from: Date = new Date(0);
@@ -18,6 +19,7 @@ export default class TimePickerObj {
   recurrenceTimeId?: string;
   isVacation: boolean = false;
   isHoliday: boolean = false;
+  id: string = "";
   signedPaymentRequestId?: string;
 
   constructor({});
@@ -28,6 +30,7 @@ export default class TimePickerObj {
 
     isMulti = false,
     isHoliday = false,
+
     signedPaymentRequestId,
     isVacation = false,
     recurrenceTimeId,
@@ -53,6 +56,7 @@ export default class TimePickerObj {
     recurrenceMultiEvent?: RecurrenceEvent;
     fatherRecurrenceMultiEventDate?: Date;
   }) {
+    this.id = v4();
     this.displayDate = displayDate;
     this.maxParticipants = maxParticipants;
     this.currentParticipants = currentParticipants;
@@ -133,6 +137,7 @@ export default class TimePickerObj {
   toJson(): Record<string, any> {
     const data: Record<string, any> = {};
     data["from"] = this.from;
+    data["id"] = this.id;
     data["duration"] = this.duration.inMinutes;
 
     data["to"] = addDuration(this.from, this.duration);
