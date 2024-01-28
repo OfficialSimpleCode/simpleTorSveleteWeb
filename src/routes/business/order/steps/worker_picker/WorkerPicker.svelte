@@ -1,6 +1,5 @@
 <script lang="ts">
   import type WorkerModel from "$lib/models/worker/worker_model";
-  import { _ } from "svelte-i18n";
 
   import { WorkersPermissionsKeys } from "$lib/consts/manager";
   import BookingController, {
@@ -11,7 +10,7 @@
   import { workersStore } from "$lib/stores/Workers";
   import { imageByGender } from "$lib/utils/images_utils";
   import { dateToDateStr } from "$lib/utils/times_utils";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
   import { isManager } from "$lib/utils/worker";
 
   const workers: WorkerModel[] = [];
@@ -58,8 +57,8 @@
           </h1>
           {#if worker.about === ""}
             <p class="text-gray-500">
-              {translate(isManager(worker.id) ? "manager" : "worker")}
-              {translate("since")}: {dateToDateStr(worker.createdAt)}
+              {translate(isManager(worker.id) ? "manager" : "worker", $_)}
+              {translate("since", $_)}: {dateToDateStr(worker.createdAt)}
             </p>
           {:else}
             <p class="text-gray-500">

@@ -3,7 +3,7 @@
 
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import CustomArrow from "$lib/components/custom_components/custom_arrow.svelte";
-  import { translate } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
 
   export let booking: Booking;
 
@@ -25,8 +25,10 @@
     <GeneralIcon icon="mdi:payment"></GeneralIcon>
     <!-- like a listTile widget -->
     <div class="flex flex-col items-start">
-      <p>{translate("onlinePayments")}</p>
-      <p class="text-sm">{translate(paid ? "pressToWatch" : "pressToPay")}</p>
+      <p>{translate("onlinePayments", $_)}</p>
+      <p class="text-sm">
+        {translate(paid ? "pressToWatch" : "pressToPay", $_)}
+      </p>
     </div>
   </div>
 

@@ -10,7 +10,7 @@
 
   // Assets
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
 
   let navigationDialog: HTMLDialogElement;
 
@@ -73,7 +73,7 @@
           <GeneralIcon icon={socialIcons[name]} size={26}></GeneralIcon>
         </button>
         <h5 class="xs:text-sm text-xs text-gray-500 select-none">
-          {translate(name)}
+          {translate(name, $_)}
         </h5>
       </div>
     {/each}

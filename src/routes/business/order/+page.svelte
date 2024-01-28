@@ -5,7 +5,7 @@
   import BookingController, {
     bookingMakerStore,
   } from "$lib/controllers/booking_controller";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
   import FinishScreen from "./steps/finish_screen/FinishScreen.svelte";
   import ServicePicker from "./steps/service_picker/ServicePicker.svelte";
   import TimePickerSchedule from "./steps/time_picker/components/TimePickerSchedule.svelte";
@@ -22,7 +22,7 @@
 
     if (stepNumber >= 2 && $bookingMakerStore.workerId === undefined) {
       ShowToast({
-        text: translate("firsChooseWorker"),
+        text: translate("firsChooseWorker", $_),
         status: "warning",
       });
       return;
@@ -63,7 +63,7 @@
           : (i + 1).toString()}
         on:click={() => clickedOnStep(i + 1)}
       >
-        {translate(step)}
+        {translate(step, $_)}
       </button>
     {/each}
   </ul>
@@ -81,7 +81,7 @@
     <button
       class="btn btn-outline sm:hidden w-full"
       on:click={() => history.back()}
-      >{translate("cancel")}
+      >{translate("cancel", $_)}
     </button>
   </div>
 </main>

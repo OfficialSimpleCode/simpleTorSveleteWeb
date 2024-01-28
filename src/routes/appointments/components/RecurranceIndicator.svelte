@@ -3,7 +3,7 @@
   import type Booking from "$lib/models/booking/booking_model";
   import RecurrenceEvent from "$lib/models/schedule/recurrence_event";
 
-  import { translate } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
 
   export let booking: Booking;
   export let showRecurranceLink: boolean = false;
@@ -33,7 +33,8 @@
         <GeneralIcon icon="mdi:repeat"></GeneralIcon>
         <p>
           {translate(
-            booking.isMultiRef ? "recurringEvent" : "recurringBooking"
+            booking.isMultiRef ? "recurringEvent" : "recurringBooking",
+            $_
           ) + " - "}
         </p>
         <p>{recurrenceInfo.explainText}vdsoivfoisvjfdiovjdiofj</p>

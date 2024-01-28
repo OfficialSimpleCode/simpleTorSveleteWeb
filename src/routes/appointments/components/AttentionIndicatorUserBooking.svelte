@@ -1,7 +1,7 @@
 <script lang="ts">
   import { BookingStatuses } from "$lib/consts/booking";
   import Booking from "$lib/models/booking/booking_model";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
   import ActionsContainer from "./ActionsContainer.svelte";
 
   export let booking: Booking;
@@ -12,7 +12,8 @@
   text={translate(
     booking.status === BookingStatuses.approved
       ? "waitingForDelete"
-      : "waitingForApproval"
+      : "waitingForApproval",
+    $_,
   )}
   icon="mdi:information-variant-circle-outline"
   {bgColor}

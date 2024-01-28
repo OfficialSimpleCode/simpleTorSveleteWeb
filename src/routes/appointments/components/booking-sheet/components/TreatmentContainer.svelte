@@ -44,7 +44,7 @@
   <CustomCircleIcon
     icon={Trash}
     translateKey=""
-    size="16px"
+    size={16}
     bgColor={"bg-base-200"}
   ></CustomCircleIcon>
 </div>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import Booking from "$lib/models/booking/booking_model";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
 
   import BookingActions from "../../BookingActions.svelte";
   import CircleIcons from "../../CircleIcons.svelte";
@@ -18,10 +18,10 @@
     <div class="flex flex-col items-start">
       <h1>
         {booking.treatmentsToStringNotDetailed +
-          ` ${translate("to")} ${booking.businessName}`}
+          ` ${translate("to", $_)} ${booking.businessName}`}
       </h1>
       <h1>
-        {`${translate("with")} ${booking.workerName}`}
+        {`${translate("with", $_)} ${booking.workerName}`}
       </h1>
     </div>
   </div>

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { weekDays } from "$lib/consts/worker_schedule";
   import { getDayString } from "$lib/utils/string_utils";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
   import { format } from "date-fns";
   import GeneralIcon from "./GeneralIcon.svelte";
 
@@ -11,7 +11,6 @@
 
   const timeStr: string = format(date, "HH:mm");
   const dayStr: string = format(date, "dd-MM-yyyy");
-  const dayOfWeekStr: string = translate(weekDays[date.getDay()]);
 </script>
 
 <div class="flex flex-row items-center justify-center text-center">
@@ -26,8 +25,12 @@
         {dayVertical
           ? showTodayAndTommrow
             ? getDayString(date)
-            : dayOfWeekStr
-          : `  (${showTodayAndTommrow ? getDayString(date) : dayOfWeekStr})`}
+            : translate(weekDays[date.getDay()], $_)
+          : `  (${
+              showTodayAndTommrow
+                ? getDayString(date)
+                : translate(weekDays[date.getDay()], $_)
+            })`}
       </p>
     </div>
   </div>

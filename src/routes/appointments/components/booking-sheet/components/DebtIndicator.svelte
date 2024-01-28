@@ -2,7 +2,7 @@
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import Booking from "$lib/models/booking/booking_model";
   import { Price } from "$lib/models/general/price";
-  import { translate } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
 
   export let booking: Booking;
 
@@ -23,7 +23,7 @@
       circlePadding="p-[2px]"
       size={20}
     ></CustomCircleIcon>
-    <p>{translate("debtOnBooking")}</p>
+    <p>{translate("debtOnBooking", $_)}</p>
     <p>
       {new Price({
         amount: booking.totalDebtAmount.toString(),
