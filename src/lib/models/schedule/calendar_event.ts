@@ -1,9 +1,11 @@
 import { Gender } from "$lib/consts/gender";
 import type { Religion } from "$lib/consts/worker_schedule";
+import { addDuration } from "$lib/utils/duration_utils";
 
 import { dateStrToDate } from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
 import type BusinessModel from "../business/business_model";
+import { Duration } from "../core/duration";
 import type IconData from "../general/icon_data";
 import RecurrenceEvent from "./recurrence_event";
 
@@ -25,7 +27,7 @@ export default class Event {
   breakNotificaiton: boolean = false;
   minutesBreakNotification: number = 60;
   extraData: any;
-  note: string | null = null;
+  note: string | undefined;
   ids: string[] = [];
 
   recurrenceEvent?: RecurrenceEvent;
@@ -81,8 +83,8 @@ export default class Event {
     dayString: string;
     monthString: string;
     workerId: string;
-    businessModel: BusinessModel | null;
-    newTimeId: string | null;
+    businessModel: BusinessModel;
+    newTimeId: string;
   }): Event {
     const newObj = new Event();
     newObj.eventName = json["p"] ?? "";
@@ -132,10 +134,15 @@ export default class Event {
       time.getHours(),
       time.getMinutes()
     );
-    const to = new Date(from.getTime() + newObj.durationMinutes * 60000);
-    const recurrenceEvent = json["RE"]
+
+    newObj.to = addDuration(
+      from,
+      new Duration({ minutes: newObj.durationMinutes })
+    );
+    newObj.recurrenceEvent = json["RE"]
       ? RecurrenceEvent.fromJson(json["RE"], from)
-      : null;
+      : undefined;
+
     newObj.colorIndex = json["c"] ?? (newObj.isVacation ? 1 : 0);
     newObj.ids = [workerId];
     newObj.isHoliday = false;
@@ -184,7 +191,7 @@ export default class Event {
     if (!this.blockSchedule) {
       data["BS"] = this.blockSchedule;
     }
-    if (this.treatmentId !== null) {
+    if (this.treatmentId !== undefined) {
       data["TID"] = this.treatmentId;
     }
     if (this.wantDeleteCounter > 0) {
@@ -238,7 +245,7 @@ export default class Event {
     if (this.recurrenceEvent != undefined) {
       data["RE"] = this.recurrenceEvent!.toJson({});
     }
-    if (this.note !== null && this.note !== "") {
+    if (this.note !== undefined && this.note !== "") {
       data["N"] = this.note;
     }
     if (this.partOfRecurrence) {
@@ -262,10 +269,10 @@ export default class Event {
     if (this.breakAddedToDeviceCalendar) {
       data["BATDC"] = this.breakAddedToDeviceCalendar;
     }
-    if (this.timeId !== null && this.recurrenceEvent === null) {
+    if (this.timeId !== undefined && this.recurrenceEvent === undefined) {
       data["RTI"] = this.timeId;
     }
-    if (this.recurrenceBreakFatherDate !== null) {
+    if (this.recurrenceBreakFatherDate !== undefined) {
       data["RBFD"] = this.recurrenceBreakFatherDate;
     }
     if (this.recurrenceBreakRefInfo != undefined) {
@@ -288,6 +295,6 @@ export default class Event {
   }
 
   toString(): string {
-    return JSON.stringify(this, null, 2);
+    return JSON.stringify(this, undefined, 2);
   }
 }

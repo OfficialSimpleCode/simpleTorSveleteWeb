@@ -2,6 +2,7 @@ import {
   addShiftsFromStrList,
   combinedShuffleShifts,
 } from "$lib/utils/shifts_utils";
+import { dateToDateStr } from "$lib/utils/times_utils";
 import type Shift from "../general/shift";
 
 export enum ShiftOperations {
@@ -91,13 +92,9 @@ export default class ShiftChangeRange {
   }
 
   getKey(): string {
-    const startStr = this.formatDate(this.start);
-    const endStr = this.formatDate(this.end);
+    const startStr = dateToDateStr(this.start);
+    const endStr = dateToDateStr(this.end);
     return `${startStr}&${endStr}`;
-  }
-
-  private formatDate(date: Date): string {
-    return date.toISOString().split("T")[0];
   }
 
   toString(): string {

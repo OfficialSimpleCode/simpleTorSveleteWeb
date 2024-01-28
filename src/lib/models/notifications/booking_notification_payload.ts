@@ -1,5 +1,6 @@
 // Assuming IconData and NotifcationPayloadObject classes are defined somewhere with proper methods
 
+import { dateIsoStr } from "$lib/utils/times_utils";
 import IconData from "../general/icon_data";
 import NotifcationPayloadObject from "./notification_payload_object";
 
@@ -63,7 +64,10 @@ export default class BookingNotificationPayload extends NotifcationPayloadObject
     data["businessId"] = this.businessId;
     data["isRecurrence"] = this.isRecurrence;
     data["totalMinutes"] = this.totalMinutes;
-    data["date"] = this.date?.toISOString() || null;
+    if (this.date !== undefined) {
+      data["date"] = dateIsoStr(this.date!);
+    }
+
     data["businessName"] = this.businessName;
     data["id"] = this.id;
     data["workerId"] = this.workerId;

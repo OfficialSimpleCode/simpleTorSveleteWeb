@@ -7,7 +7,7 @@ import IconData from "$lib/models/general/icon_data";
 import { Price } from "$lib/models/general/price";
 import BusinessPayloadData from "$lib/models/notifications/business_data_payload";
 import PaymentRequestNotificationPayload from "$lib/models/notifications/payment_request_notification_payload";
-import { dateToMonthStr } from "$lib/utils/times_utils";
+import { dateIsoStr, dateToMonthStr } from "$lib/utils/times_utils";
 import InvoiceBusinessInfo from "../invoice/invoice_business_info";
 import { PaymentObject } from "../payment_object";
 import PaymentRequestPreview from "./payment_request_preview";
@@ -182,7 +182,7 @@ export default class PaymentRequest extends PaymentObject {
       this.createdAt != null &&
       this.createdAt.getTime() !== new Date(0).getTime()
     ) {
-      data["createdAt"] = this.createdAt.toISOString();
+      data["createdAt"] = dateIsoStr(this.createdAt);
     }
     if (!this.oneTime) {
       data["oneTime"] = this.oneTime;
@@ -199,7 +199,7 @@ export default class PaymentRequest extends PaymentObject {
     if (Object.keys(this.userPayments).length > 0) {
       data["userPayments"] = {};
       Object.entries(this.userPayments).forEach(([transactionId, date]) => {
-        data["userPayments"][transactionId] = date.toISOString();
+        data["userPayments"][transactionId] = dateIsoStr(date);
       });
     }
     if (this.payers > 0) {

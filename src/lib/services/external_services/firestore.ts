@@ -119,7 +119,19 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       const result = await runTransaction(
         this._firestore,
         async (transaction) => {
-          return await transacionCommands(transaction);
+          try {
+            return await transacionCommands(transaction);
+          } catch (e) {
+            if (e instanceof Error) {
+              logger.error(`Error while run transaction -> ${e} ${e.stack}`);
+              AppErrorsHelper.GI().addError({
+                error: Errors.serverError,
+                details: e.toString(),
+              });
+            }
+
+            return false;
+          }
         }
       );
 
@@ -329,6 +341,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);
       const docRef = doc(collectionRef, docId);
       const setData = this.organizeData(data);
+      console.log(setData);
       transaction.set(docRef, setData, { merge: true });
     } catch (e) {
       logger.error("Error while setting document as map in transaction -->", e);

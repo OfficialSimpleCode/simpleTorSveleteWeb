@@ -1,3 +1,5 @@
+import { dateIsoStr } from "$lib/utils/times_utils";
+
 export default class BookingsPreview {
   bookingCount: number = 0;
   lastUpdateTime: Date = new Date(0);
@@ -25,7 +27,7 @@ export default class BookingsPreview {
   toJson(): Record<string, any> {
     const data: Record<string, any> = {};
     if (this.lastUpdateTime.getTime() !== new Date(0).getTime()) {
-      data["lastUpdateTime"] = this.lastUpdateTime.toISOString();
+      data["lastUpdateTime"] = dateIsoStr(this.lastUpdateTime);
     }
     if (this.bookingCount > 0) {
       data["bookingCount"] = this.bookingCount;

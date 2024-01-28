@@ -1,3 +1,5 @@
+import { dateIsoStr } from "$lib/utils/times_utils";
+
 export default class Debt {
   createdAt: Date = new Date(0);
   id: string = "";
@@ -64,7 +66,7 @@ export default class Debt {
 
   toJson(): Record<string, any> {
     const data: Record<string, any> = {};
-    data["createdAt"] = this.createdAt.toISOString();
+    data["createdAt"] = dateIsoStr(this.createdAt);
     data["amount"] = this.amount;
 
     if (this.showUser) {

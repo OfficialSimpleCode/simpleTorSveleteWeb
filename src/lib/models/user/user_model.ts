@@ -3,6 +3,7 @@ import { Gender, genderFromStr, genderToStr } from "$lib/consts/gender";
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
 // import { isEqual } from "lodash";
 // import { v4 as uuid } from "uuid";
+import { dateIsoStr } from "$lib/utils/times_utils";
 import type Booking from "../booking/booking_model";
 import BusinessInfo from "../business/business_info";
 import CustomerData from "../general/customer_data";
@@ -481,10 +482,10 @@ export default class UserModel {
       data["devices"][fcmId] = fcm.toJson();
     });
     if (this.lastTimeUpdateEmail.getTime() !== new Date(0).getTime()) {
-      data["lastTimeUpdateEmail"] = this.lastTimeUpdateEmail.toISOString();
+      data["lastTimeUpdateEmail"] = dateIsoStr(this.lastTimeUpdateEmail);
     }
     if (this.lastTimeUpdatePhone.getTime() !== new Date(0).getTime()) {
-      data["lastTimeUpdatePhone"] = this.lastTimeUpdatePhone.toISOString();
+      data["lastTimeUpdatePhone"] = dateIsoStr(this.lastTimeUpdatePhone);
     }
     data["gender"] = genderToStr[this.gender];
     data["phoneNumber"] = this.phoneNumber;
@@ -492,7 +493,7 @@ export default class UserModel {
     if (Object.keys(this.termsApprovals).length > 0) {
       data["termsApprovals"] = {};
       Object.entries(this.termsApprovals).forEach(([businessId, date]) => {
-        data["termsApprovals"][businessId] = date.toISOString();
+        data["termsApprovals"][businessId] = dateIsoStr(date);
       });
     }
     if (Object.keys(this.seenUpdates).length > 0) {
@@ -533,7 +534,7 @@ export default class UserModel {
     data["businessTopics"] = Array.from(this.businessTopics);
     data["authProviders"] = {};
     this.authProviders.forEach((date, provider) => {
-      data["authProviders"][provider] = date.toISOString();
+      data["authProviders"][provider] = dateIsoStr(date);
     });
     data["paymentCards"] = {};
     Object.entries(this.paymentCards).forEach(([businessId, cards]) => {
@@ -542,7 +543,7 @@ export default class UserModel {
         data["paymentCards"][businessId][cardId] = card.toJson();
       });
     });
-    data["createdAt"] = this.createdAt.toISOString();
+    data["createdAt"] = dateIsoStr(this.createdAt);
     return data;
   }
 

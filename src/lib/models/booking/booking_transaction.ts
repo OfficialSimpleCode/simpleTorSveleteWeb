@@ -1,3 +1,5 @@
+import { dateIsoStr } from "$lib/utils/times_utils";
+
 export enum PaymentTypes {
   deposit,
   payment,
@@ -76,7 +78,7 @@ export default class BookingTransactionModel {
     data["amount"] = this.amount;
     data["hypId"] = this.hypId;
     data["type"] = paymentTypesToStr[this.type];
-    data["createdAt"] = this.createdAt.toISOString();
+    data["createdAt"] = dateIsoStr(this.createdAt);
 
     return data;
   }

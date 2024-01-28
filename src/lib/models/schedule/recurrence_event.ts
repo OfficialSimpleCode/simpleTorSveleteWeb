@@ -4,6 +4,7 @@ import { setEquals } from "$lib/utils/general_utils";
 import { durationToString } from "$lib/utils/string_utils";
 import {
   addMonths,
+  dateIsoStr,
   dateStrToDate,
   dateToDateStr,
   getStartOfWeek,
@@ -181,7 +182,7 @@ export default class RecurrenceEvent {
     }
 
     if (saveStartDate && this.start) {
-      data["SD"] = this.start.toISOString();
+      data["SD"] = dateIsoStr(this.start);
     }
 
     data["FR"] = freqRecurrenceToStr[this.freqRecurrence];

@@ -4,6 +4,7 @@ import {
   arrangementToStr,
   defaultThemes,
 } from "$lib/consts/business_design";
+import { dateIsoStr } from "$lib/utils/times_utils";
 import IconData from "../general/icon_data";
 import { BusinessTheme } from "./business_theme";
 import { ProductModel } from "./ProductModel";
@@ -184,7 +185,7 @@ export class BusinessDesign {
       data.term = this.term;
     }
     if (this.lastTimeToUpdateTerm !== new Date(0)) {
-      data.lastTimeToUpdateTerm = this.lastTimeToUpdateTerm.toISOString();
+      data.lastTimeToUpdateTerm = dateIsoStr(this.lastTimeToUpdateTerm);
     }
 
     data.bottomIcons = this.bottomIcons;

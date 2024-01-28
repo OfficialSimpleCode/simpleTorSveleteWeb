@@ -6,6 +6,7 @@ import {
   NotificationOption,
   notificationOptionFromStr,
 } from "$lib/consts/notification";
+import { dateIsoStr } from "$lib/utils/times_utils";
 
 export default class WorkerNotificatiosSettings {
   showAdressAlert: boolean = false;
@@ -28,7 +29,7 @@ export default class WorkerNotificatiosSettings {
     const newObj = new WorkerNotificatiosSettings();
     newObj.notifyOnWaitingListEvents =
       json["notifyOnWaitingListEvents"] ?? true;
-    if (json["notificationOption"] != null) {
+    if (json["notificationOption"] !== undefined) {
       newObj.notificationOption =
         notificationOptionFromStr[json["notificationOption"]] ??
         NotificationOption.PushOrSMS;
@@ -39,12 +40,12 @@ export default class WorkerNotificatiosSettings {
       ? new Date(json["recurrenceNotificationsLastDate"])
       : undefined;
     newObj.remindersTypes = new Map();
-    if (json["remindersTypes"] != null) {
+    if (json["remindersTypes"] !== undefined) {
       for (const [type, minutes] of Object.entries<number>(
         json["remindersTypes"]
       )) {
         const reminderType = bookingReminderTypeFromStr[type];
-        if (reminderType != null) {
+        if (reminderType !== undefined) {
           newObj.remindersTypes.set(reminderType, minutes);
         }
       }
@@ -88,8 +89,9 @@ export default class WorkerNotificatiosSettings {
       data["notificationOption"] = NotificationOption[this.notificationOption];
     }
     if (this.recurrenceNotificationsLastDate != null) {
-      data["recurrenceNotificationsLastDate"] =
-        this.recurrenceNotificationsLastDate.toISOString();
+      data["recurrenceNotificationsLastDate"] = dateIsoStr(
+        this.recurrenceNotificationsLastDate
+      );
     }
     if (!this.notifyOnClientConfirmArrival) {
       data["notifyOnClientConfirmArrival"] = this.notifyOnClientConfirmArrival;
