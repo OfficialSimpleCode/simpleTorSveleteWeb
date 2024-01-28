@@ -172,8 +172,8 @@ export default class NotificationsHelper {
         action: EnterAction.openWorkerBooking,
         bookingData: booking.toBookingNotificationPayload,
       }),
-      title: translate("userWantsToDelete", false),
-      content: translate("userWantDeleteContent", false)
+      title: translate("userWantsToDelete", undefined, false),
+      content: translate("userWantDeleteContent", undefined, false)
         .replaceAll("CLIENT", booking.customerName)
         .replaceAll("DATE", getFormatedTime(booking.bookingDate)),
       isSilent: true,
@@ -204,8 +204,8 @@ export default class NotificationsHelper {
         action: EnterAction.openWorkerBooking,
         bookingData: booking.toBookingNotificationPayload,
       }),
-      title: translate("userRestore", false),
-      content: translate("userResotreContent", false)
+      title: translate("userRestore", undefined, false),
+      content: translate("userResotreContent", undefined, false)
         .replaceAll("CLIENT", booking.customerName)
         .replaceAll("DATE", getFormatedTime(booking.bookingDate)),
       isSilent: true,
@@ -227,9 +227,10 @@ export default class NotificationsHelper {
       fcms: worker.fcmsTokens,
       title: translate(
         managerChange ? "managerUpdate" : "WorkerBookingChanged",
+        undefined,
         false
       ).replaceAll("BUSINESSNAME", newBooking.businessName),
-      content: translate("WorkerChangedContent", false)
+      content: translate("WorkerChangedContent", undefined, false)
         .replaceAll("OLDDATE", getFormatedTime(oldBooking.bookingDate))
         .replaceAll("NEWDATE", getFormatedTime(newBooking.bookingDate))
         .replaceAll("CLIENT", nameOfChanging),
@@ -256,9 +257,10 @@ export default class NotificationsHelper {
       fcms: worker.fcmsTokens,
       title: translate(
         managerChange ? "managerUpdate" : "WorkerBookingChanged",
+        undefined,
         false
       ).replaceAll("BUSINESSNAME", newBooking.businessName),
-      content: translate("WorkerChangedTreatmentsContent", false)
+      content: translate("WorkerChangedTreatmentsContent", undefined, false)
         .replaceAll("DATE", getFormatedTime(newBooking.bookingDate))
         .replaceAll("CLIENT", nameOfChanging),
       payload: new NotificationPayload({

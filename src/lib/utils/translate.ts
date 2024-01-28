@@ -3,8 +3,8 @@ import { userStore } from "$lib/stores/User";
 import { _, locale } from "svelte-i18n";
 import { get } from "svelte/store";
 
-export function translate(strName: string, needGender: boolean = true): string {
-  const translatedStr = get(_)(strName);
+export function translate(strName: string, getText: CallableFunction = get(_), needGender: boolean = true): string {
+  const translatedStr = getText(strName);
   if (get(locale) === "he" && needGender) {
     return textAccordingToGender(translatedStr);
   }
@@ -21,3 +21,5 @@ export function textAccordingToGender(txt: string): string {
   }
   return txt;
 }
+
+export { _ };

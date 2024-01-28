@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
   import GeneralIcon from "../GeneralIcon.svelte";
 
   export let icon: string;
@@ -16,6 +16,6 @@
     <GeneralIcon {icon} {size}></GeneralIcon>
   </div>
   <div>
-    {translate(translateKey)}
+    {translate(translateKey, $_)}
   </div>
 </button>

@@ -12,13 +12,13 @@
   import { LoginType } from "$lib/services/external_services/firebase_auth_service";
   import { ShowToast } from "$lib/stores/ToastManager";
   import { isConnectedStore } from "$lib/stores/User";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
 
   async function handleClick(authProvider: AuthProvider) {
     //facebook is will be active soon
     if (AuthProvider.Facebook === authProvider) {
       ShowToast({
-        text: translate("soon"),
+        text: translate("soon", $_),
         status: "info",
       });
       return;

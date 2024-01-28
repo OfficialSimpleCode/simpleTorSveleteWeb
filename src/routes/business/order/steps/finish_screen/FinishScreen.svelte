@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { _ } from "svelte-i18n";
-
   import {
     Calendar,
     ChevronRight,
@@ -18,7 +16,7 @@
   } from "$lib/models/general/currency_model";
   import { getWeekdayFromDate } from "$lib/utils/dates_utils";
   import { dateToDateStr, dateToTimeStr } from "$lib/utils/times_utils";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
   import TipDialog from "../../components/TipDialog.svelte";
   import { addBooking } from "./helpers/add_booking";
 
@@ -62,7 +60,7 @@
     if (notShownPrice >= Object.keys($bookingMakerStore.services).length) {
       priceText = translate("notKnown");
     } else if (notShownPrice > 0) {
-      priceText = translate("moreThen", false);
+      priceText = translate("moreThen", $_, false);
     }
   }
 
@@ -71,7 +69,7 @@
     if (notShownTime >= Object.keys($bookingMakerStore.services).length) {
       timeText = translate("notKnown");
     } else if (notShownTime > 0) {
-      timeText = translate("moreThen", false);
+      timeText = translate("moreThen", $_, false);
     }
   }
 </script>

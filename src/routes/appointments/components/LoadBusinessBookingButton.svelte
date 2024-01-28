@@ -1,6 +1,6 @@
 <script lang="ts">
   import Booking from "$lib/models/booking/booking_model";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
   import ActionsContainer from "./ActionsContainer.svelte";
 
   export let bgColor: string = "bg-base-300";
@@ -11,7 +11,7 @@
 </script>
 
 <ActionsContainer
-  text={translate("loadBuisness")}
+  text={translate("loadBuisness", $_)}
   icon="mdi:reload"
   onClick={loadBusiness}
   {bgColor}

@@ -22,7 +22,7 @@ export default class BookingTextTemplate extends Booking {
   }
 
   reminderTemplate(): string {
-    return translate("alertBookingTemplate", false)
+    return translate("alertBookingTemplate", undefined, false)
       .replace(
         "ADRESS",
         this.showAdressAlert && this.adress !== ""
@@ -47,7 +47,7 @@ export default class BookingTextTemplate extends Booking {
   }
 
   confirmArrivalReminderTemplate(): string {
-    return translate("confirmArrivalReminderTemplate", false)
+    return translate("confirmArrivalReminderTemplate", undefined, false)
       .replace("DATE", getFormatedTime(this.bookingDate))
       .replace("WORKERNAME", this.workerName)
       .replace("TREATMENTNAME", this.treatmentsToStringNotDetailed)

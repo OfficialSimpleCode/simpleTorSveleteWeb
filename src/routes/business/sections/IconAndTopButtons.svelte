@@ -6,7 +6,7 @@
   import Avatar from "$lib/components/Avatar.svelte";
   import { businessStore } from "$lib/stores/Business";
   import { isConnectedStore } from "$lib/stores/User";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
 
   import NavigationDialog from "$lib/components/NavigationDialog.svelte";
 
@@ -76,7 +76,7 @@
   <div class="flex h-24 items-center">
     <div class="flex gap-5 items-center">
       <button class="btn btn-primary" on:click={orderNow}>
-        {translate("setBooking")}
+        {translate("setBooking", $_)}
       </button>
       <button class="btn btn-primary" on:click={openShareDialog}>
         <!-- <Icon src={isAppleUser() ? Trash : Share} size="26px" /> -->

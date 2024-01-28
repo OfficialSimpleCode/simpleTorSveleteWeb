@@ -3,7 +3,7 @@
   import { base } from "$app/paths";
   import type { ProductModel } from "$lib/models/business/ProductModel";
 
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
 
   export let product: ProductModel;
   export let index: number;
@@ -38,7 +38,7 @@
           class="btn btn-primary"
           on:click={() => goto(`${base}/business/product/${productId}`)}
         >
-          {translate("details")}
+          {translate("details", $_)}
         </button>
       </div>
     </div>

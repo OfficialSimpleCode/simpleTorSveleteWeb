@@ -2,7 +2,7 @@
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import type Booking from "$lib/models/booking/booking_model";
   import RecurrenceEvent from "$lib/models/schedule/recurrence_event";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
 
   export let isNow: Boolean;
   export let booking: Booking;
@@ -29,7 +29,7 @@
     <div class="flex flex-wrap items-center justify-center">
       <GeneralIcon icon="mdi:repeat"></GeneralIcon>
       <p>
-        {translate(booking.isMultiRef ? "recurringEvent" : "recurringBooking") +
+        {translate(booking.isMultiRef ? "recurringEvent" : "recurringBooking", $_) +
           " - "}
       </p>
       <p>{recurrenceInfo.explainText}</p>

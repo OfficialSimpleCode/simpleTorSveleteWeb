@@ -3,7 +3,7 @@
   import { page } from "$app/stores";
   import type Booking from "$lib/models/booking/booking_model";
   import { businessStore } from "$lib/stores/Business";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
   import { ChevronLeft, ChevronRight, Icon } from "svelte-hero-icons";
   import BookingActions from "../components/BookingActions.svelte";
   import BookingDetails from "../components/BookingDetails.svelte";
@@ -48,10 +48,10 @@
       <div class="flex flex-col items-start">
         <h1>
           {booking.treatmentsToStringNotDetailed +
-            (onlyWorker ? "" : ` ${translate("to")} ${booking.businessName}`)}
+            (onlyWorker ? "" : ` ${translate("to", $_)} ${booking.businessName}`)}
         </h1>
         <h1>
-          {`${translate("with")} ${booking.workerName}`}
+          {`${translate("with", $_)} ${booking.workerName}`}
         </h1>
       </div>
     </div>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type Booking from "$lib/models/booking/booking_model";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
   import TableItem from "./TableItem.svelte";
 
   export let booking: Booking;
@@ -18,6 +18,6 @@
     fieldTranslateKey="treatments"
     value={booking.treatments.size === 1
       ? booking.treatments.values().next().value.nameForBooking
-      : `${booking.treatmentLength} ${translate("treatments")}`}
+      : `${booking.treatmentLength} ${translate("treatments", $_)}`}
   ></TableItem>
 </div>
