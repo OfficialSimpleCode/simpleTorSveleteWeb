@@ -9,6 +9,7 @@
   import FinishScreen from "./steps/finish_screen/FinishScreen.svelte";
   import ServicePicker from "./steps/service_picker/ServicePicker.svelte";
   import TimePickerSchedule from "./steps/time_picker/components/TimePickerSchedule.svelte";
+  import WorkerPicker from "./steps/worker_picker/WorkerPicker.svelte";
 
   let steps: string[] = ["worker", "treatment", "dateAndTime", "confirmNow"];
 
@@ -68,7 +69,7 @@
   </ul>
 
   {#if $bookingMakerStore.currentStep == 1}
-    <TimePickerSchedule />
+    <WorkerPicker />
   {:else if $bookingMakerStore.currentStep == 2}
     <ServicePicker />
   {:else if $bookingMakerStore.currentStep == 3}
