@@ -5,13 +5,11 @@
   import { businessStore } from "$lib/stores/Business";
   import { ShowToast } from "$lib/stores/ToastManager";
   import type { IconSource } from "svelte-hero-icons";
-  import { DocumentText, Icon, MapPin, Phone } from "svelte-hero-icons";
 
   import NavigationDialog from "$lib/components/NavigationDialog.svelte";
 
   // Assets
-  import InsagramLogo from "$lib/images/instagram.svg";
-  import WhatsappLogo from "$lib/images/whatsapp.svg";
+  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import { translate } from "$lib/utils/translate";
 
   let navigationDialog: HTMLDialogElement;
@@ -31,14 +29,12 @@
     term: $businessStore.previewDoc,
   };
 
-  let socialIcons: { [key: string]: string } = {
-    whatsapp: WhatsappLogo,
-    instagram: InsagramLogo,
-  };
-  let socialHeroIcons: { [key: string]: IconSource } = {
-    call: Phone,
-    navigate: MapPin,
-    term: DocumentText,
+  let socialIcons: { [key: string]: IconSource } = {
+    call: "mdi:phone",
+    navigate: "mdi:map-marker-outline",
+    term: "mdi:file-document",
+    whatsapp: "mdi:whatsapp",
+    instagram: "mdi:instagram",
   };
 
   function activateLink(link: string | CallableFunction, name: string) {
@@ -74,11 +70,7 @@
           on:click={() => activateLink(link, name)}
           class="btn btn-ghost btn-square w-6 h-6 sm:w-10 sm:h-10"
         >
-          {#if socialIcons[name]}
-            <img src={socialIcons[name]} alt={name} />
-          {:else}
-            <Icon src={socialHeroIcons[name]} size="100%" />
-          {/if}
+          <GeneralIcon icon={socialIcons[name]} size={26}></GeneralIcon>
         </button>
         <h5 class="xs:text-sm text-xs text-gray-500 select-none">
           {translate(name)}

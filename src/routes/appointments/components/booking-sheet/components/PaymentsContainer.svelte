@@ -1,7 +1,7 @@
 <script lang="ts">
   import Booking from "$lib/models/booking/booking_model";
-  import { Icon, Trash } from "svelte-hero-icons";
 
+  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import CustomArrow from "$lib/components/custom_components/custom_arrow.svelte";
   import { translate } from "$lib/utils/translate";
 
@@ -22,7 +22,7 @@
   class="flex flex-row w-full justify-between items-center bg-base-300 rounded-lg py-2 px-2 gap-2"
 >
   <div class="flex flex-row items-center gap-2">
-    <Icon src={Trash} size="26px" />
+    <GeneralIcon icon="mdi:payment"></GeneralIcon>
     <!-- like a listTile widget -->
     <div class="flex flex-col items-start">
       <p>{translate("onlinePayments")}</p>

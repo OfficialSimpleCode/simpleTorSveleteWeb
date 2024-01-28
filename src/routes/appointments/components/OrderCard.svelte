@@ -9,6 +9,7 @@
   import BookingDetails from "../components/BookingDetails.svelte";
   import CircleIcons from "../components/CircleIcons.svelte";
   import BookingSheet from "../components/booking-sheet/BookingSheet.svelte";
+  import TopIndicators from "./TopIndicators.svelte";
 
   export let booking: Booking;
 
@@ -21,6 +22,7 @@
     });
     setTimeout(() => bookingDialog.showModal(), 100);
   }
+  const isNow: boolean = booking.isRightNow || true;
 </script>
 
 <!-- booking shhet and dialog -->
@@ -30,8 +32,12 @@
 
 <button
   on:click={openBookingSheet}
-  class="card bg-base-200 w-full hover:bg-base-300 px-3 py-2"
+  class="card bg-base-200 w-full hover:bg-base-300 px-3 py-3 relative {isNow
+    ? 'border border-base-300'
+    : ''}"
 >
+  <TopIndicators {isNow} {booking}></TopIndicators>
+
   <!-- icons, name, arrow (above the divider)  -->
   <div class="flex flex-row w-full justify-between items-center">
     <!-- like a listTile widget -->

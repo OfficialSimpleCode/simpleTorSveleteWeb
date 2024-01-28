@@ -476,6 +476,16 @@ export default class Booking extends ScheduleItem {
     }
   }
 
+  get isRightNow(): boolean {
+    return (
+      addDuration(
+        this.recurrenceChildDate ?? this.bookingDate,
+        new Duration({ minutes: this.totalMinutes })
+      ) > new Date() &&
+      (this.recurrenceChildDate ?? this.bookingDate) < new Date()
+    );
+  }
+
   ///Return the display date of the booking - recurrnce booking date can
   ///be trasted because the date is the father's date so we use
   ///recurrenceChildDate incase of recurrence

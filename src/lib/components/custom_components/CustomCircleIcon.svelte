@@ -1,11 +1,11 @@
 <script lang="ts">
   import { translate } from "$lib/utils/translate";
-  import { Icon, type IconSource } from "svelte-hero-icons";
+  import GeneralIcon from "../GeneralIcon.svelte";
 
-  export let icon: IconSource;
+  export let icon: string;
   export let translateKey: string;
   export let hadleClick: () => void = () => {};
-  export let size: string = "26px";
+  export let size: number = 26;
   export let bgColor: string = "bg-base-300";
 </script>
 
@@ -13,7 +13,7 @@
   <div
     class="flex flex-col justify-center gap-1 items-center rounded-full {bgColor} p-2"
   >
-    <Icon src={icon} {size} />
+    <GeneralIcon {icon} {size}></GeneralIcon>
   </div>
   <div>
     {translate(translateKey)}

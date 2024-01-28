@@ -2,7 +2,6 @@
   import { BookingStatuses } from "$lib/consts/booking";
   import Booking from "$lib/models/booking/booking_model";
   import { translate } from "$lib/utils/translate";
-  import { InformationCircle } from "svelte-hero-icons";
   import ActionsContainer from "./ActionsContainer.svelte";
 
   export let booking: Booking;
@@ -15,6 +14,6 @@
       ? "waitingForDelete"
       : "waitingForApproval"
   )}
-  icon={InformationCircle}
+  icon="mdi:information-variant-circle-outline"
   {bgColor}
 ></ActionsContainer>

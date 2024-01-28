@@ -3,7 +3,7 @@
   import { getDayString } from "$lib/utils/string_utils";
   import { translate } from "$lib/utils/translate";
   import { format } from "date-fns";
-  import { Calendar, ChartPie, Icon } from "svelte-hero-icons";
+  import GeneralIcon from "./GeneralIcon.svelte";
 
   export let date: Date;
   export let dayVertical: boolean = true;
@@ -18,7 +18,7 @@
   <!-- first elemnt the full date + the day name -->
   <div class="flex flex-row items-center justify-center gap-2">
     <!-- icon -->
-    <Icon src={Calendar} size="20px" />
+    <GeneralIcon icon="mdi:date-range" size={22}></GeneralIcon>
     <div class="flex {dayVertical ? 'flex-col' : 'flex-row'}">
       <!-- date -->
       <p dir="ltr">{dayStr}</p>
@@ -38,7 +38,7 @@
   <!-- the second elemnt - the time -->
   <div class="flex flex-row gap-2 justify-center text-center">
     <!-- icon -->
-    <Icon src={ChartPie} size="20px" />
+    <GeneralIcon icon="mdi:clock-time-three-outline" size={22}></GeneralIcon>
     <p dir="ltr">{timeStr}</p>
   </div>
 
