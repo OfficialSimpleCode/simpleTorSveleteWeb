@@ -190,14 +190,12 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       let allowedTime = false;
 
       if (!afterPayment) {
-        firestoreDataBaseWorker = new WorkerModel({});
-
-        await this.getWorkerFromTransactionRepo({
+        firestoreDataBaseWorker = await this.getWorkerFromTransactionRepo({
           transaction: transaction,
           workerId: booking.workerId,
         });
 
-        if (firestoreDataBaseWorker === null) {
+        if (firestoreDataBaseWorker === undefined) {
           return false;
         }
 

@@ -159,6 +159,12 @@ export default class WorkerModel {
     // regular shifts
     const defaultShifts =
       this.workTime.get(format(day, "EEEE").toLowerCase()) || [];
+    console.log("this.workTime", this.workTime);
+    console.log(
+      "format(day, EEEE).toLowerCase()",
+      format(day, "EEEE").toLowerCase()
+    );
+    console.log("defaultShifts", defaultShifts);
     // specific changes
     for (const specifiRangeObj of Object.values(this.specificRangeChanges)) {
       if (
