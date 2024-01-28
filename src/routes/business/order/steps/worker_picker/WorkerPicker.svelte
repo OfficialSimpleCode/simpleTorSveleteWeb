@@ -10,7 +10,7 @@
   import { workersStore } from "$lib/stores/Workers";
   import { imageByGender } from "$lib/utils/images_utils";
   import { dateToDateStr } from "$lib/utils/times_utils";
-  import { translate, _ } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import { isManager } from "$lib/utils/worker";
 
   const workers: WorkerModel[] = [];
@@ -39,7 +39,7 @@
   <ul class="w-[%70] h-full flex flex-wrap items-center justify-center gap-7">
     {#each workers as worker}
       <button
-        class="bg-base-200 rounded-xl w-full max-w-[90%] sm:min-w-[380px] sm:w-[40%] h-20 sm:h-32 flex items-center px-6 box-border gap-5 border"
+        class="bg-primary rounded-xl w-full max-w-[90%] sm:min-w-[380px] sm:w-[40%] h-20 sm:h-32 flex items-center px-6 box-border gap-5 border"
         class:border-black={$bookingMakerStore.workerId === worker.id}
         on:click={() => onTapWorker(worker)}
       >
@@ -56,12 +56,12 @@
             {worker.name}
           </h1>
           {#if worker.about === ""}
-            <p class="text-gray-500">
+            <p class="opacity-90">
               {translate(isManager(worker.id) ? "manager" : "worker", $_)}
               {translate("since", $_)}: {dateToDateStr(worker.createdAt)}
             </p>
           {:else}
-            <p class="text-gray-500">
+            <p class="opacity-90">
               {worker.about}
             </p>
           {/if}

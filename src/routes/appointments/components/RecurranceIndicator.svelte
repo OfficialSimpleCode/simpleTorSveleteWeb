@@ -7,7 +7,7 @@
 
   export let booking: Booking;
   export let showRecurranceLink: boolean = false;
-  export let absolute: boolean = true;
+  export let absolute: boolean = false;
 
   const recurrenceEvent: RecurrenceEvent | undefined =
     booking.recurrenceEvent ?? booking.recurrenceEventRefInfo;
@@ -25,7 +25,7 @@
   <div
     class="{absolute
       ? 'absolute'
-      : ''} text-end w-full px-8 top-[3px] opacity-70"
+      : ''} text-end w-full px-8 top-[3px] opacity-70 pb-2"
   >
     <div class="flex flex-col items-center">
       <!-- only the indicator about it -->
@@ -37,12 +37,12 @@
             $_
           ) + " - "}
         </p>
-        <p>{recurrenceInfo.explainText}vdsoivfoisvjfdiovjdiofj</p>
+        <p>{recurrenceInfo.explainText}</p>
       </div>
 
       <!-- click to see all -->
       <p class="text-primary {showRecurranceLink ? '' : 'hidden'}">
-        csacdsccdscsda
+        {translate("watchAllRecurrence")}
       </p>
     </div>
   </div>

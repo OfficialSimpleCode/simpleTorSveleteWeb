@@ -195,6 +195,9 @@ export function relevantHoures({
         console.log("jump", jump);
         console.log("allowedTime", allowedTime);
 
+        console.log("timeToAdd", timeToAdd);
+        console.log("timeToAdd", timeToAdd);
+
         // Adding only the first time (start of the treatment)
         finalTimes.push(new TimePickerObj({ displayDate: dateToAdd }));
 

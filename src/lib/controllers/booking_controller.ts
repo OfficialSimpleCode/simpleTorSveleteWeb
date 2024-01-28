@@ -68,7 +68,7 @@ export default class BookingController {
 
     // Resume the current worker listener
     const currentWorker = BusinessInitializer.GI().workers[newWorkerId];
-    if (currentWorker !== null && currentWorker !== undefined) {
+    if (currentWorker != null) {
       BusinessInitializer.GI().startWorkerListening(currentWorker);
     }
 

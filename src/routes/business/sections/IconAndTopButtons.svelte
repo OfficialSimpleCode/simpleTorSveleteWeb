@@ -6,7 +6,7 @@
   import Avatar from "$lib/components/Avatar.svelte";
   import { businessStore } from "$lib/stores/Business";
   import { isConnectedStore } from "$lib/stores/User";
-  import { translate, _ } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
 
   import NavigationDialog from "$lib/components/NavigationDialog.svelte";
 

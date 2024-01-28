@@ -2,7 +2,7 @@
   import BookingController, {
     bookingMakerStore,
   } from "$lib/controllers/booking_controller";
-  import { translate, _ } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
 
   const worker = BookingController.worker;
 </script>

@@ -51,6 +51,15 @@ export function loadBookingMakerTimeData(
   const daysTimes: Record<string, TimePickerObj[]> = {};
   let maxLen = 0;
   // setting the new days data
+  visibleDates = [new Date(2024, 0, 31)];
+  console.log(
+    "BookingController.worker.workerPublicData.bookingsTimes",
+    BookingController.worker.workerPublicData.bookingsTimes
+  );
+  console.log(
+    "BookingController.worker.recurrence.recurrenceEvents",
+    BookingController.worker.recurrence.recurrenceEvents
+  );
   visibleDates.forEach((visibleDate, index) => {
     if (BookingController.alreadyLoadedDates.has(dateToDateStr(visibleDate))) {
       return;

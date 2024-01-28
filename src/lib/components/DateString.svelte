@@ -1,7 +1,7 @@
 <script lang="ts">
   import { weekDays } from "$lib/consts/worker_schedule";
   import { getDayString } from "$lib/utils/string_utils";
-  import { translate, _ } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import { format } from "date-fns";
   import GeneralIcon from "./GeneralIcon.svelte";
 
@@ -13,12 +13,14 @@
   const dayStr: string = format(date, "dd-MM-yyyy");
 </script>
 
-<div class="flex flex-row items-center justify-center text-center">
+<div
+  class="flex flex-row items-center justify-center text-center bg-base-300 py-2 px-4 rounded-lg w-min text-nowrap"
+>
   <!-- first elemnt the full date + the day name -->
   <div class="flex flex-row items-center justify-center gap-2">
     <!-- icon -->
     <GeneralIcon icon="mdi:date-range" size={22}></GeneralIcon>
-    <div class="flex {dayVertical ? 'flex-col' : 'flex-row'}">
+    <div class="flex {dayVertical ? 'flex-col' : 'flex-row'} text-primary">
       <!-- date -->
       <p dir="ltr">{dayStr}</p>
       <p>
@@ -42,7 +44,7 @@
   <div class="flex flex-row gap-2 justify-center text-center">
     <!-- icon -->
     <GeneralIcon icon="mdi:clock-time-three-outline" size={22}></GeneralIcon>
-    <p dir="ltr">{timeStr}</p>
+    <p dir="ltr" class="text-primary">{timeStr}</p>
   </div>
 
   <div class="flex flex-row"></div>

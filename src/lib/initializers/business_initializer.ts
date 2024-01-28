@@ -284,7 +284,9 @@ export default class BusinessInitializer {
     // firstTimeListenToWorkerDoc = true;
 
     try {
+      console.log("cjdoscijdsoicdos");
       if (!worker.workerDocListner) {
+        console.log("cjdoscijdsoge2542353454");
         // Make a listener for the worker object doc
         worker.workerDocListner = this.generalRepo.docListenerRepo({
           path: `${buisnessCollection}/${this.business.businessId}/${workersCollection}`,
@@ -391,8 +393,10 @@ export default class BusinessInitializer {
     // let workerPublicDocUpdates = 0;
     // let workerReccurenceDocUpdates = 0;
     // let workerMultiEventsTimesDocUpdates = 0;
+    console.log("5443967349873");
 
-    if (worker.workerPublicData.listener === undefined) {
+    if (worker.workerPublicData.listener == null) {
+      console.log("cvdsjvoisjvsoidjvoidsjviodsjvisdjvidsj");
       worker.workerPublicData.listener = this.generalRepo.docListenerRepo({
         path: `${buisnessCollection}/${this.business.businessId}/${workersCollection}/${worker.id}/${dataCollection}`,
         docId: dataDoc,
@@ -462,9 +466,12 @@ export default class BusinessInitializer {
     bookingsDocListenerJson: DocumentSnapshot<DocumentData, DocumentData>,
     workerPhone: string
   ): void {
+    console.log("123456543");
     if (this.workers[workerPhone] === undefined) {
       return;
     }
+
+    console.log("123456543csacascsacsa");
 
     if (
       !bookingsDocListenerJson.exists() ||
@@ -472,11 +479,11 @@ export default class BusinessInitializer {
     ) {
       return;
     }
-
+    console.log("090890989089");
     this.workers[workerPhone]!.workerPublicData.setWorkerPublicData(
       bookingsDocListenerJson.data()!
     );
-
+    console.log("c,dspojkv09v0e9jv0w9e");
     BookingController.updateWorkerData(this.workers[workerPhone]!);
 
     logger.debug(

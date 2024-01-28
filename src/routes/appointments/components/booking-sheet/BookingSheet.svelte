@@ -38,7 +38,9 @@
         <CreatedAtIndicator {booking}></CreatedAtIndicator>
 
         <!-- summary of times, price and duration -->
-        <div class="flex flex-col bg-base-300 rounded-lg py-4 px-5 gap-6">
+        <div
+          class="flex flex-col bg-base-300 rounded-lg py-4 px-5 gap-6 items-center"
+        >
           <DateString date={booking.currentDisplayDate}></DateString>
 
           <SummaryTable {booking}></SummaryTable>
