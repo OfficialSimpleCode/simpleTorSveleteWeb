@@ -21,7 +21,7 @@
 
     LinksHelper.GI().linkedBuisnessId =
       $page.data.businessID ||
-      "972-525656377--50ab63a0-a192-11ed-950c-3ba22fe40036";
+      "972-504040624--0b794060-a1bd-11ed-b6f1-e9b70e9ea015";
     if (LinksHelper.GI().linkedBuisnessId === "") {
       return;
     }

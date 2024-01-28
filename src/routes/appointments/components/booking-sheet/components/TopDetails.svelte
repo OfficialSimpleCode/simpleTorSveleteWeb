@@ -9,7 +9,7 @@
 </script>
 
 <div
-  class="flex flex-row w-full justify-between items-center bg-slate-300 rounded-lg py-2 px-2 gap-2"
+  class="flex flex-row w-full justify-between items-center bg-base-300 rounded-lg py-2 px-2 gap-2"
 >
   <!-- like a listTile widget -->
   <div class="flex flex-row items-center">
@@ -27,5 +27,5 @@
   </div>
 
   <!-- svelte-ignore missing-declaration -->
-  <BookingActions {booking}></BookingActions>
+  <BookingActions {booking} bgColor="bg-base-200"></BookingActions>
 </div>

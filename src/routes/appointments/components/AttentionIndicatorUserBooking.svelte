@@ -6,6 +6,7 @@
   import ActionsContainer from "./ActionsContainer.svelte";
 
   export let booking: Booking;
+  export let bgColor: string = "bg-base-300";
 </script>
 
 <ActionsContainer
@@ -15,4 +16,5 @@
       : "waitingForApproval"
   )}
   icon={InformationCircle}
+  {bgColor}
 ></ActionsContainer>

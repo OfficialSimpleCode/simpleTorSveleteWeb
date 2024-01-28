@@ -3049,5 +3049,13 @@
   "invalid Phone Number": "The phone number is invalid",
   "terminalNumber": "Terminal number",
   "DealDosntExistsOrAlreadyCommitted": "The transaction does not exist or is already committed",
-  "status": "status"
+  "status": "status",
+  "createdBySimpleTor": "This page was created using the Simple Tor system",
+  "ourCompanyName": "SA SIMPLE CODE LTD",
+  "downloadSimpleTor": "Download Simple Tor",
+  "companySite": "Company Site",
+  "comapny": "comapny",
+  "legal": "legal",
+  "queueSystem": "Queue management system",
+  "systemsDevelopment": "Systems development"
 }

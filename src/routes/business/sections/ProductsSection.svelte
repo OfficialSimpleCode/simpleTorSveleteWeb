@@ -8,7 +8,7 @@
 </script>
 
 <div
-  class="flex flex-col items-center justify-center w-full pb-14 pt-10 bg-base-300 px-6 sm:px-16 gap-4"
+  class="flex flex-col items-center justify-center w-full pb-14 pt-10 bg-base-100 px-2 sm:px-16 gap-4"
 >
   <!-- products title -->
   <h1 class="text-center font-bold text-2xl pb-2">Our Products</h1>

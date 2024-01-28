@@ -33,7 +33,7 @@
         <CreatedAtIndicator {booking}></CreatedAtIndicator>
 
         <!-- summary of times, price and duration -->
-        <div class="flex flex-col bg-slate-300 rounded-lg py-4 px-5 gap-6">
+        <div class="flex flex-col bg-base-300 rounded-lg py-4 px-5 gap-6">
           <DateString date={booking.currentDisplayDate}></DateString>
 
           <SummaryTable {booking}></SummaryTable>
@@ -41,7 +41,7 @@
       </div>
 
       <!-- in case there are multy treatments - convinient list of them -->
-      {#if booking.treatments.size == 1}
+      {#if booking.treatments.size > 1}
         <BookingTreatmentsList {booking}></BookingTreatmentsList>
       {/if}
 

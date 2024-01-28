@@ -63,10 +63,10 @@
   <NavigationDialog bind:dialog={navigationDialog} />
 {/if}
 
-<section class="flex pt-1 justify-center relative top-[-1rem]">
+<section class="flex pt-1 justify-center relative xs:top-[-1rem] top-[-24px]">
   <!-- Social Links -->
   <ul
-    class="flex items-center gap-6 sm:gap-8 bg-base-200 py-2 px-5 rounded-xl mx-6 sm:mx-16 bg-opacity-20"
+    class="flex items-center gap-6 sm:gap-8 bg-base-200 py-2 px-5 rounded-xl mx-6 sm:mx-16"
   >
     {#each Object.entries(socialLinks) as [name, link]}
       <div class="flex flex-col items-center">

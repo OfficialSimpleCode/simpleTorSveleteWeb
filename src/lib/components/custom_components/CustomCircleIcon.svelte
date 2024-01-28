@@ -6,11 +6,12 @@
   export let translateKey: string;
   export let hadleClick: () => void = () => {};
   export let size: string = "26px";
+  export let bgColor: string = "bg-base-300";
 </script>
 
 <button on:click={hadleClick}>
   <div
-    class="flex flex-col justify-center gap-1 items-center rounded-full bg-slate-500 p-2"
+    class="flex flex-col justify-center gap-1 items-center rounded-full {bgColor} p-2"
   >
     <Icon src={icon} {size} />
   </div>

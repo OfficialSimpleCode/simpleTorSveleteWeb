@@ -14,8 +14,8 @@ export const bookingsMassage: { [key in BookingStatuses]: string } = {
 
 // Map for BookingStatuses keys
 export const bookingsMassageKeys: { [key: string]: BookingStatuses } = {
-  waiting: BookingStatuses.waiting,
-  approved: BookingStatuses.approved,
+  ["waiting"]: BookingStatuses.waiting,
+  ["approved"]: BookingStatuses.approved,
 };
 
 // Enum for OrderingOptions
