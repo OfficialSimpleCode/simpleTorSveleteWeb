@@ -22,7 +22,7 @@
     });
     setTimeout(() => bookingDialog.showModal(), 100);
   }
-  const isNow: boolean = booking.isRightNow || true;
+  const isNow: boolean = booking.isRightNow;
 </script>
 
 <!-- booking shhet and dialog -->
@@ -45,10 +45,10 @@
     <div class="flex flex-row items-center">
       <CircleIcons {booking}></CircleIcons>
       <!-- string date -> business name, worker -->
-      <div class="flex flex-col items-start">
+      <div class="flex flex-col items-start text-start">
         <h1>
           {booking.treatmentsToStringNotDetailed +
-            (onlyWorker ? "" : ` ${translate("to")} ${booking.businessName}`)}
+            ` ${translate("to")} ${booking.businessName}`}
         </h1>
         <h1>
           {`${translate("with")} ${booking.workerName}`}

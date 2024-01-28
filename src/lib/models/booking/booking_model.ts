@@ -38,7 +38,7 @@ import { phoneToDocId } from "$lib/utils/user";
 import pkg from "uuid";
 import BusinessModel from "../business/business_model";
 import { Duration } from "../core/duration";
-import { defaultCurrency } from "../general/currency_model";
+import { CurrencyModel, defaultCurrency } from "../general/currency_model";
 import IconData from "../general/icon_data";
 import { Price } from "../general/price";
 import Treatment from "../general/treatment_model";
@@ -542,6 +542,13 @@ export default class Booking extends ScheduleItem {
       counter += treatment.times.length * treatment.count;
     });
     return counter;
+  }
+
+  get currency(): CurrencyModel {
+    if (this.treatments.size === 0) {
+      return defaultCurrency;
+    }
+    return this.treatments.values().next().value.price!.currency;
   }
 
   get invoicesCoverPrice(): boolean {

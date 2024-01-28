@@ -3,10 +3,12 @@
   import Booking from "$lib/models/booking/booking_model";
   import BookingTreatmentsList from "./components/BookingTreatmentsList.svelte";
   import CreatedAtIndicator from "./components/CreatedAtIndicator.svelte";
+  import DebtIndicator from "./components/DebtIndicator.svelte";
   import IconsRow from "./components/IconsRow.svelte";
   import PaymentsContainer from "./components/PaymentsContainer.svelte";
   import SummaryTable from "./components/SummaryTable.svelte";
   import TopDetails from "./components/TopDetails.svelte";
+  import TopSheetIndicators from "./components/TopSheetIndicators.svelte";
   export let dialog: HTMLDialogElement;
   export let booking: Booking;
 </script>
@@ -18,6 +20,9 @@
 >
   <div class=" modal-box bg-base-200 h-[60%]">
     <div class="flex flex-col items-start h-32 gap-4 mb-2">
+      <!-- indicators -> past booking, reacurrance .. -->
+      <TopSheetIndicators {booking}></TopSheetIndicators>
+
       <!-- top icons -->
       <IconsRow {booking}></IconsRow>
 
@@ -40,6 +45,8 @@
         </div>
       </div>
 
+      <!-- debt indicator -->
+      <DebtIndicator {booking}></DebtIndicator>
       <!-- in case there are multy treatments - convinient list of them -->
       {#if booking.treatments.size > 1}
         <BookingTreatmentsList {booking}></BookingTreatmentsList>

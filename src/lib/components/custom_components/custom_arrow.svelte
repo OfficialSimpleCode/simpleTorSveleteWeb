@@ -2,7 +2,7 @@
   import GeneralIcon from "../GeneralIcon.svelte";
 </script>
 
-<div class="icon">
+<div class="flex items-center icon">
   <GeneralIcon
     icon={document.dir == "ltr"
       ? "mdi:keyboard-arrow-right"
