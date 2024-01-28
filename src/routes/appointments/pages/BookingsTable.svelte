@@ -4,7 +4,7 @@
   import { translate } from "$lib/utils/translate";
   import TableRow from "../components/TableRow.svelte";
 
-  export let ordersByDate: [string, Record<string, Booking>][];
+  export let bookings: Booking[];
 </script>
 
 <table class="table">
@@ -19,10 +19,8 @@
     </tr>
   </thead>
   <tbody>
-    {#each ordersByDate as [date, bookingMap]}
-      {#each Object.entries(bookingMap) as [id, booking]}
-        <TableRow {booking} />
-      {/each}
+    {#each bookings as booking}
+      <TableRow {booking} />
     {/each}
   </tbody>
 </table>

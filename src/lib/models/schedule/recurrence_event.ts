@@ -303,14 +303,14 @@ export default class RecurrenceEvent {
   }
 
   ///Calculate how many times the event will accure
-  ///if the event is endless return null
-  get accurances(): number | null {
+  ///if the event is endless return undefined
+  get accurances(): number | undefined {
     if (!this.start) {
-      return null;
+      return undefined;
     }
 
     if (this.endOption === RecurrenceEventEnd.endless) {
-      return null;
+      return undefined;
     }
 
     //repeats option
@@ -393,7 +393,7 @@ export default class RecurrenceEvent {
       }
     }
 
-    return null;
+    return undefined;
   }
 
   get rangeBetweenInterval(): Duration {
@@ -403,10 +403,13 @@ export default class RecurrenceEvent {
     });
   }
 
-  get endOfTheEvent(): Date | null {
+  get endOfTheEvent(): Date | undefined {
     const rangeBetween = this.rangeBetweenInterval;
-    if (this.endOption === RecurrenceEventEnd.date && this.endDate !== null) {
-      return this.endDate ?? null;
+    if (
+      this.endOption === RecurrenceEventEnd.date &&
+      this.endDate !== undefined
+    ) {
+      return this.endDate ?? undefined;
     } else if (this.endOption === RecurrenceEventEnd.repeats) {
       if (this.freqRecurrence === FreqRecurrence.weeks) {
         let startWeekRepeats = 0;
@@ -443,7 +446,7 @@ export default class RecurrenceEvent {
               }).inMilliseconds
           );
         } catch (e) {
-          return null;
+          return undefined;
         }
       } else if (this.freqRecurrence === FreqRecurrence.months) {
         return addMonths(this.start!, (this.repeats - 1) * this.interval);
@@ -456,11 +459,11 @@ export default class RecurrenceEvent {
         );
       }
     }
-    return null;
+    return undefined;
   }
 
   get explainText(): string {
-    if (this.start === null) {
+    if (this.start === undefined) {
       return "";
     }
     let resp = "";
@@ -504,8 +507,8 @@ export default class RecurrenceEvent {
         break;
     }
     const endOfEventTemp = this.endOfTheEvent;
-    if (endOfEventTemp !== null) {
-      resp += ` ${translate("until")} ${dateToDateStr(endOfEventTemp)}`;
+    if (endOfEventTemp !== undefined) {
+      resp += ` ${translate("until")} ${dateToDateStr(endOfEventTemp!)}`;
     }
     return resp;
   }
@@ -517,11 +520,11 @@ export default class RecurrenceEvent {
     date: Date;
     considerException?: boolean;
   }): boolean {
-    if (this.start === null || setToMidNight(this.start!) > date) {
+    if (this.start === undefined || setToMidNight(this.start!) > date) {
       return false;
     }
     const eventEnd = this.endOfTheEvent;
-    if (eventEnd !== null && eventEnd < setToMidNight(date)) {
+    if (eventEnd !== undefined && eventEnd < setToMidNight(date)) {
       return false;
     }
     if (considerException && this.exceptionDates.has(setToMidNight(date))) {
@@ -569,10 +572,10 @@ export default class RecurrenceEvent {
   }
 
   overlapingDatesWith(event: RecurrenceEvent): Set<Date> {
-    if (this.start === null || event.start === null) {
+    if (this.start === undefined || event.start === undefined) {
       return new Set([new Date(0)]);
     }
-    if (this.endOfTheEvent === null && event.endOfTheEvent === null) {
+    if (this.endOfTheEvent === undefined && event.endOfTheEvent === undefined) {
       return new Set([new Date(0)]);
     }
     const overlappingDates = new Set<Date>();
@@ -612,23 +615,23 @@ export default class RecurrenceEvent {
   }
 
   get isRelevant(): boolean {
-    return this.endOfTheEvent === null || this.endOfTheEvent! > new Date();
+    return this.endOfTheEvent === undefined || this.endOfTheEvent! > new Date();
   }
 
   nearestFutureAccurenceDate(
     date: Date,
     { needToBeAfterStart = true }: { needToBeAfterStart?: boolean } = {}
-  ): Date | null {
-    if (this.endOfTheEvent !== null && date > this.endOfTheEvent!) {
-      return null;
+  ): Date | undefined {
+    if (this.endOfTheEvent !== undefined && date > this.endOfTheEvent!) {
+      return undefined;
     }
     if (
-      this.start === null ||
+      this.start === undefined ||
       (date < this.start! &&
         needToBeAfterStart &&
         this.isAccureInDate({ date: this.start! }))
     ) {
-      return this.start ?? null;
+      return this.start ?? undefined;
     }
     const delta = new Duration({
       milliseconds: date.getTime() - this.start!.getTime(),
@@ -653,7 +656,8 @@ export default class RecurrenceEvent {
 
         if (
           dateToCheck >= date &&
-          (this.endOfTheEvent === null || nearestDate <= this.endOfTheEvent!)
+          (this.endOfTheEvent === undefined ||
+            nearestDate <= this.endOfTheEvent!)
         ) {
           return dateToCheck;
         }
@@ -667,12 +671,13 @@ export default class RecurrenceEvent {
         );
         if (
           dateToCheck >= date &&
-          (this.endOfTheEvent === null || nearestDate <= this.endOfTheEvent!)
+          (this.endOfTheEvent === undefined ||
+            nearestDate <= this.endOfTheEvent!)
         ) {
           return dateToCheck;
         }
       }
-      return null;
+      return undefined;
     }
     const jumpsToReachDate = Math.ceil(
       delta / this.rangeBetweenInterval.inDays
@@ -690,24 +695,30 @@ export default class RecurrenceEvent {
     const end = this.endOfTheEvent;
     while (
       !this.isAccureInDate({ date: nearestDate }) &&
-      (end === null || nearestDate < end)
+      (end === undefined || nearestDate < end)
     ) {
       nearestDate = this.addRangeBetween(nearestDate);
     }
-    if (end === null || nearestDate <= end) {
+    if (end === undefined || nearestDate <= end) {
       return nearestDate;
     }
-    return null;
+    return undefined;
   }
 
   private _getOptimalEventToPassOver(
     first: RecurrenceEvent,
     second: RecurrenceEvent
   ): RecurrenceEvent[] {
-    if (first.endOfTheEvent === null && second.endOfTheEvent !== null) {
+    if (
+      first.endOfTheEvent === undefined &&
+      second.endOfTheEvent !== undefined
+    ) {
       return [second, first];
     }
-    if (first.endOfTheEvent !== null && second.endOfTheEvent === null) {
+    if (
+      first.endOfTheEvent !== undefined &&
+      second.endOfTheEvent === undefined
+    ) {
       return [first, second];
     } else {
       if ((second.jumps ?? 99999) < (first.jumps ?? 99999)) {
@@ -718,9 +729,9 @@ export default class RecurrenceEvent {
     }
   }
 
-  get jumps(): number | null {
-    if (this.start === null || this.endOfTheEvent === null) {
-      return null;
+  get jumps(): number | undefined {
+    if (this.start === undefined || this.endOfTheEvent === undefined) {
+      return undefined;
     }
     const duration = new Duration({
       milliseconds: this.start!.getTime() - this.endOfTheEvent.getTime(),
@@ -733,6 +744,6 @@ export default class RecurrenceEvent {
   }
 
   toString(): string {
-    return JSON.stringify(this, null, 2);
+    return JSON.stringify(this, undefined, 2);
   }
 }

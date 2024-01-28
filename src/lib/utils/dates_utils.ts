@@ -2,9 +2,10 @@ import { Religion, holidays } from "$lib/consts/worker_schedule";
 import type Booking from "$lib/models/booking/booking_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
 
-import type { Duration } from "$lib/models/core/duration";
+import { Duration } from "$lib/models/core/duration";
 import type MultiBooking from "$lib/models/multi_booking/multi_booking";
 import { addDays, format, parse, startOfWeek } from "date-fns";
+import { subDuration } from "./duration_utils";
 import { dateToMonthStr } from "./times_utils";
 
 export function addDurationFromDateString(
@@ -142,7 +143,7 @@ export function laterDate(date1: Date | null, date2: Date | null): Date | null {
 
 export function dateToRemindBooking(booking: Booking, minutes: number): Date {
   //TODO utc
-  return new Date(booking.bookingDate.getTime() - minutes * 60000);
+  return subDuration(booking.bookingDate, new Duration({ minutes: minutes }));
 }
 
 export function dateToRemindMultiBooking(
@@ -150,7 +151,10 @@ export function dateToRemindMultiBooking(
   minutes: number
 ): Date {
   //TODO utc
-  return new Date(multiBooking.bookingDate.getTime() - minutes * 60000);
+  return subDuration(
+    multiBooking.bookingDate,
+    new Duration({ minutes: minutes })
+  );
 }
 
 export function allMonthBetween(date1: Date, date2: Date): Set<string> {

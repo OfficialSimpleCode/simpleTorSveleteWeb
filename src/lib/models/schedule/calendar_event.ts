@@ -165,7 +165,10 @@ export default class Event {
   }
 
   get endOfBooking(): Date {
-    return new Date(this.from.getTime() + this.totalBookingMinutes * 60000);
+    return addDuration(
+      this.from,
+      new Duration({ minutes: this.totalBookingMinutes })
+    );
   }
 
   toJson(): { [key: string]: any } {
