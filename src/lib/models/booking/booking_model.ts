@@ -466,7 +466,7 @@ export default class Booking extends ScheduleItem {
       }
       const end = this.recurrenceEvent.endOfTheEvent;
 
-      return end !== null && end < setToMidNight(new Date());
+      return end != null && end < setToMidNight(new Date());
     } else {
       return (
         addDuration(
