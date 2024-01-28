@@ -7,6 +7,6 @@
     icon={document.dir == "ltr"
       ? "mdi:keyboard-arrow-right"
       : "mdi:keyboard-arrow-left"}
-    size={20}
+    size={26}
   ></GeneralIcon>
 </div>

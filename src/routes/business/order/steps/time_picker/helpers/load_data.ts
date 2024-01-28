@@ -51,7 +51,7 @@ export function loadBookingMakerTimeData(
   const daysTimes: Record<string, TimePickerObj[]> = {};
   let maxLen = 0;
   // setting the new days data
-  visibleDates = [new Date(2024, 0, 31)];
+  visibleDates = [new Date(2024, 0, 30)];
   console.log(
     "BookingController.worker.workerPublicData.bookingsTimes",
     BookingController.worker.workerPublicData.bookingsTimes

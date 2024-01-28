@@ -179,7 +179,9 @@ export function relevantHoures({
 
       // If the jump is set to 0, no need to jump - allowed time
       const allowedTime = minutesToJump === 0;
-
+      console.log("pointerWork", pointerWork);
+      console.log("minutesToJump", minutesToJump);
+      console.log("jump", jump);
       // Add the time and save place for short bookings
       if (allowedTime) {
         const timeToAdd = firstTimeSegment.start;
@@ -191,8 +193,6 @@ export function relevantHoures({
           timeToAdd.getMinutes()
         );
 
-        console.log("minutesToJump", minutesToJump);
-        console.log("jump", jump);
         console.log("allowedTime", allowedTime);
 
         console.log("timeToAdd", timeToAdd);
