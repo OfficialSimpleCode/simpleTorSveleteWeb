@@ -119,7 +119,10 @@ export function timeStrToDate(dateStr: string): Date {
 }
 
 export function dateStrToDate(date: string): Date {
-  return moment(date, "dd-MM-yyyy").toDate();
+  const [day, month, year] = date.split("-").map(Number);
+
+  // Month in JavaScript Date object is 0-indexed, so subtract 1 from the parsed month.
+  return new Date(year, month - 1, day);
 }
 
 export function monthStrToDate(date: string): Date {

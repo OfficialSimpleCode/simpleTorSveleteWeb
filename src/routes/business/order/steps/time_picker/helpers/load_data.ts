@@ -17,7 +17,11 @@ import { relevantHoures } from "$lib/utils/available_times_utils/relevant_hours"
 import { relevantMultiEventTime } from "$lib/utils/available_times_utils/relevant_multi_event_times";
 import { setToMidNight } from "$lib/utils/dates_utils";
 import { addDuration } from "$lib/utils/duration_utils";
-import { dateToDateStr, isHoliday } from "$lib/utils/times_utils";
+import {
+  dateStrToDate,
+  dateToDateStr,
+  isHoliday,
+} from "$lib/utils/times_utils";
 import { get } from "svelte/store";
 
 export function loadBookingMakerTimeData(
@@ -48,8 +52,11 @@ export function loadBookingMakerTimeData(
   let maxLen = 0;
   // setting the new days data
   visibleDates.forEach((visibleDate, index) => {
+    if (BookingController.alreadyLoadedDates.has(dateToDateStr(visibleDate))) {
+      return;
+    }
     // generate only for days the user allowed to order
-
+    BookingController.alreadyLoadedDates.add(dateToDateStr(visibleDate));
     if (
       visibleDate >= lastDateTemp ||
       visibleDate < setToMidNight(new Date())
@@ -136,7 +143,8 @@ export function loadBookingMakerTimeData(
   const minutesForWaitingsList = minutesForWithingList(timeIntervalHeight);
   console.log(maxLen);
   Object.entries(daysTimes).forEach(([visibleDateStr, timeList]) => {
-    const visibleDate = new Date(visibleDateStr);
+    const visibleDate = dateStrToDate(visibleDateStr);
+
     if (worker!.recurrence.vacationInDate(visibleDate) != undefined) {
       if (worker!.showVacations) {
         const newTimePickerObj = new TimePickerObj({
@@ -151,6 +159,7 @@ export function loadBookingMakerTimeData(
       }
       return;
     }
+
     if (isHoliday(worker!, visibleDate) && worker!.closeScheduleOnHolidays) {
       const newTimePickerObj = new TimePickerObj({
         displayDate: undefined,

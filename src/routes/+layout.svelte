@@ -10,16 +10,7 @@
   import LinksHelper from "$lib/helpers/links_helper";
   import { LoadAppHelper } from "$lib/helpers/load_app_helper";
   import { handleLocaleChanges } from "$lib/language/loader";
-  import RecurrenceEvent, {
-    RecurrenceEventEnd,
-  } from "$lib/models/schedule/recurrence_event";
   import { businessStore } from "$lib/stores/Business";
-  const re = new RecurrenceEvent({
-    start: new Date(2024, 0, 30),
-    endOption: RecurrenceEventEnd.repeats,
-    repeats: 20,
-  });
-
   async function loadBusiness() {
     handleLocaleChanges(localStorage, document);
 

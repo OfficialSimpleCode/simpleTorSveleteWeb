@@ -41,9 +41,7 @@ export default class BookingHelper {
       AppErrorsHelper.GI().error = Errors.noTreatment;
       return undefined;
     }
-    console.log("1111111111111111");
-    booking.bookingDate = new Date(2024, 1, 5, 11, 50);
-    console.log(booking.bookingDate);
+
     if (!filledBooking) {
       await booking.copyDataToOrder({
         worker: worker,
