@@ -14,7 +14,7 @@ import {
   setTo1970,
   timeStrToDate,
   workerBookingOnMidnight,
-} from "../times_utils/times_utils";
+} from "../times_utils";
 import {
   alreadyTakenHoures,
   generateTimeSegmentsMap,

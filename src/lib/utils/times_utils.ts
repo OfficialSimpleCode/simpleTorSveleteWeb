@@ -4,12 +4,12 @@ import Booking from "$lib/models/booking/booking_model.js";
 import { Duration } from "$lib/models/core/duration.js";
 import type WorkerModel from "$lib/models/worker/worker_model.js";
 
-import { addDuration } from "../duration_utils.js";
+import { addDuration } from "./duration_utils.js";
 
 import { Religion, holidays } from "$lib/consts/worker_schedule.js";
 import moment from "moment";
-import Event from "../../models/schedule/calendar_event.js";
-import { translate } from "../translate.js";
+import Event from "../models/schedule/calendar_event.js";
+import { translate } from "./translate.js";
 
 /**
  * Checks if the booking end is on midnight and it's a worker action.

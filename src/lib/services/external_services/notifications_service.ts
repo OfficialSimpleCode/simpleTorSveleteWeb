@@ -3,7 +3,6 @@ import { NOTIFICATIONS_END_POINT } from "$lib/consts/server_variables";
 import type NotificationPayload from "$lib/models/notifications/notification_payload";
 import type UserNotification from "$lib/models/notifications/user_notification";
 import MakeRequest from "./make_request";
-
 export default class NotificationService {
   async activateWaitingListNotification({
     topic,

@@ -1,5 +1,5 @@
-import ManProfile from "$lib/images/man_profile.svg";
-import WomanProfile from "$lib/images/woman_profile.svg";
+import ManProfile from "$lib/images/man_profile.webp";
+import WomanProfile from "$lib/images/woman_profile.webp";
 
 export enum Gender {
   male,

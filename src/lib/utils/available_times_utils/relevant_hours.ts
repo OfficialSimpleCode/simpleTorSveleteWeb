@@ -4,7 +4,7 @@ import Treatment from "$lib/models/general/treatment_model";
 import TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { addDuration, durationStrikings } from "../duration_utils";
-import { convertStringToTime, dateToDateStr } from "../times_utils/times_utils";
+import { convertStringToTime, dateToDateStr } from "../times_utils";
 import {
   addMinutesToAllSegments,
   alreadyTakenHoures,

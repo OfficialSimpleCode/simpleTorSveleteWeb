@@ -5,7 +5,7 @@
   import { GlobeAlt, Icon } from "svelte-hero-icons";
 
   import GuestProfile from "./GuestProfile.svelte";
-  import LanguageBoard from "./LanguageBoard.svelte";
+  import LanguageBoard from "./components/LanguageBoard.svelte";
 
   import NotificationsBoard from "./NotificationsBoard.svelte";
   // Assets
@@ -13,7 +13,7 @@
   import USFlag from "$lib/images/flags/us.svg";
   import { businessStore } from "$lib/stores/Business";
   import { isConnectedStore } from "$lib/stores/User";
-  import LoggedInProfile from "./LoggedInProfile.svelte";
+  import LoggedInProfile from "./components/profile/LoggedInProfile.svelte";
 
   let notifications: Array<Record<string, any>> = Object.values(
     $businessStore.design.updates

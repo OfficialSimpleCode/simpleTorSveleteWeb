@@ -1,7 +1,7 @@
 import { Gender } from "$lib/consts/gender";
 import type { Religion } from "$lib/consts/worker_schedule";
 
-import { dateStrToDate } from "$lib/utils/times_utils/times_utils";
+import { dateStrToDate } from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
 import type BusinessModel from "../business/business_model";
 import type IconData from "../general/icon_data";

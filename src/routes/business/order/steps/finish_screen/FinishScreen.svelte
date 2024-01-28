@@ -17,10 +17,7 @@
     type CurrencyModel,
   } from "$lib/models/general/currency_model";
   import { getWeekdayFromDate } from "$lib/utils/dates_utils";
-  import {
-    dateToDateStr,
-    dateToTimeStr,
-  } from "$lib/utils/times_utils/times_utils";
+  import { dateToDateStr, dateToTimeStr } from "$lib/utils/times_utils";
   import { translate } from "$lib/utils/translate";
   import TipDialog from "../../components/TipDialog.svelte";
   import { addBooking } from "./helpers/add_booking";

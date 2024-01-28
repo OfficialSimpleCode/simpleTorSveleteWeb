@@ -1,6 +1,6 @@
 import { BookingReminderType, BookingStatuses, NotificationType } from "$lib/consts/booking";
 import { Gender } from "$lib/consts/gender";
-import { dateToMonthStr } from "$lib/utils/times_utils/times_utils";
+import { dateToMonthStr } from "$lib/utils/times_utils";
 import BookingInvoiceData from "../booking/booking_invoice_data";
 import type BookingPaymentRequestData from "../booking/booking_payment_request";
 import BookingTransactionModel from "../booking/booking_transaction";

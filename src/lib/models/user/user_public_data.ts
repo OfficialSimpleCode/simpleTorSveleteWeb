@@ -1,10 +1,7 @@
 import type { BookingReminderType } from "$lib/consts/booking";
 import { recurrenceBookingsDoc } from "$lib/consts/db";
 import { Gender, genderFromStr, genderToStr } from "$lib/consts/gender";
-import {
-  monthStrToDate,
-  setToStartOfMonth,
-} from "$lib/utils/times_utils/times_utils";
+import { monthStrToDate, setToStartOfMonth } from "$lib/utils/times_utils";
 import Booking from "../booking/booking_model";
 import CustomerData from "../general/customer_data";
 import Device from "../general/device";

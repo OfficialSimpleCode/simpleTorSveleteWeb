@@ -5,7 +5,7 @@ import type WorkerModel from "$lib/models/worker/worker_model";
 import type { Duration } from "$lib/models/core/duration";
 import type MultiBooking from "$lib/models/multi_booking/multi_booking";
 import { addDays, format, parse, startOfWeek } from "date-fns";
-import { dateToMonthStr } from "./times_utils/times_utils";
+import { dateToMonthStr } from "./times_utils";
 
 export function addDurationFromDateString(
   date: string,

@@ -30,7 +30,7 @@ import {
   dateToTimeStr,
   setTo1970,
   setToMidNight,
-} from "$lib/utils/times_utils/times_utils";
+} from "$lib/utils/times_utils";
 import { Timestamp, increment, type Transaction } from "firebase/firestore";
 import AppErrorsHelper from "../app_errors";
 import DbPathesHelper from "../db_paths_helper";

@@ -1,4 +1,4 @@
-import { dateToDateStr } from "$lib/utils/times_utils/times_utils";
+import { dateToDateStr } from "$lib/utils/times_utils";
 
 export default class Device {
   token: string;

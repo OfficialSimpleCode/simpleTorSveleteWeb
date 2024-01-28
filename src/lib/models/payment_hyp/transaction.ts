@@ -1,5 +1,5 @@
 import { hypValidCurrencies } from "$lib/consts/hyp";
-import { dateToDateStr, setTo1970 } from "$lib/utils/times_utils/times_utils";
+import { dateToDateStr, setTo1970 } from "$lib/utils/times_utils";
 import BookingTransactionModel, {
   PaymentTypes,
 } from "../booking/booking_transaction";

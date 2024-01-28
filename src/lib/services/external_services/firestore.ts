@@ -7,7 +7,7 @@
 
 import { logger } from "$lib/consts/application_general";
 import { ArrayCommands, NumericCommands, envKey } from "$lib/consts/db";
-import { firebaseConfig } from "$lib/firebase_config";
+import { firebaseConfig } from "$lib/consts/firebase_config";
 import AppErrorsHelper from "$lib/helpers/app_errors";
 import { getApp, getApps, initializeApp } from "firebase/app";
 import {
@@ -413,7 +413,6 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     mergeIfExist?: boolean;
   }) {
     try {
-      const options = mergeIfExist ? { merge: true } : null;
       const collectionRef = collection(
         this._firestore,
         insideEnviroments ? `${envKey}/${path}` : path
@@ -446,7 +445,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
 
     value: any;
     fieldName: string;
-    command?: NumericCommands | null;
+    command?: NumericCommands;
     insideEnviroments?: boolean;
   }) {
     try {
@@ -456,7 +455,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       );
       const docRef = doc(collectionRef, docId);
 
-      if (command === null) {
+      if (command === undefined) {
         batch.update(docRef, { [fieldName]: value ?? deleteField() });
       } else {
         batch.update(docRef, {
@@ -575,7 +574,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     Object.entries(data).forEach(([fieldName, value]) => {
       let organizedValue: any = value;
 
-      if (organizedValue === null) {
+      if (organizedValue === undefined) {
         organizedValue = deleteField();
       }
 

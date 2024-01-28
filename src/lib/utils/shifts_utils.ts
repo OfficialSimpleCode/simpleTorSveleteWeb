@@ -1,10 +1,6 @@
 import Shift from "$lib/models/general/shift";
 import { durationStrikings } from "./duration_utils";
-import {
-  dateToTimeStr,
-  setTo1970,
-  timeStrToDate,
-} from "./times_utils/times_utils";
+import { dateToTimeStr, setTo1970, timeStrToDate } from "./times_utils";
 
 ///  in case of after we finish the building of the current shift because we iterating like this
 ///      ["shift1","shift2","shift3"], "shift1" -> check on "shift2"

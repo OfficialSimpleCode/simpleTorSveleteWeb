@@ -2,7 +2,7 @@ import {
   dateToMonthStr,
   monthStrToDate,
   setToStartOfMonth,
-} from "$lib/utils/times_utils/times_utils";
+} from "$lib/utils/times_utils";
 import Booking from "../booking/booking_model";
 
 export default class UserBookings {

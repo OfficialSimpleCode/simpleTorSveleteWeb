@@ -4,7 +4,7 @@ import Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { subDuration } from "$lib/utils/duration_utils";
-import { dateToDateStr } from "$lib/utils/times_utils/times_utils";
+import { dateToDateStr } from "$lib/utils/times_utils";
 import MessagesHelper from "./messages/messages_helper";
 import NotificationsHelper from "./notifications/notification_helper";
 

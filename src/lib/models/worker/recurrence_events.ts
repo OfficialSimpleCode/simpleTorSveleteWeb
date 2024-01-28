@@ -3,7 +3,7 @@ import {
   dateToDateStr,
   dateToDayStr,
   dateToMonthStr,
-} from "$lib/utils/times_utils/times_utils";
+} from "$lib/utils/times_utils";
 import type { Unsubscribe } from "firebase/auth";
 import type BusinessModel from "../business/business_model";
 import Event from "../schedule/calendar_event";

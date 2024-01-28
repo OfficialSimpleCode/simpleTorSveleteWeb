@@ -1,8 +1,5 @@
 import { topicRegex } from "$lib/consts/notification";
-import {
-  dateStrToDate,
-  timeStrToDate,
-} from "$lib/utils/times_utils/times_utils";
+import { dateStrToDate, timeStrToDate } from "$lib/utils/times_utils";
 
 const strToReplaceAdd: string = "~.9.~";
 const strToSpaceUnicAndInfo: string = "..";

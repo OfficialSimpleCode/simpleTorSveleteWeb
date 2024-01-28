@@ -16,7 +16,7 @@ import {
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import type ReportModel from "$lib/models/general/report";
 import UserPublicData from "$lib/models/user/user_public_data";
-import { dateToMonthStr } from "$lib/utils/times_utils/times_utils";
+import { dateToMonthStr } from "$lib/utils/times_utils";
 import { Timestamp } from "firebase/firestore";
 import pkg from "uuid";
 const { v4 } = pkg;

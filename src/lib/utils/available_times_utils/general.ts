@@ -22,7 +22,7 @@ import {
   setTo1970,
   setToMidNight,
   timeStrToDate,
-} from "../times_utils/times_utils";
+} from "../times_utils";
 
 export interface TimeSegment {
   start: Date;

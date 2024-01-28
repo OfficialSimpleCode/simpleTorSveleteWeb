@@ -32,7 +32,7 @@ import {
   dateToDateStr,
   dateToMonthStr,
   dateToTimeStr,
-} from "$lib/utils/times_utils/times_utils";
+} from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
 import pkg from "uuid";
 import BusinessModel from "../business/business_model";

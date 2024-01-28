@@ -17,7 +17,7 @@ import { relevantHoures } from "$lib/utils/available_times_utils/relevant_hours"
 import { relevantMultiEventTime } from "$lib/utils/available_times_utils/relevant_multi_event_times";
 import { setToMidNight } from "$lib/utils/dates_utils";
 import { addDuration } from "$lib/utils/duration_utils";
-import { isHoliday } from "$lib/utils/times_utils/times_utils";
+import { isHoliday } from "$lib/utils/times_utils";
 import { get } from "svelte/store";
 
 export function loadBookingMakerTimeData(

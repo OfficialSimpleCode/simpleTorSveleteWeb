@@ -6,7 +6,7 @@ export enum LoginType {
 }
 
 import { logger } from "$lib/consts/application_general";
-import { firebaseConfig } from "$lib/firebase_config";
+import { firebaseConfig } from "$lib/consts/firebase_config";
 import AppErrorsHelper from "$lib/helpers/app_errors";
 import { getApp, getApps, initializeApp } from "firebase/app";
 import {

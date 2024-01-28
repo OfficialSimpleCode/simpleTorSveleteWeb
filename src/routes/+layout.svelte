@@ -3,15 +3,16 @@
   import ToastManager from "$lib/components/ToastManager.svelte";
   import "../app.css";
 
-  import { firebaseConfig } from "$lib/firebase_config";
+  import { firebaseConfig } from "$lib/consts/firebase_config";
   import { getApp, getApps, initializeApp } from "firebase/app";
 
   import { page } from "$app/stores";
+  import { Gender, genderToStr } from "$lib/consts/gender";
   import LinksHelper from "$lib/helpers/links_helper";
   import { LoadAppHelper } from "$lib/helpers/load_app_helper";
   import { handleLocaleChanges } from "$lib/language/loader";
   import { businessStore } from "$lib/stores/Business";
-
+  console.log(genderToStr[Gender.female]);
   async function loadBusiness() {
     handleLocaleChanges(localStorage, document);
 
@@ -21,7 +22,7 @@
 
     LinksHelper.GI().linkedBuisnessId =
       $page.data.businessID ||
-      "972-504040624--0b794060-a1bd-11ed-b6f1-e9b70e9ea015";
+      "972-525656377--50ab63a0-a192-11ed-950c-3ba22fe40036";
     if (LinksHelper.GI().linkedBuisnessId === "") {
       return;
     }

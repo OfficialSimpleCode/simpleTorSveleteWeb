@@ -7,7 +7,7 @@ import IconData from "$lib/models/general/icon_data";
 import { Price } from "$lib/models/general/price";
 import BusinessPayloadData from "$lib/models/notifications/business_data_payload";
 import PaymentRequestNotificationPayload from "$lib/models/notifications/payment_request_notification_payload";
-import { dateToMonthStr } from "$lib/utils/times_utils/times_utils";
+import { dateToMonthStr } from "$lib/utils/times_utils";
 import InvoiceBusinessInfo from "../invoice/invoice_business_info";
 import { PaymentObject } from "../payment_object";
 import PaymentRequestPreview from "./payment_request_preview";

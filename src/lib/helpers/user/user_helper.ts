@@ -18,6 +18,7 @@ import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import { Duration } from "$lib/models/core/duration";
 import type PaymentCard from "$lib/models/payment_hyp/payment_card";
+import { userStore } from "$lib/stores/User";
 import { addDuration } from "$lib/utils/duration_utils";
 import { hashText } from "$lib/utils/encryptions";
 import { emailValidation } from "$lib/utils/validation_utils";
@@ -258,20 +259,26 @@ export default class UserHelper {
 
   async setGender(gender: Gender): Promise<boolean> {
     if (gender === UserInitializer.GI().user.gender) {
+      console.log("22222222222222222222");
       return true;
     }
-
+    console.log("eeeeeeeeeeeeeeeee");
     UserInitializer.GI().user.gender = gender;
-    // UiManager.insertUpdate(Providers.user);
-    // UiManager.updateUi({ context });
-    return await this.userRepo.updatePublicUserField({
-      userId: UserInitializer.GI().user.id,
-      fieldName: "gender",
-      value: genderToStr[gender],
-      businessesIds: Object.keys(
-        UserInitializer.GI().user.userPublicData.permission
-      ),
-    });
+    userStore.set(UserInitializer.GI().user);
+
+    return await this.userRepo
+      .updatePublicUserField({
+        userId: UserInitializer.GI().user.id,
+        fieldName: "gender",
+        value: genderToStr[gender],
+        businessesIds: Object.keys(
+          UserInitializer.GI().user.userPublicData.permission
+        ),
+      })
+      .then((value) => {
+        console.log("33333333333", value);
+        return value;
+      });
   }
 
   async updateName(name: string): Promise<boolean> {

@@ -8,7 +8,7 @@ import {
   dateToDateStr,
   getStartOfWeek,
   setToMidNight,
-} from "$lib/utils/times_utils/times_utils";
+} from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
 import { format } from "date-fns";
 import { Duration } from "../core/duration";

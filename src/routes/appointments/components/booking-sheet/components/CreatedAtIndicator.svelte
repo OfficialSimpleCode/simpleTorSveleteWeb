@@ -1,9 +1,6 @@
 <script lang="ts">
   import Booking from "$lib/models/booking/booking_model";
-  import {
-    dateToDateStr,
-    dateToTimeStr,
-  } from "$lib/utils/times_utils/times_utils";
+  import { dateToDateStr, dateToTimeStr } from "$lib/utils/times_utils";
   import { translate } from "$lib/utils/translate";
 
   export let booking: Booking;

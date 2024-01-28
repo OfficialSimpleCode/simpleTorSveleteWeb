@@ -1,8 +1,5 @@
 import { dayLightSavingTimes } from "$lib/consts/schedule";
-import {
-  dateToDateStr,
-  dateToTimeStr,
-} from "$lib/utils/times_utils/times_utils";
+import { dateToDateStr, dateToTimeStr } from "$lib/utils/times_utils";
 
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
 

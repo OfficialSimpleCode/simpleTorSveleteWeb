@@ -1,5 +1,6 @@
 import {
   bookingsCollection,
+  bookingsObjectsCollection,
   buisnessCollection,
   clientsByPhoneDoc,
   dataCollection,
@@ -19,6 +20,7 @@ import PaymentRequestPreview from "$lib/models/payment_hyp/payment_request/payme
 import PhoneDataResult from "$lib/models/resps/phone_data_result";
 import type UserModel from "$lib/models/user/user_model";
 import { Errors } from "$lib/services/errors/messages";
+import { dateToDateStr, dateToTimeStr } from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
 import type { Transaction } from "firebase/firestore";
 import AppErrorsHelper from "../app_errors";
@@ -43,12 +45,13 @@ export default class UserRepo extends GeneralRepo implements UserApi {
     cangeUserDoc?: boolean;
     value: any;
   }): Promise<boolean> {
+    console.log(value);
     const batch = this.getBatch;
 
     if (cangeUserDoc) {
       this.updateFieldInsideDocAsMap({
         batch,
-        path: "usersCollection",
+        path: usersCollection,
         docId: userId,
         fieldName,
         value,
@@ -57,8 +60,8 @@ export default class UserRepo extends GeneralRepo implements UserApi {
 
     this.updateFieldInsideDocAsMap({
       batch,
-      path: `usersCollection/${userId}/dataCollection`,
-      docId: "dataDoc",
+      path: `${usersCollection}/${userId}/${dataCollection}`,
+      docId: dataDoc,
       fieldName,
       value,
     });
@@ -66,7 +69,7 @@ export default class UserRepo extends GeneralRepo implements UserApi {
     businessesIds.forEach((businessId) => {
       this.updateFieldInsideDocAsMap({
         batch,
-        path: `${"buisnessCollection"}/${businessId}/${"workersCollection"}`,
+        path: `${buisnessCollection}/${businessId}/${workersCollection}`,
         docId: userId,
         fieldName,
         value,
@@ -335,29 +338,29 @@ export default class UserRepo extends GeneralRepo implements UserApi {
           ).forEach(([docId, bookingsDoc]) => {
             Object.entries<Booking>(bookingsDoc).forEach(
               ([bookingId, booking]) => {
-                // futures.push(
-                //   this.updateMultipleFieldsInsideDocAsMapRepo({
-                //     path: `${buisnessCollection}/${booking.buisnessId}/${workersCollection}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`,
-                //     docId: dateToDateStr(booking.bookingDate),
-                //     data: booking.isMultiRef
-                //       ? {
-                //           [`${dateToTimeStr(
-                //             booking.bookingDate
-                //           )}.users.${bookingId}.customerId`]: userId,
-                //           [`${dateToTimeStr(
-                //             booking.bookingDate
-                //           )}.users.${bookingId}.isUserExist`]: true,
-                //           [`${dateToTimeStr(
-                //             booking.bookingDate
-                //           )}.users.${bookingId}.isVerifiedPhone`]: true,
-                //         }
-                //       : {
-                //           [`${bookingId}.customerId`]: userId,
-                //           [`${bookingId}.isUserExist`]: true,
-                //           [`${bookingId}.isVerifiedPhone`]: true,
-                //         },
-                //   })
-                // );
+                futures.push(
+                  this.updateMultipleFieldsInsideDocAsMapRepo({
+                    path: `${buisnessCollection}/${booking.buisnessId}/${workersCollection}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`,
+                    docId: dateToDateStr(booking.bookingDate),
+                    data: booking.isMultiRef
+                      ? {
+                          [`${dateToTimeStr(
+                            booking.bookingDate
+                          )}.users.${bookingId}.customerId`]: userId,
+                          [`${dateToTimeStr(
+                            booking.bookingDate
+                          )}.users.${bookingId}.isUserExist`]: true,
+                          [`${dateToTimeStr(
+                            booking.bookingDate
+                          )}.users.${bookingId}.isVerifiedPhone`]: true,
+                        }
+                      : {
+                          [`${bookingId}.customerId`]: userId,
+                          [`${bookingId}.isUserExist`]: true,
+                          [`${bookingId}.isVerifiedPhone`]: true,
+                        },
+                  })
+                );
               }
             );
           });
@@ -397,14 +400,14 @@ export default class UserRepo extends GeneralRepo implements UserApi {
                     paymentUser.isVerifiedPhone = true;
                     paymentUser.userId = userId;
 
-                    // await this.updateMultipleFieldsInsideDocAsMapRepo({
-                    //   path: paymentsRequestsPreviewsCollection,
-                    //   docId: paymentRequestId,
-                    //   data: {
-                    //     [`users.${phone}`]: undefined,
-                    //     [`users.${userId}`]: paymentUser.toJson(),
-                    //   },
-                    // });
+                    await this.updateMultipleFieldsInsideDocAsMapRepo({
+                      path: paymentsRequestsPreviewsCollection,
+                      docId: paymentRequestId,
+                      data: {
+                        [`users.${phone}`]: undefined,
+                        [`users.${userId}`]: paymentUser.toJson(),
+                      },
+                    });
                   })
                 );
               }

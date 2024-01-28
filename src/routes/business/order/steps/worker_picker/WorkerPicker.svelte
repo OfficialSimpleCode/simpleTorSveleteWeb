@@ -10,7 +10,7 @@
   import { businessStore } from "$lib/stores/Business";
   import { workersStore } from "$lib/stores/Workers";
   import { imageByGender } from "$lib/utils/images_utils";
-  import { dateToDateStr } from "$lib/utils/times_utils/times_utils";
+  import { dateToDateStr } from "$lib/utils/times_utils";
   import { translate } from "$lib/utils/translate";
   import { isManager } from "$lib/utils/worker";
 

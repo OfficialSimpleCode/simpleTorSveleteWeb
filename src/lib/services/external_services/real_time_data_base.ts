@@ -5,7 +5,7 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable max-len */
 import { NumericCommands, envKey } from "$lib/consts/db";
-import { firebaseConfig } from "$lib/firebase_config";
+import { firebaseConfig } from "$lib/consts/firebase_config";
 import { getApp, getApps, initializeApp } from "firebase/app";
 import {
   DataSnapshot,

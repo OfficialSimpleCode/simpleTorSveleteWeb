@@ -1,4 +1,4 @@
-import { dateToDateStr } from "$lib/utils/times_utils/times_utils";
+import { dateToDateStr } from "$lib/utils/times_utils";
 import Event from "../schedule/calendar_event";
 import RecurrenceEvent, { RecurrenceEventEnd } from "./recurrence_event";
 

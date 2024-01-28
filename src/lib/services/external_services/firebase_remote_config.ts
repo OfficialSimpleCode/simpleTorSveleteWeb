@@ -1,3 +1,4 @@
+import { firebaseConfig } from "$lib/consts/firebase_config";
 import {
   developersKey,
   favoriteBusinessesKey,
@@ -7,7 +8,6 @@ import {
   systemMessageKey,
   versionInfoKey,
 } from "$lib/consts/remote_config";
-import { firebaseConfig } from "$lib/firebase_config";
 import { getApp, getApps, initializeApp } from "firebase/app";
 import {
   fetchAndActivate,

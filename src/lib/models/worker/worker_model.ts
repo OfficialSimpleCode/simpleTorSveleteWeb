@@ -24,7 +24,7 @@ import {
   dateStrToDate,
   dateToDateStr,
   setToMidNight,
-} from "$lib/utils/times_utils/times_utils";
+} from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
 import { format } from "date-fns";
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
