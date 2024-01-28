@@ -9,20 +9,16 @@
   import { businessStore } from "$lib/stores/Business.js";
   import {
     getOklachValues,
-    loadColorFromTheme,
     getTheme,
+    loadColorFromTheme,
   } from "$lib/utils/colors";
 
+  import { computeLuminance } from "$lib/utils/general_utils";
+  import ChangingImages from "./sections/ChangingImages.svelte";
   import Footer from "./sections/Footer.svelte";
   import IconAndTopButtons from "./sections/IconAndTopButtons.svelte";
   import ProductsSection from "./sections/ProductsSection.svelte";
   import StoryImages from "./sections/StoryImages.svelte";
-  import { isLight, computeLuminance } from "$lib/utils/general_utils";
-
-  const changingImagesRatioX = 5;
-  const changingImagesRatioY = 4;
-  const changingImagesHeight =
-    window.innerHeight * (changingImagesRatioY / changingImagesRatioX);
 
   let themeKey: string = $businessStore.design.pickedThemeKey;
   let themes = $businessStore.design.businessThemes;
@@ -31,27 +27,27 @@
   onMount(() => {
     document.documentElement.style.setProperty(
       "--p",
-      getOklachValues(loadColorFromTheme("primary", themeKey, themes)),
+      getOklachValues(loadColorFromTheme("primary", themeKey, themes))
     );
     document.documentElement.style.setProperty(
       "--b1",
-      getOklachValues(loadColorFromTheme("background", themeKey, themes)),
+      getOklachValues(loadColorFromTheme("background", themeKey, themes))
     );
     document.documentElement.style.setProperty(
       "--bc",
-      getOklachValues(theme.brightness == 0 ? "#fff" : "#000"),
+      getOklachValues(theme.brightness == 0 ? "#fff" : "#000")
     );
     document.documentElement.style.setProperty(
       "--pc",
-      getOklachValues(computeLuminance(theme.primary) > 0.5 ? "#000" : "#fff"),
+      getOklachValues(computeLuminance(theme.primary) > 0.5 ? "#000" : "#fff")
     );
     document.documentElement.style.setProperty(
       "--b2",
-      getOklachValues(loadColorFromTheme("surface", themeKey, themes)),
+      getOklachValues(loadColorFromTheme("surface", themeKey, themes))
     );
     document.documentElement.style.setProperty(
       "--b3",
-      getOklachValues(loadColorFromTheme("tertiary", themeKey, themes)),
+      getOklachValues(loadColorFromTheme("tertiary", themeKey, themes))
     );
 
     let html: HTMLHtmlElement = document.getElementsByTagName("html")[0];
@@ -66,7 +62,7 @@
 
   $: storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
   $: storyImagesWidth = Math.floor(
-    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
+    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
   );
 
   // Update screenWidth on window resize
@@ -75,7 +71,7 @@
 
     storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
     storyImagesWidth = Math.floor(
-      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
+      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
     );
 
     console.log("screenHeight", screenHeight);
@@ -95,11 +91,7 @@
   <Navbar />
 
   <!-- background image -->
-  <img
-    class="md:h-1/2 w-full object-cover h-[{changingImagesHeight}px] min-h-[270px]"
-    src={$businessStore.design.changingImages[0]}
-    alt="backgroud"
-  />
+  <ChangingImages></ChangingImages>
 
   <!-- define the whole page below the top images -->
   <div class="bg-base-100 min-h-1/2 w-full z-10">

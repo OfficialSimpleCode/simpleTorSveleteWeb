@@ -3034,5 +3034,10 @@
   "createdBySimpleTor": "עמוד זה נוצר באמצעות מערכת Simple Tor",
   "ourCompanyName": "אס איי קוד פשוט בע״מ",
   "downloadSimpleTor": "הורד את אפליקציית Simple Tor",
-  "companySite": "אתר החברה"
+  "companySite": "אתר החברה",
+  "comapny": "חברה",
+  "legal": "משפטי",
+  "branding": "מיתוג",
+  "queueSystem": "מערכת ניהול תורים",
+  "systemsDevelopment": "פיתוח מערכות"
 }

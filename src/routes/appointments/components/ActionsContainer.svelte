@@ -4,6 +4,7 @@
   export let icon: IconSource;
   export let text: string;
   export let onClick: () => void = () => {}; // Define the prop for onClick
+  export let bgColor: string = "bg-base-300";
 
   function handleClick() {
     if (onClick) {
@@ -13,7 +14,7 @@
 </script>
 
 <div
-  class="flex flex-col justify-center items-center bg-slate-300 px-2 py-2 rounded-md"
+  class="flex flex-col justify-center items-center {bgColor} py-2 px-2 rounded-lg max-w-40 lg:max-w-60"
 >
   <Icon on:click={handleClick} src={icon} size="26px" />
   <p class="text-center">{text}</p>

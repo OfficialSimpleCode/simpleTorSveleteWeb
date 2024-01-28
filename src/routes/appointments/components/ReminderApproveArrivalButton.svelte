@@ -8,6 +8,7 @@
   import ActionsContainer from "./ActionsContainer.svelte";
 
   export let booking: Booking;
+  export let bgColor: string = "bg-base-300";
 
   function confirmArrival(): void {
     if (booking.confirmedArrival || booking.isPassed) {
@@ -44,7 +45,7 @@
     ) < (booking.recurrenceChildDate ?? booking.bookingDate);
 </script>
 
-{#if booking.status !== BookingStatuses.approved}
+{#if booking.status === BookingStatuses.approved}
   <ActionsContainer
     text={booking.confirmedArrival && booking.recurrenceEvent !== null
       ? translate("ConfirmedArrival")
@@ -53,5 +54,6 @@
       ? CheckCircle
       : PlayCircle}
     onClick={confirmArrival}
+    {bgColor}
   ></ActionsContainer>
 {/if}

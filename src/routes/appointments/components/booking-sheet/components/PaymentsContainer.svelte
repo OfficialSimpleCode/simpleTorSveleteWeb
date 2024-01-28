@@ -19,7 +19,7 @@
 </script>
 
 <div
-  class="flex flex-row w-full justify-between items-center bg-slate-300 rounded-lg py-2 px-2 gap-2"
+  class="flex flex-row w-full justify-between items-center bg-base-300 rounded-lg py-2 px-2 gap-2"
 >
   <div class="flex flex-row items-center gap-2">
     <Icon src={Trash} size="26px" />

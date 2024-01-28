@@ -5,39 +5,29 @@
   import AttentionIndicatorUserBooking from "./AttentionIndicatorUserBooking.svelte";
   import LoadBusinessBookingButton from "./LoadBusinessBookingButton.svelte";
   import ReminderApproveArrivalButton from "./ReminderApproveArrivalButton.svelte";
+
   export let booking: Booking;
+  export let bgColor: string = "bg-base-300";
 
   const showAttention =
     !booking.isPassed &&
     (booking.status !== BookingStatuses.approved || booking.needCancel);
   const forceOpenBookingSheet: boolean = false;
-
+  const a: boolean = booking.buisnessId != $businessStore.businessId;
   console.log("bid", booking.buisnessId, "shopId", $businessStore.businessId);
 </script>
 
 <!-- the business isn't loaded -->
 {#if booking.buisnessId !== $businessStore.businessId}
-  <LoadBusinessBookingButton {booking}></LoadBusinessBookingButton>
-{:else if booking.recurrenceEvent === null || forceOpenBookingSheet}
+  <LoadBusinessBookingButton {booking} {bgColor}></LoadBusinessBookingButton>
+{:else if booking.recurrenceEvent === undefined || forceOpenBookingSheet}
   {#if showAttention}
-    <AttentionIndicatorUserBooking {booking}></AttentionIndicatorUserBooking>
+    <AttentionIndicatorUserBooking {booking} {bgColor}
+    ></AttentionIndicatorUserBooking>
   {:else}
-    <ReminderApproveArrivalButton {booking}></ReminderApproveArrivalButton>
+    <ReminderApproveArrivalButton {booking} {bgColor}
+    ></ReminderApproveArrivalButton>
   {/if}
 {:else}
   <!-- nothing to display -->
 {/if}
-
-<!-- <div
-  class:bg-warning={booking.status == BookingStatuses.waiting}
-  class:text-warning-content={booking.status == BookingStatuses.waiting}
-  class:bg-success={booking.status == BookingStatuses.approved}
-  class:text-success-content={booking.status == BookingStatuses.approved}
-  class="flex text-sm rounded-xl px-2 py-4 text-center items-center"
->
-  {#if booking.status == BookingStatuses.waiting}
-    {$_("waiting")}
-  {:else if booking.status == "approved"}
-    {$_("approved")}
-  {/if}
-</div> -->
