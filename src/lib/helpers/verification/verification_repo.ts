@@ -36,22 +36,41 @@ export class VerificationRepo
     return this.onAuthUserStateChangedSRV(completed);
   }
 
+  async sendSmsForFirebaseVerification({
+    completePhone,
+    onCodeSent,
+    onFailed,
+  }: {
+    completePhone: string;
+    onCodeSent: (verificationId: string) => void;
+    onFailed: (
+      phone: string,
+      e: Error,
+      codeSentTime: Date | undefined,
+      beforeSendTime: Date
+    ) => void;
+    verificationCompleted: (credential: PhoneAuthCredential) => void;
+  }): Promise<void> {
+    await this.sendSmsForFirebaseVerificationSRV({
+      completePhone,
+      onCodeSent,
+      onFailed,
+    });
+  }
+
   async signInWithOtp({
     loginType,
     verificationId,
     otp,
-    autocredential,
   }: {
     loginType: LoginType;
     verificationId: string;
     otp: string;
-    autocredential: PhoneAuthCredential | undefined;
   }): Promise<boolean> {
     return await this.signInWithOtpSRV({
       loginType,
       verificationId,
       otp,
-      autocredential,
     });
   }
 
