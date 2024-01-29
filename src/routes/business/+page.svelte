@@ -13,7 +13,6 @@
     loadColorFromTheme,
   } from "$lib/utils/colors";
 
-  import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
   import { computeLuminance } from "$lib/utils/general_utils";
   import ChangingImages from "./sections/ChangingImages.svelte";
   import Footer from "./sections/Footer.svelte";
@@ -54,6 +53,16 @@
     let html: HTMLHtmlElement = document.getElementsByTagName("html")[0];
     html.setAttribute("data-theme", theme.brightness == 0 ? "dark" : "light");
     html.style.setProperty("font-family", theme.fontName);
+
+    // Load theme font
+    let head: HTMLHeadElement = document.getElementsByTagName("head")[0];
+    let fontLinkElement: HTMLLinkElement = document.createElement("link");
+    fontLinkElement.setAttribute("rel", "stylesheet");
+    fontLinkElement.setAttribute(
+      "href",
+      `https://fonts.googleapis.com/css?family=${theme.fontName}`
+    );
+    head.appendChild(fontLinkElement);
   });
 
   // Dialogs
@@ -91,13 +100,6 @@
   }
 </script>
 
-<svelte:head>
-  <link
-    href="https://fonts.googleapis.com/css?family={theme.fontName}"
-    rel="stylesheet"
-  />
-</svelte:head>
-
 <main class="w-full h-full" style="">
   <Navbar />
 
@@ -113,29 +115,6 @@
     </div>
     <!-- business icons links -->
     <SocialLinks />
-
-    <form on:submit|preventDefault={() => {}} class="flex flex-col gap-2">
-      <CustomTextFormField
-        placeholder="12 335 765 4"
-        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-        validationFunc={validation}
-        on:input={fun}
-      ></CustomTextFormField>
-
-      <CustomTextFormField
-        placeholder="12 335 765 4"
-        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-        validationFunc={validation}
-      ></CustomTextFormField>
-
-      <CustomTextFormField
-        placeholder="12 335 765 4"
-        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-        validationFunc={validation}
-      ></CustomTextFormField>
-
-      <button type="submit"></button>
-    </form>
 
     <!-- Display images -->
     <StoryImages></StoryImages>
