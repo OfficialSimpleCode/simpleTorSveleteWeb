@@ -1,6 +1,7 @@
 <script lang="ts">
   import DateString from "$lib/components/DateString.svelte";
   import Booking from "$lib/models/booking/booking_model";
+  import type WorkerModel from "$lib/models/worker/worker_model";
   import BookingTreatmentsList from "./components/BookingTreatmentsList.svelte";
   import CreatedAtIndicator from "./components/CreatedAtIndicator.svelte";
   import DebtIndicator from "./components/DebtIndicator.svelte";
@@ -11,6 +12,7 @@
   import TopSheetIndicators from "./components/TopSheetIndicators.svelte";
   export let dialog: HTMLDialogElement;
   export let booking: Booking;
+  export let currentWorker: WorkerModel | undefined;
 </script>
 
 <dialog
@@ -24,7 +26,7 @@
       <TopSheetIndicators {booking}></TopSheetIndicators>
 
       <!-- top icons -->
-      <IconsRow {booking}></IconsRow>
+      <IconsRow {booking} {currentWorker} />
 
       <!-- general data container -->
       <TopDetails {booking}></TopDetails>

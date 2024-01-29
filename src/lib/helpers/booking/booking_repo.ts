@@ -320,17 +320,17 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     const strBookingDay = dateToDayStr(booking.bookingDate);
     const strBookingMonth = dateToMonthStr(booking.bookingDate);
     const path: string = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
-    const bookingsTimesData: { [key: string]: any } = {};
-    Object.entries(booking.bookingWorkTimes).forEach(([time, duration]) => {
+    const bookingsTimesData: Record<string, any> = {};
+    booking.bookingWorkTimes.forEach((duration, time) => {
       bookingsTimesData[`bookingsTimes.${strBookingDate}.${time}`] = null;
     });
-    const bookingsEventsData: { [key: string]: any } = {};
-    Object.entries(booking.bookingsEventsAsEvents).forEach(([time, _]) => {
+    const bookingsEventsData: Record<string, any> = {};
+    booking.bookingsEventsAsEvents.forEach((_, time) => {
       bookingsEventsData[`${strBookingDay}.${time}`] = null;
     });
-    const formatedCustomrsData: { [key: string]: any } =
+    const formatedCustomrsData: Record<string, any> =
       this.toFormatedCustomerData({
-        // customerData: customerData,
+        customerData: customerData,
         amountOfBookingsCommand: NumericCommands.decrement,
       });
     const transacionCommands: (transaction: any) => Promise<any> = async (
@@ -360,13 +360,16 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         docId: dataDoc,
         data: bookingsTimesData,
       });
+      console.log("deleteFromWorker", deleteFromWorker);
       if (deleteFromWorker) {
+        console.log("bookingsEventsData", bookingsEventsData);
         this.transactionUpdateMultipleFieldsAsMap({
           transaction: transaction,
           path: `${path}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsEventsCollection}`,
           docId: strBookingMonth,
           data: bookingsEventsData,
         });
+        console.log("deleteAllBooking", deleteAllBooking);
         if (deleteAllBooking) {
           this.transactionUpdateAsMap({
             transaction: transaction,
@@ -380,18 +383,18 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
             path: `${path}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`,
             docId: strBookingDate,
             fieldName: `${booking.bookingId}.cancelDate`,
-            value: cancelDate.toString(),
+            value: dateIsoStr(cancelDate),
           });
         }
-        await this.updateUserBooking({
-          booking: booking,
-          transaction: transaction,
-          command: deleteFromUser ? NumericCommands.decrement : undefined,
-          data: deleteFromUser
-            ? { [booking.bookingId]: null }
-            : { [`${booking.bookingId}.workerDeleted`]: true },
-        });
       }
+      await this.updateUserBooking({
+        booking: booking,
+        transaction: transaction,
+        command: deleteFromUser ? NumericCommands.decrement : undefined,
+        data: deleteFromUser
+          ? { [booking.bookingId]: null }
+          : { [`${booking.bookingId}.workerDeleted`]: true },
+      });
       return true;
     };
     return await this.runTransaction(transacionCommands).then((value) => {
@@ -406,6 +409,47 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       }
       return null;
     });
+  }
+
+  async deleteBookingOnlyFromUser({
+    booking,
+  }: {
+    booking: Booking;
+  }): Promise<boolean> {
+    const transacionCommands = async (
+      transaction: Transaction
+    ): Promise<boolean> => {
+      const updatedBooking = await this.getUpdatedBookingDate({
+        transaction,
+        bookingToUpdate: booking,
+      });
+
+      if (updatedBooking === null) {
+        return false;
+      } else {
+        booking.bookingDate = booking.bookingDate;
+        booking.isUserExist = booking.isUserExist;
+      }
+
+      await this.updateUserBooking({
+        booking,
+        transaction,
+        command: NumericCommands.decrement,
+        data: { [booking.bookingId]: null },
+      });
+
+      // // Update the related transactions
+      // this.updateTransactionBookingReference({
+      //   transaction,
+      //   booking,
+      //   delete: true,
+      //   onlyFromUser: true,
+      // });
+
+      return true;
+    };
+
+    return await this.runTransaction(transacionCommands);
   }
 
   async updateBooking({
@@ -438,12 +482,10 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         oldBooking.isUserExist = oldBooking.isUserExist;
       }
 
-      const firestoreDataBaseWorker = new WorkerModel({});
-
-      // await this.getWorkerFromTransactionRepo({
-      //   transaction: transaction,
-      //   workerId: newBooking.workerId,
-      // });
+      const firestoreDataBaseWorker = await this.getWorkerFromTransactionRepo({
+        transaction: transaction,
+        workerId: newBooking.workerId,
+      });
 
       const isTreatmentsUpdate =
         oldBooking.bookingDate.getTime() === newBooking.bookingDate.getTime() &&
@@ -584,7 +626,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     if (newBooking.workerId !== oldBooking.workerId) {
       const formatedNewCustomrsData: Record<string, any> =
         this.toFormatedCustomerData({
-          //customerData: newBookingCustomerData,
+          customerData: newBookingCustomerData,
           amountOfBookingsCommand: NumericCommands.increment,
           useUserFirstBookingsDate: true,
           saveExtraData: true,
@@ -597,32 +639,9 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       });
       const formatedOldCustomrsData: Record<string, any> =
         this.toFormatedCustomerData({
-          //customerData: oldBookingCustomerData,
+          customerData: oldBookingCustomerData,
           amountOfBookingsCommand: NumericCommands.decrement,
         });
-      this.transactionUpdateMultipleFieldsAsMap({
-        transaction: transaction,
-        path: `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}/${oldBooking.workerId}/${dataCollection}`,
-        docId: customersDataDoc,
-        data: formatedOldCustomrsData,
-      });
-      return;
-    }
-    if (newBooking.customerId !== oldBooking.customerId) {
-      const formatedNewCustomrsData: Record<string, any> =
-        this.toFormatedCustomerData({
-          //customerData: newBookingCustomerData,
-          amountOfBookingsCommand: NumericCommands.increment,
-        });
-      let formatedOldCustomrsData: Record<string, any> =
-        this.toFormatedCustomerData({
-          //customerData: oldBookingCustomerData,
-          amountOfBookingsCommand: NumericCommands.decrement,
-        });
-      formatedOldCustomrsData = {
-        ...formatedOldCustomrsData,
-        ...formatedNewCustomrsData,
-      };
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
         path: `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}/${oldBooking.workerId}/${dataCollection}`,
@@ -995,8 +1014,9 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     if (command !== undefined) {
       previewData[`bookingsPreviews.${docId}.bookingCount`] = command;
     }
-    previewData[`bookingsPreviews.${docId}.lastUpdateTime`] =
-      new Date().toString();
+    previewData[`bookingsPreviews.${docId}.lastUpdateTime`] = dateIsoStr(
+      new Date()
+    );
 
     let path = DbPathesHelper.GI().userBookingsPathByBooking(booking);
 
@@ -1016,7 +1036,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           data: data,
         });
       }
-
+      console.log("previewData", previewData);
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
         path: `${usersCollection}/${booking.customerId}/${dataCollection}`,

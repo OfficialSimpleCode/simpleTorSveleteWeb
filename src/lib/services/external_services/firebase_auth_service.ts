@@ -23,6 +23,7 @@ import {
   reauthenticateWithCredential,
   reauthenticateWithPopup,
   signInWithCredential,
+  signInWithPhoneNumber,
   signInWithPopup,
   unlink,
   updatePhoneNumber,
@@ -32,6 +33,8 @@ import {
   type Unsubscribe,
   type User,
 } from "firebase/auth";
+import { locale } from "svelte-i18n";
+import { get } from "svelte/store";
 import { verificationErrors } from "../errors/interpeters/verification_errors_interpeter";
 import { Errors } from "../errors/messages";
 
@@ -42,7 +45,7 @@ export class FirebaseAuthService {
     const firebaseApp =
       getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
     this._auth = getAuth();
-    this._auth.useDeviceLanguage();
+    this._auth.languageCode = get(locale) ?? "en";
   }
 
   async signInWithFacebookSRV(loginType: LoginType): Promise<boolean> {
@@ -256,31 +259,32 @@ export class FirebaseAuthService {
   }): Promise<void> {
     const beforeSendTime = new Date();
     let codeSentTime: Date | undefined;
-    const recaptchaVerifier = new RecaptchaVerifier(
-      this._auth,
-      "sign-in-button",
-      {
-        size: "invisible",
-      }
-    );
-    // await signInWithPhoneNumber(
-    //   this._auth,
-    //   completePhone,
-    //   this._recaptchaVerifier
-    // )
-    //   .then((confirmationResult) => {
-    //     onCodeSent(confirmationResult.verificationId);
-    //   })
-    //   .catch((error) => {
-    //     if (error instanceof Error) {
-    //       AppErrorsHelper.GI().details = error.message;
-    //       AppErrorsHelper.GI().error =
-    //         verificationErrors[error.message] ??
-    //         verificationErrors[error.name] ??
-    //         Errors.unknown;
-    //       onFailed(completePhone, error, codeSentTime, beforeSendTime);
-    //     }
-    //   });
+    const html = document.getElementById("recaptcha-container")!;
+    console.log(html);
+    console.log("wwwwwww");
+    const recaptchaVerifier = new RecaptchaVerifier(this._auth, html, {
+      size: "invisible",
+      callback: (response: any) => {
+        console.log(response);
+      },
+    });
+    console.log("222222222222222");
+    await signInWithPhoneNumber(this._auth, completePhone, recaptchaVerifier)
+      .then((confirmationResult) => {
+        console.log("ssssssssssss");
+        onCodeSent(confirmationResult.verificationId);
+      })
+      .catch((error) => {
+        console.log("wwwwwwwwwwwwwwwww");
+        if (error instanceof Error) {
+          AppErrorsHelper.GI().details = error.message;
+          AppErrorsHelper.GI().error =
+            verificationErrors[error.message] ??
+            verificationErrors[error.name] ??
+            Errors.unknown;
+          onFailed(completePhone, error, codeSentTime, beforeSendTime);
+        }
+      });
   }
 
   get lastLoginDateSRV(): string | undefined {

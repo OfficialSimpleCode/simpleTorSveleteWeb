@@ -2,9 +2,7 @@
   import Navbar from "$lib/components/navbar/Navbar.svelte";
   import { ShowToast } from "$lib/stores/ToastManager";
 
-  import BookingController, {
-    bookingMakerStore,
-  } from "$lib/controllers/booking_controller";
+  import { bookingMakerStore } from "$lib/controllers/booking_controller";
   import { _, translate } from "$lib/utils/translate";
   import FinishScreen from "./steps/finish_screen/FinishScreen.svelte";
   import ServicePicker from "./steps/service_picker/ServicePicker.svelte";
@@ -12,8 +10,6 @@
   import WorkerPicker from "./steps/worker_picker/WorkerPicker.svelte";
 
   let steps: string[] = ["worker", "treatment", "dateAndTime", "confirmNow"];
-
-  BookingController.initializeBookingMaker({});
 
   function clickedOnStep(stepNumber: number) {
     if (stepNumber === $bookingMakerStore.currentStep) {

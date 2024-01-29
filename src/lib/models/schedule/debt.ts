@@ -59,7 +59,7 @@ export default class Debt {
       debt.id === this.id &&
       debt.description === this.description &&
       debt.showUser === this.showUser &&
-      debt.createdAt.toString() === this.createdAt.toString() &&
+      dateIsoStr(debt.createdAt) === dateIsoStr(this.createdAt) &&
       this.amount === debt.amount
     );
   }

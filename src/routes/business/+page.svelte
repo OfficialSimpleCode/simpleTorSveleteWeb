@@ -102,14 +102,14 @@
   <Navbar />
 
   <!-- background image -->
-  <ChangingImages></ChangingImages>
+  <ChangingImages />
 
   <!-- define the whole page below the top images -->
   <div class="bg-base-100 min-h-1/2 w-full z-10">
     <!-- this is effects the entire layout (top margin is -3 to be above the images)-->
     <div class=" ">
       <!-- the business icon, name, address, order & share buttons -->
-      <IconAndTopButtons></IconAndTopButtons>
+      <IconAndTopButtons />
     </div>
     <!-- business icons links -->
     <SocialLinks />

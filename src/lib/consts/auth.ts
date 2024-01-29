@@ -57,3 +57,12 @@ export const providerIdToProvider: Record<string, AuthProvider> = {
   ["facebook.com"]: AuthProvider.Facebook,
   ["phone"]: AuthProvider.Phone,
 };
+
+export enum LoginReason {
+  login,
+  linkProvider,
+  deleteUser,
+  linkProviderBusinessCreation,
+  phoneVerification,
+  phoneUpdate,
+}

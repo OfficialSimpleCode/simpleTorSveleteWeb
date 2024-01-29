@@ -1,3 +1,4 @@
+import { dateIsoStr } from "$lib/utils/times_utils";
 import IconData from "../general/icon_data";
 
 export default class NotifcationPayloadObject {
@@ -60,7 +61,7 @@ export default class NotifcationPayloadObject {
   toJsonStr(): string {
     const data = {
       businessId: this.businessId,
-      date: this.date?.toString(),
+      date: this.date ? dateIsoStr(this.date) : undefined,
       id: this.id,
       workerId: this.workerId,
       businessName: this.businessName,

@@ -59,6 +59,21 @@
 
     BookingController.scheduleObj.appendTo("#schedule");
 
+    //initial the first time lod the calendar
+    //delete the exsit events
+    BookingController.scheduleObj!.deleteEvent(
+      Object.values(BookingController.timePickerObjects)
+    );
+    loadBookingMakerTimeData(
+      BookingController.scheduleObj!.getCurrentViewDates(),
+      BookingController.worker,
+      [30]
+    );
+
+    BookingController.scheduleObj!.addEvent(
+      Object.values(BookingController.timePickerObjects)
+    );
+
     //when the user interact with the schedule and navigate between
     //dates need to load the new dates
     BookingController.scheduleObj.actionComplete = (args) => {
@@ -66,17 +81,20 @@
         args.requestType === "viewNavigate" ||
         args.requestType === "dateNavigate"
       ) {
+        if (BookingController.scheduleObj == null) {
+          return;
+        }
         //delete the exsit events
-        BookingController.scheduleObj.deleteEvent(
+        BookingController.scheduleObj!.deleteEvent(
           Object.values(BookingController.timePickerObjects)
         );
         loadBookingMakerTimeData(
-          BookingController.scheduleObj.getCurrentViewDates(),
+          BookingController.scheduleObj!.getCurrentViewDates(),
           BookingController.worker,
           [30]
         );
 
-        BookingController.scheduleObj.addEvent(
+        BookingController.scheduleObj!.addEvent(
           Object.values(BookingController.timePickerObjects)
         );
       }

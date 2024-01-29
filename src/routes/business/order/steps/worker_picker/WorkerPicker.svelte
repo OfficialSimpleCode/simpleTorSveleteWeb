@@ -35,7 +35,7 @@
   <!-- list of workers -->
   <ul class="h-full flex flex-wrap items-center justify-center gap-7">
     {#each workers as worker}
-      <WorkerItem {worker}></WorkerItem>
+      <WorkerItem {worker} />
     {/each}
   </ul>
 </section>

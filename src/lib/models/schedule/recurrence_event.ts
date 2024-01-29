@@ -128,8 +128,16 @@ export default class RecurrenceEvent {
   ): RecurrenceEvent {
     const newObj = new RecurrenceEvent({});
     newObj.start = startTime;
-    newObj.endDate = json["ED"] ? new Date(json["ED"]) : undefined;
-    newObj.repeats = json["R"] || 10;
+    if (json["ED"]) {
+      newObj.endDate = dateStrToDate(json["ED"]);
+      newObj.endOption = RecurrenceEventEnd.date;
+    } else if (json["R"]) {
+      newObj.repeats = json["R"];
+      newObj.endOption = RecurrenceEventEnd.repeats;
+    } else {
+      newObj.endOption = RecurrenceEventEnd.endless;
+    }
+
     newObj.interval = json["I"] || 1;
 
     newObj.weekDays = new SplayTreeSet(json["WD"] || []);
@@ -623,7 +631,8 @@ export default class RecurrenceEvent {
     date: Date,
     { needToBeAfterStart = true }: { needToBeAfterStart?: boolean } = {}
   ): Date | undefined {
-    if (this.endOfTheEvent !== undefined && date > this.endOfTheEvent!) {
+    console.log("eeeeeeeeeeeee", this.endOfTheEvent);
+    if (this.endOfTheEvent != undefined && date > this.endOfTheEvent!) {
       return undefined;
     }
 

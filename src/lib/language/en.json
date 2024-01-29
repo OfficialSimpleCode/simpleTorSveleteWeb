@@ -2242,7 +2242,7 @@
   "hideFromClients": "hidden from clients",
   "phoneVerificationExplain": "In order to receive an SMS reminder before the appointment we must verify your cell phone number\nwithout verification you will not receive a reminder!",
   "weNeedPhoneVerification": "Verification of cell phone number",
-  "verify": "true",
+  "verify": "Verify",
   "skip": "skip",
   "customerNeedToVerify": "In order to order from you, the customer must verify his cell phone number in order to make sure that the customer is not impersonating another customer - recommended",
   "mustVerifyPhone": "Must verify cell phone number",

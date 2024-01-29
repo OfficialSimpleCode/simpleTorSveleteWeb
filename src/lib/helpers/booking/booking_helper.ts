@@ -90,6 +90,43 @@ export default class BookingHelper {
       });
   }
 
+  async deleteBookingOnlyFromUserDoc({
+    booking,
+    deleteFromPassed,
+  }: {
+    booking: Booking;
+    deleteFromPassed?: boolean;
+  }): Promise<boolean> {
+    // if (
+    //   deleteFromPassed &&
+    //   !(await this._commitBookingTransactionDueDeletion(booking, false))
+    // ) {
+    //   return false;
+    // }
+
+    return await this.bookingRepo
+      .deleteBookingOnlyFromUser({ booking })
+      .then(async (value) => {
+        if (value) {
+          // NotificationHandler().afterDeleteBooking({
+          //   booking,
+          //   workerAction: false,
+          //   notifyWorker: false,
+          // });
+          // this._deleteBookingLocally({
+          //   booking,
+          //   fromUpdate: false,
+          //   worker: null,
+          //   deleteAllBooking: true,
+          //   workerAction: false,
+          //   removeFromDeviceCalendar: true,
+          //   newCustomerData: null,
+          // });
+        }
+        return value;
+      });
+  }
+
   async deleteBooking({
     booking,
     worker,
@@ -102,10 +139,6 @@ export default class BookingHelper {
       return null;
     }
 
-    const currentWorker = BusinessInitializer.GI().workers[booking.workerId]!;
-    const isPassed =
-      booking.bookingDate.getTime() + booking.totalMinutes * 60 * 1000 <
-      Date.now();
     const cancelDate = new Date();
 
     const deleteAllBooking = booking.status === BookingStatuses.waiting;
@@ -122,13 +155,13 @@ export default class BookingHelper {
     //   ) {
     //     MyBookingsUIController.markedBookings.clear();
     //   }
-
+    console.log("booking.isPassed", booking.isPassed);
     const resp = await this.bookingRepo.deleteBooking({
       booking,
       deleteAllBooking,
       cancelDate,
       customerData: newCustomerData,
-      deleteFromWorker: !isPassed,
+      deleteFromWorker: !booking.isPassed,
       deleteFromUser: true,
     });
 
@@ -168,7 +201,6 @@ export default class BookingHelper {
     oldBookingDateForReccurence,
     noteText,
     newClientNote = "",
-
     keepRecurrence = false,
     workerAction = false,
   }: {

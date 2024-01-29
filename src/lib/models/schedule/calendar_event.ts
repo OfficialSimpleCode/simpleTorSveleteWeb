@@ -2,7 +2,7 @@ import { Gender } from "$lib/consts/gender";
 import type { Religion } from "$lib/consts/worker_schedule";
 import { addDuration } from "$lib/utils/duration_utils";
 
-import { dateStrToDate } from "$lib/utils/times_utils";
+import { dateIsoStr, dateStrToDate } from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
 import type BusinessModel from "../business/business_model";
 import { Duration } from "../core/duration";
@@ -267,7 +267,7 @@ export default class Event {
       data["VATDC"] = this.vacationAddedToDeviceCalendar;
     }
     if (this.vacationCreatedAt != undefined) {
-      data["VCA"] = this.vacationCreatedAt!.toString();
+      data["VCA"] = dateIsoStr(this.vacationCreatedAt!);
     }
     if (this.breakAddedToDeviceCalendar) {
       data["BATDC"] = this.breakAddedToDeviceCalendar;

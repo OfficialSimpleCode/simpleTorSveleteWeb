@@ -12,6 +12,7 @@
 
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import { isAppleUser } from "$lib/consts/platform";
+  import BookingController from "$lib/controllers/booking_controller";
   import "iconify-icon";
   import ShareDialog from "../components/ShareDialog.svelte";
 
@@ -31,7 +32,7 @@
     if (!$isConnectedStore) {
       goto(`${base}/login`);
     }
-
+    BookingController.initializeBookingMaker({});
     goto(`${base}/business/order`);
   }
 

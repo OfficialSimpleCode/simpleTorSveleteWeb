@@ -37,9 +37,9 @@ export function computeLuminance(color: number): number {
   let blue: number = parseInt(hex.slice(6, 8), 16);
 
   // See <https://www.w3.org/TR/WCAG20/#relativeluminancedef>
-  const R = _linearizeColorComponent(red / 0xFF);
-  const G = _linearizeColorComponent(green / 0xFF);
-  const B = _linearizeColorComponent(blue / 0xFF);
+  const R = _linearizeColorComponent(red / 0xff);
+  const G = _linearizeColorComponent(green / 0xff);
+  const B = _linearizeColorComponent(blue / 0xff);
   return 0.2126 * R + 0.7152 * G + 0.0722 * B;
 }
 
@@ -103,4 +103,14 @@ export async function isNetworkConnected() {
 
 export async function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export function convertMapToObject(
+  metricArguments: Map<string, any>
+): Record<string, any> {
+  let newObject: Record<string, any> = {};
+  for (let [key, value] of metricArguments) {
+    newObject[key] = value;
+  }
+  return newObject;
 }

@@ -1349,7 +1349,7 @@ export default class Booking extends ScheduleItem {
       data["workerDeleted"] = this.workerDeleted;
     }
     if (this.cancelDate != null) {
-      data["cancelDate"] = this.cancelDate.toString();
+      data["cancelDate"] = dateIsoStr(this.cancelDate);
     }
     data["remindersTypes"] = {};
     this.remindersTypes.forEach((minutes, reminder) => {
@@ -1373,7 +1373,7 @@ export default class Booking extends ScheduleItem {
       });
     }
     if (this.lastTimeNotifyOnDebt != null) {
-      data["lastTimeNotifyOnDebt"] = this.lastTimeNotifyOnDebt.toString();
+      data["lastTimeNotifyOnDebt"] = dateIsoStr(this.lastTimeNotifyOnDebt);
     }
     if (this.isVerifiedPhone) {
       data["isVerifiedPhone"] = this.isVerifiedPhone;
@@ -1435,8 +1435,9 @@ export default class Booking extends ScheduleItem {
     data["buisnessId"] = this.buisnessId;
     data["shopIcon"] = this.shopIcon.toJson();
     if (this.recurrenceNotificationsLastDate != null) {
-      data["recurrenceNotificationsLastDate"] =
-        this.recurrenceNotificationsLastDate.toString();
+      data["recurrenceNotificationsLastDate"] = dateIsoStr(
+        this.recurrenceNotificationsLastDate
+      );
     }
     data["notificationType"] = notificationTypeToStr[this.notificationType];
     data["workerNotificationOption"] =

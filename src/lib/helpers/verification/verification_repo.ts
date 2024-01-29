@@ -2,12 +2,7 @@ import {
   FirebaseAuthService,
   LoginType,
 } from "$lib/services/external_services/firebase_auth_service";
-import type {
-  CompleteFn,
-  PhoneAuthCredential,
-  Unsubscribe,
-  User,
-} from "firebase/auth";
+import type { CompleteFn, Unsubscribe, User } from "firebase/auth";
 import type { VerificationApi } from "./verification_api";
 
 // Define the VerificationRepo class implementing the VerificationApi interface
@@ -49,7 +44,6 @@ export class VerificationRepo
       codeSentTime: Date | undefined,
       beforeSendTime: Date
     ) => void;
-    verificationCompleted: (credential: PhoneAuthCredential) => void;
   }): Promise<void> {
     await this.sendSmsForFirebaseVerificationSRV({
       completePhone,

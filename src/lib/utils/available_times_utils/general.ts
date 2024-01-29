@@ -15,6 +15,7 @@ import {
 } from "../duration_utils";
 
 import {
+  dateIsoStr,
   dateStrToDate,
   dateToDateStr,
   dateToTimeStr,
@@ -363,13 +364,15 @@ export function alreadyTakenHoures({
     oldBooking.bookingsEventsAsEvents.forEach((event, time) => {
       const timeDate = timeStrToDate(time);
       datesToSkipRecurrence.add(
-        new Date(
-          recurrenceSkipDate!.getFullYear(),
-          recurrenceSkipDate!.getMonth(),
-          recurrenceSkipDate!.getDate(),
-          timeDate.getHours(),
-          timeDate.getMinutes()
-        ).toString()
+        dateIsoStr(
+          new Date(
+            recurrenceSkipDate!.getFullYear(),
+            recurrenceSkipDate!.getMonth(),
+            recurrenceSkipDate!.getDate(),
+            timeDate.getHours(),
+            timeDate.getMinutes()
+          )
+        )
       );
     });
   }
@@ -407,7 +410,7 @@ export function alreadyTakenHoures({
             })
           );
 
-          if (datesToSkipRecurrence.has(dateToCheck.toString())) {
+          if (datesToSkipRecurrence.has(dateIsoStr(dateToCheck))) {
             return;
           }
         }

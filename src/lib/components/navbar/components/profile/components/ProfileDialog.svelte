@@ -3,7 +3,7 @@
   import { base } from "$app/paths";
   import Avatar from "$lib/components/Avatar.svelte";
   import InfoTooltipButton from "$lib/components/InfoTooltipButton.svelte";
-  import CustomArrow from "$lib/components/custom_components/custom_arrow.svelte";
+  import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
   import GenderPicker from "$lib/components/pickers/gender_picker/GenderPicker.svelte";
   import Google from "$lib/images/google.svg";
   import { userStore } from "$lib/stores/User";

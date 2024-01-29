@@ -1,3 +1,4 @@
+import { dateIsoStr } from "$lib/utils/times_utils";
 import IconData from "../general/icon_data";
 import NotifcationPayloadObject from "./notification_payload_object";
 
@@ -48,7 +49,7 @@ export default class TransactionNotificationPayload extends NotifcationPayloadOb
     data["businessName"] = this.businessName;
     data["businessId"] = this.businessId;
     if (this.date != null) {
-      data["date"] = this.date.toString();
+      data["date"] = dateIsoStr(this.date);
     }
 
     data["id"] = this.id;

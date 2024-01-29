@@ -28,15 +28,15 @@
     <DateString
       date={$bookingMakerStore.date ?? new Date()}
       showTodayAndTommrow={true}
-    ></DateString>
+    />
   </div>
 
   <!-- serivces preview and option to edit the service -->
-  <ServicesPreview></ServicesPreview>
+  <ServicesPreview />
 
   <!-- the user note  -->
-  <AddNote></AddNote>
+  <AddNote />
 
   <!-- finish button (could be pay or deposin) -->
-  <FinishButton></FinishButton>
+  <FinishButton />
 </section>

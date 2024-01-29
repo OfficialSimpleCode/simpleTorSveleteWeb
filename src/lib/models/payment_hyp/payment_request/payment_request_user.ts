@@ -1,4 +1,5 @@
 import { Gender, genderFromStr } from "$lib/consts/gender";
+import { dateIsoStr } from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
 
 export default class PaymentRequestUser {
@@ -88,7 +89,7 @@ export default class PaymentRequestUser {
     if (Object.keys(this.payments).length > 0) {
       data["PY"] = {};
       Object.entries<Date>(this.payments).forEach(([transactionId, date]) => {
-        data["PY"][transactionId] = date.toString();
+        data["PY"][transactionId] = dateIsoStr(date);
       });
     }
     if (this.userDecline) {

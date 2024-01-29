@@ -2,7 +2,7 @@
   import Booking from "$lib/models/booking/booking_model";
 
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
-  import CustomArrow from "$lib/components/custom_components/custom_arrow.svelte";
+  import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
   import { _, translate } from "$lib/utils/translate";
 
   export let booking: Booking;

@@ -3,7 +3,7 @@ import { NotificationType } from "$lib/consts/booking";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import Booking from "$lib/models/booking/booking_model";
-import type { PaymentTypes } from "$lib/models/booking/booking_transaction";
+import { PaymentTypes } from "$lib/models/booking/booking_transaction";
 import Treatment from "$lib/models/general/treatment_model";
 import WorkerModel from "$lib/models/worker/worker_model";
 import { ShowToast } from "$lib/stores/ToastManager";
@@ -39,26 +39,37 @@ export const bookingMakerStore = writable<BookingMaker>();
 
 export default class BookingController {
   static timePickerObjects: Record<string, Record<string, any>> = {};
-
+  static oldBooking: Booking | undefined;
   static visibleDates: Date[] = [];
-  static scheduleObj: schedule.Schedule;
+  static scheduleObj: schedule.Schedule | undefined;
   static firstDateToShow: Date | undefined;
-  static initializeBookingMaker({ isUpdate = false }: { isUpdate?: boolean }) {
+  static initializeBookingMaker({
+    bookingForUpdate,
+  }: {
+    bookingForUpdate?: Booking;
+  }) {
+    console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
     const initialBookingMaker: BookingMaker = {
-      workerId: undefined,
+      workerId: bookingForUpdate?.workerId,
       showVerificationAlert: false,
       services: {},
-      date: undefined,
-      isUpdate: isUpdate,
-      currentPaymentType: undefined,
-      currentCurrencyCode: undefined,
-      pickMultipleServices: false,
+
+      date: bookingForUpdate?.bookingDate,
+      isUpdate: bookingForUpdate != null,
+      currentPaymentType: PaymentTypes.payment,
+      currentCurrencyCode: bookingForUpdate?.currency.code,
+      pickMultipleServices: (bookingForUpdate?.treatmentLength ?? 0) > 1,
       hasMultiTreatment: false,
       isBookingWithPaymentUpdate: false,
       currentStep: 1,
       isMultiEvent: false,
     };
 
+    bookingForUpdate?.treatments.forEach((treatment, index) => {
+      initialBookingMaker.services[treatment.id] = treatment;
+    });
+    console.log(initialBookingMaker);
+    BookingController.oldBooking = bookingForUpdate;
     bookingMakerStore.set(initialBookingMaker);
   }
 
@@ -96,6 +107,7 @@ export default class BookingController {
 
   static updateWorkerData(workerObj: WorkerModel) {
     const bookingMaker = get(bookingMakerStore);
+    console.log("rrrrrrrrrrrrrrrr", bookingMaker);
     logger.debug("Getting new data for the worker");
 
     // If treatments had changed
@@ -120,7 +132,7 @@ export default class BookingController {
 
     const currentWorker =
       BusinessInitializer.GI().workers[bookingMaker.workerId!];
-    if (currentWorker !== null) {
+    if (currentWorker != null) {
       bookingMaker.showVerificationAlert =
         showPhoneVerificationAlert(currentWorker);
     }
@@ -129,7 +141,8 @@ export default class BookingController {
     //only if there picked worker and picked service  need to update the schedule
     if (
       bookingMaker.workerId != null &&
-      Object.entries(bookingMaker.services).length > 0
+      Object.entries(bookingMaker.services).length > 0 &&
+      BookingController.scheduleObj != undefined
     ) {
       BookingController.scheduleObj.deleteEvent(
         Object.values(BookingController.timePickerObjects)
@@ -236,11 +249,7 @@ export default class BookingController {
       return;
     }
 
-    BusinessInitializer.GI().startTimesListening(
-      worker,
-      treatment.isMulti,
-      treatment.amountInAdvance > 0
-    );
+    BusinessInitializer.GI().startTimesListening(worker, treatment.isMulti);
     bookingMaker.currentStep += 1;
     bookingMakerStore.set(bookingMaker);
   }
@@ -311,11 +320,7 @@ export default class BookingController {
       return;
     }
 
-    BusinessInitializer.GI().startTimesListening(
-      worker,
-      treatment.isMulti,
-      treatment.amountInAdvance > 0
-    );
+    BusinessInitializer.GI().startTimesListening(worker, treatment.isMulti);
 
     bookingMaker.currentCurrencyCode = treatment.price!.currency.code;
     if (treatment.amountInAdvance > 0) {

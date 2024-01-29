@@ -1,3 +1,4 @@
+import { dateIsoStr } from "$lib/utils/times_utils";
 import IconData from "../general/icon_data";
 import NotifcationPayloadObject from "./notification_payload_object";
 
@@ -44,7 +45,7 @@ export default class BreakNotificationPayload extends NotifcationPayloadObject {
     const data: { [key: string]: any } = {};
 
     data["businessId"] = this.businessId;
-    data["date"] = this.date?.toString();
+    data["date"] = this.date ? dateIsoStr(this.date) : undefined;
     data["businessName"] = this.businessName;
     data["id"] = this.id;
     data["workerId"] = this.workerId;

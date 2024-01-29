@@ -90,12 +90,14 @@ export default class DeveloperHelper {
     errorType,
     exceptions,
     extras,
+    errorCode,
     strIssue,
   }: {
     userId: string;
     errorType: ErrorsTypeLog;
     exceptions: any[];
     extras: { [key: string]: any };
+    errorCode: string;
     strIssue?: string;
   }): Promise<void> {
     const error: { [key: string]: any } = {

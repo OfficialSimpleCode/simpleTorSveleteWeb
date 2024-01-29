@@ -10,7 +10,7 @@ import PaymentRequestNotificationPayload from "$lib/models/notifications/payment
 import { dateIsoStr, dateToMonthStr } from "$lib/utils/times_utils";
 import InvoiceBusinessInfo from "../invoice/invoice_business_info";
 import { PaymentObject } from "../payment_object";
-import PaymentRequestPreview from "./payment_request_preview";
+import PaymentRequestPreview from "./PaymentRequestPreview";
 import type PaymentRequestUser from "./payment_request_user";
 
 export default class PaymentRequest extends PaymentObject {
