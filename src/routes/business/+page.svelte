@@ -13,7 +13,6 @@
     loadColorFromTheme,
   } from "$lib/utils/colors";
 
-  import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
   import { computeLuminance } from "$lib/utils/general_utils";
   import ChangingImages from "./sections/ChangingImages.svelte";
   import Footer from "./sections/Footer.svelte";
@@ -28,27 +27,27 @@
   onMount(() => {
     document.documentElement.style.setProperty(
       "--p",
-      getOklachValues(loadColorFromTheme("primary", themeKey, themes)),
+      getOklachValues(loadColorFromTheme("primary", themeKey, themes))
     );
     document.documentElement.style.setProperty(
       "--b1",
-      getOklachValues(loadColorFromTheme("background", themeKey, themes)),
+      getOklachValues(loadColorFromTheme("background", themeKey, themes))
     );
     document.documentElement.style.setProperty(
       "--bc",
-      getOklachValues(theme.brightness == 0 ? "#fff" : "#000"),
+      getOklachValues(theme.brightness == 0 ? "#fff" : "#000")
     );
     document.documentElement.style.setProperty(
       "--pc",
-      getOklachValues(computeLuminance(theme.primary) > 0.5 ? "#000" : "#fff"),
+      getOklachValues(computeLuminance(theme.primary) > 0.5 ? "#000" : "#fff")
     );
     document.documentElement.style.setProperty(
       "--b2",
-      getOklachValues(loadColorFromTheme("surface", themeKey, themes)),
+      getOklachValues(loadColorFromTheme("surface", themeKey, themes))
     );
     document.documentElement.style.setProperty(
       "--b3",
-      getOklachValues(loadColorFromTheme("tertiary", themeKey, themes)),
+      getOklachValues(loadColorFromTheme("tertiary", themeKey, themes))
     );
 
     let html: HTMLHtmlElement = document.getElementsByTagName("html")[0];
@@ -61,7 +60,7 @@
     fontLinkElement.setAttribute("rel", "stylesheet");
     fontLinkElement.setAttribute(
       "href",
-      `https://fonts.googleapis.com/css?family=${theme.fontName}`,
+      `https://fonts.googleapis.com/css?family=${theme.fontName}`
     );
     head.appendChild(fontLinkElement);
   });
@@ -73,7 +72,7 @@
 
   $: storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
   $: storyImagesWidth = Math.floor(
-    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
+    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
   );
 
   // Update screenWidth on window resize
@@ -82,7 +81,7 @@
 
     storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
     storyImagesWidth = Math.floor(
-      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
+      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
     );
 
     console.log("screenHeight", screenHeight);
@@ -116,29 +115,6 @@
     </div>
     <!-- business icons links -->
     <SocialLinks />
-
-    <form on:submit|preventDefault={() => {}} class="flex flex-col gap-2">
-      <CustomTextFormField
-        placeholder="12 335 765 4"
-        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-        validationFunc={validation}
-        on:input={fun}
-      ></CustomTextFormField>
-
-      <CustomTextFormField
-        placeholder="12 335 765 4"
-        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-        validationFunc={validation}
-      ></CustomTextFormField>
-
-      <CustomTextFormField
-        placeholder="12 335 765 4"
-        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-        validationFunc={validation}
-      ></CustomTextFormField>
-
-      <button type="submit"></button>
-    </form>
 
     <!-- Display images -->
     <StoryImages></StoryImages>
