@@ -11,7 +11,7 @@
     addDuration(
       booking.currentDisplayDate,
       new Duration({ minutes: booking.totalMinutes })
-    ) < new Date() || true;
+    ) < new Date();
 </script>
 
 <div class="flex flex-col gap-1 w-full">

@@ -17,7 +17,11 @@ import { relevantHoures } from "$lib/utils/available_times_utils/relevant_hours"
 import { relevantMultiEventTime } from "$lib/utils/available_times_utils/relevant_multi_event_times";
 import { setToMidNight } from "$lib/utils/dates_utils";
 import { addDuration } from "$lib/utils/duration_utils";
-import { dateToDateStr, isHoliday } from "$lib/utils/times_utils";
+import {
+  dateStrToDate,
+  dateToDateStr,
+  isHoliday,
+} from "$lib/utils/times_utils";
 import { get } from "svelte/store";
 
 export function loadBookingMakerTimeData(
@@ -31,11 +35,11 @@ export function loadBookingMakerTimeData(
   const bookingMaker = get(bookingMakerStore);
   BookingController.visibleDates = visibleDates;
   console.log(bookingMaker);
-  if (worker === null) {
+  if (worker == null) {
     return;
   }
   // empty the current events
-  BookingController.timePickerObjects = [];
+  BookingController.timePickerObjects = {};
   //remember the first date that user saw in the screen
   if (visibleDates.length > 1) {
     BookingController.firstDateToShow = visibleDates[0];
@@ -47,9 +51,22 @@ export function loadBookingMakerTimeData(
   const daysTimes: Record<string, TimePickerObj[]> = {};
   let maxLen = 0;
   // setting the new days data
-  visibleDates.forEach((visibleDate, index) => {
-    // generate only for days the user allowed to order
 
+  // console.log(
+  //   "BookingController.worker.workerPublicData.bookingsTimes",
+  //   BookingController.worker.workerPublicData.bookingsTimes
+  // );
+  // console.log(
+  //   "BookingController.worker.recurrence.recurrenceEvents",
+  //   BookingController.worker.recurrence.recurrenceEvents
+  // );
+  visibleDates.forEach((visibleDate, index) => {
+    // if (BookingController.alreadyLoadedDates.has(dateToDateStr(visibleDate))) {
+    //   return;
+    // }
+
+    // BookingController.alreadyLoadedDates.add(dateToDateStr(visibleDate));
+    // generate only for days the user allowed to order
     if (
       visibleDate >= lastDateTemp ||
       visibleDate < setToMidNight(new Date())
@@ -136,7 +153,8 @@ export function loadBookingMakerTimeData(
   const minutesForWaitingsList = minutesForWithingList(timeIntervalHeight);
   console.log(maxLen);
   Object.entries(daysTimes).forEach(([visibleDateStr, timeList]) => {
-    const visibleDate = new Date(visibleDateStr);
+    const visibleDate = dateStrToDate(visibleDateStr);
+
     if (worker!.recurrence.vacationInDate(visibleDate) != undefined) {
       if (worker!.showVacations) {
         const newTimePickerObj = new TimePickerObj({
@@ -147,10 +165,12 @@ export function loadBookingMakerTimeData(
         newTimePickerObj.duration = new Duration({
           minutes: Math.floor(minutesForWaitingsList * 1.3),
         });
-        BookingController.timePickerObjects.push(newTimePickerObj.toJson());
+        BookingController.timePickerObjects[newTimePickerObj.id] =
+          newTimePickerObj.toJson();
       }
       return;
     }
+
     if (isHoliday(worker!, visibleDate) && worker!.closeScheduleOnHolidays) {
       const newTimePickerObj = new TimePickerObj({
         displayDate: undefined,
@@ -160,7 +180,8 @@ export function loadBookingMakerTimeData(
       newTimePickerObj.duration = new Duration({
         minutes: Math.floor(minutesForWaitingsList * 1.3),
       });
-      BookingController.timePickerObjects.push(newTimePickerObj.toJson());
+      BookingController.timePickerObjects[newTimePickerObj.id] =
+        newTimePickerObj.toJson();
       return;
     }
     const eventMinutes = Math.floor(minutesIn24Hours / maxLen);
@@ -190,7 +211,8 @@ export function loadBookingMakerTimeData(
         newTimePickerObj.from = dateToPut;
         newTimePickerObj.duration = new Duration({ minutes: minutesToAdd });
 
-        BookingController.timePickerObjects.push(newTimePickerObj.toJson());
+        BookingController.timePickerObjects[newTimePickerObj.id] =
+          newTimePickerObj.toJson();
         minutesToPresent += minutesToAdd;
       } else {
         if (
@@ -211,7 +233,8 @@ export function loadBookingMakerTimeData(
         newTimePickerObj.duration = new Duration({
           minutes: Math.ceil(minutesForWaitingsList * 1.1),
         });
-        BookingController.timePickerObjects.push(newTimePickerObj.toJson());
+        BookingController.timePickerObjects[newTimePickerObj.id] =
+          newTimePickerObj.toJson();
         minutesToPresent += Math.ceil(minutesForWaitingsList * 1.1);
       }
     });
@@ -230,7 +253,8 @@ export function loadBookingMakerTimeData(
       (newTimePickerObj.duration = new Duration({
         minutes: minutesForWaitingsList,
       })),
-        BookingController.timePickerObjects.push(newTimePickerObj.toJson());
+        (BookingController.timePickerObjects[newTimePickerObj.id] =
+          newTimePickerObj.toJson());
       return;
     }
   });

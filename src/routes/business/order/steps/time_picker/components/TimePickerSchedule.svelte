@@ -1,4 +1,8 @@
 <script lang="ts">
+  import BookingController from "$lib/controllers/booking_controller";
+  import { Duration } from "$lib/models/core/duration";
+  import { setToMidNight } from "$lib/utils/dates_utils";
+  import { addDuration } from "$lib/utils/duration_utils";
   import * as sync from "@syncfusion/ej2-base";
   import "@syncfusion/ej2-base/styles/material.css";
   import "@syncfusion/ej2-buttons/styles/material.css";
@@ -9,124 +13,76 @@
   import "@syncfusion/ej2-navigations/styles/material.css";
   import "@syncfusion/ej2-popups/styles/material.css";
   import * as schedule from "@syncfusion/ej2-schedule";
-
-  import BookingController from "$lib/controllers/booking_controller";
-  import { Duration } from "$lib/models/core/duration";
-  import { setToMidNight } from "$lib/utils/dates_utils";
-  import { addDuration, subDuration } from "$lib/utils/duration_utils";
   import { Schedule } from "@syncfusion/ej2-schedule";
   import "@syncfusion/ej2-schedule/styles/material.css";
   import "@syncfusion/ej2-splitbuttons/styles/material.css";
   import { onMount } from "svelte";
+  import { applyCategoryColor } from "../helpers/event_renderer";
+  import { loadBookingMakerTimeData } from "../helpers/load_data";
   import { onEventClick } from "../helpers/on_tap_time_obj";
   const { Week } = schedule;
 
   sync.registerLicense(
     "Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCfEx0Q3xbf1x0ZFRHallSTnZYUiweQnxTdEFjWH1ZcXVQRWBbWUxxWg=="
   );
-  var data = [
-    {
-      Id: 1,
-      Subject: "Testing",
-      StartTime: addDuration(new Date(), new Duration({ minutes: 200 })),
-      EndTime: addDuration(new Date(), new Duration({ minutes: 220 })),
-      IsAllDay: false,
-    },
-    {
-      Id: 2,
-      Subject: "Vacation",
-      StartTime: new Date(),
-      EndTime: addDuration(new Date(), new Duration({ minutes: 60 })),
-      IsAllDay: false,
-    },
-  ];
-  let scheduleObj: schedule.Schedule;
+
   onMount(() => {
     Schedule.Inject(Week);
-    scheduleObj = new schedule.Schedule({
+    BookingController.scheduleObj = new schedule.Schedule({
       width: "100%",
       height: "100%",
       views: ["Week"],
       workHours: { highlight: false },
       showQuickInfo: false,
       eventClick: onEventClick,
-      minDate: setToMidNight(
-        subDuration(new Date(), new Duration({ days: 1 }))
-      ),
+      minDate: setToMidNight(new Date()),
       timeScale: {},
-
       maxDate: addDuration(
         new Date(),
         new Duration({ days: BookingController.worker.daysToAllowBookings })
       ),
 
       eventSettings: {
-        dataSource: data,
-        allowAdding: false,
-        allowDeleting: false,
+        fields: {
+          id: "id",
+          subject: { name: "displayDate" },
+          startTime: { name: "from" },
+          endTime: { name: "to" },
+        },
+        enableMaxHeight: true,
+
         allowEditing: false,
       },
+      eventRendered: (args: schedule.EventRenderedArgs) =>
+        applyCategoryColor(args),
     });
 
-    scheduleObj.appendTo("#schedule");
+    BookingController.scheduleObj.appendTo("#schedule");
 
-    // loadBookingMakerTimeData(
-    //   scheduleObj.getCurrentViewDates(),
-    //   BookingController.worker,
-    //   [60]
-    // );
-    // scheduleObj.addEvent(BookingController.timePickerObjects);
-    // scheduleObj.actionComplete = (args) => {
-    //   if (
-    //     args.requestType === "viewNavigate" ||
-    //     args.requestType === "dateNavigate"
-    //   ) {
-    //     console.log(scheduleObj.getCurrentViewDates());
+    //when the user interact with the schedule and navigate between
+    //dates need to load the new dates
+    BookingController.scheduleObj.actionComplete = (args) => {
+      if (
+        args.requestType === "viewNavigate" ||
+        args.requestType === "dateNavigate"
+      ) {
+        //delete the exsit events
+        BookingController.scheduleObj.deleteEvent(
+          Object.values(BookingController.timePickerObjects)
+        );
+        loadBookingMakerTimeData(
+          BookingController.scheduleObj.getCurrentViewDates(),
+          BookingController.worker,
+          [30]
+        );
 
-    //     loadBookingMakerTimeData(
-    //       scheduleObj.getCurrentViewDates(),
-    //       BookingController.worker,
-    //       [60]
-    //     );
-    //     console.log(
-    //       "BookingController.timePickerObjects",
-    //       BookingController.timePickerObjects
-    //     );
-    //     scheduleObj.addEvent(BookingController.timePickerObjects);
-    //   }
-    // };
-    // console.log(BookingController.timePickerObjects);
+        BookingController.scheduleObj.addEvent(
+          Object.values(BookingController.timePickerObjects)
+        );
+      }
+    };
+    console.log(BookingController.timePickerObjects);
   });
-  function add() {
-    console.log(new Date());
-    console.log(addDuration(new Date(), new Duration({ minutes: 60 })));
-    let Data = [
-      {
-        Id: 3,
-        Subject: "",
-        StartTime: new Date(),
-        EndTime: addDuration(new Date(), new Duration({ minutes: 60 })),
-      },
-      {
-        Id: 4,
-        Subject: "",
-        StartTime: new Date(),
-        EndTime: addDuration(new Date(), new Duration({ minutes: 60 })),
-      },
-    ];
-    scheduleObj.addEvent(Data);
-  }
 </script>
 
 <div id="schedule"></div>
-<div
-  role="button"
-  tabindex="0"
-  class="btn btn-ghost btn-circle"
-  on:click={() => {
-    add();
-  }}
-  on:keypress={() => {
-    add();
-  }}
-></div>

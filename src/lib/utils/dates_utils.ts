@@ -6,7 +6,7 @@ import { Duration } from "$lib/models/core/duration";
 import type MultiBooking from "$lib/models/multi_booking/multi_booking";
 import { addDays, format, parse, startOfWeek } from "date-fns";
 import { subDuration } from "./duration_utils";
-import { dateToMonthStr } from "./times_utils";
+import { dateToMonthStr, dateToUtc } from "./times_utils";
 
 export function addDurationFromDateString(
   date: string,
@@ -142,17 +142,18 @@ export function laterDate(date1: Date | null, date2: Date | null): Date | null {
 }
 
 export function dateToRemindBooking(booking: Booking, minutes: number): Date {
-  //TODO utc
-  return subDuration(booking.bookingDate, new Duration({ minutes: minutes }));
+  return subDuration(
+    dateToUtc(booking.bookingDate),
+    new Duration({ minutes: minutes })
+  );
 }
 
 export function dateToRemindMultiBooking(
   multiBooking: MultiBooking,
   minutes: number
 ): Date {
-  //TODO utc
   return subDuration(
-    multiBooking.bookingDate,
+    dateToUtc(multiBooking.bookingDate),
     new Duration({ minutes: minutes })
   );
 }

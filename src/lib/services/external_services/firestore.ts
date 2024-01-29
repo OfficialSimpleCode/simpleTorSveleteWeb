@@ -568,6 +568,13 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     try {
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);
       const docRef = doc(collectionRef, docId);
+      //in type script firestore the listner wont return a doc when  created so need to
+      //call to the doc manually firstly
+      getDoc(docRef).then((doc) => {
+        if (doc.exists()) {
+          onChanged(doc);
+        }
+      });
       return onSnapshot(docRef, onChanged);
     } catch (e) {
       if (e instanceof Error) {

@@ -42,7 +42,7 @@ export default class UserBookings {
     this.recurrence = {};
     Object.entries(json).forEach(([bookingId, bookingJson]) => {
       const booking = Booking.fromJson(bookingJson, bookingId);
-      if (booking.cancelDate !== null) {
+      if (booking.cancelDate !== undefined) {
         return;
       }
       this.recurrence![bookingId] = booking;

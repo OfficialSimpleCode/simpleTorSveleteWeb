@@ -63,41 +63,41 @@ export class VerificationHelper {
     });
   }
 
-  //   public async sendSmsForFirebaseVerification(
-  //     completePhone: string,
-  //     onCodeSent: (verificationId: string) => void,
-  //     onFailed: (
-  //       verificationId: string,
-  //       exception: FirebaseAuthException,
-  //       startDate: Date | undefined,
-  //       endDate: Date
-  //     ) => void,
-  //     verificationCompleted: (credential: PhoneAuthCredential) => void
-  //   ): Promise<void> {
-  //     await this.verificationRepo.sendSmsForFirebaseVerification({
-  //       completePhone,
-  //       onCodeSent,
-  //       onFailed,
-  //       verificationCompleted,
-  //     });
-  //   }
+  public async sendSmsForFirebaseVerification(
+    completePhone: string,
+    onCodeSent: (verificationId: string) => void,
+    onFailed: (
+      verificationId: string,
+      exception: Error,
+      startDate: Date | undefined,
+      endDate: Date
+    ) => void,
+    verificationCompleted: (credential: PhoneAuthCredential) => void
+  ): Promise<void> {
+    await this.verificationRepo.sendSmsForFirebaseVerification({
+      completePhone,
+      onCodeSent,
+      onFailed,
+      verificationCompleted,
+    });
+  }
 
-  //   public async sendSmsWithExternalProvider(
-  //     completePhone: string,
-  //     onCodeSent: (verificationId: string) => void,
-  //     onFailed: (
-  //       verificationId: string,
-  //       error: Errors,
-  //       startDate: Date | undefined,
-  //       endDate: Date
-  //     ) => void
-  //   ): Promise<void> {
-  //     await this.verificationRepo.sendSmsWithExternalProvider({
-  //       completePhone,
-  //       onCodeSent,
-  //       onFailed,
-  //     });
-  //   }
+  // public async sendSmsWithExternalProvider(
+  //   completePhone: string,
+  //   onCodeSent: (verificationId: string) => void,
+  //   onFailed: (
+  //     verificationId: string,
+  //     error: Errors,
+  //     startDate: Date | undefined,
+  //     endDate: Date
+  //   ) => void
+  // ): Promise<void> {
+  //   await this.verificationRepo.sendSmsWithExternalProvider({
+  //     completePhone,
+  //     onCodeSent,
+  //     onFailed,
+  //   });
+  // }
 
   public get userId(): string {
     return this.verificationRepo.userId;
@@ -148,9 +148,11 @@ export class VerificationHelper {
   async handleLogin({
     provider,
     loginType,
+    otp = "",
   }: {
     provider: AuthProvider;
     loginType: LoginType;
+    otp?: string;
   }): Promise<boolean> {
     switch (provider) {
       case AuthProvider.Apple:
@@ -163,13 +165,12 @@ export class VerificationHelper {
         return await this._signInWithFacebook(loginType);
 
       case AuthProvider.Phone:
-        return false;
-      // return this.phoneVerificationWithFirebase
-      //   ? await this._loginWithOtp({
-      //       loginType,
-      //       otp,
-      //       autocredential,
-      //     })
+        return await this._loginWithOtp({
+          loginType,
+          otp,
+        });
+      // this.phoneVerificationWithFirebase
+      //   ?
       //   : await this._verifyOTPWithExternalProvider({ otp });
     }
   }
@@ -189,17 +190,14 @@ export class VerificationHelper {
   private async _loginWithOtp({
     loginType,
     otp,
-    autocredential,
   }: {
     loginType: LoginType;
     otp: string;
-    autocredential: PhoneAuthCredential | undefined;
   }): Promise<boolean> {
     return await this.verificationRepo.signInWithOtp({
       loginType,
       verificationId: this.verificationID,
       otp,
-      autocredential,
     });
   }
 

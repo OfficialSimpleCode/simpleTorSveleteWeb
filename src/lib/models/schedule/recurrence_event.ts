@@ -1,5 +1,5 @@
 import { monthDifference } from "$lib/utils/dates_utils";
-import { addDuration } from "$lib/utils/duration_utils";
+import { addDuration, diffDuration } from "$lib/utils/duration_utils";
 import { setEquals } from "$lib/utils/general_utils";
 import { durationToString } from "$lib/utils/string_utils";
 import {
@@ -451,11 +451,11 @@ export default class RecurrenceEvent {
       } else if (this.freqRecurrence === FreqRecurrence.months) {
         return addMonths(this.start!, (this.repeats - 1) * this.interval);
       } else {
-        return new Date(
-          this.start!.getTime() +
-            new Duration({
-              minutes: rangeBetween.inMinutes * (this.repeats - 1),
-            }).inMilliseconds
+        return addDuration(
+          this.start!,
+          new Duration({
+            minutes: rangeBetween.inMinutes * (this.repeats - 1),
+          })
         );
       }
     }
@@ -534,9 +534,7 @@ export default class RecurrenceEvent {
       minutes:
         freqRecurrenceToDuration[this.freqRecurrence].inMinutes * this.interval,
     });
-    const intervalFromStart = new Duration({
-      milliseconds: date.getTime() - setToMidNight(this.start!).getTime(),
-    });
+    const intervalFromStart = diffDuration(date, setToMidNight(this.start!));
     const startWeekDay = this.start!.getDay() === 7 ? 0 : this.start!.getDay();
     const dateWeekDay = date.getDay() === 7 ? 0 : date.getDay();
     if (this.freqRecurrence === FreqRecurrence.weeks) {
@@ -560,14 +558,17 @@ export default class RecurrenceEvent {
   }
 
   addRangeBetween(date: Date): Date {
-    const utcDate = new Date(date.getUTCDate());
+    //TODO UTC
+    //we need to convert to utc to avoid day light saving time
+    // const utcDate = addDuration(
+    //   dateToUtc(date),
+    //   new Duration({ minutes: date.getTimezoneOffset() })
+    // );
+
     if (this.freqRecurrence === FreqRecurrence.months) {
-      return addMonths(utcDate, this.interval);
+      return addMonths(date, this.interval);
     } else {
-      return addDuration(
-        utcDate,
-        new Duration({ minutes: this.rangeBetweenInterval.inMinutes })
-      );
+      return addDuration(date, this.rangeBetweenInterval);
     }
   }
 
@@ -625,17 +626,17 @@ export default class RecurrenceEvent {
     if (this.endOfTheEvent !== undefined && date > this.endOfTheEvent!) {
       return undefined;
     }
+
     if (
       this.start === undefined ||
       (date < this.start! &&
         needToBeAfterStart &&
         this.isAccureInDate({ date: this.start! }))
     ) {
-      return this.start ?? undefined;
+      return this.start;
     }
-    const delta = new Duration({
-      milliseconds: date.getTime() - this.start!.getTime(),
-    }).inDays;
+
+    const delta = diffDuration(date, this.start!).inDays;
 
     if (this.freqRecurrence === FreqRecurrence.weeks) {
       const jumpsToReachDate = Math.floor(
@@ -650,8 +651,9 @@ export default class RecurrenceEvent {
 
       let sunday: Date = getStartOfWeek(nearestDate);
       for (const dayToCheck of this.weekDays) {
-        const dateToCheck = new Date(
-          sunday.getTime() + new Duration({ days: dayToCheck }).inMilliseconds
+        const dateToCheck = addDuration(
+          sunday,
+          new Duration({ days: dayToCheck })
         );
 
         if (
@@ -693,10 +695,13 @@ export default class RecurrenceEvent {
       nearestDate = this.addRangeBetween(nearestDate);
     }
     const end = this.endOfTheEvent;
+
     while (
       !this.isAccureInDate({ date: nearestDate }) &&
       (end === undefined || nearestDate < end)
     ) {
+      console.log(this.isAccureInDate({ date: nearestDate }));
+
       nearestDate = this.addRangeBetween(nearestDate);
     }
     if (end === undefined || nearestDate <= end) {

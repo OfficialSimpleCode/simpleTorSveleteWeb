@@ -106,8 +106,8 @@ export function minutesToJumpOverForbbiden(
       if (status === "STRIKE") {
         // If strike, the end of forbidden time must be after the start of the segment
         const currentDifference: Duration = diffDuration(
-          endSegment,
-          forbiddenTimes[pointer + 1]
+          forbiddenTimes[pointer + 1],
+          startSegment
         );
         // Set the jump to the highest option
         minutesToJump = Math.max(minutesToJump, currentDifference.inMinutes);
@@ -216,6 +216,13 @@ export function getJump(
       ? worker.longestBookingTime
       : worker.shortBookingTime;
 
+  console.log(
+    "worker.longestBookingTime",
+    worker.longestBookingTime,
+    "worker.shortBookingTime",
+    worker.shortBookingTime
+  );
+
   /* If the default jump is passing over the next forbidden - 
     coming back to end forbidden to save holes in schedule */
   const afterAdding = addDuration(
@@ -231,11 +238,10 @@ export function getJump(
 
   const nextForbidden = forbbidenTimes[indexesInForbidden[0]];
   const endForbidden = forbbidenTimes[indexesInForbidden[0] + 1];
-  if (
-    nextForbidden.getTime() > currentTime.getTime() &&
-    nextForbidden.getTime() < afterAdding.getTime()
-  ) {
-    return endForbidden.getTime() - currentTime.getTime();
+  if (nextForbidden > currentTime && nextForbidden < afterAdding) {
+    return new Duration({
+      milliseconds: endForbidden.getTime() - currentTime.getTime(),
+    }).inMinutes;
   }
 
   return defaultAdding;

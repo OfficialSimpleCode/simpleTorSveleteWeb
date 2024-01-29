@@ -21,12 +21,12 @@ export function sortMyBookings(): Booking[] {
       if (!booking.recurrenceEvent) {
         return;
       }
-
+      console.log("eeeeeeeeeeeeeee");
       const dateOfNearestBooking =
         booking.recurrenceEvent.nearestFutureAccurenceDate(new Date(), {
           needToBeAfterStart: false,
         });
-
+      console.log("2222222222222222222");
       if (!dateOfNearestBooking) {
         return;
       }

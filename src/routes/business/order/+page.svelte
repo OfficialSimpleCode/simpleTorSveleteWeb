@@ -5,7 +5,7 @@
   import BookingController, {
     bookingMakerStore,
   } from "$lib/controllers/booking_controller";
-  import { translate, _ } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import FinishScreen from "./steps/finish_screen/FinishScreen.svelte";
   import ServicePicker from "./steps/service_picker/ServicePicker.svelte";
   import TimePickerSchedule from "./steps/time_picker/components/TimePickerSchedule.svelte";
@@ -67,21 +67,22 @@
       </button>
     {/each}
   </ul>
-
-  {#if $bookingMakerStore.currentStep == 1}
-    <WorkerPicker />
-  {:else if $bookingMakerStore.currentStep == 2}
-    <ServicePicker />
-  {:else if $bookingMakerStore.currentStep == 3}
-    <TimePickerSchedule />
-  {:else if $bookingMakerStore.currentStep == 4}
-    <FinishScreen />
-  {/if}
-  <div class="pb-4 w-[90%] mt-3">
-    <button
-      class="btn btn-outline sm:hidden w-full"
-      on:click={() => history.back()}
-      >{translate("cancel", $_)}
-    </button>
+  <div class="flex flex-col w-full lg:max-w-[1000px] items-center">
+    {#if $bookingMakerStore.currentStep == 1}
+      <WorkerPicker />
+    {:else if $bookingMakerStore.currentStep == 2}
+      <ServicePicker />
+    {:else if $bookingMakerStore.currentStep == 3}
+      <TimePickerSchedule />
+    {:else if $bookingMakerStore.currentStep == 4}
+      <FinishScreen />
+    {/if}
+    <div class="pb-4 w-[90%] mt-3">
+      <button
+        class="btn btn-outline sm:hidden w-full"
+        on:click={() => history.back()}
+        >{translate("cancel", $_)}
+      </button>
+    </div>
   </div>
 </main>

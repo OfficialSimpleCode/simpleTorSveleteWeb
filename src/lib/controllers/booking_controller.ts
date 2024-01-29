@@ -9,8 +9,18 @@ import WorkerModel from "$lib/models/worker/worker_model";
 import { ShowToast } from "$lib/stores/ToastManager";
 import { sendMessage } from "$lib/utils/notifications_utils";
 import { translate } from "$lib/utils/translate";
+import "@syncfusion/ej2-base/styles/material.css";
+import "@syncfusion/ej2-buttons/styles/material.css";
+import "@syncfusion/ej2-calendars/styles/material.css";
+import "@syncfusion/ej2-dropdowns/styles/material.css";
+import "@syncfusion/ej2-inputs/styles/material.css";
+import "@syncfusion/ej2-lists/styles/material.css";
+import "@syncfusion/ej2-navigations/styles/material.css";
+import "@syncfusion/ej2-popups/styles/material.css";
+import * as schedule from "@syncfusion/ej2-schedule";
 
 import { get, writable } from "svelte/store";
+import { loadBookingMakerTimeData } from "../../routes/business/order/steps/time_picker/helpers/load_data";
 interface BookingMaker {
   workerId?: string;
   showVerificationAlert: boolean;
@@ -28,8 +38,10 @@ interface BookingMaker {
 export const bookingMakerStore = writable<BookingMaker>();
 
 export default class BookingController {
-  static timePickerObjects: Record<string, any>[] = [];
+  static timePickerObjects: Record<string, Record<string, any>> = {};
+
   static visibleDates: Date[] = [];
+  static scheduleObj: schedule.Schedule;
   static firstDateToShow: Date | undefined;
   static initializeBookingMaker({ isUpdate = false }: { isUpdate?: boolean }) {
     const initialBookingMaker: BookingMaker = {
@@ -46,6 +58,7 @@ export default class BookingController {
       currentStep: 1,
       isMultiEvent: false,
     };
+
     bookingMakerStore.set(initialBookingMaker);
   }
 
@@ -66,7 +79,7 @@ export default class BookingController {
 
     // Resume the current worker listener
     const currentWorker = BusinessInitializer.GI().workers[newWorkerId];
-    if (currentWorker !== null && currentWorker !== undefined) {
+    if (currentWorker != null) {
       BusinessInitializer.GI().startWorkerListening(currentWorker);
     }
 
@@ -113,6 +126,23 @@ export default class BookingController {
     }
 
     bookingMakerStore.set(bookingMaker);
+    //only if there picked worker and picked service  need to update the schedule
+    if (
+      bookingMaker.workerId != null &&
+      Object.entries(bookingMaker.services).length > 0
+    ) {
+      BookingController.scheduleObj.deleteEvent(
+        Object.values(BookingController.timePickerObjects)
+      );
+      loadBookingMakerTimeData(
+        BookingController.scheduleObj.getCurrentViewDates(),
+        BookingController.worker,
+        [30]
+      );
+      BookingController.scheduleObj.addEvent(
+        Object.values(BookingController.timePickerObjects)
+      );
+    }
   }
 
   static get bookingFromValues(): Booking {

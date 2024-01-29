@@ -249,7 +249,7 @@ export default class Treatment {
         );
       }
     }
-
+    newTreatment.totalMinutes = newTreatment.totalTotalMinutes;
     return newTreatment;
   }
 

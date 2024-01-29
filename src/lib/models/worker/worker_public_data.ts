@@ -1,7 +1,13 @@
 import { dayLightSavingTimes } from "$lib/consts/schedule";
-import { dateToDateStr, dateToTimeStr } from "$lib/utils/times_utils";
+import { addDuration, subDuration } from "$lib/utils/duration_utils";
+import {
+  dateStrToDate,
+  dateToDateStr,
+  dateToTimeStr,
+} from "$lib/utils/times_utils";
 
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
+import { Duration } from "../core/duration";
 
 export default class WorkerPublicData {
   bookingsTimes: Record<string, Record<string, number>> = {};
@@ -34,16 +40,15 @@ export default class WorkerPublicData {
 
     // Assuming dayLightSavingTimes is defined somewhere
     dayLightSavingTimes.forEach((date) => {
-      date = new Date(date.getTime() + 60 * 60 * 1000); // Add 1 hour
+      date = addDuration(date, new Duration({ hours: 1 })); // Add 1 hour
       this.bookingsTimes[dateToDateStr(date)] = { [dateToTimeStr(date)]: 60 };
     });
 
     if (json["bookingsTimes"] != undefined) {
       Object.entries<Record<string, any>>(json["bookingsTimes"]!).forEach(
         ([dateString, times]) => {
-          const date = new Date(dateString);
-          const lastWeek = new Date();
-          lastWeek.setDate(lastWeek.getDate() - 7);
+          const date = dateStrToDate(dateString);
+          const lastWeek = subDuration(new Date(), new Duration({ days: 7 }));
 
           if (date >= lastWeek && Object.keys(times).length != 0) {
             this.bookingsTimes[dateString] = {};
