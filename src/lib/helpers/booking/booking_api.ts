@@ -12,7 +12,7 @@ export interface BookingApi {
     workerAction: boolean;
     dateForRecurrenceChild?: Date;
     checkForUpdate?: boolean;
-  }): Promise<Booking | null>;
+  }): Promise<Booking | undefined>;
 
   // Check booking date validity.
   checkBookingDateValidity(params: {

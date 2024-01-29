@@ -12,3 +12,40 @@ export function emailValidation(email: string | null): string | null {
 
   return null;
 }
+
+export function nameValidation(
+  name: string | null,
+  options: { withoutTranslate?: boolean } = {}
+): string | null {
+  const withoutTranslate = options.withoutTranslate || false;
+
+  if (name === null) return name;
+
+  if (name.includes("&&")) {
+    return withoutTranslate ? "" : translate("illegalName") + " - &&";
+  }
+
+  if (name.includes("~")) {
+    return withoutTranslate ? "" : translate("illegalName") + " - ~";
+  }
+
+  if (name === "guest") {
+    return withoutTranslate ? "" : translate("illegalName") + " - guest";
+  }
+
+  if (name.length > 30 || name.length < 2) {
+    return withoutTranslate ? "" : translate("illegalName");
+  }
+
+  if (name.length > 15 && !name.includes(" ")) {
+    return withoutTranslate ? "" : translate("illegalName");
+  }
+
+  for (let i = 0; i < Math.min(name.length, 2); i++) {
+    if (name[i] === " ") {
+      return withoutTranslate ? "" : translate("illegalName");
+    }
+  }
+
+  return null;
+}

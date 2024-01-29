@@ -35,13 +35,13 @@
       return;
     }
 
-    // if (stepNumber === 4 && $bookingMakerStore.date === undefined) {
-    //   ShowToast({
-    //     text: translate("firstPickDate"),
-    //     status: "warning",
-    //   });
-    //   return;
-    // }
+    if (stepNumber === 4 && $bookingMakerStore.date === undefined) {
+      ShowToast({
+        text: translate("firstPickDate"),
+        status: "warning",
+      });
+      return;
+    }
 
     $bookingMakerStore.currentStep = stepNumber;
   }

@@ -5,14 +5,14 @@
 
   export let placeholder: string;
   export let pattern: string;
-  export let validationFunc: (value: string) => string;
+  export let validationFunc: (value: string) => string | null;
   export let isRequired: boolean = false;
   export let lableTranslateKey: string = "";
   export let type: InputOptions = InputOptions.text;
 
-  let value = "";
+  export let value = "";
   let errorMessage = "";
-  let validationResp = "";
+  let validationResp: string | null = "";
 
   const dispatch = createEventDispatcher();
   function handleInput(
@@ -25,12 +25,12 @@
     validationResp = validationFunc(inputValue);
 
     // display error onlt if it isn't empty
-    errorMessage = inputValue === "" ? "" : validationResp;
+    errorMessage = inputValue === "" ? "" : validationResp ?? "";
 
     // prepearing the object
     const eventResp: TextFieldEvent = {
       value: inputValue,
-      isValid: validationResp === "" && inputValue.length > 0,
+      isValid: validationResp == null && inputValue.length > 0,
     };
     // update the listeners field value change
     dispatch("valueChange", eventResp);

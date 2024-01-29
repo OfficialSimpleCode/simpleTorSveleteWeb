@@ -16,6 +16,7 @@ export class VerificationHelper {
   public currentAuthProvider?: AuthProvider;
   public verificationID: string = "";
   public submitedPhone: string = "";
+
   public lastVerificationUnix: number = 0;
   public currentCredential?: PhoneAuthCredential;
   public phoneVerificationWithFirebase: boolean = true;

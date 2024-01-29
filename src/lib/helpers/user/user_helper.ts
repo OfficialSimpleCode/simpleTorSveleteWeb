@@ -87,7 +87,7 @@ export default class UserHelper {
       revenueCatId: v4(),
       gender,
     });
-
+    console.log("currentUser", currentUser);
     currentUser.authProviders = authProvider
       ? new Map([[authProvider, new Date()]])
       : new Map();

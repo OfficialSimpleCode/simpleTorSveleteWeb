@@ -197,7 +197,6 @@ export default class BookingHelper {
     newWorker,
     oldWorker,
     forceUpdate = false,
-    isChangeDuration = false,
     oldBookingDateForReccurence,
     noteText,
     newClientNote = "",
@@ -278,6 +277,7 @@ export default class BookingHelper {
       })
       .then(async (value) => {
         if (value) {
+          console.log("value", value);
           //   if (bookingListener) {
           //     bookingListener.value = newBooking;
           //     bookingListener.notifyListeners();

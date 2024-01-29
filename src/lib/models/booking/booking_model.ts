@@ -349,6 +349,8 @@ export default class Booking extends ScheduleItem {
       if (json["bookingDate"] != null) {
         newBooking.bookingDate = new Date(json["bookingDate"]) || new Date(0);
       }
+      console.log(newBooking.bookingDate);
+      console.log(json["bookingDate"]);
       if (json["treatments"] != null) {
         newBooking.treatments = new Map();
         let index = 0;
@@ -937,7 +939,7 @@ export default class Booking extends ScheduleItem {
         }
       }
     });
-    this.debts = { ...oldBooking.debts };
+    this.debts = new Map(oldBooking.debts);
     this.isUserExist = oldBooking.isUserExist;
     this.createdAt = oldBooking.createdAt;
     this.lastTimeNotifyOnDebt = oldBooking.lastTimeNotifyOnDebt;
@@ -962,7 +964,7 @@ export default class Booking extends ScheduleItem {
     this.showPhoneAlert = worker.notifications.showPhoneAlert;
     this.showAdressAlert = worker.notifications.showAdressAlert;
     this.adress = business.adress;
-    this.invoices = { ...oldBooking.invoices };
+
     this.businessName = business.shopName;
     this.bookingId =
       oldBooking.bookingId === "" || oldBooking.recurrenceEvent != undefined
@@ -985,13 +987,17 @@ export default class Booking extends ScheduleItem {
     }
     this.needCancel = oldBooking.needCancel;
     this.finishInvoices = oldBooking.finishInvoices;
+    this.invoices = new Map();
+    oldBooking.invoices.forEach((invoice, id) => {
+      this.invoices.set(id, BookingInvoiceData.fromBookingInvoiceData(invoice));
+    });
     this.transactions = new Map();
-    for (const [id, transaction] of Object.entries(oldBooking.transactions)) {
+    oldBooking.transactions.forEach((transaction, id) => {
       this.transactions.set(
         id,
         BookingTransactionModel.fromTransaction(transaction)
       );
-    }
+    });
   }
 
   sameTreatments(other: Booking): boolean {

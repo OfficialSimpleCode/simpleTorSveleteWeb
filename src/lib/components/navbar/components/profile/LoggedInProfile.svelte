@@ -5,6 +5,8 @@
 
   import { _ } from "svelte-i18n";
 
+  import { userStore } from "$lib/stores/User";
+  import { imageByGender } from "$lib/utils/images_utils";
   import PurchesesDialog from "../../PurchesesDialog.svelte";
   import ProfileDialog from "./components/ProfileDialog.svelte";
 
@@ -35,10 +37,7 @@
 <div class="dropdown dropdown-end">
   <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
     <div class="w-10 rounded-full">
-      <img
-        alt="profile"
-        src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-      />
+      <img alt="profile" src={imageByGender($userStore.gender)} />
     </div>
   </div>
   <ul

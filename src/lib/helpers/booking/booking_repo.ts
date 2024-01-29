@@ -9,7 +9,6 @@ import {
   customersDataDoc,
   dataCollection,
   dataDoc,
-  paymentsRequestsPreviewsCollection,
   recurrenceBookingsDoc,
   recurrenceEventsDoc,
   usersCollection,
@@ -28,7 +27,6 @@ import {
   dateToDateStr,
   dateToDayStr,
   dateToMonthStr,
-  dateToTimeStr,
   setTo1970,
   setToMidNight,
 } from "$lib/utils/times_utils";
@@ -50,8 +48,8 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     bookingToUpdate: Booking;
     dateForRecurrenceChild?: Date;
     checkForUpdate?: boolean;
-  }): Promise<Booking | null> {
-    let updatedBooking: Booking | null = null;
+  }): Promise<Booking | undefined> {
+    let updatedBooking: Booking | undefined;
 
     await super
       .transactionGet(
@@ -80,11 +78,11 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         checkForUpdate,
         bookingToUpdate,
       });
-      return validResp ? updatedBooking : null;
+      return validResp ? updatedBooking : undefined;
     } else {
       AppErrorsHelper.GI().details = "";
       AppErrorsHelper.GI().error = Errors.workerDeleteTheBookingMeanwhile;
-      return null;
+      return undefined;
     }
   }
 
@@ -340,7 +338,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         transaction: transaction,
         bookingToUpdate: booking,
       });
-      if (updatedBooking === null) {
+      if (updatedBooking == null) {
         return false;
       } else {
         booking.bookingDate = booking.bookingDate;
@@ -424,7 +422,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         bookingToUpdate: booking,
       });
 
-      if (updatedBooking === null) {
+      if (updatedBooking == null) {
         return false;
       } else {
         booking.bookingDate = booking.bookingDate;
@@ -467,7 +465,6 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
   }): Promise<boolean> {
     const oldBookingDateStr = dateToDateStr(oldBooking.bookingDate);
     const newBookingDateStr = dateToDateStr(newBooking.bookingDate);
-    const bookingTime = dateToTimeStr(newBooking.bookingDate);
 
     const transacionCommands = async (transaction: any): Promise<any> => {
       const updatedBooking = await this.getUpdatedBookingDate({
@@ -475,7 +472,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         bookingToUpdate: oldBooking,
         dateForRecurrenceChild: oldBookingDateForReccurence,
       });
-      if (updatedBooking === null) {
+      if (updatedBooking == null) {
         return false;
       } else {
         oldBooking.bookingDate = oldBooking.bookingDate;
@@ -555,8 +552,6 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         newBooking: newBooking,
         oldBookingDateForReccurence: oldBookingDateForReccurence,
       });
-
-      this.updateBookingPaymentRequest(transaction, oldBooking, newBooking);
 
       return true;
     };
@@ -651,21 +646,22 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       return;
     }
     const formatedNewCustomrsData: { [key: string]: any } = {};
-    if (newBookingCustomerData.lastBookingsDate !== null) {
+    if (newBookingCustomerData.lastBookingsDate != null) {
       formatedNewCustomrsData[
         `data.${newBookingCustomerData.customerUuid}.lastBookingsDate`
       ] = dateIsoStr(newBookingCustomerData.lastBookingsDate);
     }
-    if (newBookingCustomerData.firstBookingsDate !== null) {
+    if (newBookingCustomerData.firstBookingsDate != null) {
       formatedNewCustomrsData[
         `data.${newBookingCustomerData.customerUuid}.firstBookingsDate`
       ] = dateIsoStr(newBookingCustomerData.firstBookingsDate);
     }
-    if (newBookingCustomerData.userFirstBookingsDate !== null) {
+    if (newBookingCustomerData.userFirstBookingsDate != null) {
       formatedNewCustomrsData[
         `data.${newBookingCustomerData.customerUuid}.userFirstBookingsDate`
       ] = dateIsoStr(newBookingCustomerData.userFirstBookingsDate);
     }
+    console.log(formatedNewCustomrsData);
     this.transactionUpdateMultipleFieldsAsMap({
       transaction: transaction,
       path: `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}/${newBooking.workerId}/${dataCollection}`,
@@ -687,8 +683,8 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     const oldBookingMonth = dateToMonthStr(oldBooking.bookingDate);
     const newBookingsEventsData: { [key: string]: any } = {};
     if (
-      oldBooking.recurrenceEvent != undefined &&
-      oldBookingDateForReccurence != undefined
+      oldBooking.recurrenceEvent != null &&
+      oldBookingDateForReccurence != null
     ) {
       const recurrenceData: { [key: string]: any } = {};
       oldBooking.bookingsEventsAsJson.forEach((timeId, _) => {
@@ -719,7 +715,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       return;
     }
     let oldBookingsEventsData: Record<string, any> = {};
-    oldBooking.bookingsEventsAsJson.forEach((time, _) => {
+    oldBooking.bookingsEventsAsJson.forEach((_, time) => {
       oldBookingsEventsData[`${oldBookingDay}.${time}`] = null;
     });
     if (
@@ -746,7 +742,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         data: newBookingsEventsData,
       });
     } else {
-      newBooking.bookingsEventsAsJson.forEach((time, event) => {
+      newBooking.bookingsEventsAsJson.forEach((event, time) => {
         newBookingsEventsData[`${newBookingDay}.${time}`] = event;
       });
       oldBookingsEventsData = {
@@ -762,26 +758,6 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     }
   }
 
-  updateBookingPaymentRequest(
-    transaction: Transaction,
-    oldBooking: Booking,
-    newBooking: Booking
-  ): void {
-    if (
-      oldBooking.paymentRequest === undefined ||
-      newBooking.paymentRequest === undefined
-    ) {
-      return;
-    }
-    this.transactionUpdateAsMap({
-      transaction: transaction,
-      path: paymentsRequestsPreviewsCollection,
-      docId: newBooking.paymentRequest!.id,
-      fieldName: "bookingReference",
-      value: newBooking.toBookingReferencePaymentObj.toJson(),
-    });
-  }
-
   updateBookingsTimes(
     transaction: Transaction,
     oldBooking: Booking,
@@ -792,7 +768,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
   ): void {
     //add the new data
     const newTreatmentsData: { [key: string]: any } = {};
-    Object.entries(newBooking.bookingWorkTimes).forEach(([time, duration]) => {
+    newBooking.bookingWorkTimes.forEach((duration, time) => {
       newTreatmentsData[`bookingsTimes.${newBookingDateStr}.${time}`] =
         duration;
     });
@@ -811,8 +787,8 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       return;
     }
     //delete the old data
-    const oldTreatmentsData: { [key: string]: any } = {};
-    Object.entries(oldBooking.bookingWorkTimes).forEach(([time, duration]) => {
+    let oldTreatmentsData: { [key: string]: any } = {};
+    oldBooking.bookingWorkTimes.forEach((_, time) => {
       oldTreatmentsData[`bookingsTimes.${oldBookingDateStr}.${time}`] = null;
     });
     //case that the new and the old are not in the same doc
@@ -833,7 +809,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       });
     } else {
       //case that the new and the old are in the same doc
-      Object.assign(oldTreatmentsData, newTreatmentsData);
+      oldTreatmentsData = Object.assign(oldTreatmentsData, newTreatmentsData);
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
         path: `${buisnessCollection}/${newBooking.buisnessId}/${workersCollection}/${newBooking.workerId}/${dataCollection}`,

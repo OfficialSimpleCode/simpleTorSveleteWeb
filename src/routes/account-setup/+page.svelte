@@ -1,93 +1,75 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
+  import { base } from "$app/paths";
   import CustomPhoneField from "$lib/components/custom_components/CustomPhoneField.svelte";
   import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
   import GenderPicker from "$lib/components/pickers/gender_picker/GenderPicker.svelte";
   import { Gender } from "$lib/consts/gender";
-  import { InputOptions } from "$lib/consts/text_fields";
-  import UserHelper from "$lib/helpers/user/user_helper";
+  import {
+    InputOptions,
+    type PhonePickerEvent,
+    type TextFieldEvent,
+  } from "$lib/consts/text_fields";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
-  import UserInitializer from "$lib/initializers/user_initializer";
   import { _, translate } from "$lib/utils/translate";
+  import { emailValidation, nameValidation } from "$lib/utils/validation_utils";
+  import { signInAction } from "./helpers/sign_in";
 
-  let fullName: string;
-  let fullNameError: string = "";
-  let email: string;
-  let emailError: string = "";
-  let phoneNumber: string;
-  let phoneNumberError: string = "";
-  let genderError: string = "";
-  let pickedGender: Gender = Gender.anonymous;
   let processing: boolean = false;
 
-  function validatePhoneNumber() {
-    if (!phoneNumber || phoneNumber.length == 0) {
-      phoneNumberError = "Phone number is required";
-      return false;
+  const userData = VerificationHelper.GI().userData;
+
+  let fullName: string = userData?.displayName ?? "";
+
+  let email: string = userData?.email ?? "";
+  let phoneNumber: string = userData?.phoneNumber ?? "";
+  let pickedGender: Gender = Gender.anonymous;
+  let verifiedEmail: boolean = false;
+
+  let validPhone: boolean = false;
+  let validName: boolean = emailValidation(email) == null;
+  let validEmail: boolean = nameValidation(fullName) == null;
+
+  if (userData?.emailVerified == true) {
+    verifiedEmail = true;
+  }
+
+  console.log(userData);
+
+  async function setupAccount() {
+    if (!validEmail || !validPhone || !validName) {
+      console.log(validEmail, validPhone, validName);
+      return;
     }
-    // TODO: implement
-    return true;
-  }
-
-  function resetErrors() {
-    fullNameError = "";
-    emailError = "";
-    phoneNumberError = "";
-    genderError = "";
-  }
-
-  // function validate() {
-  //     resetErrors();
-  //     return (
-  //         validateFullName() &&
-  //         validateEmail() &&
-  //         validatePhoneNumber() &&
-  //         validateGender()
-  //     );
-  // }
-
-  function setupAccount() {
-    return;
     processing = true;
     try {
-      UserHelper.GI()
-        .createUser({
-          gender: pickedGender,
-          userName: fullName,
-          phone: phoneNumber,
-          email: email,
-          isVerifiedEmail: false,
-          isVerifiedPhone: false,
-          userId: UserInitializer.GI().userId,
-          authProvider: VerificationHelper.GI().currentAuthProvider,
-        })
-        .then(async (phoneDataResp) => {
-          if (phoneDataResp == null) {
-            return null;
-          }
-          // loading the user
-          UserInitializer.GI().userDoc = undefined; // force db load user
-          const setUpResp = await UserInitializer.GI().setupUser({
-            newUserId: VerificationHelper.GI().userId,
-          });
-
-          if (setUpResp) {
-            return phoneDataResp;
-          }
-          return null;
-        });
+      const resp = await signInAction(
+        pickedGender,
+        fullName,
+        phoneNumber,
+        email
+      );
+      if (resp != null) {
+        goto(`${base}/business`);
+      }
     } finally {
       // For setup server errors
       processing = false;
     }
   }
 
-  function vali(value: string): string {
-    if (value.length < 5) {
-      return "Short";
-    } else if (value.length > 10) {
-      return "Long";
-    }
-    return "";
+  function handleEmailChange(event: CustomEvent<TextFieldEvent>): void {
+    validEmail = event.detail.isValid;
+    email = event.detail.value;
+  }
+  function handlePhoneChange(event: CustomEvent<PhonePickerEvent>): void {
+    validPhone = event.detail.isValid;
+    phoneNumber = event.detail.value ?? "";
+  }
+  function handleNameChange(event: CustomEvent<TextFieldEvent>): void {
+    console.log(event.detail.isValid);
+    validName = event.detail.isValid;
+    fullName = event.detail.value;
   }
 </script>
 
@@ -111,21 +93,25 @@
           type={InputOptions.text}
           lableTranslateKey="Full Name"
           placeholder="full name"
+          value={fullName}
           pattern=""
-          validationFunc={vali}
+          validationFunc={nameValidation}
           isRequired={true}
-        ></CustomTextFormField>
+          on:valueChange={handleNameChange}
+        />
 
         <CustomTextFormField
           type={InputOptions.email}
           lableTranslateKey="Email (optional)"
           placeholder="example@gmail.com"
+          value={email}
           pattern=""
-          validationFunc={vali}
+          validationFunc={emailValidation}
           isRequired={true}
-        ></CustomTextFormField>
+          on:valueChange={handleEmailChange}
+        />
 
-        <CustomPhoneField />
+        <CustomPhoneField on:phoneChange={handlePhoneChange} />
 
         <GenderPicker />
         <div class="form-control mt-6">
