@@ -27,32 +27,42 @@
   onMount(() => {
     document.documentElement.style.setProperty(
       "--p",
-      getOklachValues(loadColorFromTheme("primary", themeKey, themes))
+      getOklachValues(loadColorFromTheme("primary", themeKey, themes)),
     );
     document.documentElement.style.setProperty(
       "--b1",
-      getOklachValues(loadColorFromTheme("background", themeKey, themes))
+      getOklachValues(loadColorFromTheme("background", themeKey, themes)),
     );
     document.documentElement.style.setProperty(
       "--bc",
-      getOklachValues(theme.brightness == 0 ? "#fff" : "#000")
+      getOklachValues(theme.brightness == 0 ? "#fff" : "#000"),
     );
     document.documentElement.style.setProperty(
       "--pc",
-      getOklachValues(computeLuminance(theme.primary) > 0.5 ? "#000" : "#fff")
+      getOklachValues(computeLuminance(theme.primary) > 0.5 ? "#000" : "#fff"),
     );
     document.documentElement.style.setProperty(
       "--b2",
-      getOklachValues(loadColorFromTheme("surface", themeKey, themes))
+      getOklachValues(loadColorFromTheme("surface", themeKey, themes)),
     );
     document.documentElement.style.setProperty(
       "--b3",
-      getOklachValues(loadColorFromTheme("tertiary", themeKey, themes))
+      getOklachValues(loadColorFromTheme("tertiary", themeKey, themes)),
     );
 
     let html: HTMLHtmlElement = document.getElementsByTagName("html")[0];
     html.setAttribute("data-theme", theme.brightness == 0 ? "dark" : "light");
     html.style.setProperty("font-family", theme.fontName);
+
+    // Load theme font
+    let head: HTMLHeadElement = document.getElementsByTagName("head")[0];
+    let fontLinkElement: HTMLLinkElement = document.createElement("link");
+    fontLinkElement.setAttribute("rel", "stylesheet");
+    fontLinkElement.setAttribute(
+      "href",
+      `https://fonts.googleapis.com/css?family=${theme.fontName}`,
+    );
+    head.appendChild(fontLinkElement);
   });
 
   // Dialogs
@@ -62,7 +72,7 @@
 
   $: storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
   $: storyImagesWidth = Math.floor(
-    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
+    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
   );
 
   // Update screenWidth on window resize
@@ -71,7 +81,7 @@
 
     storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
     storyImagesWidth = Math.floor(
-      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
+      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
     );
 
     console.log("screenHeight", screenHeight);
@@ -79,13 +89,6 @@
     console.log(`h-[${storyImagesHeigth}px]`, `w-[${storyImagesWidth}px]`);
   });
 </script>
-
-<svelte:head>
-  <link
-    href="https://fonts.googleapis.com/css?family={theme.fontName}"
-    rel="stylesheet"
-  />
-</svelte:head>
 
 <main class="w-full h-full" style="">
   <Navbar />
