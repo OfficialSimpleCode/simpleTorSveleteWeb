@@ -50,7 +50,7 @@
           endTime: { name: "to" },
         },
         enableMaxHeight: true,
-        template: "#apptemplate",
+
         allowEditing: false,
       },
       eventRendered: (args: schedule.EventRenderedArgs) =>

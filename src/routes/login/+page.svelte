@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
+  import { goto, pushState } from "$app/navigation";
   import { base } from "$app/paths";
+  import { page } from "$app/stores";
   import {
     AuthProvider,
     authProviderToImage,
@@ -12,8 +13,9 @@
   import { LoginType } from "$lib/services/external_services/firebase_auth_service";
   import { ShowToast } from "$lib/stores/ToastManager";
   import { isConnectedStore } from "$lib/stores/User";
-  import { translate, _ } from "$lib/utils/translate";
-
+  import { _, translate } from "$lib/utils/translate";
+  import PhoneDialog from "./components/PhoneDialog.svelte";
+  let phoneDialog: HTMLDialogElement;
   async function handleClick(authProvider: AuthProvider) {
     //facebook is will be active soon
     if (AuthProvider.Facebook === authProvider) {
@@ -21,6 +23,10 @@
         text: translate("soon", $_),
         status: "info",
       });
+      return;
+    }
+    if (AuthProvider.Phone === authProvider) {
+      openPhoneDialog();
       return;
     }
     const resp = await VerificationHelper.GI().handleLogin({
@@ -39,7 +45,19 @@
 
     goto(`${base}/business`);
   }
+
+  function openPhoneDialog() {
+    pushState("", {
+      showModal: true,
+    });
+    setTimeout(() => phoneDialog.showModal(), 200);
+  }
 </script>
+
+<!-- Dialog -->
+{#if $page.state.showModal}
+  <PhoneDialog bind:dialog={phoneDialog} />
+{/if}
 
 <main class="flex w-full h-full">
   <img

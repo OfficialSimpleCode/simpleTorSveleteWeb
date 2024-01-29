@@ -15,6 +15,7 @@ import {
   OAuthProvider,
   PhoneAuthCredential,
   PhoneAuthProvider,
+  RecaptchaVerifier,
   getAuth,
   linkWithCredential,
   linkWithPopup,
@@ -36,10 +37,12 @@ import { Errors } from "../errors/messages";
 
 export class FirebaseAuthService {
   _auth: Auth;
+
   constructor() {
     const firebaseApp =
       getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
     this._auth = getAuth();
+    this._auth.useDeviceLanguage();
   }
 
   async signInWithFacebookSRV(loginType: LoginType): Promise<boolean> {
@@ -237,40 +240,48 @@ export class FirebaseAuthService {
     return this.isLoggedInSRV && this._auth.currentUser!.displayName === null;
   }
 
-  //   async sendSmsForFirebaseVerificationSRV({
-  //       completePhone, onCodeSent, onFailed, verificationCompleted,
-  //   }: {
-  //       completePhone: string;
-  //       onCodeSent: (verificationId: string) => void;
-  //       onFailed: (
-  //           phone: string,
-  //           e: FirebaseAuthException,
-  //           codeSentTime: Date | undefined,
-  //           beforeSendTime: Date
-  //       ) => void;
-  //       verificationCompleted: (credential: PhoneAuthCredential) => void;
-  //   }): Promise<void> {
-  //       const beforeSendTime = new Date();
-  //       let codeSentTime: Date | undefined;
-  //       await verifyPhoneNumber(this._auth,({
-  //           phoneNumber: completePhone,
-  //           verificationCompleted: verificationCompleted,
-  //           verificationFailed: (e) => {
-  //               AppErrors().details = e.message ?? e.code;
-  //               AppErrors().error =
-  //                   verificationErrors[e.code] ?? verificationErrors[e.message] ?? Errors.unknown;
-
-  //               onFailed(completePhone, e, codeSentTime, beforeSendTime);
-  //           },
-  //           codeSent: (verificationId, resendToken) => {
-  //               codeSentTime = new Date();
-  //               onCodeSent(verificationId);
-  //           },
-  //           codeAutoRetrievalTimeout: (verificationId) => {
-  //               // Handle a timeout of when automatic SMS code handling fails.
-  //           },
-  //       }));
-  //   }
+  async sendSmsForFirebaseVerificationSRV({
+    completePhone,
+    onCodeSent,
+    onFailed,
+  }: {
+    completePhone: string;
+    onCodeSent: (verificationId: string) => void;
+    onFailed: (
+      phone: string,
+      e: Error,
+      codeSentTime: Date | undefined,
+      beforeSendTime: Date
+    ) => void;
+  }): Promise<void> {
+    const beforeSendTime = new Date();
+    let codeSentTime: Date | undefined;
+    const recaptchaVerifier = new RecaptchaVerifier(
+      this._auth,
+      "sign-in-button",
+      {
+        size: "invisible",
+      }
+    );
+    // await signInWithPhoneNumber(
+    //   this._auth,
+    //   completePhone,
+    //   this._recaptchaVerifier
+    // )
+    //   .then((confirmationResult) => {
+    //     onCodeSent(confirmationResult.verificationId);
+    //   })
+    //   .catch((error) => {
+    //     if (error instanceof Error) {
+    //       AppErrorsHelper.GI().details = error.message;
+    //       AppErrorsHelper.GI().error =
+    //         verificationErrors[error.message] ??
+    //         verificationErrors[error.name] ??
+    //         Errors.unknown;
+    //       onFailed(completePhone, error, codeSentTime, beforeSendTime);
+    //     }
+    //   });
+  }
 
   get lastLoginDateSRV(): string | undefined {
     return this._auth.currentUser?.metadata.lastSignInTime;
