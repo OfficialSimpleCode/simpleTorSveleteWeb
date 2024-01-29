@@ -78,11 +78,11 @@
 </script>
 
 <main class="w-full h-full flex flex-row items-center">
-  <img
+  <!-- <img
     class="flex-[1] w-full h-full object-cover hidden md:block"
     src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.timeout.com%2Fimages%2F105689091%2Fimage.jpg&f=1&nofb=1&ipt=f4b5132df6bedb3677bcdbc6907999e648fa1cc14693e8a5494a845d2cf3ec8a&ipo=images"
     alt="account-setup"
-  />
+  /> -->
 
   <div
     class="flex-[1] w-full h-full flex flex-col justify-center items-center gap-10"

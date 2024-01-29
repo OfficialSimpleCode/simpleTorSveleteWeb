@@ -13,6 +13,7 @@
     loadColorFromTheme,
   } from "$lib/utils/colors";
 
+  import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
   import { computeLuminance } from "$lib/utils/general_utils";
   import ChangingImages from "./sections/ChangingImages.svelte";
   import Footer from "./sections/Footer.svelte";
@@ -78,6 +79,16 @@
     console.log("storyImagesHeigth", storyImagesHeigth);
     console.log(`h-[${storyImagesHeigth}px]`, `w-[${storyImagesWidth}px]`);
   });
+
+  function validation(val: string) {
+    if (val.length < 5) return "TO_SHORT";
+    else if (val.length > 10) return "TO_LONG";
+    return "";
+  }
+
+  function fun(event: CustomEvent<any>): void {
+    console.log("val1", event.detail.value);
+  }
 </script>
 
 <svelte:head>
@@ -102,6 +113,29 @@
     </div>
     <!-- business icons links -->
     <SocialLinks />
+
+    <form on:submit|preventDefault={() => {}} class="flex flex-col gap-2">
+      <CustomTextFormField
+        placeholder="12 335 765 4"
+        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+        validationFunc={validation}
+        on:input={fun}
+      ></CustomTextFormField>
+
+      <CustomTextFormField
+        placeholder="12 335 765 4"
+        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+        validationFunc={validation}
+      ></CustomTextFormField>
+
+      <CustomTextFormField
+        placeholder="12 335 765 4"
+        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+        validationFunc={validation}
+      ></CustomTextFormField>
+
+      <button type="submit"></button>
+    </form>
 
     <!-- Display images -->
     <StoryImages></StoryImages>
