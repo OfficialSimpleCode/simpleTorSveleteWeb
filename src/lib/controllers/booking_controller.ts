@@ -34,6 +34,7 @@ interface BookingMaker {
   isBookingWithPaymentUpdate: boolean;
   currentStep: number;
   isMultiEvent: boolean;
+  note: string;
 }
 export const bookingMakerStore = writable<BookingMaker>();
 
@@ -53,7 +54,7 @@ export default class BookingController {
       workerId: bookingForUpdate?.workerId,
       showVerificationAlert: false,
       services: {},
-
+      note: "",
       date: bookingForUpdate?.bookingDate,
       isUpdate: bookingForUpdate != null,
       currentPaymentType: PaymentTypes.payment,
@@ -344,7 +345,7 @@ export default class BookingController {
     if (bookingMaker.services[treatment!.id]?.count === 1) {
       this.removeService(bookingMaker, treatment);
     } else {
-      bookingMaker.services[treatment.id].count = -1;
+      bookingMaker.services[treatment.id].count -= 1;
       bookingMakerStore.set(bookingMaker);
     }
   }
@@ -373,8 +374,8 @@ export default class BookingController {
         status: "warning",
       });
       return;
-    } else {
     }
+    bookingMaker.services[treatment.id].count += 1;
 
     bookingMakerStore.set(bookingMaker);
   }

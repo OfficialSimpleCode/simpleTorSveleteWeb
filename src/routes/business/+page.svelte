@@ -12,6 +12,8 @@
     getTheme,
     loadColorFromTheme,
   } from "$lib/utils/colors";
+  import { businessTypeToStr } from "$lib/consts/business_types";
+  import { translate, _ } from "$lib/utils/translate";
 
   import { computeLuminance } from "$lib/utils/general_utils";
   import ChangingImages from "./sections/ChangingImages.svelte";
@@ -28,27 +30,27 @@
   onMount(() => {
     document.documentElement.style.setProperty(
       "--p",
-      getOklachValues(loadColorFromTheme("primary", themeKey, themes))
+      getOklachValues(loadColorFromTheme("primary", themeKey, themes)),
     );
     document.documentElement.style.setProperty(
       "--b1",
-      getOklachValues(loadColorFromTheme("background", themeKey, themes))
+      getOklachValues(loadColorFromTheme("background", themeKey, themes)),
     );
     document.documentElement.style.setProperty(
       "--bc",
-      getOklachValues(theme.brightness == 0 ? "#fff" : "#000")
+      getOklachValues(theme.brightness == 0 ? "#fff" : "#000"),
     );
     document.documentElement.style.setProperty(
       "--pc",
-      getOklachValues(computeLuminance(theme.primary) > 0.5 ? "#000" : "#fff")
+      getOklachValues(computeLuminance(theme.primary) > 0.5 ? "#000" : "#fff"),
     );
     document.documentElement.style.setProperty(
       "--b2",
-      getOklachValues(loadColorFromTheme("surface", themeKey, themes))
+      getOklachValues(loadColorFromTheme("surface", themeKey, themes)),
     );
     document.documentElement.style.setProperty(
       "--b3",
-      getOklachValues(loadColorFromTheme("tertiary", themeKey, themes))
+      getOklachValues(loadColorFromTheme("tertiary", themeKey, themes)),
     );
 
     let html: HTMLHtmlElement = document.getElementsByTagName("html")[0];
@@ -61,7 +63,7 @@
     fontLinkElement.setAttribute("rel", "stylesheet");
     fontLinkElement.setAttribute(
       "href",
-      `https://fonts.googleapis.com/css?family=${theme.fontName}`
+      `https://fonts.googleapis.com/css?family=${theme.fontName}`,
     );
     head.appendChild(fontLinkElement);
   });
@@ -73,7 +75,7 @@
 
   $: storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
   $: storyImagesWidth = Math.floor(
-    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
+    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
   );
 
   // Update screenWidth on window resize
@@ -82,7 +84,7 @@
 
     storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
     storyImagesWidth = Math.floor(
-      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
+      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
     );
 
     console.log("screenHeight", screenHeight);
@@ -101,7 +103,38 @@
   }
 </script>
 
-<main class="w-full h-full" style="">
+<svelte:head>
+  <title>
+    {$businessStore.shopName} | {translate(
+      businessTypeToStr[$businessStore.businesseType],
+      $_,
+    )}
+  </title>
+  <meta
+    name="description"
+    content={translate(businessTypeToStr[$businessStore.businesseType], $_)}
+  />
+  <link
+    rel="icon"
+    href={$businessStore.design.shopIconUrl}
+    type="image/x-icon"
+  />
+  <meta name="author" content={$businessStore.ownersName} />
+  <meta
+    property="og:title"
+    content="{$businessStore.shopName} | {translate(
+      businessTypeToStr[$businessStore.businesseType],
+      $_,
+    )}"
+  />
+  <meta property="og:image" content={$businessStore.design.shopIconUrl} />
+  <meta
+    property="og:description"
+    content={translate(businessTypeToStr[$businessStore.businesseType], $_)}
+  />
+</svelte:head>
+
+<main class="w-full h-full">
   <Navbar />
 
   <!-- background image -->

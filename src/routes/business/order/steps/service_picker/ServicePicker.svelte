@@ -1,4 +1,5 @@
 <script lang="ts">
+  import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
   import BookingController, {
     bookingMakerStore,
   } from "$lib/controllers/booking_controller";
@@ -8,18 +9,36 @@
   import ServiceItem from "./components/ServiceItem.svelte";
 
   const worker = BookingController.worker;
+
+  function continueNextStep() {
+    if (Object.keys($bookingMakerStore.services).length > 0) {
+      $bookingMakerStore.currentStep += 1;
+    }
+    // todo: tost to pick service
+  }
 </script>
 
 <section
   id="service-step"
   class="w-full flex flex-col items-center gap-12 md:w-[70%]"
 >
-  <!-- title -->
-  <h1 class="text-2xl">
-    {$bookingMakerStore.pickMultipleServices
-      ? $_("pickServices")
-      : $_("pichTreatment")}
-  </h1>
+  <div class="flex flex-row justify-between w-full px-10">
+    <div class="w-[26px]"></div>
+    <!-- title -->
+    <h1 class="text-2xl">
+      {$bookingMakerStore.pickMultipleServices
+        ? $_("pickServices")
+        : $_("pichTreatment")}
+    </h1>
+
+    {#if $bookingMakerStore.pickMultipleServices}
+      <button on:click={continueNextStep}>
+        <CustomArrow></CustomArrow>
+      </button>
+    {:else}
+      <div class="w-[26px]"></div>
+    {/if}
+  </div>
 
   <!-- pick multiple items tuggle -->
   <MultipleServicesTuggle />
@@ -43,5 +62,5 @@
   </ul>
 
   <!-- buttom continue button -->
-  <ButtomContinueButton></ButtomContinueButton>
+  <ButtomContinueButton continueFunc={continueNextStep}></ButtomContinueButton>
 </section>

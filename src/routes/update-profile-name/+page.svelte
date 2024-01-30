@@ -1,6 +1,7 @@
 <script lang="ts">
     import { userStore } from "$lib/stores/User";
     import { _ } from "svelte-i18n";
+    import { openProfileDialog } from "$lib/utils/ui_utils";
 
     import UpdatePageHeader from "$lib/components/UpdatePageHeader.svelte";
 
@@ -10,7 +11,11 @@
 </script>
 
 <main class="flex flex-col items-center mx-4 mt-0 gap-10 h-full">
-    <UpdatePageHeader title={$_("name")} helpMessage="" />
+    <UpdatePageHeader
+        title={$_("name")}
+        helpMessage=""
+        onBack={openProfileDialog}
+    />
 
     <div class="flex items-center justify-center w-full h-[60%]">
         <div class="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">

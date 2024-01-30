@@ -22,7 +22,7 @@
     <GeneralIcon icon="mdi:date-range" size={22}></GeneralIcon>
     <div class="flex {dayVertical ? 'flex-col' : 'flex-row'} text-primary">
       <!-- date -->
-      <p dir="ltr">{dayStr}</p>
+      <p dir="ltr" class="whitespace-nowrap">{dayStr}</p>
       <p>
         {dayVertical
           ? showTodayAndTommrow

@@ -48,6 +48,7 @@
 
 <dialog
   bind:this={dialog}
+  id="profileDialog"
   class="modal modal-bottom sm:modal-middle"
   on:close={() => history.back()}
 >

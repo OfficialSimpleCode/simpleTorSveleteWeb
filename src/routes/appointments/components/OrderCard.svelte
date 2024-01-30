@@ -39,7 +39,7 @@
 
 <button
   on:click={openBookingSheet}
-  class="card bg-base-200 w-full hover:bg-base-300 px-3 py-3 relative {isNow
+  class="card bg-base-200 w-full hover:bg-base-300 hover:bg-opacity-20 px-3 py-3 relative {isNow
     ? 'border border-base-300'
     : ''}
     {booking.recurrenceEvent ?? booking.recurrenceEventRefInfo ? 'pt-6' : ''}"

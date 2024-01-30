@@ -26,7 +26,7 @@
 
 <tr
   on:click={openBookingSheet}
-  class="group bg-base-200 hover:bg-base-300 cursor-pointer border border-base-300"
+  class="group bg-base-200 hover:bg-base-300 hover:bg-opacity-20 cursor-pointer border border-base-300"
 >
   <td class="flex flex-row justify-start items-center">
     <CircleIcons {booking}></CircleIcons>

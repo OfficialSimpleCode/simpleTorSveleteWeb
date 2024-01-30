@@ -73,7 +73,7 @@
   }
 </script>
 
-<main class="w-full h-full flex items-center">
+<main class="w-full min-h-full flex items-center">
   <img
     class="flex-[1] w-min h-full object-cover hidden lg:flex !max-w-[55%]"
     src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.timeout.com%2Fimages%2F105689091%2Fimage.jpg&f=1&nofb=1&ipt=f4b5132df6bedb3677bcdbc6907999e648fa1cc14693e8a5494a845d2cf3ec8a&ipo=images"
@@ -83,7 +83,7 @@
   <div
     class="flex-[1] w-full h-full flex flex-col justify-center items-center gap-10 bg-base-100 mx-2"
   >
-    <div class="text-center">
+    <div class="text-center mt-4">
       <h1 class="text-4xl">Account Setup</h1>
       <h5 class="opacity-60">Fast and Easy</h5>
     </div>

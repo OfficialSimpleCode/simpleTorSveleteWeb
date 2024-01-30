@@ -1,7 +1,8 @@
 <script lang="ts">
   import { base } from "$app/paths";
-
   import { goto } from "$app/navigation";
+  import { openProfileDialog } from "$lib/utils/ui_utils";
+
   import UpdatePageHeader from "$lib/components/UpdatePageHeader.svelte";
   //  ---------------------------   //
   import CustomPhoneField from "$lib/components/custom_components/CustomPhoneField.svelte";
@@ -37,6 +38,7 @@
   <UpdatePageHeader
     title={capitalizeFirstLetter(translate("phoneUpdate", $_))}
     helpMessage={translate("phoneUpdateExplain", $_)}
+    onBack={openProfileDialog}
   />
 
   <div class="flex items-center justify-center w-full h-[60%]">
