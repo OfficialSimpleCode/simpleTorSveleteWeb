@@ -1,6 +1,6 @@
 <script lang="ts">
   import InfoTooltipButton from "$lib/components/InfoTooltipButton.svelte";
-  import { translate } from "$lib/utils/translate";
+  import { translate, _ } from "$lib/utils/translate";
   import { createEventDispatcher } from "svelte";
   import { Icon, XCircle } from "svelte-hero-icons";
   import { sendSms } from "../helpers/send_sms";
@@ -26,5 +26,5 @@
 </div>
 
 <button class="btn xs:btn-lg btn-outline w-full" on:click={onContinue}>
-  {translate("verify")}
+  {translate("verify", $_)}
 </button>
