@@ -2,7 +2,7 @@
     import { base } from "$app/paths";
     import { goto } from "$app/navigation";
 
-    import { translate, _ } from "$lib/utils/translate";
+    import { _ } from "svelte-i18n";
 
     export let titleKey: string;
 
@@ -13,7 +13,7 @@
 
     function isBusinessIdValid(): boolean {
         return true;
-        error = translate("invalidId", $_);
+        error = $_("invalidId");
         return false;
     }
 
@@ -39,7 +39,7 @@
     <div class="-translate-y-[20vh] w-full flex flex-col items-center">
         <div class="my-8">
             <h1 class="text-2xl sm:text-4xl text-center">
-                {translate(titleKey, $_)}
+                {$_(titleKey)}
             </h1>
         </div>
         <form class="join w-[85%] max-w-[700px]">
@@ -59,7 +59,7 @@
                 {#if loading}
                     <div class="loading loading-spinner" />
                 {:else}
-                    {translate("loadBuisness", $_)}
+                    {$_("loadBuisness")}
                 {/if}
             </button>
         </form>
@@ -72,7 +72,7 @@
             {#if loading}
                 <div class="loading loading-spinner" />
             {:else}
-                {translate("loadBuisness", $_)}
+                {$_("loadBuisness")}
             {/if}
         </button>
         {#if error.length > 0}
