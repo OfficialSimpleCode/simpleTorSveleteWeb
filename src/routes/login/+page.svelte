@@ -59,7 +59,7 @@
   <PhoneDialog bind:dialog={phoneDialog} />
 {/if}
 
-<main class="flex w-full h-full">
+<main class="flex w-full min-h-full">
   <img
     class="flex-[1] object-cover !max-w-[50%] hidden lg:flex"
     src="https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?cs=srgb&dl=action-athlete-barbell-841130.jpg&fm=jpg"
@@ -69,7 +69,7 @@
   <div
     class="flex-[1] flex flex-col justify-center items-center xs:gap-8 gap-5 sm:mx-[70px] mx-3 my-[100px]"
   >
-    <h1 class="text-3xl text-center">Login Or Signup</h1>
+    <h1 class="text-3xl text-center mt-4">Login Or Signup</h1>
     {#each googleOrder as authProvider, i}
       <button
         on:click={() => handleClick(authProvider)}
