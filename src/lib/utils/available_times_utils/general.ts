@@ -299,8 +299,8 @@ export function getFakeBookingFromTime(
   end: string,
   workerId: string = ""
 ): Booking {
-  const startEvent = new Date(`1970-01-01T${start}`);
-  const endEvent = new Date(`1970-01-01T${end}`);
+  const startEvent = timeStrToDate(start);
+  const endEvent = timeStrToDate(end);
   const totalMinutes = Math.floor(
     (endEvent.getTime() - startEvent.getTime()) / (60 * 1000)
   );

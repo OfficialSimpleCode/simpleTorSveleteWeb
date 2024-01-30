@@ -2,7 +2,11 @@ import { Gender } from "$lib/consts/gender";
 import type { Religion } from "$lib/consts/worker_schedule";
 import { addDuration } from "$lib/utils/duration_utils";
 
-import { dateIsoStr, dateStrToDate } from "$lib/utils/times_utils";
+import {
+  dateIsoStr,
+  dateStrToDate,
+  timeStrToDate,
+} from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
 import type BusinessModel from "../business/business_model";
 import { Duration } from "../core/duration";
@@ -125,8 +129,8 @@ export default class Event {
       : undefined;
     newObj.recurrenceBreakFatherDate = json["RBFD"];
     const isBreak = json["IB"] ?? false;
-    const time = new Date(timeStr);
-    const date = new Date(`${dayString}-${monthString}`);
+    const time = timeStrToDate(timeStr);
+    const date = dateStrToDate(`${dayString}-${monthString}`);
     const from = new Date(
       date.getFullYear(),
       date.getMonth(),

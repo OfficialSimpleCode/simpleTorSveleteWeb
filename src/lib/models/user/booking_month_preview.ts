@@ -1,4 +1,4 @@
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 
 export default class BookingsPreview {
   bookingCount: number = 0;
@@ -18,7 +18,7 @@ export default class BookingsPreview {
       newObj.docId = newDocId;
       newObj.bookingCount = json["bookingCount"] ?? 0;
       newObj.lastUpdateTime = json["lastUpdateTime"]
-        ? new Date(json["lastUpdateTime"])
+        ? isoToDate(json["lastUpdateTime"])
         : new Date(0);
     }
     return newObj;

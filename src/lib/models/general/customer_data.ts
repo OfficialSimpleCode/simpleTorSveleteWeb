@@ -1,6 +1,6 @@
 import { Gender } from "$lib/consts/gender";
 import { hashId } from "$lib/utils/encryptions";
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
 import MultiBookingUser from "../multi_booking/multi_booking_user";
 import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
@@ -123,13 +123,13 @@ export default class CustomerData {
       json["phoneNumber"] ??
       (uuid.length < 20 && uuid.includes("-") ? uuid : "");
     if (json["firstBookingsDate"] != "" && json["firstBookingsDate"] != null) {
-      customerData.firstBookingsDate = new Date(json["firstBookingsDate"]);
+      customerData.firstBookingsDate = isoToDate(json["firstBookingsDate"]);
     }
     if (
       json["userFirstBookingsDate"] != "" &&
       json["userFirstBookingsDate"] != null
     ) {
-      customerData.userFirstBookingsDate = new Date(
+      customerData.userFirstBookingsDate = isoToDate(
         json["userFirstBookingsDate"]
       );
       if (
@@ -140,7 +140,7 @@ export default class CustomerData {
       }
     }
     if (json["lastBookingsDate"] != null) {
-      customerData.lastBookingsDate = new Date(json["lastBookingsDate"]);
+      customerData.lastBookingsDate = isoToDate(json["lastBookingsDate"]);
     }
     customerData.workerNaming = json["workerNaming"] ?? "";
     customerData.amoutOfBookings = json["amoutOfBookings"] ?? 0;

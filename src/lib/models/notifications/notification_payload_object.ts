@@ -1,4 +1,4 @@
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import IconData from "../general/icon_data";
 
 export default class NotifcationPayloadObject {
@@ -18,14 +18,14 @@ export default class NotifcationPayloadObject {
     shopIcon = new IconData(),
   }: {
     businessId?: string;
-    date?: Date | null;
+    date?: Date | undefined;
     id?: string;
     workerId?: string;
     businessName?: string;
     shopIcon?: IconData;
   } = {}) {
     this.businessId = businessId;
-    this.date = date || null;
+    this.date = date || undefined;
     this.id = id;
     this.workerId = workerId;
     this.businessName = businessName;
@@ -42,7 +42,7 @@ export default class NotifcationPayloadObject {
       shopIcon?: string;
     };
 
-    const date = json.date ? new Date(json.date) : null;
+    const date = json.date ? isoToDate(json.date) : undefined;
     const newShopIcon = json.shopIcon
       ? IconData.fromJsonStr(json.shopIcon)
       : new IconData();

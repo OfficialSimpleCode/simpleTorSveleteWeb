@@ -3,7 +3,7 @@ import { Gender, genderFromStr, genderToStr } from "$lib/consts/gender";
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
 // import { isEqual } from "lodash";
 // import { v4 as uuid } from "uuid";
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import type Booking from "../booking/booking_model";
 import BusinessInfo from "../business/business_info";
 import CustomerData from "../general/customer_data";
@@ -222,7 +222,7 @@ export default class UserModel {
       isVerifiedEmail: false,
       email: "",
       lastCleanDate: json["lastCleanDate"],
-      createdAt: new Date(json["createdAt"]),
+      createdAt: isoToDate(json["createdAt"]),
     });
 
     if (json["devices"] && typeof json["devices"] === "object") {
@@ -238,7 +238,7 @@ export default class UserModel {
     if (json["termsApprovals"]) {
       Object.entries<string>(json["termsApprovals"]).forEach(
         ([businessId, dateStr]) => {
-          user.termsApprovals[businessId] = new Date(dateStr) || new Date(0);
+          user.termsApprovals[businessId] = isoToDate(dateStr) || new Date(0);
         }
       );
     }
@@ -270,13 +270,11 @@ export default class UserModel {
     }
 
     if (json["lastTimeUpdatePhone"]) {
-      user.lastTimeUpdatePhone =
-        new Date(json["lastTimeUpdatePhone"]) || new Date(0);
+      user.lastTimeUpdatePhone = isoToDate(json["lastTimeUpdatePhone"]);
     }
 
     if (json["lastTimeUpdateEmail"]) {
-      user.lastTimeUpdateEmail =
-        new Date(json["lastTimeUpdateEmail"]) || new Date(0);
+      user.lastTimeUpdateEmail = isoToDate(json["lastTimeUpdateEmail"]);
     }
 
     user.productsIds = {};
@@ -384,18 +382,15 @@ export default class UserModel {
       );
     }
 
-    user.createdAt = new Date(json["createdAt"]);
+    user.createdAt = isoToDate(json["createdAt"]);
     user.limitOfBuisnesses = json["limitOfBuisnesses"] || 1;
 
     if (json["authProviders"]) {
-      Object.entries<Date>(json["authProviders"]).forEach(
+      Object.entries<string>(json["authProviders"]).forEach(
         ([provider, date]) => {
           if (authProviderFromStr[provider]) {
             const authProvider = authProviderFromStr[provider];
-            user.authProviders.set(
-              authProvider,
-              new Date(date) || new Date(2023)
-            );
+            user.authProviders.set(authProvider, isoToDate(date));
           }
         }
       );
@@ -410,7 +405,7 @@ export default class UserModel {
     }
 
     if (json["lastTimeConnect"]) {
-      user.lastTimeConnect = new Date(json["lastTimeConnect"]) || new Date();
+      user.lastTimeConnect = isoToDate(json["lastTimeConnect"]);
     }
 
     user.userPublicData = new UserPublicData({

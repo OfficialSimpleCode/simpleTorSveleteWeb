@@ -1,4 +1,4 @@
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 
 export enum PaymentTypes {
   deposit,
@@ -56,7 +56,7 @@ export default class BookingTransactionModel {
     newObj.id = newId;
     newObj.type = paymentTypesFromStr[json["type"]] || PaymentTypes.payment;
     newObj.createdAt = json["createdAt"]
-      ? new Date(json["createdAt"])
+      ? isoToDate(json["createdAt"])
       : new Date(0);
     return newObj;
   }

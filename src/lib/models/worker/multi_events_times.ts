@@ -1,3 +1,5 @@
+import { dateStrToDate } from "$lib/utils/times_utils";
+import { addDays } from "date-fns";
 import type { Unsubscribe } from "firebase/firestore";
 import MultiBookingTime from "../multi_booking/multi_booking_time";
 
@@ -20,9 +22,8 @@ export default class MultiEventsTimes {
 
     if (json["eventsTimes"] !== null) {
       Object.entries(json["eventsTimes"]).forEach(([dateString, timesJson]) => {
-        const date = new Date(dateString);
-        const lastWeek = new Date();
-        lastWeek.setDate(lastWeek.getDate() - 7);
+        const date = dateStrToDate(dateString);
+        const lastWeek = addDays(new Date(), -7);
 
         if (
           date >= lastWeek &&
@@ -43,9 +44,8 @@ export default class MultiEventsTimes {
       Object.entries<Record<string, any>>(
         json["eventsTimeDuringPayment"]
       ).forEach(([dateString, dayTimes]) => {
-        const date = new Date(dateString);
-        const lastWeek = new Date();
-        lastWeek.setDate(lastWeek.getDate() - 7);
+        const date = dateStrToDate(dateString);
+        const lastWeek = addDays(new Date(), -7);
 
         if (date >= lastWeek) {
           Object.entries<Record<string, any>>(dayTimes).forEach(

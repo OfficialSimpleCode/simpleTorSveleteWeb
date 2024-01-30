@@ -11,9 +11,6 @@
   import { LoadAppHelper } from "$lib/helpers/load_app_helper";
   import { handleLocaleChanges } from "$lib/language/loader";
   import { businessStore } from "$lib/stores/Business";
-  import { dateIsoStr } from "$lib/utils/times_utils";
-  console.log("2024-02-01T17:05:00.000Z");
-  console.log(dateIsoStr(new Date(Date.parse("2024-02-01T17:05:00.000Z"))));
 
   async function loadBusiness() {
     handleLocaleChanges(localStorage, document);

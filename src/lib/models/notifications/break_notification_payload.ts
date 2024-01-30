@@ -1,4 +1,4 @@
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import IconData from "../general/icon_data";
 import NotifcationPayloadObject from "./notification_payload_object";
 
@@ -34,7 +34,7 @@ export default class BreakNotificationPayload extends NotifcationPayloadObject {
     return new BreakNotificationPayload({
       businessId: json.businessId || "",
       businessName: json.businessName || "",
-      date: json.date ? new Date(json.date) : undefined,
+      date: json.date ? isoToDate(json.date) : undefined,
       id: json.id || "",
       workerId: json.workerId || "",
       shopIcon: json.shopIcon ? IconData.fromJsonStr(json.shopIcon) : undefined,

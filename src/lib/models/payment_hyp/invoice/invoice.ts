@@ -8,6 +8,7 @@ import {
   dateIsoStr,
   dateToDayStr,
   dateToMonthStr,
+  isoToDate,
 } from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
 import { PaymentObject } from "../payment_object";
@@ -95,16 +96,16 @@ export default class Invoice extends PaymentObject {
   static fromJson(json: Record<string, any>, id: string): Invoice {
     const newObj = new Invoice({});
     newObj.invoiceId = id;
-    if (json["CD"] !== undefined) {
+    if (json["CD"] != null) {
       newObj.customerData = CustomerData.fromMinimalJson(json["CD"]);
     }
-    if (json["RD"] !== undefined) {
-      newObj.createdAt = new Date(json["RD"]);
+    if (json["RD"] != null) {
+      newObj.createdAt = isoToDate(json["RD"]);
     }
-    if (json["BI"] !== undefined) {
+    if (json["BI"] != null) {
       newObj.businessInfo = InvoiceBusinessInfo.fromJson(json["BI"]);
     }
-    if (json["WIN"] !== undefined) {
+    if (json["WIN"] != null) {
       newObj.workerInfo = InvoiceWorkerInfo.fromJson(json["WIN"]);
     }
 

@@ -70,12 +70,12 @@ export async function checkForReminders(): Promise<{
       addDuration(new Date(), new Duration({ minutes: maxMinutesToRemind }))
     ) {
       if (start < new Date()) {
-        start = new Date(start.getTime() + 24 * 60 * 60 * 1000); // Add one day
+        start = addDuration(start, new Duration({ days: 1 })); // Add one day
         continue;
       }
 
       if (!booking.recurrenceEvent.isAccureInDate({ date: start })) {
-        start = new Date(start.getTime() + 24 * 60 * 60 * 1000); // Add one day
+        start = addDuration(start, new Duration({ days: 1 })); // Add one day
         continue;
       }
 

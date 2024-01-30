@@ -76,8 +76,8 @@ export function addShiftsFromStrList(
   strShifts: string[]
 ): void {
   for (let i = 0; i < strShifts.length; i += 2) {
-    const startS = new Date(strShifts[i]);
-    const endS = new Date(strShifts[i + 1]);
+    const startS = timeStrToDate(strShifts[i]);
+    const endS = timeStrToDate(strShifts[i + 1]);
     shifts.push(new Shift({ start: startS, end: endS }));
   }
 }

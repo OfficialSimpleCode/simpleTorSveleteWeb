@@ -1,4 +1,4 @@
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 
 export default class Debt {
   createdAt: Date = new Date(0);
@@ -29,7 +29,7 @@ export default class Debt {
 
   static fromJson(json: any, newId: string): Debt {
     const debt = new Debt({
-      createdAt: json["createdAt"] ? new Date(json["createdAt"]) : new Date(0),
+      createdAt: json["createdAt"] ? isoToDate(json["createdAt"]) : new Date(0),
       amount:
         json["amount"] != null
           ? typeof json["amount"] === "number"

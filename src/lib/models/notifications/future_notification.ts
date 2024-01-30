@@ -4,6 +4,7 @@ import {
   notifcationsCollection,
   scheduleNotificationDoc,
 } from "$lib/consts/db";
+import { isoToDate } from "$lib/utils/times_utils";
 import IconData from "../general/icon_data";
 
 export default class FutureNotification {
@@ -79,10 +80,10 @@ export default class FutureNotification {
     );
   }
 
-  static fromJson(json: any): FutureNotification {
+  static fromJson(json: Record<string, any>): FutureNotification {
     const shopIcon = IconData.fromJson(json["SI"]);
     const fcms = new Set<string>(json["FS"] || []);
-    const dateToNotify = new Date(json["dateToNotify"]);
+    const dateToNotify = isoToDate(json["dateToNotify"]);
 
     return new FutureNotification({
       businessId: json["I"],

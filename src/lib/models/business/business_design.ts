@@ -4,7 +4,7 @@ import {
   arrangementToStr,
   defaultThemes,
 } from "$lib/consts/business_design";
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import IconData from "../general/icon_data";
 import { BusinessTheme } from "./business_theme";
 import { ProductModel } from "./ProductModel";
@@ -94,7 +94,7 @@ export class BusinessDesign {
 
     if (json.lastTimeToUpdateTerm) {
       newObj.lastTimeToUpdateTerm =
-        new Date(json.lastTimeToUpdateTerm) || new Date(0);
+        isoToDate(json.lastTimeToUpdateTerm) || new Date(0);
     }
 
     newObj.pickedThemeKey = json.pickedThemeKey || "darkIoss";

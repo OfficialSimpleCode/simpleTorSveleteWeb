@@ -1,4 +1,4 @@
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 
 export default class Check {
   accountNumber: string = "";
@@ -7,15 +7,22 @@ export default class Check {
   checkNumber: string = "";
   amount: number = 0;
   repaymentDate: Date = new Date(0);
-
-  constructor(
-    accountNumber: string,
-    bankBranch: string, // Snif number like 902
-    bankNumber: string,
-    checkNumber: string,
-    amount: number,
-    repaymentDate: Date
-  ) {
+  constructor({});
+  constructor({
+    accountNumber,
+    bankBranch,
+    bankNumber,
+    checkNumber,
+    amount,
+    repaymentDate,
+  }: {
+    accountNumber: string;
+    bankBranch: string; // Snif number like 902
+    bankNumber: string;
+    checkNumber: string;
+    amount: number;
+    repaymentDate: Date;
+  }) {
     this.accountNumber = accountNumber;
     this.bankBranch = bankBranch;
     this.bankNumber = bankNumber;
@@ -37,14 +44,14 @@ export default class Check {
   }
 
   static fromJson(json: Record<string, any>): Check {
-    const check = new Check(
-      json["AN"] || "",
-      json["BB"] || "",
-      json["BN"] || "",
-      json["CN"] || "",
-      json["A"] || 0,
-      new Date(json["RD"] || "1970-01-01T00:00:00.000Z")
-    );
+    const check = new Check({});
+
+    check.accountNumber = json["AN"] || "";
+    check.bankBranch = json["BB"] || "";
+    check.bankNumber = json["BN"] || "";
+    check.checkNumber = json["CN"] || "";
+    check.amount = json["A"] || 0;
+    check.repaymentDate = isoToDate(json["RD"]) ?? new Date(0);
 
     return check;
   }

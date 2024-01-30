@@ -2,7 +2,7 @@ import {
   PAYMENT_REQUEST_END_POINT,
   SERVER_BASE_URL,
 } from "$lib/consts/server_variables";
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 
 export default class BookingPaymentRequestData {
   id: string = "";
@@ -28,7 +28,7 @@ export default class BookingPaymentRequestData {
     newObj.id = json["id"] ?? "";
 
     if (json["createdAt"] != null) {
-      newObj.createdAt = new Date(json["createdAt"]) || new Date(0);
+      newObj.createdAt = isoToDate(json["createdAt"]) || new Date(0);
     }
 
     newObj.workerId = json["workerId"] ?? "";

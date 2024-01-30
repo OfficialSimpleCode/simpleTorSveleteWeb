@@ -114,3 +114,7 @@ export function convertMapToObject(
   }
   return newObject;
 }
+
+export function isNumber(value?: string | number): boolean {
+  return value != null && value !== "" && !isNaN(Number(value.toString()));
+}

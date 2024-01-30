@@ -7,6 +7,7 @@ import {
   businessTypeFromStr,
 } from "$lib/consts/business_types";
 import { hypPathFromStr, type HypPaths } from "$lib/consts/hyp_pathes";
+import { dateStrToDate, isoToDate } from "$lib/utils/times_utils";
 import { BusinessData } from "./business_data";
 import { BusinessDesign } from "./business_design";
 import { ProductModel } from "./product_model";
@@ -165,7 +166,7 @@ export default class BusinessModel {
     this.searchable = json["searchable"] ?? true;
 
     if (json["expiredDate"] != null) {
-      this.expiredDate = new Date(json["expiredDate"]);
+      this.expiredDate = dateStrToDate(json["expiredDate"]);
     }
 
     this.notifyOnNewCustomer = json["notifyOnNewCustomer"] ?? true;
@@ -234,12 +235,12 @@ export default class BusinessModel {
     if (json["createdAt"] instanceof Timestamp) {
       this.createdAt = (json["createdAt"] as Timestamp).toDate();
     } else if (typeof json["createdAt"] === "string") {
-      this.createdAt = new Date(json["createdAt"]) || new Date();
+      this.createdAt = isoToDate(json["createdAt"]) || new Date();
     }
 
     if (json["lastTimeConnected"] != null) {
       this.lastTimeConnected =
-        new Date(json["lastTimeConnected"]) || new Date();
+        isoToDate(json["lastTimeConnected"]) || new Date();
     }
   }
 

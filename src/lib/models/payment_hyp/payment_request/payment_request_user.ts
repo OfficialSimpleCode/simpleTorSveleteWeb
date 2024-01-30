@@ -1,5 +1,5 @@
 import { Gender, genderFromStr } from "$lib/consts/gender";
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
 
 export default class PaymentRequestUser {
@@ -64,9 +64,7 @@ export default class PaymentRequestUser {
 
     if (json["PY"] != null && typeof json["PY"] === "object") {
       Object.entries<string>(json["PY"]).forEach(([transactionId, dateStr]) => {
-        user.payments[transactionId] = dateStr
-          ? new Date(dateStr)
-          : new Date(0);
+        user.payments[transactionId] = isoToDate(dateStr) ?? new Date(0);
       });
     }
 

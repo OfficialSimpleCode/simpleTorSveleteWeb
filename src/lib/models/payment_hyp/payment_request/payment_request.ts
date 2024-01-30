@@ -7,7 +7,7 @@ import IconData from "$lib/models/general/icon_data";
 import { Price } from "$lib/models/general/price";
 import BusinessPayloadData from "$lib/models/notifications/business_data_payload";
 import PaymentRequestNotificationPayload from "$lib/models/notifications/payment_request_notification_payload";
-import { dateIsoStr, dateToMonthStr } from "$lib/utils/times_utils";
+import { dateIsoStr, dateToMonthStr, isoToDate } from "$lib/utils/times_utils";
 import InvoiceBusinessInfo from "../invoice/invoice_business_info";
 import { PaymentObject } from "../payment_object";
 import PaymentRequestPreview from "./PaymentRequestPreview";
@@ -162,14 +162,14 @@ export default class PaymentRequest extends PaymentObject {
       Object.entries<string>(json["userPayments"]).forEach(
         ([transactionId, dateStr]) => {
           newObj.userPayments[transactionId] =
-            dateStr != null ? new Date(dateStr) : new Date(0);
+            dateStr != null ? isoToDate(dateStr) : new Date(0);
         }
       );
     }
     newObj.summary = json["summary"] ?? "";
     if (json["createdAt"] != null) {
       newObj.createdAt =
-        json["createdAt"] != null ? new Date(json["createdAt"]) : new Date(0);
+        json["createdAt"] != null ? isoToDate(json["createdAt"]) : new Date(0);
     }
     newObj.payers = json["payers"] ?? 0;
 

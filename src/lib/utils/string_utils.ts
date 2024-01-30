@@ -5,7 +5,7 @@ import {
 import { weekDays } from "$lib/consts/worker_schedule";
 import type { Duration } from "$lib/models/core/duration";
 import { addDays, format } from "date-fns";
-import { dateIsoStr } from "./times_utils";
+import { dateIsoStr, dateToDateStr } from "./times_utils";
 import { translate } from "./translate";
 
 export function durationToString(
@@ -153,12 +153,10 @@ export function getFormatedTime(
 
 export function getDayString(date: Date, beforeDay: string = ""): string {
   let todayOrTomorrow = "";
-  if (
-    format(date, "dd-MM-yyyy") === format(addDays(new Date(), 1), "dd-MM-yyyy")
-  ) {
+  if (dateToDateStr(date) === dateToDateStr(addDays(new Date(), 1))) {
     todayOrTomorrow = translate("tomorrow");
   }
-  if (format(date, "dd-MM-yyyy") === format(new Date(), "dd-MM-yyyy")) {
+  if (dateToDateStr(date) === dateToDateStr(new Date())) {
     todayOrTomorrow = translate("today");
   }
   const day = weekDays[date.getDay()];

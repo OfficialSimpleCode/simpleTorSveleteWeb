@@ -14,7 +14,7 @@ import NotificationPayload, {
 import type NotificationTopic from "$lib/models/notifications/notification_topic";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { getFormatedTime } from "$lib/utils/string_utils";
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
 import NotificationsRepo from "./notifications_repo";
 
@@ -309,7 +309,7 @@ export default class NotificationsHelper {
     const futures: Promise<boolean>[] = [];
 
     for (const [dateStr, data] of Object.entries(notifications)) {
-      const dateToNotify = new Date(dateStr);
+      const dateToNotify = isoToDate(dateStr);
 
       const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${dateToNotify.getMonth()}/${dateToNotify.getDay()}/${dateToNotify.getHours()}`;
 
@@ -366,7 +366,7 @@ export default class NotificationsHelper {
 
     const futures: Promise<boolean>[] = [];
     for (const [dateStr, data] of Object.entries(datesToDelete)) {
-      const dateToNotify = new Date(dateStr);
+      const dateToNotify = isoToDate(dateStr);
       const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${dateToNotify.getMonth()}/${dateToNotify.getDay()}/${dateToNotify.getHours()}`;
 
       futures.push(

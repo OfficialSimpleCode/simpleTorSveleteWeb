@@ -1,4 +1,4 @@
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import IconData from "../general/icon_data";
 import NotifcationPayloadObject from "./notification_payload_object";
 
@@ -26,7 +26,7 @@ export default class TransactionNotificationPayload extends NotifcationPayloadOb
 
     const businessName = json["businessName"] || "";
     const businessId = json["businessId"] || "";
-    const date = json["date"] ? new Date(json["date"]) : new Date();
+    const date = json["date"] ? isoToDate(json["date"]) : new Date();
     const id = json["id"] || "";
     const workerId = json["workerId"] || "";
     const shopIcon = json["shopIcon"]

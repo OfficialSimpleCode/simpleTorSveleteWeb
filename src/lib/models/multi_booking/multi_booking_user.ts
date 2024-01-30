@@ -19,7 +19,7 @@ import {
 import { EventFilterType } from "$lib/consts/worker_schedule";
 
 import { sendMessageForMulti } from "$lib/utils/notifications_utils";
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
 import pkg from "uuid";
 import BookingInvoiceData from "../booking/booking_invoice_data";
@@ -344,12 +344,12 @@ export default class MultiBookingUser {
       : new Map();
     multiBookingUser.finishInvoices = json["finishInvoices"] || false;
     multiBookingUser.cancelDate = json["cancelDate"]
-      ? new Date(json["cancelDate"])
+      ? isoToDate(json["cancelDate"])
       : null;
     multiBookingUser.wasWaiting = json["wasWaiting"] || false;
     multiBookingUser.isUserExist = json["isUserExist"] || true;
     multiBookingUser.lastTimeNotifyOnDebt = json["lastTimeNotifyOnDebt"]
-      ? new Date(json["lastTimeNotifyOnDebt"])
+      ? isoToDate(json["lastTimeNotifyOnDebt"])
       : null;
     multiBookingUser.invoices = json["invoices"]
       ? new Map(
@@ -381,7 +381,7 @@ export default class MultiBookingUser {
       ? new Set([json["deviceFCM"]])
       : new Set();
     multiBookingUser.createdAt = json["createdAt"]
-      ? new Date(json["createdAt"])
+      ? isoToDate(json["createdAt"])
       : new Date(0);
     multiBookingUser.transactions = json["transactions"]
       ? new Map(

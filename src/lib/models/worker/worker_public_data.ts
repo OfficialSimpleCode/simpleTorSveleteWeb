@@ -6,6 +6,7 @@ import {
   dateToTimeStr,
 } from "$lib/utils/times_utils";
 
+import { addDays } from "date-fns";
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
 import { Duration } from "../core/duration";
 
@@ -23,7 +24,7 @@ export default class WorkerPublicData {
   findLastBookingsTimesDate(): Date | undefined {
     let lastDate: Date | undefined;
     Object.entries(this.bookingsTimes).forEach(([dateStr, bookings]) => {
-      const currentDate = new Date(dateStr);
+      const currentDate = dateStrToDate(dateStr);
       if (
         Object.keys(bookings).length > 0 &&
         (!lastDate || currentDate > lastDate)
@@ -82,9 +83,8 @@ export default class WorkerPublicData {
     if (json["duringPaymentBookingsTime"] !== null) {
       Object.entries(json["duringPaymentBookingsTime"]).forEach(
         ([dateString, times]) => {
-          const date = new Date(dateString);
-          const lastWeek = new Date();
-          lastWeek.setDate(lastWeek.getDate() - 7);
+          const date = dateStrToDate(dateString);
+          const lastWeek = addDays(new Date(), -7);
 
           if (date >= lastWeek) {
             Object.entries(

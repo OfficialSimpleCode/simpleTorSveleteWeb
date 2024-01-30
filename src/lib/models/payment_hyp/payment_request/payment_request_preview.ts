@@ -5,7 +5,7 @@ import {
 import IconData from "$lib/models/general/icon_data";
 import { Price } from "$lib/models/general/price";
 import PaymentRequestNotificationPayload from "$lib/models/notifications/payment_request_notification_payload";
-import { dateIsoStr, dateToMonthStr } from "$lib/utils/times_utils";
+import { dateIsoStr, dateToMonthStr, isoToDate } from "$lib/utils/times_utils";
 import BookingReferencePaymentObj from "../booking_reference";
 import type InvoiceBusinessInfo from "../invoice/invoice_business_info";
 import { PaymentObject } from "../payment_object";
@@ -139,7 +139,7 @@ export default class PaymentRequestPreview extends PaymentObject {
     }
     if (json["createdAt"] != null) {
       paymentRequestPreview.createdAt =
-        new Date(json["createdAt"]) ?? new Date(0);
+        isoToDate(json["createdAt"]) ?? new Date(0);
     }
     paymentRequestPreview.oneTime = json["oneTime"] ?? true;
     paymentRequestPreview.businessName = json["businessName"] ?? "";

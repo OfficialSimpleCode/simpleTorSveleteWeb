@@ -24,6 +24,7 @@ import {
   dateIsoStr,
   dateStrToDate,
   dateToDateStr,
+  isoToDate,
   setToMidNight,
 } from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
@@ -238,7 +239,7 @@ export default class WorkerModel {
     if (workerJson["lastCleanDate"] instanceof Timestamp) {
       this.lastCleanDate = workerJson["lastCleanDate"].toDate();
     } else if (typeof workerJson["lastCleanDate"] === "string") {
-      this.lastCleanDate = new Date(workerJson["lastCleanDate"]) || new Date();
+      this.lastCleanDate = isoToDate(workerJson["lastCleanDate"]);
     }
     if (workerJson["religions"]) {
       this.religions = workerJson["religions"].map(
@@ -408,7 +409,7 @@ export default class WorkerModel {
           NotificationOption.OnlyPush;
       }
       if (workerJson["recurrenceNotificationsLastDate"]) {
-        this.notifications.recurrenceNotificationsLastDate = new Date(
+        this.notifications.recurrenceNotificationsLastDate = isoToDate(
           workerJson["recurrenceNotificationsLastDate"]
         );
       } else {
@@ -440,7 +441,7 @@ export default class WorkerModel {
     if (workerJson["closeCalendarDate"]) {
       //the format is not the regular its cant
       //be changed - already used in production
-      this.closeCalendarDate = new Date(workerJson["closeCalendarDate"]);
+      this.closeCalendarDate = isoToDate(workerJson["closeCalendarDate"]);
     }
     if (workerJson["minDateForShowinData"]) {
       this.minDateForShowinData = dateStrToDate(
@@ -451,7 +452,7 @@ export default class WorkerModel {
     this.allowBookingConfirmations =
       workerJson["allowBookingConfirmations"] || true;
     if (workerJson["createdAt"]) {
-      this.createdAt = new Date(workerJson["createdAt"]);
+      this.createdAt = isoToDate(workerJson["createdAt"]);
     } else {
       this.createdAt = new Date(2023, 0, 1);
     }

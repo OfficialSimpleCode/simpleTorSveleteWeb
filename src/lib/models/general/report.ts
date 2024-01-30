@@ -1,4 +1,4 @@
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 
 export default class ReportModel {
   createdAt: Date = new Date(0);
@@ -35,8 +35,7 @@ export default class ReportModel {
     }
 
     if (json["createdAt"] != null) {
-      const parsedDate = Date.parse(json["createdAt"]);
-      report.createdAt = isNaN(parsedDate) ? new Date(0) : new Date(parsedDate);
+      report.createdAt = isoToDate(json["createdAt"]);
     }
     report.name = json["name"] || "";
     report.description = json["description"] || "";

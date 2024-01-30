@@ -129,27 +129,6 @@ export function monthStrToDate(date: string): Date {
   return moment(date, "MM-yyyy").toDate();
 }
 
-export function conversStrToDateTime(day: Date, strTime: string): Date {
-  const time = new Date(`1970-01-01T${strTime}`);
-  return new Date(
-    day.getFullYear(),
-    day.getMonth(),
-    day.getDate(),
-    time.getHours(),
-    time.getMinutes()
-  );
-}
-
-export function convers1970DateTimeToDay(day: Date, dateFrom1970: Date): Date {
-  return new Date(
-    day.getFullYear(),
-    day.getMonth(),
-    day.getDate(),
-    dateFrom1970.getHours(),
-    dateFrom1970.getMinutes()
-  );
-}
-
 export function laterDate(date1: Date | null, date2: Date | null): Date | null {
   if (date1 === null && date2 === null) {
     return null;
@@ -221,16 +200,6 @@ export function setTo1970(date: Date): Date {
   return new Date(1970, 0, 1, date.getHours(), date.getMinutes());
 }
 
-export function addMonths(date: Date, months: number): Date {
-  return new Date(
-    date.getFullYear(),
-    date.getMonth() + months,
-    date.getDate(),
-    date.getHours(),
-    date.getMinutes()
-  );
-}
-
 export function convertStringToTime(times: string[]): Date[] {
   const convertedTimes: Date[] = [];
   for (let i = 0; i < times.length; i++) {
@@ -275,6 +244,12 @@ export function isHoliday(worker: WorkerModel, date: Date): boolean {
 
 export function dateIsoStr(date: Date) {
   return `${format(date, "yyyy-MM-dd")}T${format(date, "HH:mm:ss")}.000Z`;
+}
+
+export function isoToDate(dateStr: string): Date {
+  const newStr = dateStr.replace("Z", "");
+
+  return new Date(newStr);
 }
 
 export function dateToUtc(date: Date) {

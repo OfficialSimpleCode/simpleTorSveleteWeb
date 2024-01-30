@@ -34,6 +34,7 @@ import {
   dateToMonthStr,
   dateToTimeStr,
   dateToUtc,
+  isoToDate,
 } from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
 import pkg from "uuid";
@@ -269,7 +270,7 @@ export default class Booking extends ScheduleItem {
       newBooking.isMultiRef = json["isMultiRef"] || false;
       newBooking.needCancel = json["needCancel"] || false;
       if (json["lastTimeNotifyOnDebt"] != null) {
-        newBooking.lastTimeNotifyOnDebt = new Date(
+        newBooking.lastTimeNotifyOnDebt = isoToDate(
           json["lastTimeNotifyOnDebt"]
         );
       }
@@ -305,7 +306,7 @@ export default class Booking extends ScheduleItem {
       }
       newBooking.clientMail = json["clientMail"] || "";
       if (json["recurrenceNotificationsLastDate"] != null) {
-        newBooking.recurrenceNotificationsLastDate = new Date(
+        newBooking.recurrenceNotificationsLastDate = isoToDate(
           json["recurrenceNotificationsLastDate"]
         );
       }
@@ -324,7 +325,7 @@ export default class Booking extends ScheduleItem {
         });
       }
       if (json["cancelDate"] != null) {
-        newBooking.cancelDate = new Date(json["cancelDate"]);
+        newBooking.cancelDate = isoToDate(json["cancelDate"]);
       }
       newBooking.wasWaiting = json["wasWaiting"] || false;
       newBooking.isUserExist = json["isUserExist"] || true;
@@ -347,7 +348,7 @@ export default class Booking extends ScheduleItem {
         BookingStatuses.approved;
       newBooking.confirmedArrival = json["confirmedArrival"] || false;
       if (json["bookingDate"] != null) {
-        newBooking.bookingDate = new Date(json["bookingDate"]) || new Date(0);
+        newBooking.bookingDate = isoToDate(json["bookingDate"]) || new Date(0);
       }
       console.log(newBooking.bookingDate);
       console.log(json["bookingDate"]);
@@ -396,7 +397,7 @@ export default class Booking extends ScheduleItem {
         newBooking.userFcms = new Set([json["deviceFCM"]]);
       }
       if (json["createdAt"] != null) {
-        newBooking.createdAt = new Date(json["createdAt"]) || new Date(0);
+        newBooking.createdAt = isoToDate(json["createdAt"]) || new Date(0);
       }
       if (json["RE"] != null) {
         newBooking.recurrenceEvent = RecurrenceEvent.fromJson(

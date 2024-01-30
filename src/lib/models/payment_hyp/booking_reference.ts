@@ -1,4 +1,4 @@
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 
 export default class BookingReferencePaymentObj {
   id: string = "";
@@ -45,7 +45,7 @@ export default class BookingReferencePaymentObj {
   }
 
   static fromJson(json: Record<string, any>): BookingReferencePaymentObj {
-    const date = json["D"] ? new Date(json["D"]) : new Date(0);
+    const date = json["D"] ? isoToDate(json["D"]) : new Date(0);
     const id = json["I"] || "";
     const isMultiBooking = json["IMB"] || false;
     const workerId = json["WI"] || "";

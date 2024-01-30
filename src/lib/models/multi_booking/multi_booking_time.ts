@@ -1,4 +1,4 @@
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 
 export default class MultiBookingTime {
   treatmentId: string = "";
@@ -63,7 +63,7 @@ export default class MultiBookingTime {
     const index = json["I"] || 0;
 
     const expiredDate = expiredDateString
-      ? new Date(expiredDateString)
+      ? isoToDate(expiredDateString)
       : undefined;
 
     return new MultiBookingTime({

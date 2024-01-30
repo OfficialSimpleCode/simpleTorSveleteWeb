@@ -1,6 +1,6 @@
 // Assuming IconData and NotifcationPayloadObject classes are defined somewhere with proper methods
 
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import IconData from "../general/icon_data";
 import NotifcationPayloadObject from "./notification_payload_object";
 
@@ -37,7 +37,7 @@ export default class BookingNotificationPayload extends NotifcationPayloadObject
 
     const businessId = json["businessId"] || "";
     const businessName = json["businessName"] || "";
-    const date = json["date"] ? new Date(json["date"]) : undefined;
+    const date = json["date"] ? isoToDate(json["date"]) : undefined;
     const workerId = json["workerId"] || "";
     const id = json["id"] || "";
     const isRecurrence = json["isRecurrence"] || false;

@@ -3,7 +3,6 @@ import { addDuration, diffDuration } from "$lib/utils/duration_utils";
 import { setEquals } from "$lib/utils/general_utils";
 import { durationToString } from "$lib/utils/string_utils";
 import {
-  addMonths,
   dateIsoStr,
   dateStrToDate,
   dateToDateStr,
@@ -11,7 +10,7 @@ import {
   setToMidNight,
 } from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
-import { format } from "date-fns";
+import { addMonths, format } from "date-fns";
 import { Duration } from "../core/duration";
 import { SplayTreeSet } from "../general/splay_tree_set";
 
@@ -432,10 +431,9 @@ export default class RecurrenceEvent {
         const repeatsLeft = this.repeats - startWeekRepeats;
         const weekJumps = Math.ceil(repeatsLeft / this.weekDays.size);
         const daysJumps = repeatsLeft % this.weekDays.size;
-        const startWithWeekJumps = new Date(
-          this.start!.getTime() +
-            new Duration({ minutes: rangeBetween.inMinutes * weekJumps })
-              .milliseconds
+        const startWithWeekJumps = addDuration(
+          this.start!,
+          new Duration({ minutes: rangeBetween.inMinutes * weekJumps })
         );
 
         const sunday = getStartOfWeek(startWithWeekJumps);
@@ -444,14 +442,14 @@ export default class RecurrenceEvent {
           (a, b) => a - b
         );
         try {
-          return new Date(
-            sunday.getTime() +
-              new Duration({
-                days:
-                  daysJumps - 1 < 0
-                    ? this.weekDays.last
-                    : this.weekDays.elementAt(daysJumps - 1),
-              }).inMilliseconds
+          return addDuration(
+            sunday,
+            new Duration({
+              days:
+                daysJumps - 1 < 0
+                  ? this.weekDays.last
+                  : this.weekDays.elementAt(daysJumps - 1),
+            })
           );
         } catch (e) {
           return undefined;

@@ -6,7 +6,7 @@ import {
   NotificationOption,
   notificationOptionFromStr,
 } from "$lib/consts/notification";
-import { dateIsoStr } from "$lib/utils/times_utils";
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 
 export default class WorkerNotificatiosSettings {
   showAdressAlert: boolean = false;
@@ -37,7 +37,7 @@ export default class WorkerNotificatiosSettings {
     newObj.recurrenceNotificationsLastDate = json[
       "recurrenceNotificationsLastDate"
     ]
-      ? new Date(json["recurrenceNotificationsLastDate"])
+      ? isoToDate(json["recurrenceNotificationsLastDate"])
       : undefined;
     newObj.remindersTypes = new Map();
     if (json["remindersTypes"] !== undefined) {

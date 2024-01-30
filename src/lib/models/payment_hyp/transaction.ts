@@ -1,5 +1,11 @@
 import { hypValidCurrencies } from "$lib/consts/hyp";
-import { dateIsoStr, dateToDateStr, setTo1970 } from "$lib/utils/times_utils";
+import { isNumber } from "$lib/utils/general_utils";
+import {
+  dateIsoStr,
+  dateToDateStr,
+  isoToDate,
+  setTo1970,
+} from "$lib/utils/times_utils";
 import BookingTransactionModel, {
   PaymentTypes,
 } from "../booking/booking_transaction";
@@ -86,7 +92,7 @@ export default class TransactionModel extends PaymentObject {
     transactionModel.refundTransactionId = json["RTI"];
     transactionModel.userName = json["UN"] ?? "";
     if (json["RTCA"] != null) {
-      transactionModel.refundTransactionCreatedAt = new Date(json["RTCA"]);
+      transactionModel.refundTransactionCreatedAt = isoToDate(json["RTCA"]);
     }
     transactionModel.transactionReference = json["TR"] ?? "";
     transactionModel.invoiceId = json["II"];
@@ -104,7 +110,7 @@ export default class TransactionModel extends PaymentObject {
       currency: currency ?? defaultCurrency,
     });
     if (json["CA"] != null) {
-      transactionModel.createdAt = new Date(json["CA"]);
+      transactionModel.createdAt = isoToDate(json["CA"]);
     }
     return transactionModel;
   }

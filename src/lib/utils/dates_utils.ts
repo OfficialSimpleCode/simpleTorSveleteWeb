@@ -4,25 +4,23 @@ import type WorkerModel from "$lib/models/worker/worker_model";
 
 import { Duration } from "$lib/models/core/duration";
 import type MultiBooking from "$lib/models/multi_booking/multi_booking";
-import { addDays, format, parse, startOfWeek } from "date-fns";
+import { addDays, addMonths, format, startOfWeek } from "date-fns";
 import { subDuration } from "./duration_utils";
-import { dateToMonthStr, dateToUtc } from "./times_utils";
-
-export function addDurationFromDateString(
-  date: string,
-  duration: Duration
-): string {
-  const dateObj =
-    parse(date, "HH:mm", new Date()).getTime() + duration.inMilliseconds;
-  return format(new Date(dateObj), "HH:mm");
-}
+import {
+  dateStrToDate,
+  dateToDateStr,
+  dateToMonthStr,
+  dateToTimeStr,
+  dateToUtc,
+  timeStrToDate,
+} from "./times_utils";
 
 export function setTo1970(dateTime: Date): Date {
-  return parse(format(dateTime, "HH:mm"), "HH:mm", new Date(1970, 0, 1));
+  return timeStrToDate(dateToTimeStr(dateTime));
 }
 
 export function setToMidNight(dateTime: Date): Date {
-  return parse(format(dateTime, "dd-MM-yyyy"), "dd-MM-yyyy", new Date());
+  return dateStrToDate(dateToDateStr(dateTime));
 }
 
 export function setToStartOfMonth(dateTime: Date): Date {
@@ -61,7 +59,7 @@ export function convertStringToTime(strTimes: string[] | null): Date[] {
   if (strTimes == null) return [];
   const times: Date[] = [];
   strTimes.forEach((element) => {
-    times.push(new Date(format(element, "HH:mm")));
+    times.push(timeStrToDate(element));
   });
   return times;
 }
@@ -70,7 +68,7 @@ export function convertStringToDateTime(strTimes: string[] | null): Date[] {
   if (strTimes == null) return [];
   const times: Date[] = [];
   strTimes.forEach((element) => {
-    times.push(new Date(format(element, "dd-MM-yyyy")));
+    times.push(dateStrToDate(element));
   });
   return times;
 }
@@ -97,8 +95,8 @@ export function isDateOverlappingWorkTime(
     if (workDay.length <= i + 1) {
       continue;
     }
-    const start = parse(workDay[i], "HH:mm", new Date(1970, 0, 1));
-    const end = parse(workDay[i + 1], "HH:mm", new Date(1970, 0, 1));
+    const start = timeStrToDate(workDay[i]);
+    const end = timeStrToDate(workDay[i + 1]);
     if (date1970 >= start && date1970 <= end) {
       isOverlapping = true;
       break;
@@ -109,12 +107,6 @@ export function isDateOverlappingWorkTime(
 
 export function firstDayOfTheMonth(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), 1);
-}
-
-export function addMonths(inputDate: Date, numberOfMonths: number): Date {
-  const newDate = new Date(inputDate);
-  newDate.setMonth(newDate.getMonth() + numberOfMonths);
-  return newDate;
 }
 
 export function monthDifference(date1: Date, date2: Date): number {

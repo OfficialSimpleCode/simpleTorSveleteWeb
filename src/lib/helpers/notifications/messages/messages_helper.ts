@@ -7,6 +7,8 @@ import { emojisRegex } from "$lib/consts/string";
 import DbPathesHelper from "$lib/helpers/db_paths_helper";
 import GeneralRepo from "$lib/helpers/general/general_repo";
 import type Booking from "$lib/models/booking/booking_model";
+import { Duration } from "$lib/models/core/duration";
+import { subDuration } from "$lib/utils/duration_utils";
 import { removePhoneNumberPrefix } from "$lib/utils/string_utils";
 import MessageRepo from "./messages_repo";
 export default class MessagesHelper {
@@ -161,8 +163,9 @@ export default class MessagesHelper {
       return true;
     }
 
-    const timeToSend = new Date(
-      eventTime.getTime() - minutesBeforeNotify * 60 * 1000
+    const timeToSend = subDuration(
+      eventTime,
+      new Duration({ minutes: minutesBeforeNotify })
     );
 
     if (timeToSend.getTime() < new Date().getTime()) {
