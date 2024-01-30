@@ -1,7 +1,7 @@
 <script lang="ts">
   import Navbar from "$lib/components/navbar/Navbar.svelte";
   import type Booking from "$lib/models/booking/booking_model";
-  import { translate, _ } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import { sortMyBookings } from "./helpers/sort_bookings";
   import BookingList from "./pages/BookingList.svelte";
   import BookingsTable from "./pages/BookingsTable.svelte";
@@ -12,6 +12,7 @@
 </script>
 
 <main class=" h-full">
+  <!-- application nav bar -->
   <Navbar />
   <div class="md:pt-20 pt-2 flex flex-col gap-8 items-center h-full">
     <!-- title -->

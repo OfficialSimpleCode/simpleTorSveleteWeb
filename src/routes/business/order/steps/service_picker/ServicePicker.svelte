@@ -22,7 +22,7 @@
   </h1>
 
   <!-- pick multiple items tuggle -->
-  <MultipleServicesTuggle></MultipleServicesTuggle>
+  <MultipleServicesTuggle />
 
   <!-- list of treatments -->
   <ul

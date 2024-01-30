@@ -55,7 +55,7 @@ export default class BookingController {
       pickMultipleServices: false,
       hasMultiTreatment: false,
       isBookingWithPaymentUpdate: false,
-      currentStep: 1,
+      currentStep: 0,
       isMultiEvent: false,
     };
 
@@ -205,6 +205,7 @@ export default class BookingController {
       } else {
         bookingMaker.currentStep += 1;
         bookingMakerStore.set(bookingMaker);
+        //this.addService(bookingMaker, treatment);
       }
     }
   }
@@ -345,13 +346,13 @@ export default class BookingController {
 
   static onAddTreatmentCount(treatment: Treatment) {
     const bookingMaker = get(bookingMakerStore);
-    if (bookingMaker.services[treatment!.id] != undefined) {
+    if (bookingMaker.services[treatment!.id] == null) {
       return;
     }
     let treatmentsAmount = 0;
     Object.entries(bookingMaker.services).forEach(
       ([treatmentId, treatment]) => {
-        if (bookingMaker.services.value.hasOwnProperty(treatmentId)) {
+        if (bookingMaker.services.hasOwnProperty(treatmentId)) {
           const treatment = bookingMaker.services[treatmentId];
           treatmentsAmount += treatment.count;
         }
@@ -367,11 +368,13 @@ export default class BookingController {
         status: "warning",
       });
       return;
+    } else {
     }
 
     bookingMakerStore.set(bookingMaker);
   }
 }
+
 function showPhoneVerificationAlert(worker: WorkerModel): boolean {
   const tempBooking = new Booking({});
   tempBooking.userFcms = UserInitializer.GI().user.fcmsTokens;

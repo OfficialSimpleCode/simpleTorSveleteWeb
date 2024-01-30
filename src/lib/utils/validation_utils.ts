@@ -1,3 +1,4 @@
+import { noteCharLimit } from "$lib/consts/limitation";
 import { translate } from "./translate";
 
 export function emailValidation(email: string | null): string | null {
@@ -11,4 +12,9 @@ export function emailValidation(email: string | null): string | null {
   }
 
   return null;
+}
+
+export function noteValidation(note: string): string {
+  if (note.trim().length > noteCharLimit) return translate("tooLongNote");
+  return "";
 }

@@ -20,28 +20,40 @@
   import { applyCategoryColor } from "../helpers/event_renderer";
   import { loadBookingMakerTimeData } from "../helpers/load_data";
   import { onEventClick } from "../helpers/on_tap_time_obj";
-  const { Week } = schedule;
+  const { Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop } = schedule;
 
   sync.registerLicense(
     "Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCfEx0Q3xbf1x0ZFRHallSTnZYUiweQnxTdEFjWH1ZcXVQRWBbWUxxWg=="
   );
 
   onMount(() => {
-    Schedule.Inject(Week);
+    Schedule.Inject(Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop);
     BookingController.scheduleObj = new schedule.Schedule({
+      currentView: "Week",
+      dateFormat: "dd-MMM-yyyy",
       width: "100%",
       height: "100%",
       views: ["Week"],
+      cssClass: "schedule-cell-dimension bg-primary",
+      allowDragAndDrop: false,
+      showTimeIndicator: true,
       workHours: { highlight: false },
       showQuickInfo: false,
+      cellHeaderTemplate:
+        '<div class="templatewrap">${getDate(data.date)}</div>',
       eventClick: onEventClick,
       minDate: setToMidNight(new Date()),
-      timeScale: {},
+      // timeScale: {},
       maxDate: addDuration(
         new Date(),
         new Duration({ days: BookingController.worker.daysToAllowBookings })
       ),
-
+      headerRows: [{ option: "Month" }, { option: "Date" }],
+      timeScale: {
+        enable: true,
+        interval: 60,
+        slotCount: 3,
+      },
       eventSettings: {
         fields: {
           id: "id",
