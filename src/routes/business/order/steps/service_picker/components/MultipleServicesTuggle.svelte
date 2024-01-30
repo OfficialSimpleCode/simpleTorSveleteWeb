@@ -1,14 +1,26 @@
 <script>
   import { _ } from "$lib/utils/translate";
 
+  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import { bookingMakerStore } from "$lib/controllers/booking_controller";
+
+  function handleTuggleClick() {
+    if (!$bookingMakerStore.pickMultipleServices) {
+      $bookingMakerStore.pickMultipleServices = true;
+    } else {
+      // need to remove all the selected services
+      $bookingMakerStore.services = {};
+      // update the ui
+      $bookingMakerStore.pickMultipleServices = false;
+    }
+  }
 </script>
 
-<div class="w-full flex flex-row items-center justify-between max-w-[90%]">
+<button
+  on:click={handleTuggleClick}
+  class="w-full flex flex-row gap-2 items-center max-w-[90%]"
+  class:opacity-50={!$bookingMakerStore.pickMultipleServices}
+>
+  <GeneralIcon icon="mdi:checkbox-multiple-blank"></GeneralIcon>
   {$_("chooseMulti")}
-  <input
-    bind:checked={$bookingMakerStore.pickMultipleServices}
-    type="checkbox"
-    class="toggle toggle-accent"
-  />
-</div>
+</button>

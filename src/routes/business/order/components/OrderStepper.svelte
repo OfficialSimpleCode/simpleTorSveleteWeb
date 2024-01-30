@@ -57,7 +57,7 @@
 >
   <!-- worker step -->
   <button
-    class="btn bg-base-300 sm:w-[150px] w-[100px] rounded-lg px-2"
+    class="btn bg-base-300 sm:w-[190px] xs:w-[135px] w-[108px] rounded-lg px-2"
     class:bg-primary={$bookingMakerStore.currentStep === 0}
     on:click={() => clickedOnStep(0)}
   >
@@ -69,7 +69,7 @@
   </button>
   <!-- service step -->
   <button
-    class="btn bg-base-300 sm:w-[150px] w-[100px] rounded-lg px-2"
+    class="btn bg-base-300 sm:w-[150px] xs:w-[135px] w-[108px] rounded-lg px-2"
     class:bg-primary={$bookingMakerStore.currentStep === 1}
     on:click={() => clickedOnStep(1)}
   >
@@ -82,7 +82,7 @@
 
   <!-- time step -->
   <button
-    class="btn bg-base-300 sm:w-[150px] w-[100px] rounded-lg px-2"
+    class="btn bg-base-300 sm:w-[150px] xs:w-[135px] w-[108px] rounded-lg px-2"
     class:bg-primary={$bookingMakerStore.currentStep === 2}
     on:click={() => clickedOnStep(2)}
   >

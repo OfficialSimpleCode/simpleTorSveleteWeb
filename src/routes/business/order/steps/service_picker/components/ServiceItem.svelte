@@ -53,7 +53,7 @@
 
       <!-- amount selected indicator -->
       <button class="btn btn-sm join-item w-min text-center bg-primary">
-        {treatment.count}
+        {($bookingMakerStore.services[treatment.id] ?? treatment).count}
       </button>
 
       <!-- increase btn -->

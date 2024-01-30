@@ -344,7 +344,7 @@ export default class BookingController {
     if (bookingMaker.services[treatment!.id]?.count === 1) {
       this.removeService(bookingMaker, treatment);
     } else {
-      bookingMaker.services[treatment.id].count = -1;
+      bookingMaker.services[treatment.id].count -= 1;
       bookingMakerStore.set(bookingMaker);
     }
   }
@@ -373,8 +373,8 @@ export default class BookingController {
         status: "warning",
       });
       return;
-    } else {
     }
+    bookingMaker.services[treatment.id].count += 1;
 
     bookingMakerStore.set(bookingMaker);
   }

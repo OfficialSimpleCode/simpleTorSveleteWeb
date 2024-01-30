@@ -17,7 +17,7 @@
     BUSINESS_LINK_END_POINT,
     SERVER_BASE_URL,
   } from "$lib/consts/server_variables";
-  import { translate, _ } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import clipboard from "clipboardy";
   import { QRCodeImage } from "svelte-qrcode-image";
 

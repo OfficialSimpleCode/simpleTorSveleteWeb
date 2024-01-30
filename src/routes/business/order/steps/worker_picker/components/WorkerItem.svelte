@@ -41,12 +41,16 @@
 
     <!-- worker abour or default -->
     {#if worker.about === ""}
-      <p class="opacity-90 text-start xs:text-lg text-sm">
+      <p
+        class="opacity-90 text-start xs:text-lg text-sm overflow-hidden whitespace-nowrap text-ellipsis"
+      >
         {translate(isManager(worker.id) ? "manager" : "worker", $_)}
         {translate("since", $_)}: {dateToDateStr(worker.createdAt)}
       </p>
     {:else}
-      <p class="opacity-90 text-start xs:text-lg text-sm">
+      <p
+        class="opacity-90 text-start xs:text-lg text-sm overflow-hidden whitespace-nowrap text-ellipsis"
+      >
         {worker.about}
       </p>
     {/if}
