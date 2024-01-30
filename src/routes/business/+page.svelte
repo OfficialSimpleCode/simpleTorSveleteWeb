@@ -19,6 +19,7 @@
   import IconAndTopButtons from "./sections/IconAndTopButtons.svelte";
   import ProductsSection from "./sections/ProductsSection.svelte";
   import StoryImages from "./sections/StoryImages.svelte";
+  import Updates from "./sections/Updates.svelte";
 
   let themeKey: string = $businessStore.design.pickedThemeKey;
   let themes = $businessStore.design.businessThemes;
@@ -115,6 +116,9 @@
     </div>
     <!-- business icons links -->
     <SocialLinks />
+
+    <!-- business updates -->
+    <Updates />
 
     <!-- Display images -->
     <StoryImages></StoryImages>
