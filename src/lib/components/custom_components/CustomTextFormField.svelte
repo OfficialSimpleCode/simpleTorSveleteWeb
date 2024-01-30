@@ -3,8 +3,9 @@
   import { _, translate } from "$lib/utils/translate";
   import { createEventDispatcher } from "svelte";
 
-  export let placeholder: string;
-  export let pattern: string;
+  export let bgColor: string = "";
+  export let placeholder: string = "";
+  export let pattern: string = "";
   export let validationFunc: (value: string) => string | null;
   export let isRequired: boolean = false;
   export let lableTranslateKey: string = "";
@@ -46,7 +47,7 @@
     <div>
       {#if isRequired}
         <input
-          class="input input-bordered w-full {validationResp !== ''
+          class="input input-bordered {bgColor} w-full {validationResp !== ''
             ? 'border-red-700'
             : ''}"
           type="text"
@@ -58,7 +59,7 @@
         />
       {:else}
         <input
-          class="input input-bordered w-full {validationResp !== ''
+          class="input input-bordered {bgColor} w-full {validationResp !== ''
             ? 'border-red-700'
             : ''}"
           type="text"
@@ -75,7 +76,7 @@
     <div>
       {#if isRequired}
         <input
-          class="input input-bordered w-full {validationResp !== ''
+          class="input input-bordered {bgColor} w-full {validationResp !== ''
             ? 'border-red-700'
             : ''}"
           type="email"
@@ -87,7 +88,7 @@
         />
       {:else}
         <input
-          class="input input-bordered w-full {validationResp !== ''
+          class="input input-bordered {bgColor} w-full {validationResp !== ''
             ? 'border-red-700'
             : ''}"
           type="email"
@@ -104,7 +105,7 @@
     <div>
       {#if isRequired}
         <input
-          class="input input-bordered w-full {validationResp !== ''
+          class="input input-bordered {bgColor} w-full {validationResp !== ''
             ? 'border-red-700'
             : ''}"
           type="password"
@@ -116,7 +117,7 @@
         />
       {:else}
         <input
-          class="input input-bordered w-full {validationResp !== ''
+          class="input input-bordered {bgColor} w-full {validationResp !== ''
             ? 'border-red-700'
             : ''}"
           type="password"

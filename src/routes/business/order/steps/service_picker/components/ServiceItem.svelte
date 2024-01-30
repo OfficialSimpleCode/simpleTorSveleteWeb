@@ -6,9 +6,6 @@
 
   export let treatment: Treatment;
 
-  const a: boolean = Object.keys($bookingMakerStore.services).includes(
-    treatment.id
-  );
   function isPickedService(): boolean {
     return Object.keys($bookingMakerStore.services).includes(treatment.id);
   }
@@ -17,8 +14,8 @@
 <div class="w-full sm:min-w-[480px] flex flex-col items-center gap-2">
   <button
     class="bg-primary rounded-xl w-full h-20 sm:h-28 flex items-center px-6 box-border gap-5 border justify-between"
-    class:opacity-50={!isPickedService()}
-    class:border={isPickedService()}
+    class:opacity-50={!isPickedService() && $bookingMakerStore}
+    class:border={isPickedService() && $bookingMakerStore}
     on:click={() => BookingController.onTapService(treatment)}
   >
     <!-- name of the service -->
@@ -49,7 +46,7 @@
       <!-- decrease btn -->
       <button
         class="btn btn-sm join-item bg-primary"
-        on:click={() => BookingController.onAddTreatmentCount(treatment)}
+        on:click={() => BookingController.onRemoveTreatmentCount(treatment)}
       >
         -
       </button>
@@ -62,7 +59,7 @@
       <!-- increase btn -->
       <button
         class="btn btn-sm join-item bg-primary"
-        on:click={() => BookingController.onRemoveTreatmentCount(treatment)}
+        on:click={() => BookingController.onAddTreatmentCount(treatment)}
       >
         +
       </button>

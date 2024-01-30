@@ -52,7 +52,7 @@
   </label>
 
   <!-- phone field -->
-  <div class="flex flex-row gap-2 xs:text-lg">
+  <div dir="ltr" class="flex flex-row gap-2 xs:text-lg">
     <!-- selct for the prefix (by country) -->
     <select
       class="country-select rounded-md input input-bordered"

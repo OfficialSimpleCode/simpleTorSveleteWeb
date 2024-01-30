@@ -17,7 +17,7 @@
 </script>
 
 <button
-  class="bg-primary rounded-xl w-full max-w-[90%] sm:min-w-[380px] md:w-[40%] h-20 sm:h-32 flex items-center px-6 gap-5 box-border"
+  class="bg-primary rounded-xl w-full max-w-[90%] sm:min-w-[500px] md:w-[40%] h-20 sm:h-32 flex items-center px-6 gap-5 box-border py-2"
   class:opacity-50={$bookingMakerStore.workerId !== worker.id}
   class:border={$bookingMakerStore.workerId === worker.id}
   on:click={() => onTapWorker(worker)}
@@ -41,12 +41,12 @@
 
     <!-- worker abour or default -->
     {#if worker.about === ""}
-      <p class="opacity-90">
+      <p class="opacity-90 text-start xs:text-lg text-sm">
         {translate(isManager(worker.id) ? "manager" : "worker", $_)}
         {translate("since", $_)}: {dateToDateStr(worker.createdAt)}
       </p>
     {:else}
-      <p class="opacity-90">
+      <p class="opacity-90 text-start xs:text-lg text-sm">
         {worker.about}
       </p>
     {/if}

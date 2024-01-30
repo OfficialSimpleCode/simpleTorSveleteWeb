@@ -1,14 +1,17 @@
-<script>
+<script lang="ts">
+  import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
   import { _ } from "$lib/utils/translate";
+  import { noteValidation } from "$lib/utils/validation_utils";
+
+  function validNote(value: string): string {
+    throw new Error("Function not implemented.");
+  }
 </script>
 
-<div class="bg-base-300 w-full rounded-lg">
-  <label class="form-control w-full px-3 pb-3">
-    <div class="label"></div>
-    <input
-      type="text"
-      placeholder="{$_('note')} ({$_('optional')})"
-      class="input border-b border-b-gray-500 sm:input-lg w-full focus:outline-none bg-base-300"
-    />
-  </label>
+<div class="w-full rounded-lg">
+  <CustomTextFormField
+    validationFunc={noteValidation}
+    bgColor="bg-base-300"
+    placeholder="{$_('note')} ({$_('optional')})"
+  ></CustomTextFormField>
 </div>
