@@ -455,8 +455,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     batch: WriteBatch;
     path: string;
     docId: string;
-
-    value: any;
+    value?: any;
     fieldName: string;
     command?: NumericCommands;
     insideEnviroments?: boolean;
@@ -468,7 +467,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       );
       const docRef = doc(collectionRef, docId);
 
-      if (command === undefined) {
+      if (command == null) {
         batch.update(docRef, { [fieldName]: value ?? deleteField() });
       } else {
         batch.update(docRef, {
@@ -584,6 +583,26 @@ export default class FirestoreDataBase extends RealTimeDatabase {
         });
       }
 
+      throw e;
+    }
+  }
+
+  async getAllDocIdsInsideCollection({
+    path,
+  }: {
+    path: string;
+  }): Promise<string[]> {
+    try {
+      const collectionRef = collection(this._firestore, `${envKey}/${path}`);
+      const docs = await getDocs(collectionRef);
+      return docs.docs.map((doc) => doc.id);
+    } catch (e) {
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
       throw e;
     }
   }

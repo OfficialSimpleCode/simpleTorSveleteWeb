@@ -1,7 +1,11 @@
-import { AuthProvider, authProviderToProviderId } from "$lib/consts/auth";
-import type { LoginType } from "$lib/services/external_services/firebase_auth_service";
-import type { PhoneAuthCredential, User } from "firebase/auth";
-import VerificationRepo from "./verification_repo";
+import {
+  AuthProvider,
+  LoginType,
+  authProviderToProviderId,
+} from "$lib/consts/auth";
+
+import type { ParsedToken, PhoneAuthCredential, User } from "firebase/auth";
+import { VerificationRepo } from "./verification_repo";
 
 export class VerificationHelper {
   private static _singleton: VerificationHelper = new this();
@@ -114,6 +118,10 @@ export class VerificationHelper {
     return this.verificationRepo.lastLoginDate;
   }
 
+  async userClaims(): Promise<ParsedToken | undefined> {
+    return await this.verificationRepo.userClaims();
+  }
+
   public async unlinkProvider(authProvider: AuthProvider): Promise<boolean> {
     const providerId = authProviderToProviderId[authProvider] || "";
     const value = await this.verificationRepo.unlinkProvider({ providerId });
@@ -193,6 +201,7 @@ export class VerificationHelper {
     loginType: LoginType;
     otp: string;
   }): Promise<boolean> {
+    console.log("this.verificationID", this.verificationID);
     return await this.verificationRepo.signInWithOtp({
       loginType,
       verificationId: this.verificationID,

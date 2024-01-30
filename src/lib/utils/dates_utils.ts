@@ -4,6 +4,7 @@ import type WorkerModel from "$lib/models/worker/worker_model";
 
 import { Duration } from "$lib/models/core/duration";
 import type MultiBooking from "$lib/models/multi_booking/multi_booking";
+import type BreakModel from "$lib/models/schedule/break_model";
 import { addDays, addMonths, format, startOfWeek } from "date-fns";
 import { subDuration } from "./duration_utils";
 import {
@@ -139,6 +140,14 @@ export function dateToRemindBooking(booking: Booking, minutes: number): Date {
     new Duration({ minutes: minutes })
   );
 }
+///Get break Return the date that need to notify the worker about it
+///in utc time
+export function dateToNotifyBreak(breakModel: BreakModel): Date {
+  return subDuration(
+    dateToUtc(breakModel.bookingDate),
+    new Duration({ minutes: breakModel.minutesNotification })
+  );
+}
 
 export function dateToRemindMultiBooking(
   multiBooking: MultiBooking,
@@ -180,6 +189,9 @@ export function getWeekdayFromDate(date: Date): string {
   var weekdayName = weekdays[dayOfWeek];
 
   return weekdayName;
+}
+export function utcDeltaMinutes(): number {
+  return new Date().getTimezoneOffset();
 }
 
 // enum CustomDurationOptions {

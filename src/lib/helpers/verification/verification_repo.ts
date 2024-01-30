@@ -1,8 +1,6 @@
-import {
-  FirebaseAuthService,
-  LoginType,
-} from "$lib/services/external_services/firebase_auth_service";
-import type { CompleteFn, Unsubscribe, User } from "firebase/auth";
+import type { LoginType } from "$lib/consts/auth";
+import { FirebaseAuthService } from "$lib/services/external_services/firebase_auth_service";
+import type { CompleteFn, ParsedToken, Unsubscribe, User } from "firebase/auth";
 import type { VerificationApi } from "./verification_api";
 
 // Define the VerificationRepo class implementing the VerificationApi interface
@@ -122,12 +120,7 @@ export class VerificationRepo
     return this.lastLoginDateSRV;
   }
 
-  async userClaims(): Promise<{
-    [key: string]: any;
-  } | null> {
-    return await this.userClaimsSRV;
+  async userClaims(): Promise<ParsedToken | undefined> {
+    return await this.userClaimsSRV();
   }
 }
-
-// Export the VerificationRepo class
-export default VerificationRepo;

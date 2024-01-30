@@ -47,7 +47,7 @@ export default class BusinessModel {
   lastTimeConnected: Date = new Date();
   businessData: BusinessData = new BusinessData();
   design: BusinessDesign = new BusinessDesign();
-
+  constructor({});
   constructor({
     shopName = "",
     businessId,

@@ -16,7 +16,6 @@ export default class MultiBooking extends ScheduleItem {
   treatment: Treatment = new Treatment();
   isMulti: boolean = true;
   workerGender: Gender = Gender.anonymous;
-  bookingDate: Date = new Date(0);
   note: string = "";
   bookingId: string = "";
   createdAt: Date = new Date();

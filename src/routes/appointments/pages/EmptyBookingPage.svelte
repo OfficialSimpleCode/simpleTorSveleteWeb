@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Animation from "$lib/components/Animation.svelte";
+  import LottieAnimation from "$lib/components/LottieAnimation.svelte";
   import { emptyAnimation } from "$lib/consts/resources";
 </script>
 
 <div>
-  <Animation animationFile={emptyAnimation}></Animation>
+  <LottieAnimation animationFile={emptyAnimation}></LottieAnimation>
 </div>

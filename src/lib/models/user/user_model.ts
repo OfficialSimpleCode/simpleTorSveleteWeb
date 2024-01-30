@@ -18,8 +18,8 @@ import UserPublicData from "./user_public_data";
 import UserSubProductItem from "./user_sub_product.item";
 
 export default class UserModel {
-  productsIds: { [key: string]: UserSubProductItem } = {};
-  pendingProductsIds: { [key: string]: string } = {};
+  productsIds: Map<string, UserSubProductItem> = new Map();
+  pendingProductsIds: Map<string, string> = new Map();
   id: string = "";
   revenueCatId: string = "";
   limitOfBuisnesses: number = 1;
@@ -28,7 +28,7 @@ export default class UserModel {
   lastTimeUpdatePhone: Date = new Date(0);
   lastTimeUpdateEmail: Date = new Date(0);
   authProviders: Map<AuthProvider, Date> = new Map();
-  businessesInfo: { [key: string]: BusinessInfo } = {};
+  businessesInfo: Map<string, BusinessInfo> = new Map();
   storyLikes: string[] = [];
   paymentCards: Record<string, Record<string, PaymentCard>> = {}; //{businessId: {cardId: PaymentCard()}}
   lastVisitedBuisnesses: string[] = [];
@@ -59,12 +59,13 @@ export default class UserModel {
   devices: { [key: string]: Device } = {};
   bookings: UserBookings = new UserBookings();
   hasOldNotification: boolean = false;
+  bookingsToShow: Booking[] = [];
 
   constructor({
     name = "",
     phoneNumber = "",
     id = "",
-    productsIds = {},
+
     myBuisnessesIds = [],
     revenueCatId = "",
     limitOfBuisnesses = 1,
@@ -81,7 +82,7 @@ export default class UserModel {
     name?: string;
     phoneNumber?: string;
     id?: string;
-    productsIds?: { [key: string]: UserSubProductItem };
+
     myBuisnessesIds?: string[];
     revenueCatId?: string;
     limitOfBuisnesses?: number;
@@ -108,7 +109,7 @@ export default class UserModel {
     this.name = name;
     this.phoneNumber = phoneNumber;
     this.id = id;
-    this.productsIds = productsIds;
+
     this.revenueCatId = revenueCatId;
     this.limitOfBuisnesses = limitOfBuisnesses;
     this.gender = gender;
@@ -209,11 +210,9 @@ export default class UserModel {
       name: json["name"],
       phoneNumber: json["phoneNumber"],
       id: json["id"],
-      productsIds: {},
       myBuisnessesIds: [],
       revenueCatId: json["revenueCatId"],
       limitOfBuisnesses: json["limitOfBuisnesses"],
-
       gender: genderFromStr[json["gender"]],
       lastVisitedBuisnesses: json["lastVisitedBuisnesses"],
       lastVisitedBuisnessesRemoved: json["lastVisitedBuisnessesRemoved"],
@@ -277,13 +276,13 @@ export default class UserModel {
       user.lastTimeUpdateEmail = isoToDate(json["lastTimeUpdateEmail"]);
     }
 
-    user.productsIds = {};
+    user.productsIds = new Map();
     if (json["productsIds"]) {
       Object.entries(json["productsIds"]).forEach(
         ([productId, productJson]) => {
-          user.productsIds[productId] = UserSubProductItem.fromJson(
-            productJson,
-            productId
+          user.productsIds.set(
+            productId,
+            UserSubProductItem.fromJson(productJson, productId)
           );
         }
       );
@@ -292,7 +291,7 @@ export default class UserModel {
     if (json["pendingProductsIds"]) {
       Object.entries<string>(json["pendingProductsIds"]).forEach(
         ([productId, businessId]) => {
-          user.pendingProductsIds[productId] = businessId;
+          user.pendingProductsIds.set(productId, businessId);
         }
       );
     }
@@ -309,12 +308,12 @@ export default class UserModel {
       );
     }
 
-    user.businessesInfo = {};
+    user.businessesInfo = new Map();
     if (json["businessesInfo"]) {
       Object.entries(json["businessesInfo"]).forEach(([businessId, info]) => {
-        user.businessesInfo[businessId] = BusinessInfo.fromJson(
-          info,
-          businessId
+        user.businessesInfo.set(
+          businessId,
+          BusinessInfo.fromJson(info, businessId)
         );
       });
     }
@@ -504,11 +503,15 @@ export default class UserModel {
     data["revenueCatId"] = this.revenueCatId;
     if (Object.keys(this.productsIds).length > 0) {
       data["productsIds"] = {};
-      Object.entries(this.productsIds).forEach(([productId, product]) => {
+      this.productsIds.forEach((product, productId) => {
         data["productsIds"][productId] = product.toJson();
       });
     }
-    data["pendingProductsIds"] = this.pendingProductsIds;
+    data["pendingProductsIds"] = {};
+    this.pendingProductsIds.forEach((businessId, productId) => {
+      data["pendingProductsIds"][businessId] = productId;
+    });
+
     data["lastCleanDate"] = this.lastCleanDate;
     data["limitOfBuisnesses"] = this.limitOfBuisnesses;
     data["lastVisitedBuisnesses"] = this.lastVisitedBuisnesses;
@@ -517,7 +520,7 @@ export default class UserModel {
     if (this.cardPaymentsPass !== "") {
       data["cardPaymentsPass"] = this.cardPaymentsPass;
     }
-    Object.entries(this.businessesInfo).forEach(([businessId, info]) => {
+    this.businessesInfo.forEach((info, businessId) => {
       data["businessesInfo"][businessId] = info.toJson();
     });
     data["storyLikes"] = this.storyLikes;

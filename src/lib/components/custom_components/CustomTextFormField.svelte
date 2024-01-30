@@ -6,7 +6,8 @@
   export let bgColor: string = "";
   export let placeholder: string = "";
   export let pattern: string = "";
-  export let validationFunc: (value: string) => string | null;
+  export let validationFunc: ((value: string) => string | null) | undefined =
+    undefined;
   export let isRequired: boolean = false;
   export let lableTranslateKey: string = "";
   export let type: InputOptions = InputOptions.text;
@@ -23,7 +24,7 @@
     const inputValue: string = event.currentTarget.value;
 
     // resp from the validation
-    validationResp = validationFunc(inputValue);
+    validationResp = validationFunc ? validationFunc(inputValue) : null;
 
     // display error onlt if it isn't empty
     errorMessage = inputValue === "" ? "" : validationResp ?? "";

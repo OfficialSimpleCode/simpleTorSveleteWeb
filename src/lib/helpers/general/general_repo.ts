@@ -127,7 +127,7 @@ export default class GeneralRepo extends FirestoreDataBase {
     path: string;
     docId: string;
     fieldName: string;
-    value: any;
+    value?: any;
     insideEnviroments?: boolean;
     command?: NumericCommands | undefined;
   }): Promise<boolean> {
@@ -164,6 +164,21 @@ export default class GeneralRepo extends FirestoreDataBase {
       insideEnviroments: insideEnviroments,
     });
     return await this.commmitBatch(batch);
+  }
+
+  async getAllDocInsideCollectionRepo({
+    path,
+  }: {
+    path: string;
+  }): Promise<Record<string, any>[]> {
+    try {
+      const result = await super.getAllDocsInsideCollection(path);
+      return result;
+    } catch (error) {
+      // Handle error as needed
+      console.error("Error in getAllDocInsideCollectionRepo:", error);
+      return [];
+    }
   }
 
   async deleteDocRepo({

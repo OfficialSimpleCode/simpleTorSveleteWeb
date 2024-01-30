@@ -32,6 +32,7 @@ import { format } from "date-fns";
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
 import Device from "../general/device";
 import Treatment from "../general/treatment_model";
+import Events from "./events";
 import MultiEventsTimes from "./multi_events_times";
 import WorkerNotificatiosSettings from "./notifications_settings";
 import PublicCustomers from "./public_customers_data";
@@ -101,6 +102,8 @@ export default class WorkerModel {
   storylikesAmount: Record<string, number> = {};
   //------------------------------- from multiEventsTimes doc------------------------------
   multiEventsTimes: MultiEventsTimes = new MultiEventsTimes();
+  //-----------------------------from booking event collection --------------------------
+  events: Events = new Events({});
 
   //-------------------------------another vars ----------------------------
   generalBookingsCount: number = 0;

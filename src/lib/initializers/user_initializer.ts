@@ -9,10 +9,10 @@ import AppErrorsHelper from "$lib/helpers/app_errors";
 import DbPathesHelper from "$lib/helpers/db_paths_helper";
 import { GeneralData } from "$lib/helpers/general_data";
 import UserRepo from "$lib/helpers/user/user_repo";
-import VerificationRepo from "$lib/helpers/verification/verification_repo";
+import { VerificationRepo } from "$lib/helpers/verification/verification_repo";
 import UserModel from "$lib/models/user/user_model";
 import { isConnectedStore, userStore } from "$lib/stores/User";
-import { checkForReminders } from "$lib/utils/booking_utils";
+import { checkForReminders, sortMyBookings } from "$lib/utils/booking_utils";
 import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
 
 export default class UserInitializer {
@@ -128,6 +128,8 @@ export default class UserInitializer {
               this.user.userPublicData.bookingsDocsToLoad
             );
 
+            this.user.bookingsToShow = sortMyBookings(this.user);
+
             // // update server to relevant fcm for notifications
             // _transaferInvoiceIfNeeded();
             // transaferBookingsIfNeeded(this.user);
@@ -171,6 +173,20 @@ export default class UserInitializer {
     });
   }
 
+  cancelPublicDataListening(user: UserModel) {
+    /* Cancel current user listening */
+    try {
+      if (user.userPublicDataListener != null) {
+        user.userPublicDataListener!();
+        user.userPublicDataListener = undefined;
+      }
+
+      console.log("User Listening canceled");
+    } catch (e) {
+      console.log("Error while pausing the user listener -->", e);
+    }
+  }
+
   async loadBookingsDocs(docs: Set<string>) {
     const futures: Promise<void>[] = [];
 
@@ -181,16 +197,6 @@ export default class UserInitializer {
     await Promise.all(futures);
   }
 
-  async logout(): Promise<boolean> {
-    return this.verificationRepo.logout().then(async (value: boolean) => {
-      if (value) {
-        this.user = new UserModel({});
-        userStore.set(this.user);
-        isConnectedStore.set(false);
-      }
-      return value;
-    });
-  }
   async loadBookingDoc(docId: string): Promise<void> {
     try {
       const bookingsDoc = await this.userRepo.getDocSRV({
@@ -205,5 +211,33 @@ export default class UserInitializer {
     } catch (error) {
       logger.error(`Error loading booking doc ${docId}: ${error}`);
     }
+  }
+  async getAllBookingsDocs(): Promise<void> {
+    const docsToLoad: Set<string> = new Set();
+    const userPublicData = this.user.userPublicData;
+
+    Object.entries(userPublicData.bookingsPreviews).forEach(
+      ([docId, preview]) => {
+        if (preview.bookingCount === 0) {
+          return;
+        }
+
+        const bookings = this.user.bookings;
+        if (
+          bookings.futureBookings.hasOwnProperty(docId) ||
+          bookings.passedBookings.hasOwnProperty(docId)
+        ) {
+          return;
+        }
+
+        if (docId === recurrenceBookingsDoc && bookings.recurrence !== null) {
+          return;
+        }
+
+        docsToLoad.add(docId);
+      }
+    );
+
+    await this.loadBookingsDocs(docsToLoad);
   }
 }

@@ -158,7 +158,9 @@ export default class UserPublicData {
     if (dataJson["permission"]) {
       Object.entries<number>(dataJson["permission"]).forEach(
         ([businessId, codePermission]) => {
-          if (codePermission === 2) this.myBuisnessesIds.push(businessId);
+          if (codePermission === 2) {
+            this.myBuisnessesIds.push(businessId);
+          }
           this.permission.set(businessId, codePermission);
         }
       );

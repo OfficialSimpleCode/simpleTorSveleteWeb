@@ -10,11 +10,11 @@
     E164Number,
   } from "svelte-tel-input/types";
 
+  // You must use E164 number format. It's guarantee the parsing and storing consistency.
+  export let value: E164Number | null = "";
+
   // Any Country Code Alpha-2 (ISO 3166)
   let selectedCountry: CountryCode | null = "IL";
-
-  // You must use E164 number format. It's guarantee the parsing and storing consistency.
-  let value: E164Number | null = "";
 
   // Validity
   let valid = true;
@@ -26,14 +26,22 @@
 
   const dispatch = createEventDispatcher();
   function updatePhoneNumber() {
+    const phone = detailedValue?.phoneNumber;
+    console.log(detailedValue?.countryCallingCode);
+
+    const formattedPhone = phone?.replace(
+      `+${detailedValue?.countryCallingCode ?? "eeeeee"}`,
+      `+${detailedValue?.countryCallingCode}-`
+    );
     // prepearing the object
     const event: PhonePickerEvent = {
-      value: detailedValue?.phoneNumber,
+      value: formattedPhone,
       isValid:
         valid &&
         detailedValue?.phoneNumber != null &&
         detailedValue?.phoneNumber?.length > 0,
     };
+    console.log(event);
     // update the listeners about phone change
     dispatch("phoneChange", event);
   }

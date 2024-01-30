@@ -27,6 +27,7 @@ import {
   dateToDateStr,
   dateToDayStr,
   dateToMonthStr,
+  dateToTimeStr,
   setTo1970,
   setToMidNight,
 } from "$lib/utils/times_utils";
@@ -1034,5 +1035,106 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           docId: docId,
           data: data,
         });
+  }
+
+  async updateFieldsInBooking({
+    booking,
+    data,
+
+    eventValue,
+    updateUser = true,
+    changeInEvents = false,
+    incrementCounters = true,
+    counterType,
+    eventFieldName,
+  }: {
+    booking: Booking;
+    data: Record<string, any>; // ex: {"needCancel":true,"wasWaiting":true}
+
+    eventValue?: any;
+    updateUser?: boolean;
+    changeInEvents?: boolean;
+    incrementCounters?: boolean;
+    counterType?: EventFilterType;
+    eventFieldName?: string;
+  }): Promise<boolean> {
+    const transacionCommands: (transaction: any) => Promise<boolean> = async (
+      transaction
+    ) => {
+      const updateResp = await this.getUpdatedBookingDate({
+        transaction,
+        bookingToUpdate: booking,
+      });
+
+      if (updateResp == null) {
+        return false;
+      } else {
+        booking.bookingDate = updateResp.bookingDate;
+        booking.isUserExist = updateResp.isUserExist;
+      }
+
+      const path = `${buisnessCollection}/${booking.buisnessId}/${workersCollection}`;
+
+      if (changeInEvents && eventFieldName !== null) {
+        const bookingDay = dateToDayStr(booking.bookingDate);
+        const bookingMonth = dateToMonthStr(booking.bookingDate);
+
+        const bookingsEventsData: Record<string, any> = {};
+        booking.bookingsEventsAsJson.forEach((time, event) => {
+          bookingsEventsData[`${bookingDay}.${time}.${eventFieldName}`] =
+            eventValue;
+        });
+
+        // Put the booking event in the doc and create one if it doesn't exist
+        this.transactionUpdateMultipleFieldsAsMap({
+          transaction,
+          path: `${path}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsEventsCollection}`,
+          docId: bookingMonth,
+          data: bookingsEventsData,
+        });
+      }
+
+      const dataForWorker: Record<string, any> = {};
+      Object.entries(data).forEach(([fieldName, value]) => {
+        dataForWorker[
+          booking.isMultiRef
+            ? `${dateToTimeStr(booking.bookingDate)}.users.${
+                booking.bookingId
+              }.${fieldName}`
+            : `${booking.bookingId}.${fieldName}`
+        ] = value;
+      });
+
+      this.transactionUpdateMultipleFieldsAsMap({
+        transaction,
+        path: `${path}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`,
+        docId: dateToDateStr(booking.bookingDate),
+        data: dataForWorker,
+      });
+
+      return true;
+    };
+
+    return await this.runTransaction(transacionCommands).then(async (value) => {
+      if (value && updateUser) {
+        const dataForUser: Record<string, any> = {};
+        Object.entries(data).forEach(([fieldName, value]) => {
+          dataForUser[`${booking.bookingId}.${fieldName}`] = value;
+        });
+
+        await this.updateUserBooking({ booking, data: dataForUser });
+
+        if (counterType != null) {
+          // Increment the eventsCounters
+          await this.realTimeEventsCounterHandler({
+            workerId: booking.workerId,
+            businessId: booking.buisnessId,
+            increment: incrementCounters,
+            types: new Map([[counterType, 1]]),
+          });
+        }
+      }
+      return value;
+    });
   }
 }

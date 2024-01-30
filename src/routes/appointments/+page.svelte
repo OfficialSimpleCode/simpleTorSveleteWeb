@@ -1,14 +1,15 @@
 <script lang="ts">
   import Navbar from "$lib/components/navbar/Navbar.svelte";
   import type Booking from "$lib/models/booking/booking_model";
+  import { userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
-  import { sortMyBookings } from "./helpers/sort_bookings";
+
   import BookingList from "./pages/BookingList.svelte";
   import BookingsTable from "./pages/BookingsTable.svelte";
   import EmptyBookingPage from "./pages/EmptyBookingPage.svelte";
 
   const emptyBookins = false;
-  let bookings: Booking[] = sortMyBookings();
+  let bookings: Booking[] = $userStore.bookingsToShow;
 </script>
 
 <main class=" h-full">

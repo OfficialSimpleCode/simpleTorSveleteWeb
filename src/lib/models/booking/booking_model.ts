@@ -83,7 +83,6 @@ export default class Booking extends ScheduleItem {
   lastTimeNotifyOnDebt?: Date;
   adress: string = "";
   wasWaiting: boolean = false;
-  bookingDate: Date = new Date(0);
   note: string = "";
   needCancel: boolean = false;
   treatments: Map<string, Treatment> = new Map();

@@ -5,25 +5,45 @@
   import InfoTooltipButton from "$lib/components/InfoTooltipButton.svelte";
   import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
   import GenderPicker from "$lib/components/pickers/gender_picker/GenderPicker.svelte";
-  import Google from "$lib/images/google.svg";
+  import type { Gender } from "$lib/consts/gender";
+  import UserHelper from "$lib/helpers/user/user_helper";
   import { userStore } from "$lib/stores/User";
+  import { imageByGender } from "$lib/utils/images_utils";
   import { dateToDateStr } from "$lib/utils/times_utils";
   import {
     ArrowRightOnRectangle,
-    ChevronRight,
     Envelope,
     Icon,
     Identification,
     Phone,
-    Plus,
     Trash,
     User,
     XCircle,
   } from "svelte-hero-icons";
   import { _ } from "svelte-i18n";
-  import { logOut, updateGender } from "../helpers/helpers";
+
+  import AuthOptions from "./AuthOptions.svelte";
 
   export let dialog: HTMLDialogElement;
+  let loadingLogout: boolean = false;
+
+  async function updateGender(newGender: Gender) {
+    await UserHelper.GI().setGender(newGender);
+  }
+
+  async function onLogout() {
+    loadingLogout = true;
+    try {
+      await UserHelper.GI().logout();
+      history.back();
+    } finally {
+      loadingLogout = false;
+    }
+  }
+
+  async function onDeleteUser() {
+    goto(`${base}/delete-user`);
+  }
 </script>
 
 <dialog
@@ -45,9 +65,9 @@
         <Avatar
           small={true}
           ring={false}
-          img="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+          img={imageByGender($userStore.gender)}
         />
-        <h1 class="text-xl">{$userStore.name}</h1>
+        <h1 class="text-xl mt-5">{$userStore.name}</h1>
         <h5 class="text-sm text-gray-500">
           {$_("since")}: {dateToDateStr($userStore.createdAt)}
         </h5>
@@ -65,7 +85,7 @@
           </div>
           <div class="flex items-center text-gray-500">
             {$userStore.name}
-            <Icon src={ChevronRight} size="18px" />
+            <CustomArrow />
           </div>
         </button>
         <div class="divider h-[1px]" />
@@ -79,7 +99,7 @@
           </div>
           <div class="flex items-center text-gray-500">
             {$userStore.phoneNumber}
-            <Icon src={ChevronRight} size="18px" />
+            <CustomArrow />
           </div>
         </button>
         <div class="divider h-[1px]" />
@@ -111,71 +131,30 @@
         </button>
       </section>
       <GenderPicker onChanged={updateGender} pickedGender={$userStore.gender} />
-      <!-- Gender -->
-      <!-- <section
-        class="relative rounded-lg bg-base-100 p-6 flex items-center justify-center gap-10 w-[90%]"
-      >
-        <InfoCircle
-          message="hello this is a test message for the info circle"
-        />
-        <button
-          id="male"
-          class="flex flex-col items-center"
-          class:text-gray-500={$userStore.gender !== Gender.male}
-          on:click={() => updateGender(Gender.male)}
-        >
-          <Icon src={HandThumbUp} size="35px" />
-          <div>{$_("male")}</div>
-        </button>
-        <button
-          id="female"
-          class="flex flex-col items-center"
-          class:text-gray-500={$userStore.gender !== Gender.female}
-          on:click={() => updateGender(Gender.female)}
-        >
-          <Icon src={HandThumbDown} size="35px" />
-          <span>{$_("female")}</span>
-        </button>
-        <button
-          id="other"
-          class="flex flex-col items-center"
-          class:text-gray-500={$userStore.gender !== Gender.anonymous}
-          on:click={() => updateGender(Gender.anonymous)}
-        >
-          <Icon src={Moon} size="35px" />
-          <span>{$_("other")}</span>
-        </button>
-      </section> -->
 
-      <!-- Auth Options -->
-      <section
-        class="relative rounded-lg bg-base-100 p-6 flex items-center justify-center gap-4 w-[90%]"
-      >
-        <button class="btn btn-ghost">
-          <img src={Google} alt="google" class="w-[35px]" />
-        </button>
-        <button class="btn btn-ghost">
-          <Icon src={Plus} size="35px" />
-        </button>
-      </section>
-
+      <AuthOptions />
       <!-- Actions -->
       <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
         <button
           class="btn btn-ghost join-item flex justify-between items-center"
-          on:click={logOut}
+          on:click={onLogout}
         >
           <div class="flex items-center gap-2">
             <Icon src={ArrowRightOnRectangle} size="26px" />
             {$_("logout")}
           </div>
           <div class="flex items-center text-gray-500">
-            <CustomArrow />
+            {#if loadingLogout}
+              <div class="loading loading-spinner"></div>
+            {:else}
+              <CustomArrow />
+            {/if}
           </div>
         </button>
         <div class="divider h-[1px]" />
         <button
           class="btn btn-ghost join-item flex justify-between items-center"
+          on:click={onDeleteUser}
         >
           <div class="flex items-center gap-2">
             <Icon src={Trash} size="26px" />

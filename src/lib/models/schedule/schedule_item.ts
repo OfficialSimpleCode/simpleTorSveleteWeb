@@ -9,7 +9,7 @@ export default abstract class ScheduleItem {
   workerPhone: string = "";
   buisnessId: string = "";
   businessName: string = "";
-
+  bookingDate: Date = new Date(0);
   recurrenceEvent?: RecurrenceEvent;
 
   // Contain the event id of the recurrence father

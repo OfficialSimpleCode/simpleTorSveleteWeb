@@ -1,7 +1,8 @@
 <script lang="ts">
+  import { LoginReason } from "$lib/consts/auth";
   import GetOtpView from "./phone_dialog/components/GetOtpView.svelte";
   import GetPhoneView from "./phone_dialog/components/GetPhoneView.svelte";
-
+  export let loginReason: LoginReason;
   export let dialog: HTMLDialogElement;
   let insideOtp: boolean = false;
 </script>
@@ -11,6 +12,7 @@
   class="modal modal-bottom sm:modal-middle"
   on:close={() => {
     insideOtp = false;
+
     history.back();
   }}
 >
@@ -23,7 +25,7 @@
         }}
       />
     {:else}
-      <GetOtpView {dialog} />
+      <GetOtpView {loginReason} {dialog} />
     {/if}
   </div>
   <form method="dialog" class="modal-backdrop">

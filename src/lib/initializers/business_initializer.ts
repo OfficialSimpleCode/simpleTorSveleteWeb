@@ -15,6 +15,7 @@ import DbPathesHelper from "$lib/helpers/db_paths_helper";
 import GeneralRepo from "$lib/helpers/general/general_repo";
 import { GeneralData } from "$lib/helpers/general_data";
 import ThemeHelper from "$lib/helpers/theme_helper";
+import { BusinessData } from "$lib/models/business/business_data";
 import { BusinessDesign } from "$lib/models/business/business_design";
 import BusinessModel from "$lib/models/business/business_model";
 import WorkerModel from "$lib/models/worker/worker_model";
@@ -270,6 +271,42 @@ export default class BusinessInitializer {
         }
       },
     });
+  }
+  async cancelBusinessDataListener() {
+    try {
+      if (this.business.businessData.listener != null) {
+        this.business.businessData = new BusinessData();
+        this.business.businessData.listener!();
+      }
+    } catch (e) {
+      logger.debug("Error while cancel the business data listener");
+    }
+  }
+
+  emptyBusinessData(): void {
+    //TODO Remove the business themes from the theme helper themes
+    // Object.keys(this.business.design.businessThemes).forEach((themeKey) => {
+    //   ThemeHelper().currentThemes.delete(themeKey);
+    // });
+
+    // this.changingImages = [];
+    // this.storyCacheImages = {};
+    // this.businessLimits = {};
+    // this.productsCacheImages = [];
+    //TODOD remove reminder
+
+    // this.storyImagesLength = 0;
+    // this.eligibleWorkerAmount = 0;
+    // this.limitionPassed = [];
+
+    this.businessSubtype = SubType.trial;
+    this.business = BusinessModel.empty();
+    this.business.businessData = new BusinessData();
+
+    // No need to wait
+    this.cancelBusinessDataListener();
+    GeneralData.currentBusinesssId = "";
+    businessStore.set(new BusinessModel({}));
   }
 
   //---------------------------------------listeners --------------------------------------

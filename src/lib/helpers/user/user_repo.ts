@@ -3,10 +3,12 @@ import {
   bookingsObjectsCollection,
   buisnessCollection,
   clientsByPhoneDoc,
+  customersDataDoc,
   dataCollection,
   dataDoc,
   invoicesCollection,
   paymentRequestColletion,
+  paymentsCollection,
   paymentsRequestsPreviewsCollection,
   phoneDataCollections,
   phonesCollection,
@@ -424,5 +426,158 @@ export default class UserRepo extends GeneralRepo implements UserApi {
 
       return undefined;
     });
+  }
+
+  async deleteUser({ user }: { user: UserModel }): Promise<boolean> {
+    // Take a dup of client at in case the listeners will update it
+    const clientAt: Map<string, Set<string>> = new Map(
+      user.userPublicData.clientAt
+    );
+    const batch = this.getBatch;
+    this.deleteDoc({
+      batch,
+      path: `${usersCollection}/${user.id}/${dataCollection}`,
+      docId: dataDoc,
+    });
+    this.deleteDoc({
+      batch,
+      path: usersCollection,
+      docId: user.id,
+    });
+
+    const invoicesIds = await this.getAllDocIdsInsideCollection({
+      path: `${usersCollection}/${user.id}/${dataCollection}/${dataDoc}/${invoicesCollection}`,
+    });
+    invoicesIds.forEach((docId) => {
+      this.deleteDoc({
+        batch,
+        path: `${usersCollection}/${user.id}/${dataCollection}/${dataDoc}/${invoicesCollection}`,
+        docId,
+      });
+    });
+    const paymentRequestsIds = await this.getAllDocIdsInsideCollection({
+      path: `${usersCollection}/${user.id}/${dataCollection}/${dataDoc}/${paymentRequestColletion}`,
+    });
+    paymentRequestsIds.forEach((docId) => {
+      this.deleteDoc({
+        batch,
+        path: `${usersCollection}/${user.id}/${dataCollection}/${dataDoc}/${paymentRequestColletion}`,
+        docId,
+      });
+    });
+    const paymentsIds = await this.getAllDocIdsInsideCollection({
+      path: `${usersCollection}/${user.id}/${dataCollection}/${dataDoc}/${paymentsCollection}`,
+    });
+
+    paymentsIds.forEach((docId) => {
+      this.deleteDoc({
+        batch,
+        path: `${usersCollection}/${user.id}/${dataCollection}/${dataDoc}/${paymentsCollection}`,
+        docId,
+      });
+    });
+    const bookingsIds = await this.getAllDocIdsInsideCollection({
+      path: `${usersCollection}/${user.id}/${dataCollection}/${dataDoc}/${bookingsCollection}`,
+    });
+
+    bookingsIds.forEach((docId) => {
+      this.deleteDoc({
+        batch,
+        path: `${usersCollection}/${user.id}/${dataCollection}/${dataDoc}/${bookingsCollection}`,
+        docId,
+      });
+    });
+
+    return await this.commmitBatch(batch).then(async (value) => {
+      if (value) {
+        const futures: Promise<boolean>[] = [];
+        const data: Record<string, null> = { [`data.${user.id}`]: null };
+        if (user.isVerifiedPhone) {
+          // Delete the customer phone too if the user is verified
+          data[`data.${user.phoneNumber}`] = null;
+        }
+        // Delete all the places that the user is client in
+        clientAt.forEach((workerIds, businessId) => {
+          const path = `${buisnessCollection}/${businessId}/${workersCollection}`;
+          workerIds.forEach((workerId) => {
+            futures.push(
+              this.updateMultipleFieldsInsideDocAsMapRepo({
+                path: `${path}/${workerId}/${dataCollection}`,
+                docId: customersDataDoc,
+                data,
+              })
+            );
+          });
+        });
+        futures.push(
+          this.deleteDocRepo({
+            path: phonesCollection,
+            docId: phoneToDocId(user.phoneNumber),
+          })
+        );
+        await Promise.all(futures);
+      }
+
+      return value;
+    });
+  }
+
+  async updatePhone({
+    userId,
+    businessesIds,
+    phone,
+    currentPhone,
+    isVerified,
+  }: {
+    userId: string;
+    businessesIds: string[];
+    phone: string;
+    currentPhone: string;
+    isVerified: boolean;
+  }): Promise<boolean> {
+    const transacionCommands: (
+      transaction: Transaction
+    ) => Promise<boolean> = async (transaction) => {
+      if (currentPhone !== phone) {
+        // check if phone is already exist in the phone collection
+        const phoneDoc = await this.transactionGet(
+          transaction,
+          phonesCollection,
+          phoneToDocId(phone)
+        );
+
+        if (phoneDoc.exists() && phoneDoc.data()!.userId !== userId) {
+          AppErrorsHelper.GI().error = Errors.alreadyExistPhone;
+          return false;
+        }
+      }
+
+      this.transactionUpdateMultipleFieldsAsMap({
+        transaction,
+        path: usersCollection,
+        docId: userId,
+        data: { phoneNumber: phone, isVerifiedPhone: isVerified },
+      });
+
+      this.transactionUpdateMultipleFieldsAsMap({
+        transaction,
+        path: `${usersCollection}/${userId}/${dataCollection}`,
+        docId: dataDoc,
+        data: { phoneNumber: phone, isVerifiedPhone: isVerified },
+      });
+
+      businessesIds.forEach((businessId) => {
+        this.transactionUpdateMultipleFieldsAsMap({
+          transaction,
+          path: `${buisnessCollection}/${businessId}/${workersCollection}`,
+          docId: userId,
+          data: { phone: phone, isVerifiedPhone: isVerified },
+        });
+      });
+
+      return true;
+    };
+
+    return await this.runTransaction(transacionCommands);
   }
 }

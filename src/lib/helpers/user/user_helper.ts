@@ -1,11 +1,14 @@
 import {
   ArrayCommands,
   NumericCommands,
+  bookingsObjectsCollection,
   buisnessCollection,
+  customersDataDoc,
   dataCollection,
   dataDoc,
   phonesCollection,
   usersCollection,
+  workersCollection,
 } from "$lib/consts/db";
 import { genderToStr, type Gender } from "$lib/consts/gender";
 import PhoneDataResult from "$lib/models/resps/phone_data_result";
@@ -13,20 +16,31 @@ import UserModel from "$lib/models/user/user_model";
 import { Errors } from "$lib/services/errors/messages";
 import { phoneToDocId } from "$lib/utils/user";
 
-import { AuthProvider } from "$lib/consts/auth";
+import { AuthProvider, authProviderToStr } from "$lib/consts/auth";
+import { maxTimeBetweenLogInAndDelete } from "$lib/consts/limitation";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
+import type Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
 import type PaymentCard from "$lib/models/payment_hyp/payment_card";
-import { userStore } from "$lib/stores/User";
-import { addDuration } from "$lib/utils/duration_utils";
+import { isConnectedStore, userStore } from "$lib/stores/User";
+import { addDuration, subDuration } from "$lib/utils/duration_utils";
 import { hashText } from "$lib/utils/encryptions";
+import {
+  dateIsoStr,
+  dateToDateStr,
+  dateToTimeStr,
+  isoToDate,
+} from "$lib/utils/times_utils";
 import { emailValidation } from "$lib/utils/validation_utils";
 import pkg from "uuid";
 import AppErrorsHelper from "../app_errors";
+import { BookingRepo } from "../booking/booking_repo";
 import DbPathesHelper from "../db_paths_helper";
 import { GeneralData } from "../general_data";
-import VerificationRepo from "../verification/verification_repo";
+import ManagerHelper from "../manager/manager_helper";
+import { VerificationHelper } from "../verification/verification_helper";
+import { VerificationRepo } from "../verification/verification_repo";
 import UserRepo from "./user_repo";
 
 const { v4 } = pkg;
@@ -81,7 +95,7 @@ export default class UserHelper {
       isVerifiedEmail,
       phoneNumber: phone,
       myBuisnessesIds: [],
-      productsIds: {},
+
       lastVisitedBuisnessesRemoved: [],
       lastVisitedBuisnesses: [],
       revenueCatId: v4(),
@@ -98,8 +112,7 @@ export default class UserHelper {
       // Ensure the phone is verified
       phoneVerifiedResp = await this.mergePhoneCollectionWithUser(
         currentUser,
-        phone,
-        { fromCreateUser: true }
+        phone
       );
 
       if (!phoneVerifiedResp) {
@@ -118,10 +131,122 @@ export default class UserHelper {
     return phoneVerifiedResp || new PhoneDataResult();
   }
 
+  async deleteUser(user: UserModel): Promise<boolean> {
+    // Make sure the delete is happened after login
+    if (
+      VerificationHelper.GI().lastLoginDate == null ||
+      subDuration(
+        isoToDate(VerificationHelper.GI().lastLoginDate!),
+        maxTimeBetweenLogInAndDelete
+      ) > new Date()
+    ) {
+      AppErrorsHelper.GI().error = Errors.bigDiffrentBetweenLoginAndDelete;
+      return false;
+    }
+
+    await this._beforeLogout();
+
+    // Delete all the worker objects of me from all the businesses
+    const permissions = [
+      ...Object.keys(UserInitializer.GI().user.userPublicData.permission),
+    ];
+
+    await Promise.all(
+      permissions.map(async (id) => {
+        if (UserInitializer.GI().user.userPublicData.permission.get(id) === 1) {
+          return await ManagerHelper.GI().deleteWorker({
+            workerId: user.id,
+            buisnessId: id,
+          });
+        }
+      })
+    );
+
+    // Delete all my businesses
+    const duplicate = [
+      ...UserInitializer.GI().user.userPublicData.myBuisnessesIds,
+    ];
+
+    await Promise.all(
+      duplicate.map(async (businessId) => {
+        return await ManagerHelper.GI().deleteBuisness(
+          businessId,
+          true,
+          "",
+          ""
+        );
+      })
+    );
+
+    await UserInitializer.GI().getAllBookingsDocs();
+
+    await this.markUserDeletedOnAllWorkerBookings();
+
+    ///TODO notifiication
+    // await NotificationHandler.GI().cancelAllBookingsScheduleNoification(
+    //   UserInitializer().user.bookings.all
+    // );
+
+    await this.userRepo.deleteUser({ user });
+
+    return await this.verificationRepo.deleteUser().then(async (value) => {
+      if (value) {
+        UserInitializer.GI().user = new UserModel({
+          name: "guest",
+        });
+        userStore.set(UserInitializer.GI().user);
+        isConnectedStore.set(false);
+      }
+      return value;
+    });
+  }
+
+  async logout(): Promise<boolean> {
+    await this._beforeLogout();
+
+    return await this.verificationRepo.logout().then(async (value) => {
+      if (value) {
+        UserInitializer.GI().user = new UserModel({
+          name: "guest",
+        });
+        userStore.set(UserInitializer.GI().user);
+        isConnectedStore.set(false);
+      }
+      return value;
+    });
+  }
+
+  async _beforeLogout(): Promise<void> {
+    UserInitializer.GI().cancelPublicDataListening(UserInitializer.GI().user);
+  }
+
+  async markUserDeletedOnAllWorkerBookings(): Promise<void> {
+    const futures: Promise<boolean>[] = [];
+    Object.entries(UserInitializer.GI().user.bookings.all).forEach(
+      ([bookingId, booking]) => {
+        if (booking.workerDeleted) {
+          return;
+        }
+        futures.push(
+          this.userRepo.updateFieldInsideDocAsMapRepo({
+            path: `${buisnessCollection}/${booking.buisnessId}/${workersCollection}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`,
+            docId: dateToDateStr(booking.bookingDate),
+            fieldName: booking.isMultiRef
+              ? `${dateToTimeStr(
+                  booking.bookingDate
+                )}.users.${bookingId}.userDeleted`
+              : `${bookingId}.userDeleted`,
+            value: true,
+          })
+        );
+      }
+    );
+    await Promise.all(futures);
+  }
+
   async mergePhoneCollectionWithUser(
     user: UserModel,
-    phone: string,
-    { fromCreateUser = false }: { fromCreateUser?: boolean }
+    phone: string
   ): Promise<PhoneDataResult | undefined> {
     // get the invoices and bookings
     const phoneData = await this.userRepo.mergePhoneDataWithUser({
@@ -414,5 +539,248 @@ export default class UserHelper {
     }
 
     return value;
+  }
+
+  async addAuthProvider({
+    provider,
+    isVerifiedPhone,
+    phone,
+    isVerfiedEmail,
+    email,
+  }: {
+    provider: AuthProvider;
+    isVerifiedPhone?: boolean;
+    phone?: string;
+    isVerfiedEmail?: boolean;
+    email?: string;
+  }): Promise<PhoneDataResult | undefined> {
+    if (UserInitializer.GI().user.authProviders.has(provider)) {
+      return new PhoneDataResult();
+    }
+
+    const addedTime = new Date();
+    UserInitializer.GI().user.authProviders.set(provider, addedTime);
+
+    const data: Record<string, string> = {};
+    UserInitializer.GI().user.authProviders.forEach((date, proivder) => {
+      if (authProviderToStr[proivder] !== null) {
+        data[authProviderToStr[proivder]!] = dateIsoStr(date);
+      }
+    });
+
+    const value = await this.userRepo.updateFieldInsideDocAsMapRepo({
+      docId: UserInitializer.GI().user.id,
+      path: usersCollection,
+      fieldName: "authProviders",
+      value: data,
+    });
+
+    if (!value) {
+      // not successful, delete the added provider
+      UserInitializer.GI().user.authProviders.delete(provider);
+    } else {
+      let dataResult: PhoneDataResult | undefined = new PhoneDataResult();
+      if (phone != null && isVerifiedPhone === true) {
+        dataResult = await this.updatePhone(phone, isVerifiedPhone === true);
+      }
+      if (email != null) {
+        await this.updateEmail(email, { isVerified: isVerfiedEmail === true });
+      }
+      userStore.set(UserInitializer.GI().user);
+      return dataResult;
+    }
+
+    return new PhoneDataResult();
+  }
+
+  async updatePhone(
+    phone: string,
+    isVerified: boolean
+  ): Promise<PhoneDataResult | undefined> {
+    // same phone, no need to update
+    if (
+      UserInitializer.GI().user.phoneNumber === phone &&
+      isVerified === UserInitializer.GI().user.isVerifiedPhone
+    ) {
+      return new PhoneDataResult();
+    }
+
+    if (
+      UserInitializer.GI().user.phoneNumber !== phone &&
+      addDuration(
+        UserInitializer.GI().user.lastTimeUpdatePhone,
+        new Duration({ days: 1 })
+      ) > new Date()
+    ) {
+      AppErrorsHelper.GI().error = Errors.cantUpdatePhonelTooShortTimeBetween;
+      return undefined;
+    }
+
+    let phoneVerifiedResp: PhoneDataResult | undefined;
+    if (isVerified) {
+      // make sure the phone is verified
+      phoneVerifiedResp = await this.mergePhoneCollectionWithUser(
+        UserInitializer.GI().user,
+        phone
+      );
+      if (phoneVerifiedResp == null) {
+        isVerified = false;
+        // make sure again that the current details are different
+        if (
+          UserInitializer.GI().user.phoneNumber === phone &&
+          isVerified === UserInitializer.GI().user.isVerifiedPhone
+        ) {
+          return new PhoneDataResult();
+        }
+      }
+    }
+
+    if (
+      (UserInitializer.GI().user.isVerifiedPhone && !isVerified) ||
+      (UserInitializer.GI().user.isVerifiedPhone &&
+        UserInitializer.GI().user.phoneNumber !== phone)
+    ) {
+      // delete the old phone doc from the phones collection
+      const resp = await this.userRepo.deleteDocRepo({
+        path: phonesCollection,
+        docId: phoneToDocId(UserInitializer.GI().user.phoneNumber),
+      });
+
+      if (!resp) {
+        return undefined;
+      }
+    }
+
+    const value = await this.userRepo.updatePhone({
+      currentPhone: UserInitializer.GI().user.phoneNumber,
+      userId: UserInitializer.GI().user.id,
+      businessesIds: Object.keys(
+        UserInitializer.GI().user.userPublicData.permission
+      ),
+      phone,
+      isVerified,
+    });
+
+    if (value) {
+      const now = new Date();
+      await this.updateAllClients(
+        UserInitializer.GI().user.id,
+        phone,
+        isVerified
+      );
+
+      if (UserInitializer.GI().user.phoneNumber !== phone) {
+        await this.userRepo
+          .updateFieldInsideDocAsMapRepo({
+            path: usersCollection,
+            docId: UserInitializer.GI().user.id,
+            fieldName: "lastTimeUpdatePhone",
+            value: now.toISOString(),
+          })
+          .then((result) => {
+            if (result) {
+              UserInitializer.GI().user.lastTimeUpdatePhone = now;
+            }
+          });
+
+        await this.handleScheduleMessgesPhoneChange(phone);
+        await this.handleExistBookingsPhoneChange(phone);
+      } else {
+        await this.makeReminderToAllBookingsWithoutRemminder(isVerified);
+      }
+
+      // update locally
+      UserInitializer.GI().user.phoneNumber = phone;
+      UserInitializer.GI().user.userPublicData.phoneNumber = phone;
+      UserInitializer.GI().user.isVerifiedPhone = isVerified;
+      UserInitializer.GI().user.userPublicData.isVerifiedPhone = isVerified;
+      userStore.set(UserInitializer.GI().user);
+
+      return phoneVerifiedResp ?? new PhoneDataResult();
+    }
+
+    return undefined;
+  }
+
+  async handleScheduleMessgesPhoneChange(newPhone: string): Promise<void> {
+    ///TODO notification
+    return;
+  }
+
+  async makeReminderToAllBookingsWithoutRemminder(isVerified: boolean) {
+    //TODO
+  }
+
+  async handleExistBookingsPhoneChange(newPhone: string): Promise<void> {
+    const bookingsToUpdate: Record<string, Booking> = {};
+
+    await UserInitializer.GI().getAllBookingsDocs();
+    const bookingRepo = new BookingRepo();
+    //const multiBookingRepo = new MultiBookingRepo();
+
+    const bookingsToPassOn = UserInitializer.GI().user.bookings.all;
+
+    Object.entries(bookingsToPassOn).forEach(([bookingId, booking]) => {
+      booking.customerPhone = newPhone;
+      if (booking.workerDeleted) {
+        return;
+      }
+      bookingsToUpdate[bookingId] = booking;
+    });
+
+    const futures: Promise<boolean>[] = [];
+    //TODO multi booking
+    Object.entries(bookingsToUpdate).forEach(([bookingId, booking]) => {
+      if (booking.isMultiRef) {
+        // const multiBooking = booking.toMultiBooking();
+        // futures.push(
+        //   multiBookingRepo.updateFieldsInMultiBookingUser({
+        //     multiBooking,
+        //     multiBookingUser:
+        //       multiBooking.users[Object.keys(multiBooking.users)[0]],
+        //     data: { customerPhone: newPhone },
+        //     workerAction: false,
+        //   })
+        // );
+      } else {
+        futures.push(
+          bookingRepo.updateFieldsInBooking({
+            booking: booking,
+            data: { customerPhone: newPhone },
+          })
+        );
+      }
+    });
+
+    await Promise.all(futures);
+  }
+
+  async updateAllClients(
+    userId: string,
+    userPhone: string,
+    isVerifiedPhone: boolean
+  ): Promise<boolean> {
+    const clientAt = UserInitializer.GI().user.userPublicData.clientAt;
+    const futures: Promise<boolean>[] = [];
+
+    clientAt.forEach((workerIds, businessId) => {
+      const path = `${buisnessCollection}/${businessId}/${workersCollection}`;
+
+      workerIds.forEach((workerId) => {
+        futures.push(
+          this.userRepo.updateMultipleFieldsInsideDocAsMapRepo({
+            path: `${path}/${workerId}/${dataCollection}`,
+            docId: customersDataDoc,
+            data: {
+              [`data.${userId}.isVerifiedPhone`]: isVerifiedPhone,
+              [`data.${userId}.phoneNumber`]: userPhone,
+            },
+          })
+        );
+      });
+    });
+
+    const resp = await Promise.all(futures);
+    return !resp.includes(false);
   }
 }

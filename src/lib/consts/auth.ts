@@ -1,12 +1,19 @@
 import Apple from "$lib/images/apple.svg";
 import Facebook from "$lib/images/facebook.svg";
 import Google from "$lib/images/google.svg";
+import Phone from "$lib/images/smartphone.webp";
 
 export enum AuthProvider {
   Apple,
   Google,
   Facebook,
   Phone,
+}
+export enum LoginType {
+  login,
+  link,
+  reauthenticate,
+  phoneUpdate,
 }
 
 export const authProviderToStr: Record<AuthProvider, string> = {
@@ -41,7 +48,7 @@ export const authProviderToImage: Record<AuthProvider, string> = {
   [AuthProvider.Apple]: Apple,
   [AuthProvider.Google]: Google,
   [AuthProvider.Facebook]: Facebook,
-  [AuthProvider.Phone]: "Phone",
+  [AuthProvider.Phone]: Phone,
 };
 
 export const authProviderToProviderId: Record<AuthProvider, string> = {
@@ -62,7 +69,15 @@ export enum LoginReason {
   login,
   linkProvider,
   deleteUser,
-  linkProviderBusinessCreation,
+
   phoneVerification,
   phoneUpdate,
 }
+
+export const loginReasonToLoginType: Map<LoginReason, LoginType> = new Map([
+  [LoginReason.login, LoginType.login],
+  [LoginReason.linkProvider, LoginType.link],
+  [LoginReason.deleteUser, LoginType.reauthenticate],
+  [LoginReason.phoneVerification, LoginType.link],
+  [LoginReason.phoneUpdate, LoginType.phoneUpdate],
+]);

@@ -10,7 +10,7 @@
   import ILFlag from "$lib/images/flags/il.svg";
   import USFlag from "$lib/images/flags/us.svg";
   import { businessStore } from "$lib/stores/Business";
-  import { isConnectedStore } from "$lib/stores/User";
+  import { isConnectedStore, userStore } from "$lib/stores/User";
   import GeneralIcon from "../GeneralIcon.svelte";
   import LoggedInProfile from "./components/profile/LoggedInProfile.svelte";
 
@@ -79,8 +79,12 @@
       }}
     >
       <div class="indicator">
-        <GeneralIcon icon="mdi:cart"></GeneralIcon>
-        <span class="badge badge-sm indicator-item">8</span>
+        <GeneralIcon icon="lets-icons:order-fill"></GeneralIcon>
+        {#if Object.values($userStore.bookingsToShow).length > 0}
+          <span class="bg-primary badge badge-sm indicator-item rounded-badge">
+            {Object.values($userStore.bookingsToShow).length}</span
+          >
+        {/if}
       </div>
     </div>
 

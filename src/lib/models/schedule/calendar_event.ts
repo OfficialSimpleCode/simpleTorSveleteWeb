@@ -87,8 +87,8 @@ export default class Event {
     dayString: string;
     monthString: string;
     workerId: string;
-    businessModel: BusinessModel;
-    newTimeId: string;
+    businessModel: BusinessModel | undefined;
+    newTimeId: string | undefined;
   }): Event {
     const newObj = new Event();
     newObj.eventName = json["p"] ?? "";

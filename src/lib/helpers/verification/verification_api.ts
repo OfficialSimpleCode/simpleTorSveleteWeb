@@ -1,5 +1,5 @@
-import type { LoginType } from "$lib/services/external_services/firebase_auth_service";
-import type { User } from "firebase/auth";
+import type { LoginType } from "$lib/consts/auth";
+import type { ParsedToken, User } from "firebase/auth";
 
 export interface VerificationApi {
   signInWithGoogle(loginType: LoginType): Promise<boolean>;
@@ -72,7 +72,5 @@ export interface VerificationApi {
 
   get lastLoginDate(): string | undefined;
 
-  userClaims(): Promise<{
-    [key: string]: any;
-  } | null>;
+  userClaims(): Promise<ParsedToken | undefined>;
 }

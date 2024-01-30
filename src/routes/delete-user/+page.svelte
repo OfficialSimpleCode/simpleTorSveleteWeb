@@ -3,4 +3,4 @@
   import { LoginReason } from "$lib/consts/auth";
 </script>
 
-<LoginPage loginReason={LoginReason.login} />
+<LoginPage loginReason={LoginReason.deleteUser} />

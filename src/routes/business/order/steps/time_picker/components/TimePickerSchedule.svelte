@@ -23,7 +23,7 @@
   const { Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop } = schedule;
 
   sync.registerLicense(
-    "Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCfEx0Q3xbf1x0ZFRHallSTnZYUiweQnxTdEFjWH1ZcXVQRWBbWUxxWg=="
+    "Ngo9BigBOggjHTQxAR8/V1NAaF5cWWRCfEx0Q3xbf1x0ZFRHallSTnZYUiweQnxTdEFjWHxecHZQQWRbWEB+Wg=="
   );
 
   onMount(() => {

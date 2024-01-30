@@ -1,11 +1,5 @@
-export enum LoginType {
-  login,
-  link,
-  reauthenticate,
-  phoneUpdate,
-}
-
 import { logger } from "$lib/consts/application_general";
+import { LoginType } from "$lib/consts/auth";
 import { firebaseConfig } from "$lib/consts/firebase_config";
 import AppErrorsHelper from "$lib/helpers/app_errors";
 import { getApp, getApps, initializeApp } from "firebase/app";
@@ -13,7 +7,6 @@ import {
   FacebookAuthProvider,
   GoogleAuthProvider,
   OAuthProvider,
-  PhoneAuthCredential,
   PhoneAuthProvider,
   RecaptchaVerifier,
   getAuth,
@@ -30,6 +23,7 @@ import {
   updateProfile,
   type Auth,
   type CompleteFn,
+  type ParsedToken,
   type Unsubscribe,
   type User,
 } from "firebase/auth";
@@ -85,7 +79,6 @@ export class FirebaseAuthService {
         );
         break;
       case LoginType.phoneUpdate:
-        // Handle phoneUpdate case
         break;
     }
   }
@@ -126,7 +119,6 @@ export class FirebaseAuthService {
         await reauthenticateWithPopup(this._auth.currentUser!, googleProvider);
         break;
       case LoginType.phoneUpdate:
-        // Handle phoneUpdate case
         break;
     }
   }
@@ -163,7 +155,6 @@ export class FirebaseAuthService {
         await reauthenticateWithPopup(this._auth.currentUser!, appleProvider);
         break;
       case LoginType.phoneUpdate:
-        // Handle phoneUpdate case
         break;
     }
   }
@@ -172,15 +163,12 @@ export class FirebaseAuthService {
     loginType,
     verificationId,
     otp,
-    autocredential,
   }: {
     loginType: LoginType;
     verificationId: string;
     otp: string;
-    autocredential?: PhoneAuthCredential;
   }): Promise<boolean> {
-    const credential =
-      autocredential ?? PhoneAuthProvider.credential(verificationId, otp);
+    const credential = PhoneAuthProvider.credential(verificationId, otp);
 
     try {
       switch (loginType) {
@@ -260,9 +248,15 @@ export class FirebaseAuthService {
     const beforeSendTime = new Date();
     let codeSentTime: Date | undefined;
     const html = document.getElementById("recaptcha-container")!;
+    var element = document.createElement("input");
+    //Assign different attributes to the element.
+    element.setAttribute("name", "ddd");
+    element.setAttribute("style", "color:Red");
+    document.body.appendChild(element);
+
     console.log(html);
     console.log("wwwwwww");
-    const recaptchaVerifier = new RecaptchaVerifier(this._auth, html, {
+    const recaptchaVerifier = new RecaptchaVerifier(this._auth, element, {
       size: "invisible",
       callback: (response: any) => {
         console.log(response);
@@ -309,9 +303,9 @@ export class FirebaseAuthService {
     return this._auth.currentUser;
   }
 
-  async userClaimsSRV(): Promise<{ [key: string]: any } | null> {
+  async userClaimsSRV(): Promise<ParsedToken | undefined> {
     if (this._auth.currentUser === null) {
-      return null;
+      return undefined;
     }
     await this._auth.currentUser.getIdToken(true);
     const idTokenResult = await this._auth.currentUser.getIdTokenResult();

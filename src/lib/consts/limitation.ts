@@ -1,6 +1,8 @@
 /// This file is saving the export const of the app limitations
 /// Example: save the time before re-send opt message, max business updates
 
+import { Duration } from "$lib/models/core/duration";
+
 export const daysForBookingsDoc = 20;
 export const limitForShopNotifications = 4;
 export const limitForSubNotifications = 4;
@@ -60,3 +62,5 @@ export const minimumAuthProvidersForBusinessOwner = 2;
 export const paymentRequsetForNewBusiness = 15;
 export const messagesForNewBusiness = 20;
 export const treatmentPriceChangeNoteCharsLimit = 60;
+
+export const maxTimeBetweenLogInAndDelete = new Duration({ minutes: 5 });
