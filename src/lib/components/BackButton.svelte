@@ -5,7 +5,7 @@
 
     function back() {
         history.back();
-        onBack();
+        setTimeout(onBack, 200);
     }
 </script>
 
