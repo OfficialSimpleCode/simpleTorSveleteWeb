@@ -1,28 +1,30 @@
 <script lang="ts">
-  import InfoTooltipButton from "$lib/components/InfoTooltipButton.svelte";
-  import { translate } from "$lib/utils/translate";
-  import { Icon, XCircle } from "svelte-hero-icons";
+  import GetOtpView from "./phone_dialog/components/GetOtpView.svelte";
+  import GetPhoneView from "./phone_dialog/components/GetPhoneView.svelte";
 
   export let dialog: HTMLDialogElement;
+  let insideOtp: boolean = false;
 </script>
 
 <dialog
   bind:this={dialog}
   class="modal modal-bottom sm:modal-middle"
-  on:close={() => history.back()}
+  on:close={() => {
+    insideOtp = false;
+    history.back();
+  }}
 >
   <div class="modal-box bg-base-200 pb-10">
-    <div class="flex justify-between items-center mb-[1rem]">
-      <InfoTooltipButton message={translate("loginWithPhoneExplain")} />
-      <div class="center">
-        <h3 class="font-bold text-lg">{translate("loginWithPhone")}</h3>
-        <h3 class="text-sm">{translate("enterPhoneNumber")}</h3>
-      </div>
-
-      <button class="btn btn-ghost" on:click={() => dialog.close()}>
-        <Icon src={XCircle} size="24px" />
-      </button>
-    </div>
+    {#if !insideOtp}
+      <GetPhoneView
+        {dialog}
+        on:navigateOtp={(e) => {
+          insideOtp = true;
+        }}
+      />
+    {:else}
+      <GetOtpView {dialog} />
+    {/if}
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>

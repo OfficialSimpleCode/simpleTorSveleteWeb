@@ -1,6 +1,6 @@
 <script lang="ts">
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
-  import CustomArrow from "$lib/components/custom_components/custom_arrow.svelte";
+  import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
   import { bookingMakerStore } from "$lib/controllers/booking_controller";
   import {
     defaultCurrency,

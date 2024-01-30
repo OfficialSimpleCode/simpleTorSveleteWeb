@@ -16,6 +16,7 @@ export class VerificationHelper {
   public currentAuthProvider?: AuthProvider;
   public verificationID: string = "";
   public submitedPhone: string = "";
+
   public lastVerificationUnix: number = 0;
   public currentCredential?: PhoneAuthCredential;
   public phoneVerificationWithFirebase: boolean = true;
@@ -71,14 +72,12 @@ export class VerificationHelper {
       exception: Error,
       startDate: Date | undefined,
       endDate: Date
-    ) => void,
-    verificationCompleted: (credential: PhoneAuthCredential) => void
+    ) => void
   ): Promise<void> {
     await this.verificationRepo.sendSmsForFirebaseVerification({
-      completePhone,
-      onCodeSent,
-      onFailed,
-      verificationCompleted,
+      completePhone: completePhone,
+      onCodeSent: onCodeSent,
+      onFailed: onFailed,
     });
   }
 

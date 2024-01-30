@@ -381,11 +381,7 @@ export default class BusinessInitializer {
     });
   }
 
-  startTimesListening(
-    worker: WorkerModel,
-    isMulti: boolean,
-    workerAction: boolean
-  ) {
+  startTimesListening(worker: WorkerModel, isMulti: boolean) {
     // AppErrors.addError({ code: settingsCodeToInt[SettingsErrorCodes.startTimesListening] });
     // const updateTitle = translate("realTimeUpdateRecivedTitle", { needGender: false }) + '!';
     // const updateContet = translate("realTimeUpdateRecived", { needGender: false });
@@ -393,10 +389,8 @@ export default class BusinessInitializer {
     // let workerPublicDocUpdates = 0;
     // let workerReccurenceDocUpdates = 0;
     // let workerMultiEventsTimesDocUpdates = 0;
-    console.log("5443967349873");
 
     if (worker.workerPublicData.listener == null) {
-      console.log("cvdsjvoisjvsoidjvoidsjviodsjvisdjvidsj");
       worker.workerPublicData.listener = this.generalRepo.docListenerRepo({
         path: `${buisnessCollection}/${this.business.businessId}/${workersCollection}/${worker.id}/${dataCollection}`,
         docId: dataDoc,
@@ -466,12 +460,9 @@ export default class BusinessInitializer {
     bookingsDocListenerJson: DocumentSnapshot<DocumentData, DocumentData>,
     workerPhone: string
   ): void {
-    console.log("123456543");
     if (this.workers[workerPhone] === undefined) {
       return;
     }
-
-    console.log("123456543csacascsacsa");
 
     if (
       !bookingsDocListenerJson.exists() ||
@@ -479,11 +470,11 @@ export default class BusinessInitializer {
     ) {
       return;
     }
-    console.log("090890989089");
+
     this.workers[workerPhone]!.workerPublicData.setWorkerPublicData(
       bookingsDocListenerJson.data()!
     );
-    console.log("c,dspojkv09v0e9jv0w9e");
+
     BookingController.updateWorkerData(this.workers[workerPhone]!);
 
     logger.debug(

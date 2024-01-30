@@ -15,8 +15,8 @@ import {
 } from "$lib/consts/db";
 import Booking from "$lib/models/booking/booking_model";
 import Invoice from "$lib/models/payment_hyp/invoice/invoice";
+import PaymentRequestPreview from "$lib/models/payment_hyp/payment_request/PaymentRequestPreview";
 import PaymentRequest from "$lib/models/payment_hyp/payment_request/payment_request";
-import PaymentRequestPreview from "$lib/models/payment_hyp/payment_request/payment_request_preview";
 import PhoneDataResult from "$lib/models/resps/phone_data_result";
 import type UserModel from "$lib/models/user/user_model";
 import { Errors } from "$lib/services/errors/messages";

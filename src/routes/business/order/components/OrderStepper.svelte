@@ -11,7 +11,6 @@
       return;
     }
 
-    // didnt choose worker can't go forward
     if (stepNumber >= 1 && $bookingMakerStore.workerId === undefined) {
       ShowToast({
         text: translate("firsChooseWorker", $_),
@@ -20,7 +19,6 @@
       return;
     }
 
-    // didnt choose service can't go forward
     if (
       stepNumber >= 2 &&
       Object.keys($bookingMakerStore.services).length === 0
@@ -32,13 +30,13 @@
       return;
     }
 
-    // if (stepNumber === 4 && $bookingMakerStore.date === undefined) {
-    //   ShowToast({
-    //     text: translate("firstPickDate"),
-    //     status: "warning",
-    //   });
-    //   return;
-    // }
+    if (stepNumber === 3 && $bookingMakerStore.date === undefined) {
+      ShowToast({
+        text: translate("firstPickDate"),
+        status: "warning",
+      });
+      return;
+    }
 
     $bookingMakerStore.currentStep = stepNumber;
   }

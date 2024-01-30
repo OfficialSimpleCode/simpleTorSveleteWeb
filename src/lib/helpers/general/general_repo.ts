@@ -12,9 +12,9 @@ import {
   eventFilterTypeToStr,
   type EventFilterType,
 } from "$lib/consts/worker_schedule";
-//import CustomerData from "$lib/models/general/customer_data";
-// import WorkerModel from "$lib/models/worker/worker_model";
+
 import BusinessModel from "$lib/models/business/business_model";
+import type CustomerData from "$lib/models/general/customer_data";
 import WorkerModel from "$lib/models/worker/worker_model";
 import FirestoreDataBase from "$lib/services/external_services/firestore";
 import {
@@ -40,8 +40,6 @@ export default class GeneralRepo extends FirestoreDataBase {
     docId: string;
     insideEnviroments?: boolean;
   }): Promise<DocumentSnapshot<DocumentData, DocumentData>> {
-    // const obj = BusinessModel.empty();
-    //const c = new CustomerData({});
     return await super.getDocSRV({
       path: path,
       docId: docId,
@@ -124,14 +122,14 @@ export default class GeneralRepo extends FirestoreDataBase {
     fieldName,
     value,
     insideEnviroments = true,
-    command = null,
+    command = undefined,
   }: {
     path: string;
     docId: string;
     fieldName: string;
     value: any;
     insideEnviroments?: boolean;
-    command?: NumericCommands | null;
+    command?: NumericCommands | undefined;
   }): Promise<boolean> {
     const batch = this.getBatch;
     this.updateFieldInsideDocAsMap({
@@ -311,61 +309,61 @@ export default class GeneralRepo extends FirestoreDataBase {
   }
 
   toFormatedCustomerData({
-    //customerData,
+    customerData,
     amountOfBookingsCommand,
     useUserFirstBookingsDate = false,
     saveExtraData = false,
   }: {
-    //customerData: CustomerData;
+    customerData: CustomerData;
     amountOfBookingsCommand: any;
     useUserFirstBookingsDate?: boolean;
     saveExtraData?: boolean;
   }): Record<string, any> {
-    // const customerDataJson = customerData.toJson();
-    // customerDataJson["amoutOfBookings"] = amountOfBookingsCommand;
+    const customerDataJson = customerData.toJson();
+    customerDataJson["amoutOfBookings"] = amountOfBookingsCommand;
     const formatedCustomrsData: Record<string, any> = {};
-    // formatedCustomrsData[`data.${customerData.customerUuid}.amoutOfBookings`] =
-    //   customerDataJson["amoutOfBookings"];
-    // if (customerDataJson["lastBookingsDate"] != null) {
-    //   formatedCustomrsData[
-    //     `data.${customerData.customerUuid}.lastBookingsDate`
-    //   ] = customerDataJson["lastBookingsDate"];
-    // }
-    // if (useUserFirstBookingsDate) {
-    //   if (customerDataJson["userFirstBookingsDate"] != null) {
-    //     formatedCustomrsData[
-    //       `data.${customerData.customerUuid}.userFirstBookingsDate`
-    //     ] = customerDataJson["userFirstBookingsDate"];
-    //   }
-    // } else {
-    //   if (customerDataJson["firstBookingsDate"] != null) {
-    //     formatedCustomrsData[
-    //       `data.${customerData.customerUuid}.firstBookingsDate`
-    //     ] = customerDataJson["firstBookingsDate"];
-    //   }
-    // }
-    // if (saveExtraData) {
-    //   if (customerDataJson["gender"] != null) {
-    //     formatedCustomrsData[`data.${customerData.customerUuid}.gender`] =
-    //       customerDataJson["gender"];
-    //   }
-    //   if (customerDataJson["name"] != null) {
-    //     formatedCustomrsData[`data.${customerData.customerUuid}.name`] =
-    //       customerDataJson["name"];
-    //   }
-    //   if (customerDataJson["workerNaming"] != null) {
-    //     formatedCustomrsData[`data.${customerData.customerUuid}.name`] =
-    //       customerDataJson["workerNaming"];
-    //   }
-    //   if (customerDataJson["email"] != null) {
-    //     formatedCustomrsData[`data.${customerData.customerUuid}.email`] =
-    //       customerDataJson["email"];
-    //   }
-    //   if (customerDataJson["id"] != null) {
-    //     formatedCustomrsData[`data.${customerData.customerUuid}.id`] =
-    //       customerDataJson["id"];
-    //   }
-    // }
+    formatedCustomrsData[`data.${customerData.customerUuid}.amoutOfBookings`] =
+      customerDataJson["amoutOfBookings"];
+    if (customerDataJson["lastBookingsDate"] != null) {
+      formatedCustomrsData[
+        `data.${customerData.customerUuid}.lastBookingsDate`
+      ] = customerDataJson["lastBookingsDate"];
+    }
+    if (useUserFirstBookingsDate) {
+      if (customerDataJson["userFirstBookingsDate"] != null) {
+        formatedCustomrsData[
+          `data.${customerData.customerUuid}.userFirstBookingsDate`
+        ] = customerDataJson["userFirstBookingsDate"];
+      }
+    } else {
+      if (customerDataJson["firstBookingsDate"] != null) {
+        formatedCustomrsData[
+          `data.${customerData.customerUuid}.firstBookingsDate`
+        ] = customerDataJson["firstBookingsDate"];
+      }
+    }
+    if (saveExtraData) {
+      if (customerDataJson["gender"] != null) {
+        formatedCustomrsData[`data.${customerData.customerUuid}.gender`] =
+          customerDataJson["gender"];
+      }
+      if (customerDataJson["name"] != null) {
+        formatedCustomrsData[`data.${customerData.customerUuid}.name`] =
+          customerDataJson["name"];
+      }
+      if (customerDataJson["workerNaming"] != null) {
+        formatedCustomrsData[`data.${customerData.customerUuid}.name`] =
+          customerDataJson["workerNaming"];
+      }
+      if (customerDataJson["email"] != null) {
+        formatedCustomrsData[`data.${customerData.customerUuid}.email`] =
+          customerDataJson["email"];
+      }
+      if (customerDataJson["id"] != null) {
+        formatedCustomrsData[`data.${customerData.customerUuid}.id`] =
+          customerDataJson["id"];
+      }
+    }
     return formatedCustomrsData;
   }
 

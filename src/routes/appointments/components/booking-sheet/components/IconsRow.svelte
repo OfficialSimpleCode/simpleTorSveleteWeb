@@ -4,9 +4,12 @@
   import NavigationDialog from "$lib/components/NavigationDialog.svelte";
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import Booking from "$lib/models/booking/booking_model";
+  import type WorkerModel from "$lib/models/worker/worker_model";
+  import { deleteBooking } from "../../../helpers/delete_booking";
+  import { updateBooking } from "../../../helpers/update_booking";
 
   export let booking: Booking;
-  booking.bookingDate;
+  export let currentWorker: WorkerModel | undefined;
 
   let navigationDialog: HTMLDialogElement;
 
@@ -25,13 +28,25 @@
 {/if}
 
 <div class="flex flex-row gap-4 justify-start w-full">
-  <CustomCircleIcon icon="mdi:trash-can-outline" translateKey="delete"
-  ></CustomCircleIcon>
-  <CustomCircleIcon icon="mdi:edit-outline" translateKey="edit"
-  ></CustomCircleIcon>
+  <CustomCircleIcon
+    icon="mdi:trash-can-outline"
+    translateKey="delete"
+    hadleClick={(loadingState) =>
+      deleteBooking({
+        booking: booking,
+        worker: currentWorker,
+        loadingState: loadingState,
+      })}
+  />
+  <CustomCircleIcon
+    icon="mdi:edit-outline"
+    translateKey="edit"
+    hadleClick={() =>
+      updateBooking({ booking: booking, worker: currentWorker })}
+  />
   <CustomCircleIcon
     icon="mdi:map-marker-outline"
     translateKey="navigate"
     hadleClick={openNavigationDialog}
-  ></CustomCircleIcon>
+  />
 </div>

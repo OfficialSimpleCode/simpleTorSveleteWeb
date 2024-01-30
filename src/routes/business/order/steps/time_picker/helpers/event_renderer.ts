@@ -4,8 +4,6 @@ export function applyCategoryColor(args: EventRenderedArgs): void {
   if (!args.element) {
     return;
   }
-  console.log(
-    "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-  );
+
   args.element.style.backgroundColor = "blue";
 }

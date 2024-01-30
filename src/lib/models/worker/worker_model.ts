@@ -21,6 +21,7 @@ import {
 } from "$lib/utils/shifts_utils";
 
 import {
+  dateIsoStr,
   dateStrToDate,
   dateToDateStr,
   setToMidNight,
@@ -591,7 +592,7 @@ export default class WorkerModel {
     Object.entries(this.storyImages).forEach(([imageId, image]) => {
       data["storyImages"][imageId] = image;
     });
-    data["createdAt"] = this.createdAt.toString();
+    data["createdAt"] = dateIsoStr(this.createdAt);
     return data;
   }
   toString() {

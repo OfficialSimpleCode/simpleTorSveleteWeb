@@ -5,6 +5,7 @@ import {
 import { weekDays } from "$lib/consts/worker_schedule";
 import type { Duration } from "$lib/models/core/duration";
 import { addDays, format } from "date-fns";
+import { dateIsoStr } from "./times_utils";
 import { translate } from "./translate";
 
 export function durationToString(
@@ -65,7 +66,7 @@ export function durationToString(
   minutes = minutesInt > 0 ? `${minutesInt}` + translate("minutesChar") : "";
   let secondsInt = duration.seconds - duration.minutes * 60;
   if (secondsInt === 1) {
-    seconds = translate("second", false);
+    seconds = translate("second", undefined, false);
   }
   if (secondsInt > 1) {
     seconds = `${secondsInt}` + " " + translate("seconds");
@@ -226,7 +227,7 @@ export function printDuration(duration: Duration): string {
 }
 
 export function timeUuid(): string {
-  return Date.now().toString();
+  return dateIsoStr(new Date());
 }
 
 export function parseVersionToInt(version: string): number {

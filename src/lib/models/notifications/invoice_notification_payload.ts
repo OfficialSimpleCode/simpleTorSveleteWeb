@@ -1,3 +1,4 @@
+import { dateIsoStr } from "$lib/utils/times_utils";
 import IconData from "../general/icon_data";
 import NotifcationPayloadObject from "./notification_payload_object";
 export default class InvoiceNotificationPayload extends NotifcationPayloadObject {
@@ -48,7 +49,7 @@ export default class InvoiceNotificationPayload extends NotifcationPayloadObject
   toJsonStr(): string {
     const data = {
       businessId: this.businessId,
-      date: this.date?.toString(),
+      date: this.date ? dateIsoStr(this.date) : undefined,
       businessName: this.businessName,
       id: this.id,
       workerId: this.workerId,

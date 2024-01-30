@@ -1,9 +1,11 @@
 <script lang="ts">
   import { pushState } from "$app/navigation";
   import { page } from "$app/stores";
-  import CustomArrow from "$lib/components/custom_components/custom_arrow.svelte";
+  import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
   import type Booking from "$lib/models/booking/booking_model";
+  import type WorkerModel from "$lib/models/worker/worker_model";
   import { businessStore } from "$lib/stores/Business";
+  import { workersStore } from "$lib/stores/Workers";
   import { _, translate } from "$lib/utils/translate";
   import BookingActions from "../components/BookingActions.svelte";
   import BookingDetails from "../components/BookingDetails.svelte";
@@ -13,8 +15,13 @@
 
   export let booking: Booking;
 
-  let onlyWorker = $businessStore.businessId !== booking.buisnessId;
   let bookingDialog: HTMLDialogElement;
+
+  let currentWorker: WorkerModel | undefined;
+
+  if (booking.buisnessId === $businessStore.businessId) {
+    currentWorker = $workersStore[booking.workerId]!;
+  }
 
   function openBookingSheet() {
     pushState("", {
@@ -27,7 +34,7 @@
 
 <!-- booking shhet and dialog -->
 {#if $page.state.showModal}
-  <BookingSheet bind:dialog={bookingDialog} {booking} />
+  <BookingSheet bind:dialog={bookingDialog} {booking} {currentWorker} />
 {/if}
 
 <button
@@ -56,7 +63,7 @@
       </div>
     </div>
     <!-- arrow icon -->
-    <CustomArrow></CustomArrow>
+    <CustomArrow />
   </div>
 
   <!-- divider -->
