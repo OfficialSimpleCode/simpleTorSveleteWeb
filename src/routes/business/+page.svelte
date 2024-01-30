@@ -104,20 +104,37 @@
 </script>
 
 <svelte:head>
-  <title
-    >{$businessStore.shopName} | {translate(
+  <title>
+    {$businessStore.shopName} | {translate(
       businessTypeToStr[$businessStore.businesseType],
       $_,
-    )}</title
-  >
+    )}
+  </title>
   <meta
     name="description"
     content={translate(businessTypeToStr[$businessStore.businesseType], $_)}
   />
-  <link rel="icon" href={$businessStore.design.shopIconUrl} type="image/x-icon" />
+  <link
+    rel="icon"
+    href={$businessStore.design.shopIconUrl}
+    type="image/x-icon"
+  />
+  <meta name="author" content={$businessStore.ownersName} />
+  <meta
+    property="og:title"
+    content="{$businessStore.shopName} | {translate(
+      businessTypeToStr[$businessStore.businesseType],
+      $_,
+    )}"
+  />
+  <meta property="og:image" content={$businessStore.design.shopIconUrl} />
+  <meta
+    property="og:description"
+    content={translate(businessTypeToStr[$businessStore.businesseType], $_)}
+  />
 </svelte:head>
 
-<main class="w-full h-full" style="">
+<main class="w-full h-full">
   <Navbar />
 
   <!-- background image -->

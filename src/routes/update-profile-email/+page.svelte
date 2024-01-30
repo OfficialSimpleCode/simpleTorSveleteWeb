@@ -1,8 +1,10 @@
 <script lang="ts">
   import { userStore } from "$lib/stores/User";
   import { _ } from "svelte-i18n";
+  import { openProfileDialog } from "$lib/utils/ui_utils";
 
   import UpdatePageHeader from "$lib/components/UpdatePageHeader.svelte";
+  
 
   let email: string = $userStore.userPublicData.email;
   let loading: boolean = false;
@@ -17,6 +19,7 @@
   <UpdatePageHeader
     title={$_("emailUpdate")}
     helpMessage={$_("emailUpdateExplain")}
+    onBack={openProfileDialog}
   />
 
   <div class="flex items-center justify-center w-full h-[60%]">

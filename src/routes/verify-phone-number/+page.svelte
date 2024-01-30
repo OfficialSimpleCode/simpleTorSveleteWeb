@@ -1,9 +1,10 @@
 <script lang="ts">
   import { base } from "$app/paths";
+  import { goto } from "$app/navigation";
   import { onMount } from "svelte";
   import OtpInput from "svelte-otp";
 
-  import { goto } from "$app/navigation";
+  import { openProfileDialog } from "$lib/utils/ui_utils";
   import UpdatePageHeader from "$lib/components/UpdatePageHeader.svelte";
   import { userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
@@ -38,6 +39,7 @@
   <UpdatePageHeader
     title={translate("verifyPhoneMechanizem", $_)}
     helpMessage={translate("phoneVerificationPageExplain", $_)}
+    onBack={openProfileDialog}
   />
 
   <div class="flex items-center justify-center w-full h-[60%]">
