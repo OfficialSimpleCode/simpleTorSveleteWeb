@@ -14,7 +14,8 @@ export function emailValidation(email: string | null): string | null {
   return null;
 }
 
-export function noteValidation(note: string): string {
+export function noteValidation(note: string | null): string | null {
+  if (note == null) return null;
   if (note.trim().length > noteCharLimit) return translate("tooLongNote");
   return "";
 }
