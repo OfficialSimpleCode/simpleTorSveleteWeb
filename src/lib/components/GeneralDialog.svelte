@@ -5,6 +5,8 @@
   // https://lottie.host/4e25a10f-2ecd-4721-a293-c8350f0a1b8c/IkKz9cEb2c.json
   export let dialog: HTMLDialogElement;
   export let animation: string = "";
+  export let image: string = "";
+  export let imageAlt: string = "";
   export let title: string;
   export let content: string;
   export let onSave: CallableFunction;
@@ -29,6 +31,8 @@
       <div class="flex items-center justify-center bg-slate-600 h-[120px]">
         <LottieAnimation animationFile={animation} loop={true} />
       </div>
+    {:else if image}
+      <img src={image} alt={imageAlt} />
     {/if}
 
     <!-- content -->

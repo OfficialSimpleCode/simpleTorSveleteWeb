@@ -1,33 +1,11 @@
 <script>
   import Logo from "$lib/components/Logo.svelte";
-  import { isAppleUser } from "$lib/consts/platform";
   import { businessStore } from "$lib/stores/Business";
-  import { translate, _ } from "$lib/utils/translate";
+  import { downloadSimpleTor } from "$lib/utils/links_utils";
+  import { _, translate } from "$lib/utils/translate";
   import FooterSocialIcons from "../components/FooterSocialIcons.svelte";
 
-  function downloadSimpleTor() {
-    const dynamicLink = $businessStore.dynamicLink;
-
-    // Check if dynamicLink is empty
-    if (dynamicLink) {
-      window.open(dynamicLink, "_blank");
-    } else {
-      // Define the links
-      const iosLink = "itms-apps://itunes.apple.com/app/id6444347892";
-      const androidLink =
-        "market://details?id=com.simpletor.management_system_app";
-      const webLink =
-        "https://play.google.com/store/apps/details?id=com.simpletor.management_system_app";
-
-      // Choose the appropriate link based on the platform
-      const storeLink = isAppleUser() ? iosLink : androidLink;
-
-      // If it's neither iOS nor Android, assume it's a web link
-      const finalLink = isAppleUser() || dynamicLink ? storeLink : webLink;
-
-      window.open(finalLink, "_blank");
-    }
-  }
+  const dynamicLink = $businessStore.dynamicLink;
 </script>
 
 <!-- top footer -->
@@ -37,8 +15,9 @@
     <header class="footer-title">
       {translate("treatments", $_).toLocaleUpperCase()}
     </header>
-    <button on:click={downloadSimpleTor} class="link link-hover"
-      >{translate("queueSystem", $_)}</button
+    <button
+      on:click={() => downloadSimpleTor(dynamicLink)}
+      class="link link-hover">{translate("queueSystem", $_)}</button
     >
     <button class="link link-hover"
       >{translate("systemsDevelopment", $_)}</button
@@ -78,12 +57,17 @@
   <!-- logo and company details -->
   <aside class="items-center grid-flow-col">
     <Logo />
-    <p>{translate("ourCompanyName", $_)}<br />{translate("createdBySimpleTor", $_)}</p>
+    <p>
+      {translate("ourCompanyName", $_)}<br />{translate(
+        "createdBySimpleTor",
+        $_
+      )}
+    </p>
   </aside>
 
   <!-- download simple tor app -->
   <button
-    on:click={downloadSimpleTor}
+    on:click={() => downloadSimpleTor(dynamicLink)}
     class="btn lg:btn-lg bg-primary btn-primary flex items-center justify-center"
   >
     {translate("downloadSimpleTor", $_)}
