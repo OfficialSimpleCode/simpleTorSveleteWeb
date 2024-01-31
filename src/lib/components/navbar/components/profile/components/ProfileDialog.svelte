@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
+  import { goto, pushState } from "$app/navigation";
   import { base } from "$app/paths";
   import Avatar from "$lib/components/Avatar.svelte";
   import InfoTooltipButton from "$lib/components/InfoTooltipButton.svelte";
@@ -22,10 +22,37 @@
   } from "svelte-hero-icons";
   import { _ } from "svelte-i18n";
 
+  import { page } from "$app/stores";
+  import { translate } from "$lib/utils/translate";
+  import { emailValidation, nameValidation } from "$lib/utils/validation_utils";
   import AuthOptions from "./AuthOptions.svelte";
+  import ChangeAtrributeDialog from "./ChangeAtrributeDialog.svelte";
 
   export let dialog: HTMLDialogElement;
+  let emailDialog: HTMLDialogElement;
+  let nameDialog: HTMLDialogElement;
+  let phoneDialog: HTMLDialogElement;
   let loadingLogout: boolean = false;
+  console.log($userStore.id);
+  function openEmailDialog() {
+    pushState("", {
+      showModal: true,
+    });
+    setTimeout(() => emailDialog.showModal(), 200);
+  }
+
+  function openNameDialog() {
+    pushState("", {
+      showModal: true,
+    });
+    setTimeout(() => nameDialog.showModal(), 200);
+  }
+  function openPhoneDialog() {
+    pushState("", {
+      showModal: true,
+    });
+    setTimeout(() => phoneDialog.showModal(), 200);
+  }
 
   async function updateGender(newGender: Gender) {
     await UserHelper.GI().setGender(newGender);
@@ -41,10 +68,38 @@
     }
   }
 
+  async function onUpdateName(name: string) {
+    return await UserHelper.GI().updateName(name);
+  }
+
+  async function onUpdateEmail(email: string) {
+    return await UserHelper.GI().updateEmail(email);
+  }
+
   async function onDeleteUser() {
     goto(`${base}/delete-user`);
   }
 </script>
+
+<!-- Dialog -->
+{#if $page.state.showModal}
+  <ChangeAtrributeDialog
+    explain={translate("nameExplain")}
+    title={translate("name")}
+    initialValue={$userStore.userPublicData.name}
+    validationFunc={nameValidation}
+    onUpdate={onUpdateName}
+    bind:dialog={nameDialog}
+  />
+  <ChangeAtrributeDialog
+    explain={translate("emailUpdateExplain")}
+    title={translate("email")}
+    initialValue={$userStore.userPublicData.email}
+    validationFunc={emailValidation}
+    onUpdate={onUpdateEmail}
+    bind:dialog={emailDialog}
+  />
+{/if}
 
 <dialog
   bind:this={dialog}
@@ -78,7 +133,7 @@
       <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
         <button
           class="btn btn-ghost join-item flex justify-between items-center"
-          on:click={() => goto(`${base}/update-profile-name`)}
+          on:click={openNameDialog}
         >
           <div class="flex items-center gap-2">
             <Icon src={Identification} size="26px" />
@@ -106,7 +161,7 @@
         <div class="divider h-[1px]" />
         <button
           class="btn btn-ghost join-item flex justify-between items-center"
-          on:click={() => goto(`${base}/update-profile-email`)}
+          on:click={openEmailDialog}
         >
           <div class="flex items-center gap-2">
             <Icon src={Envelope} size="26px" />

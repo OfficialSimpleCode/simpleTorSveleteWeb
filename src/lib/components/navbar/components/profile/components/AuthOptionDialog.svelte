@@ -20,7 +20,7 @@
 
 <dialog
   bind:this={explainDialog}
-  class="modal modal-bottom sm:modal-middle"
+  class="modal modal-middle"
   on:close={() => history.back()}
 >
   <div class="modal-box bg-base-200 pb-10">
