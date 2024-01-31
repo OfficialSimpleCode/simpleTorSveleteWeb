@@ -95,7 +95,6 @@ export default class UserHelper {
       isVerifiedEmail,
       phoneNumber: phone,
       myBuisnessesIds: [],
-
       lastVisitedBuisnessesRemoved: [],
       lastVisitedBuisnesses: [],
       revenueCatId: v4(),
@@ -413,6 +412,7 @@ export default class UserHelper {
     const user = UserInitializer.GI().user;
 
     user.name = name;
+    userStore.set(user);
     return await this.userRepo
       .updatePublicUserField({
         userId: user.id,

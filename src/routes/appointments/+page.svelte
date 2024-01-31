@@ -8,7 +8,7 @@
   import BookingsTable from "./pages/BookingsTable.svelte";
   import EmptyBookingPage from "./pages/EmptyBookingPage.svelte";
 
-  const emptyBookins = false;
+  const emptyBookins = Object.values($userStore.bookingsToShow).length === 0;
   let bookings: Booking[] = $userStore.bookingsToShow;
 </script>
 
