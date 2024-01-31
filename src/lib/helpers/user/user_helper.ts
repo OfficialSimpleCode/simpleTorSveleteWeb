@@ -101,9 +101,8 @@ export default class UserHelper {
       gender,
     });
     console.log("currentUser", currentUser);
-    currentUser.authProviders = authProvider
-      ? new Map([[authProvider, new Date()]])
-      : new Map();
+    currentUser.authProviders =
+      authProvider != null ? new Map([[authProvider, new Date()]]) : new Map();
 
     let phoneVerifiedResp: PhoneDataResult | undefined;
 
@@ -144,12 +143,13 @@ export default class UserHelper {
     }
 
     await this._beforeLogout();
+    console.log("wwwwwwwwww");
 
     // Delete all the worker objects of me from all the businesses
     const permissions = [
       ...Object.keys(UserInitializer.GI().user.userPublicData.permission),
     ];
-
+    console.log("qqqqqqqqqqqqqqqqq");
     await Promise.all(
       permissions.map(async (id) => {
         if (UserInitializer.GI().user.userPublicData.permission.get(id) === 1) {
@@ -160,7 +160,7 @@ export default class UserHelper {
         }
       })
     );
-
+    console.log("           qqqqqqqqq");
     // Delete all my businesses
     const duplicate = [
       ...UserInitializer.GI().user.userPublicData.myBuisnessesIds,
@@ -176,20 +176,22 @@ export default class UserHelper {
         );
       })
     );
-
+    console.log("wwwwwwwqqqqqqqqq");
     await UserInitializer.GI().getAllBookingsDocs();
-
+    console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
     await this.markUserDeletedOnAllWorkerBookings();
 
     ///TODO notifiication
     // await NotificationHandler.GI().cancelAllBookingsScheduleNoification(
     //   UserInitializer().user.bookings.all
     // );
-
+    console.log("wwwwwwwwwwwwwwww");
     await this.userRepo.deleteUser({ user });
 
     return await this.verificationRepo.deleteUser().then(async (value) => {
       if (value) {
+        console.log("eeeeeeeeeeee");
+        console.log(value);
         UserInitializer.GI().user = new UserModel({
           name: "guest",
         });

@@ -1,4 +1,8 @@
-import { AuthProvider, authProviderFromStr } from "$lib/consts/auth";
+import {
+  AuthProvider,
+  authProviderFromStr,
+  authProviderToStr,
+} from "$lib/consts/auth";
 import { Gender, genderFromStr, genderToStr } from "$lib/consts/gender";
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
 // import { isEqual } from "lodash";
@@ -387,7 +391,7 @@ export default class UserModel {
     if (json["authProviders"]) {
       Object.entries<string>(json["authProviders"]).forEach(
         ([provider, date]) => {
-          if (authProviderFromStr[provider]) {
+          if (authProviderFromStr[provider] != undefined) {
             const authProvider = authProviderFromStr[provider];
             user.authProviders.set(authProvider, isoToDate(date));
           }
@@ -532,7 +536,7 @@ export default class UserModel {
     data["businessTopics"] = Array.from(this.businessTopics);
     data["authProviders"] = {};
     this.authProviders.forEach((date, provider) => {
-      data["authProviders"][provider] = dateIsoStr(date);
+      data["authProviders"][authProviderToStr[provider]] = dateIsoStr(date);
     });
     data["paymentCards"] = {};
     Object.entries(this.paymentCards).forEach(([businessId, cards]) => {

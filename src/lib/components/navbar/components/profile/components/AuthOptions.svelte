@@ -8,13 +8,17 @@
     authProviderToImage,
     authProviderToStr,
   } from "$lib/consts/auth";
+  import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { userStore } from "$lib/stores/User";
   import AuthOptionDialog from "./AuthOptionDialog.svelte";
   let explainDialog: HTMLDialogElement;
 
   const verificationProviders: Map<AuthProvider, Date> =
     $userStore.authProviders;
+
+  console.log(verificationProviders);
   async function onAdd() {
+    VerificationHelper.GI().setupLoggin();
     goto(`${base}/link-source`);
   }
 

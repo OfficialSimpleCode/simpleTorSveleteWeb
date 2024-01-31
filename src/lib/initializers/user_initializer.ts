@@ -72,7 +72,7 @@ export default class UserInitializer {
         await this.verificationRepo.logout();
         return true; // to not display an error
       }
-
+      console.log("eeeeeeeeeeeeeeeee");
       /*If user came from logging his doc already in the userDoc 
       and there is no need to read again from the db*/
       if (this.userDoc === undefined) {
@@ -81,7 +81,7 @@ export default class UserInitializer {
           docId: newUserId,
         });
       }
-
+      console.log("qqqqqqqqq");
       if (
         !logoutIfDosentExist &&
         (this.userDoc === undefined || !this.userDoc.exists())
@@ -89,6 +89,7 @@ export default class UserInitializer {
         this.userDoc = undefined;
         return true; // new user log-in and not registered yet -> leave him logged-in
       }
+      console.log("eeeeeeeeeeeeeeeeeeeeeeeee");
 
       this.user = UserModel.fromUserDocJson(this.userDoc?.data()!);
 

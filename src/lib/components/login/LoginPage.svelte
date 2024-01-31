@@ -11,19 +11,51 @@
   } from "$lib/consts/auth";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { ShowToast } from "$lib/stores/ToastManager";
-  import { userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
   import LogoAndName from "../custom_components/LogoAndName.svelte";
   import PhoneDialog from "./components/PhoneDialog.svelte";
   import { handleLogin } from "./helpers/handle_login";
   export let loginReason: LoginReason = LoginReason.login;
   let phoneDialog: HTMLDialogElement;
+  let loading: boolean = false;
 
-  const alreadyActiveProviders: AuthProvider[] = Object.values(
-    $userStore.authProviders
-  );
+  let isActive: Map<AuthProvider, boolean> = new Map();
 
+  googleOrder.forEach((provider) => {
+    //facebook is will be active soon
+    if (AuthProvider.Facebook === provider) {
+      isActive.set(provider, false);
+      return;
+    }
+
+    //handle the click for link provider
+    if (
+      loginReason === LoginReason.linkProvider &&
+      VerificationHelper.GI().existsLoginProviders.has(
+        authProviderToProviderId[provider]
+      )
+    ) {
+      isActive.set(provider, false);
+      return;
+    }
+
+    //handle the click for delete user
+    if (
+      loginReason === LoginReason.deleteUser &&
+      !VerificationHelper.GI().existsLoginProviders.has(
+        authProviderToProviderId[provider]
+      )
+    ) {
+      isActive.set(provider, false);
+      return;
+    }
+    isActive.set(provider, true);
+  });
   async function handleClick(authProvider: AuthProvider) {
+    if (loading) {
+      return;
+    }
+    console.log(VerificationHelper.GI().existsLoginProviders);
     //facebook is will be active soon
     if (AuthProvider.Facebook === authProvider) {
       ShowToast({
@@ -36,7 +68,6 @@
     //handle the click for link provider
     if (
       loginReason === LoginReason.linkProvider &&
-      alreadyActiveProviders.includes(authProvider) &&
       VerificationHelper.GI().existsLoginProviders.has(
         authProviderToProviderId[authProvider]
       )
@@ -47,13 +78,13 @@
       });
       return;
     }
+
     //handle the click for delete user
     if (
       loginReason === LoginReason.deleteUser &&
-      (!alreadyActiveProviders.includes(authProvider) ||
-        !VerificationHelper.GI().existsLoginProviders.has(
-          authProviderToProviderId[authProvider]
-        ))
+      !VerificationHelper.GI().existsLoginProviders.has(
+        authProviderToProviderId[authProvider]
+      )
     ) {
       ShowToast({
         text: translate("canVerifyOnlyWithExistProviders", $_),
@@ -66,8 +97,12 @@
       openPhoneDialog();
       return;
     }
-
-    handleLogin({ provider: authProvider, loginReason: loginReason });
+    loading = true;
+    try {
+      await handleLogin({ provider: authProvider, loginReason: loginReason });
+    } finally {
+      loading = false;
+    }
   }
 
   function openPhoneDialog() {
@@ -120,19 +155,22 @@
       {/if}
 
       {#if loginReason === LoginReason.deleteUser}
-        <h1 class="text-xs text-center opacity-70">
-          {translate("deleteUserIsSesnstive", undefined, false)}
-        </h1>
-        <h1 class="text-xs text-center opacity-70">
-          {translate("noticeYouHaveBusinesses")}
-        </h1>
+        <div class="flex flex-col">
+          <h1 class="text-md text-center opacity-70">
+            {translate("deleteUserIsSesnstive", undefined, false)}
+          </h1>
+          <h1 class="text-xs text-center opacity-70">
+            {translate("noticeYouHaveBusinesses")}
+          </h1>
+        </div>
       {/if}
 
       {#each googleOrder as authProvider, i}
         <button
           on:click={() => handleClick(authProvider)}
-          class="btn xs:btn-lg btn-outline w-full {authProvider ===
-          AuthProvider.Facebook
+          class="btn xs:btn-lg btn-outline w-full {!isActive.get(
+            authProvider
+          ) || loading
             ? 'opacity-50'
             : ''}"
         >
@@ -153,6 +191,10 @@
         </button>
       {/each}
     </div>
+
     <div class="h-[50px] mb-[50px]"></div>
+    {#if loading}
+      <div class="loading loading-spinner" />
+    {/if}
   </div>
 </main>

@@ -32,7 +32,11 @@ export async function handleLogin({
   }
 
   if (loginReason === LoginReason.deleteUser) {
-    return await deleteUser();
+    const resp = await deleteUser();
+    if (resp) {
+      goto(`${base}/business`);
+    }
+    return;
   }
 
   if (loginReason === LoginReason.phoneUpdate) {
@@ -40,7 +44,10 @@ export async function handleLogin({
   }
 
   if (loginReason === LoginReason.linkProvider) {
-    return await addProvider(provider);
+    const resp = await addProvider(provider);
+    if (resp != null) {
+      goto(`${base}/business`);
+    }
   }
   if (loginReason === LoginReason.phoneVerification) {
     if (VerificationHelper.GI().phoneVerificationWithFirebase) {
@@ -74,20 +81,8 @@ export async function handleLogin({
 }
 
 async function deleteUser() {
-  // const makeSureDeleteResp = await makeSureDeleteUserDialog(context);
-  // if (makeSureDeleteResp == true) {
-  //   final loadingResp = await Loading(
-  //           context: context,
-  //           navigator: Navigator.of(context),
-  //           future: deleteUser(context),
-  //           animation: deleteAnimation,
-  //           msg: translate("UserDeleted"))
-  //       .dialog();
-  //   Navigator.pop(context, loadingResp);
-  // } else {
-  //   Navigator.pop(context, false);
-  // }
-  // return;
+  console.log("ddddddddddddd");
+  return await UserHelper.GI().deleteUser(UserInitializer.GI().user);
 }
 
 async function updatePhone({

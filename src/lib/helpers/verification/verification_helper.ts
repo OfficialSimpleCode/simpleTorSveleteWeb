@@ -161,6 +161,7 @@ export class VerificationHelper {
     loginType: LoginType;
     otp?: string;
   }): Promise<boolean> {
+    this.currentAuthProvider = provider;
     switch (provider) {
       case AuthProvider.Apple:
         return await this._signInWithApple(loginType);

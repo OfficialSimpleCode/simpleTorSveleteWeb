@@ -13,6 +13,7 @@
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import { isAppleUser } from "$lib/consts/platform";
   import BookingController from "$lib/controllers/booking_controller";
+  import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import "iconify-icon";
   import ShareDialog from "../components/ShareDialog.svelte";
 
@@ -30,6 +31,7 @@
   // open order booking sheet
   function orderNow() {
     if (!$isConnectedStore) {
+      VerificationHelper.GI().setupLoggin();
       goto(`${base}/login`);
     }
     BookingController.initializeBookingMaker({});

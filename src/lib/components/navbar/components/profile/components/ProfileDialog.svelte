@@ -12,6 +12,7 @@
   import { dateToDateStr } from "$lib/utils/times_utils";
   import {
     ArrowRightOnRectangle,
+    CheckCircle,
     Envelope,
     Icon,
     Identification,
@@ -23,8 +24,10 @@
   import { _ } from "svelte-i18n";
 
   import { page } from "$app/stores";
+  import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { translate } from "$lib/utils/translate";
   import { emailValidation, nameValidation } from "$lib/utils/validation_utils";
+  import clipboard from "clipboardy";
   import AuthOptions from "./AuthOptions.svelte";
   import ChangeAtrributeDialog from "./ChangeAtrributeDialog.svelte";
 
@@ -33,6 +36,7 @@
   let nameDialog: HTMLDialogElement;
   let phoneDialog: HTMLDialogElement;
   let loadingLogout: boolean = false;
+  let copiedUserId: boolean = false;
   console.log($userStore.id);
   function openEmailDialog() {
     pushState("", {
@@ -47,11 +51,20 @@
     });
     setTimeout(() => nameDialog.showModal(), 200);
   }
+
   function openPhoneDialog() {
     pushState("", {
       showModal: true,
     });
     setTimeout(() => phoneDialog.showModal(), 200);
+  }
+
+  function copyToUserIdClipboard() {
+    clipboard.write($userStore.id);
+    copiedUserId = true;
+
+    // TODO: copy to clipboard
+    setTimeout(() => (copiedUserId = false), 1500);
   }
 
   async function updateGender(newGender: Gender) {
@@ -77,6 +90,7 @@
   }
 
   async function onDeleteUser() {
+    VerificationHelper.GI().setupLoggin();
     goto(`${base}/delete-user`);
   }
 </script>
@@ -175,14 +189,27 @@
         <div class="divider h-[1px]" />
         <button
           class="btn btn-ghost join-item flex justify-between items-center"
+          on:click={copyToUserIdClipboard}
         >
           <div class="flex items-center gap-2">
             <Icon src={User} size="26px" />
             {$_("userId")}
           </div>
-          <div class="flex items-center text-gray-500">
-            {$userStore.id}
-            <CustomArrow />
+          <div
+            class={copiedUserId
+              ? "flex items-center text-gray-500 gap-2"
+              : "flex items-center text-gray-500"}
+          >
+            {#if copiedUserId}
+              {translate("Copied", $_)}
+            {:else}
+              {$userStore.id}
+            {/if}
+            {#if copiedUserId}
+              <Icon src={CheckCircle} size="22px" />
+            {:else}
+              <CustomArrow />
+            {/if}
           </div>
         </button>
       </section>
