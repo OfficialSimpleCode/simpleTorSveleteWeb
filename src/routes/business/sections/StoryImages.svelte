@@ -44,7 +44,7 @@
 {/if}
 
 <div class="flex items-center justify-center">
-  <Carousel>
+  <Carousel autoScroll={true} interval={3500} showArrows={true}>
     {#each workersStories as [storyId, image]}
       <CarouselItem>
         <img class="object-cover" src={image} alt="gym" />
