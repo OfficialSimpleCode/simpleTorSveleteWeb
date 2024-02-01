@@ -309,22 +309,23 @@ export default class UserHelper {
     email: string,
     { isVerified = false }: { isVerified?: boolean } = {}
   ): Promise<boolean> {
-    if (emailValidation(email) !== null) {
+    if (emailValidation(email) != null) {
       AppErrorsHelper.GI().error = Errors.illegalFields;
       return false;
     }
     if (email === UserInitializer.GI().user.userPublicData.email) {
       return true;
     }
-    if (
-      addDuration(
-        UserInitializer.GI().user.lastTimeUpdateEmail,
-        new Duration({ days: 1 })
-      ) > new Date()
-    ) {
-      AppErrorsHelper.GI().error = Errors.cantUpdateEmailTooShortTimeBetween;
-      return false;
-    }
+    // if (
+    //   addDuration(
+    //     UserInitializer.GI().user.lastTimeUpdateEmail,
+    //     new Duration({ days: 1 })
+    //   ) > new Date()
+    // ) {
+    //   AppErrorsHelper.GI().error = Errors.cantUpdateEmailTooShortTimeBetween;
+    //   return false;
+    // }
+
     UserInitializer.GI().user.userPublicData.email = email;
     return await this.userRepo
       .updateMultipleFieldsInsideDocAsMapRepo({
@@ -355,6 +356,8 @@ export default class UserHelper {
               return value;
             });
         }
+        console.log(UserInitializer.GI().user.userPublicData.email);
+        userStore.set(UserInitializer.GI().user);
         return value;
       });
   }
@@ -455,6 +458,7 @@ export default class UserHelper {
           }
           await Promise.all(futures);
         }
+        console.log(value);
         return value;
       });
   }

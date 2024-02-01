@@ -822,6 +822,7 @@ export default class Booking extends ScheduleItem {
 
     this.workerNotificationOption = worker.notifications.notificationOption;
     this.workerRemindersTypes = new Map(worker.notifications.remindersTypes);
+    console.log(worker.notifications.remindersTypes);
     for (const [type, minutes] of worker.notifications.remindersTypes) {
       if (this.isPassed) {
         continue;
@@ -839,7 +840,9 @@ export default class Booking extends ScheduleItem {
       ) {
         this.remindersTypes.set(
           type,
-          this.remindersTypes.get(type)! - (this.remindersTypes.get(type)! % 5)
+          Math.abs(
+            Math.round(diffDuration(new Date(), this.bookingDate).inMinutes / 2)
+          )
         );
         if (this.remindersTypes.get(type)! < 10) {
           this.remindersTypes.delete(type);

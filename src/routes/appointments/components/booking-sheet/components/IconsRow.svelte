@@ -7,11 +7,12 @@
   import type WorkerModel from "$lib/models/worker/worker_model";
   import { deleteBooking } from "../../../helpers/delete_booking";
   import { updateBooking } from "../../../helpers/update_booking";
-
+  export let mainDialog: HTMLDialogElement;
   export let booking: Booking;
   export let currentWorker: WorkerModel | undefined;
 
   let navigationDialog: HTMLDialogElement;
+  let loadingDelete: boolean = false;
 
   // open choose navigation option dialog
   function openNavigationDialog() {
@@ -19,6 +20,34 @@
       showModal: true,
     });
     setTimeout(() => navigationDialog.showModal(), 100);
+  }
+
+  async function onDelete() {
+    if (loadingDelete) {
+      return;
+    }
+    loadingDelete = true;
+    try {
+      const resp = await deleteBooking({
+        booking: booking,
+        worker: currentWorker,
+      });
+      if (resp) {
+        mainDialog.close();
+      }
+    } finally {
+      loadingDelete = false;
+    }
+  }
+  async function onUpdate() {
+    if (loadingDelete) {
+      return;
+    }
+
+    const resp = await updateBooking({
+      booking: booking,
+      worker: currentWorker,
+    });
   }
 </script>
 
@@ -31,18 +60,13 @@
   <CustomCircleIcon
     icon="mdi:trash-can-outline"
     translateKey="delete"
-    hadleClick={(loadingState) =>
-      deleteBooking({
-        booking: booking,
-        worker: currentWorker,
-        loadingState: loadingState,
-      })}
+    loading={loadingDelete}
+    hadleClick={onDelete}
   />
   <CustomCircleIcon
     icon="mdi:edit-outline"
     translateKey="edit"
-    hadleClick={() =>
-      updateBooking({ booking: booking, worker: currentWorker })}
+    hadleClick={onUpdate}
   />
   <CustomCircleIcon
     icon="mdi:map-marker-outline"

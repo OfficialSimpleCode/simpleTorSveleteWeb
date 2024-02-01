@@ -1,7 +1,7 @@
 <script lang="ts">
   import InfoTooltipButton from "$lib/components/InfoTooltipButton.svelte";
-  import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
-  import { InputOptions, type TextFieldEvent } from "$lib/consts/text_fields";
+  import CustomPhoneField from "$lib/components/custom_components/CustomPhoneField.svelte";
+  import { type TextFieldEvent } from "$lib/consts/text_fields";
   import { translate } from "$lib/utils/translate";
   import { Icon, XCircle } from "svelte-hero-icons";
   export let dialog: HTMLDialogElement;
@@ -13,9 +13,8 @@
   export let onUpdate: (value: string) => Promise<boolean>;
 
   let text: string = initialValue;
-  let isValid: boolean = validationFunc
-    ? validationFunc(initialValue) == null
-    : true;
+  let isValid: boolean = true;
+
   let loading: boolean = false;
 
   function onChange(event: CustomEvent<TextFieldEvent>) {
@@ -24,9 +23,7 @@
     isValid = event.detail.isValid;
   }
 
-  async function onUpdateHandler() {
-    console.log("Eeeeeeeeee", isValid);
-
+  async function handlePhoneChange() {
     if (!isValid || loading) {
       return;
     }
@@ -58,20 +55,14 @@
 
     <div class="flex flex-col">
       <div class="form-control mt-6">
-        <CustomTextFormField
-          type={InputOptions.text}
-          value={initialValue}
-          pattern=""
-          {validationFunc}
-          isRequired={true}
-          on:valueChange={onChange}
-        />
+        <CustomPhoneField value={initialValue} on:phoneChange={onChange} />
+
         <h3 class="font-bold text-xs opacity-70">{explain}</h3>
       </div>
 
       <button
         class="btn btn-primary {loading ? 'opacity-70' : ''}"
-        on:click={onUpdateHandler}
+        on:click={handlePhoneChange}
       >
         {#if loading}
           <div class="loading loading-spinner"></div>

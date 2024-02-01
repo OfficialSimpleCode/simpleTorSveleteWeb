@@ -4,15 +4,14 @@
 
   export let icon: string;
   export let translateKey: string;
-  export let hadleClick: (loading: boolean) => void = () => {};
+  export let hadleClick: () => void = () => {};
   export let size: number = 26;
   export let bgColor: string = "bg-base-300";
   export let circlePadding: string = "p-2";
-
-  let loading: boolean = false;
+  export let loading: boolean = false;
 </script>
 
-<button on:click={() => hadleClick(loading)}>
+<button on:click={hadleClick}>
   <div
     class="flex flex-col justify-center gap-1 items-center rounded-full {bgColor} {circlePadding}"
   >

@@ -26,7 +26,7 @@
       <TopSheetIndicators {booking}></TopSheetIndicators>
 
       <!-- top icons -->
-      <IconsRow {booking} {currentWorker} />
+      <IconsRow {booking} {currentWorker} mainDialog={dialog} />
 
       <!-- general data container -->
       <TopDetails {booking}></TopDetails>

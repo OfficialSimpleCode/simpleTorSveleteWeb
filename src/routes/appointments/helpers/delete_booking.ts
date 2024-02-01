@@ -5,21 +5,21 @@ import type WorkerModel from "$lib/models/worker/worker_model";
 export async function deleteBooking({
   booking,
   worker,
-  loadingState,
 }: {
   booking: Booking;
   worker: WorkerModel | undefined;
-  loadingState: boolean;
-}) {
-  loadingState = true;
+}): Promise<boolean> {
   //TODO delete dialog
   if (worker == null) {
-    await BookingHelper.GI().deleteBookingOnlyFromUserDoc({ booking: booking });
-  } else {
-    await BookingHelper.GI().deleteBooking({
+    return await BookingHelper.GI().deleteBookingOnlyFromUserDoc({
       booking: booking,
-      worker: worker,
     });
+  } else {
+    return (
+      (await BookingHelper.GI().deleteBooking({
+        booking: booking,
+        worker: worker,
+      })) != null
+    );
   }
-  loadingState = false;
 }

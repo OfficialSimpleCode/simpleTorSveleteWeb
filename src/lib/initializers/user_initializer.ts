@@ -161,7 +161,7 @@ export default class UserInitializer {
             //   BusinessUIController().showReminderNavigator.notifyListeners();
             // }
 
-            // UiManager.insertUpdate(Providers.user);
+            userStore.set(this.user);
 
             // if (this.userListinerAllowUpdate) {
             //   UiManager.updateUi({ context: GeneralData.generalContext });

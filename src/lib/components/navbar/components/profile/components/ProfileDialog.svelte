@@ -25,11 +25,13 @@
 
   import { page } from "$app/stores";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
+  import UserInitializer from "$lib/initializers/user_initializer";
   import { translate } from "$lib/utils/translate";
   import { emailValidation, nameValidation } from "$lib/utils/validation_utils";
   import clipboard from "clipboardy";
   import AuthOptions from "./AuthOptions.svelte";
   import ChangeAtrributeDialog from "./ChangeAtrributeDialog.svelte";
+  import ChangePhoneDialog from "./ChangePhoneDialog.svelte";
 
   export let dialog: HTMLDialogElement;
   let emailDialog: HTMLDialogElement;
@@ -89,6 +91,10 @@
     return await UserHelper.GI().updateEmail(email);
   }
 
+  async function onUpdatePhone(phone: string) {
+    return (await UserHelper.GI().updatePhone(phone, false)) != null;
+  }
+
   async function onDeleteUser() {
     VerificationHelper.GI().setupLoggin();
     goto(`${base}/delete-user`);
@@ -100,7 +106,7 @@
   <ChangeAtrributeDialog
     explain={translate("nameExplain")}
     title={translate("name")}
-    initialValue={$userStore.userPublicData.name}
+    initialValue={UserInitializer.GI().user.userPublicData.name}
     validationFunc={nameValidation}
     onUpdate={onUpdateName}
     bind:dialog={nameDialog}
@@ -108,10 +114,17 @@
   <ChangeAtrributeDialog
     explain={translate("emailUpdateExplain")}
     title={translate("email")}
-    initialValue={$userStore.userPublicData.email}
+    initialValue={UserInitializer.GI().user.userPublicData.email}
     validationFunc={emailValidation}
     onUpdate={onUpdateEmail}
     bind:dialog={emailDialog}
+  />
+  <ChangePhoneDialog
+    explain={translate("phoneUpdateExplain")}
+    title={translate("phoneNumber")}
+    initialValue={UserInitializer.GI().user.userPublicData.phoneNumber}
+    onUpdate={onUpdatePhone}
+    bind:dialog={phoneDialog}
   />
 {/if}
 
@@ -161,7 +174,7 @@
         <div class="divider h-[1px]" />
         <button
           class="btn btn-ghost join-item flex justify-between items-center"
-          on:click={() => goto(`${base}/update-profile-phone`)}
+          on:click={openPhoneDialog}
         >
           <div class="flex items-center gap-2">
             <Icon src={Phone} size="26px" />

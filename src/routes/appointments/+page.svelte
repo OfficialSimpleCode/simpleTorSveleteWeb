@@ -1,15 +1,11 @@
 <script lang="ts">
   import Navbar from "$lib/components/navbar/Navbar.svelte";
-  import type Booking from "$lib/models/booking/booking_model";
   import { userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
 
   import BookingList from "./pages/BookingList.svelte";
   import BookingsTable from "./pages/BookingsTable.svelte";
   import EmptyBookingPage from "./pages/EmptyBookingPage.svelte";
-
-  const emptyBookins = Object.values($userStore.bookingsToShow).length === 0;
-  let bookings: Booking[] = $userStore.bookingsToShow;
 </script>
 
 <main class=" h-full">
@@ -19,17 +15,17 @@
     <!-- title -->
     <h1 class="text-3xl mx-10">{translate("myBookings", $_)}</h1>
 
-    {#if !emptyBookins}
+    {#if Object.values($userStore.bookingsToShow).length !== 0}
       <!-- table object in widge screens -->
       <div class="overflow-x-auto w-full hidden md:block min-h-[400px] mx-10">
-        <BookingsTable {bookings}></BookingsTable>
+        <BookingsTable bookings={$userStore.bookingsToShow}></BookingsTable>
       </div>
 
       <!-- list of booking in small screens -->
       <div
         class="flex flex-col md:hidden max-w-[95%] sm:max-w-[80%] w-full gap-3"
       >
-        <BookingList {bookings}></BookingList>
+        <BookingList bookings={$userStore.bookingsToShow}></BookingList>
       </div>
     {:else}
       <EmptyBookingPage></EmptyBookingPage>
