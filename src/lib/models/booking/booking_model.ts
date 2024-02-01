@@ -1345,6 +1345,34 @@ export default class Booking extends ScheduleItem {
     );
   }
 
+  createRegularBookingFromRecurrence(
+    this: Booking,
+    newDateForRecurrence: Date,
+    useId = false
+  ): Booking {
+    const newBooking = Booking.fromBooking(this);
+    if (this.recurrenceEvent != null) {
+      newBooking.recurrenceEventRefInfo = RecurrenceEvent.fromRecurrenceEvent(
+        this.recurrenceEvent
+      );
+      newBooking.recurrenceEventRefInfo.exceptionDates = new Set<Date>();
+    }
+
+    newBooking.bookingId = useId ? newBooking.bookingId : v4();
+    newBooking.bookingDate = new Date(
+      newDateForRecurrence.getFullYear(),
+      newDateForRecurrence.getMonth(),
+      newDateForRecurrence.getDate(),
+      newBooking.bookingDate.getHours(),
+      newBooking.bookingDate.getMinutes()
+    );
+    newBooking.recurrenceEvent = undefined;
+    newBooking.recurrenceRef = newBooking.bookingId;
+    newBooking.recurrenceTimeId = undefined;
+    newBooking.recurreneFatherDate = dateToDateStr(newBooking.bookingDate);
+    return newBooking;
+  }
+
   toJson(): Record<string, any> {
     const data: Record<string, any> = {};
     data["workerGender"] = genderToStr[this.workerGender];

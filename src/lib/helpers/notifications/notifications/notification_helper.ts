@@ -1,4 +1,4 @@
-import { BookingStatuses } from "$lib/consts/booking";
+import { BookingReminderType, BookingStatuses } from "$lib/consts/booking";
 import {
   notifcationsCollection,
   scheduleNotificationDoc,
@@ -13,6 +13,7 @@ import NotificationPayload, {
 } from "$lib/models/notifications/notification_payload";
 import type NotificationTopic from "$lib/models/notifications/notification_topic";
 import type WorkerModel from "$lib/models/worker/worker_model";
+import { dateToRemindBooking } from "$lib/utils/dates_utils";
 import { getFormatedTime } from "$lib/utils/string_utils";
 import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
@@ -270,6 +271,37 @@ export default class NotificationsHelper {
       isSilent: true,
     });
   }
+  async notifyWorkerThatClientConfirmArrival({
+    worker,
+    booking,
+  }: {
+    worker: WorkerModel;
+    booking: Booking;
+  }): Promise<void> {
+    if (worker.fcmsTokens.size === 0) {
+      return; // Unable to notify - there isn't an FCM token
+    }
+    if (worker.id === booking.customerId) {
+      return; // Worker booked for himself
+    }
+    if (!worker.notifications.notifyOnClientConfirmArrival) {
+      return; // Worker doesn't want to get notifications about the confirmation
+    }
+
+    await this.notificationRepo.notifyMultipleUsers({
+      fcms: worker.fcmsTokens,
+      payload: new NotificationPayload({
+        action: EnterAction.openWorkerBooking,
+        bookingData: booking.toBookingNotificationPayload,
+      }),
+      title: translate("clientComfirmArrival", undefined, false),
+      content: translate("clientComfirmArrivalContent", undefined, false)
+        .replace("TREATMENTNAME", booking.treatmentsToStringNotDetailed)
+        .replace("DATE", getFormatedTime(booking.bookingDate))
+        .replace("NAME", booking.customerName),
+      isSilent: true,
+    });
+  }
 
   //-------------------------------------- waiting list -------------------------------
 
@@ -381,6 +413,38 @@ export default class NotificationsHelper {
 
     const results = await Promise.all(futures);
     return !results.includes(false);
+  }
+
+  async cancelSpecificScheduleNotificationOnBooking({
+    booking,
+    reminderType,
+    minutesBefore,
+  }: {
+    booking: Booking;
+    reminderType: BookingReminderType;
+    minutesBefore: number;
+  }): Promise<boolean> {
+    if (minutesBefore === 0) {
+      return true;
+    }
+
+    const dateToNotify = dateToRemindBooking(booking, minutesBefore);
+
+    if (dateToNotify < new Date()) {
+      return true;
+    }
+
+    // No possibility for non-valid data
+    const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${dateToNotify.getMonth()}/${dateToNotify.getDate()}/${dateToNotify.getHours()}`;
+    const docId = dateToNotify.getMinutes().toString();
+    const fieldName = booking.reminderId(reminderType);
+
+    return this.generalRepo.updateFieldInsideDocAsMapRepo({
+      insideEnviroments: false,
+      path,
+      docId,
+      fieldName,
+    });
   }
 
   private _notifyToWorker(

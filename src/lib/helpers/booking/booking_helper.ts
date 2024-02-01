@@ -1,5 +1,6 @@
 import { logger } from "$lib/consts/application_general";
-import { BookingStatuses } from "$lib/consts/booking";
+import { BookingReminderType, BookingStatuses } from "$lib/consts/booking";
+import { NumericCommands } from "$lib/consts/db";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import Booking from "$lib/models/booking/booking_model";
@@ -7,6 +8,7 @@ import type WorkerModel from "$lib/models/worker/worker_model";
 import { Errors } from "$lib/services/errors/messages";
 import { needToHoldOn } from "$lib/utils/booking_utils";
 import AppErrorsHelper from "../app_errors";
+import NotificationHandler from "../notifications/notification_handler";
 import { BookingRepo } from "./booking_repo";
 
 export default class BookingHelper {
@@ -317,5 +319,65 @@ export default class BookingHelper {
       });
 
     return value;
+  }
+
+  async confirmBookingArrival({
+    booking,
+    bookingDateForReccurence,
+    worker,
+  }: {
+    booking: Booking;
+    bookingDateForReccurence?: Date;
+    worker: WorkerModel;
+  }): Promise<boolean> {
+    if (booking.confirmedArrival) {
+      return true;
+    }
+
+    const hasConfirmArrivalReminder =
+      booking.remindersTypes.get(BookingReminderType.confirmArrival) != null;
+    const minutesBeforeAlert =
+      booking.remindersTypes.get(BookingReminderType.confirmArrival) || 0;
+
+    // In case the booking is recurrence and needs to create a new one with the need to cancel value
+    let newBooking: Booking | undefined;
+    if (booking.recurrenceEvent && bookingDateForReccurence) {
+      newBooking = booking.createRegularBookingFromRecurrence(
+        bookingDateForReccurence
+      );
+      newBooking.confirmedArrival = true;
+      // No need to remind on confirm arrival
+      newBooking.remindersTypes.delete(BookingReminderType.confirmArrival);
+    } else {
+      booking.remindersTypes.delete(BookingReminderType.confirmArrival);
+    }
+
+    const resp =
+      newBooking !== undefined
+        ? await this.bookingRepo.makeNewBookingFromReccurence({
+            reccurenceBooking: booking,
+            newBooking: newBooking,
+            workerAction: false,
+          })
+        : await this.bookingRepo.updateFieldsInBooking({
+            booking: booking,
+            data: {
+              confirmedArrival: true,
+              "remindersTypes.confirmArrival": null,
+            },
+            changeInEvents: true,
+            eventFieldName: booking.isMultiRef ? "CAA" : "CA",
+            eventValue: booking.isMultiRef ? NumericCommands.increment : true,
+          });
+
+    if (resp) {
+      NotificationHandler.GI().afterConfirmBookingArrival({
+        booking: newBooking || booking,
+        worker: worker,
+        minutesBeforeAlert: minutesBeforeAlert,
+        hasConfirmArrivalReminder: hasConfirmArrivalReminder,
+      });
+    }
+    return resp;
   }
 }

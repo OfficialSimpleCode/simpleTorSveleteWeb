@@ -1,4 +1,8 @@
-import { BookingStatuses, NotificationType } from "$lib/consts/booking";
+import {
+  BookingReminderType,
+  BookingStatuses,
+  NotificationType,
+} from "$lib/consts/booking";
 import UserInitializer from "$lib/initializers/user_initializer";
 import Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
@@ -361,6 +365,43 @@ export default class NotificationHandler {
           );
         }
       }
+    }
+  }
+
+  async afterConfirmBookingArrival({
+    booking,
+    worker,
+    minutesBeforeAlert,
+    hasConfirmArrivalReminder,
+  }: {
+    booking: Booking;
+    worker: WorkerModel;
+    minutesBeforeAlert: number;
+    hasConfirmArrivalReminder: boolean;
+  }): Promise<void> {
+    // Notify worker that user confirmed arrival
+    await NotificationsHelper.GI().notifyWorkerThatClientConfirmArrival({
+      worker,
+      booking,
+    });
+
+    if (!hasConfirmArrivalReminder) {
+      return;
+    }
+
+    if (booking.notificationType === NotificationType.message) {
+      await MessagesHelper.GI().cancelSpecificScheduleMessageOnBooking(
+        booking,
+        BookingReminderType.confirmArrival
+      );
+    } else if (booking.notificationType === NotificationType.push) {
+      await NotificationsHelper.GI().cancelSpecificScheduleNotificationOnBooking(
+        {
+          booking: booking,
+          reminderType: BookingReminderType.confirmArrival,
+          minutesBefore: minutesBeforeAlert,
+        }
+      );
     }
   }
 }
