@@ -4,21 +4,18 @@
   import { workersStore } from "$lib/stores/Workers.js";
   import ImageDisplayDialog from "../components/ImageDisplayDialog.svelte";
 
-  import Carousel from "$lib/components/carousel/Carousel.svelte";
-  import CarouselItem from "$lib/components/carousel/CarouselItem.svelte";
-
   let workersStories: Map<string, string> = Object.values($workersStore)
     .map((w) => w.storyImages)
     .reduce(
       (result, currentMap) => new Map([...result, ...currentMap]),
-      new Map(),
+      new Map()
     );
   let storyHearts: Map<string, number> = Object.values($workersStore)
     .map((w) => w.storylikesAmount)
     .reduce(
       (result, currentMap) =>
         new Map([...result, ...Object.entries(currentMap)]),
-      new Map(),
+      new Map()
     );
 
   let imageDisplayDialog: HTMLDialogElement;
@@ -42,16 +39,6 @@
     {storyHearts}
   />
 {/if}
-
-<div class="flex items-center justify-center">
-  <Carousel autoScroll={true} interval={3500} showArrows={true}>
-    {#each workersStories as [storyId, image]}
-      <CarouselItem>
-        <img class="object-cover" src={image} alt="gym" />
-      </CarouselItem>
-    {/each}
-  </Carousel>
-</div>
 
 <div class="mt-10 bg-base-200 w-full pb-14 px-2 pt-10 xs:px-16">
   <h1 class="text-center font-bold text-2xl pb-6">Our Works</h1>
