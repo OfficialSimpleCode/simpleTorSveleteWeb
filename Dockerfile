@@ -1,9 +1,11 @@
 FROM node:14-alpine
 
+WORKDIR /webApp
+COPY . /webApp/
+
 RUN npm install
 RUN npm run build
 
-# WORKDIR /webApp
 
 
 
