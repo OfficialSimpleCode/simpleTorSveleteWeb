@@ -1,7 +1,6 @@
 import { logger } from "$lib/consts/application_general";
 import { serverSignature } from "$lib/consts/secrets";
 import { SERVER_BASE_URL } from "$lib/consts/server_variables";
-// import fetch from "node-fetch";
 export default class MakeRequest {
   private static _singleton: MakeRequest = new MakeRequest();
 
