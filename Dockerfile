@@ -1,18 +1,14 @@
-FROM node:18.17.1-alpine
+FROM node:18.17.1 as build
 
-WORKDIR /webApp
-COPY . /webApp/
+# install dependencies
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
 
-RUN npm install
+# Copy all local files into the image.
+COPY . .
+
 RUN npm run build
 
-
-
-
-# COPY docs /usr/src/app/
-
-EXPOSE 5000
-
-ENV HOST=0.0.0.0
-
-CMD [ "npm", "start" ]
+EXPOSE 3000
+CMD ["node", "build/index.js"]
