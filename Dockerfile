@@ -1,12 +1,13 @@
 FROM node:14-alpine
 
-WORKDIR /usr/src/app
-
 RUN npm install
-
 RUN npm run build
 
-COPY docs /usr/src/app/
+# WORKDIR /webApp
+
+
+
+# COPY docs /usr/src/app/
 
 EXPOSE 5000
 
