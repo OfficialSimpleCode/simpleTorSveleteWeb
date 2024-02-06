@@ -3,7 +3,7 @@ FROM node:18.17.1 as build
 # install dependencies
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --omit dev
 
 # Copy all local files into the image.
 COPY . .
