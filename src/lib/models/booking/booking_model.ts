@@ -876,9 +876,10 @@ export default class Booking extends ScheduleItem {
     business,
     newClientNote,
     keepRecurrence = false,
+    user,
   }: {
     oldBooking: Booking;
-
+    user: UserModel;
     worker: WorkerModel;
     needToHoldOn: boolean;
     business: BusinessModel;
@@ -892,6 +893,7 @@ export default class Booking extends ScheduleItem {
     this.clientMail = oldBooking.clientMail;
     this.customerId = oldBooking.customerId;
     this.note = oldBooking.note;
+    this.userFcms = user.fcmsTokens;
 
     if (oldBooking.treatments.size > this.treatments.size) {
       const newBookingNewTreatments: Map<string, Treatment> = new Map();
@@ -922,7 +924,16 @@ export default class Booking extends ScheduleItem {
     }
     this.workerNotificationOption = worker.notifications.notificationOption;
     this.workerRemindersTypes = new Map(worker.notifications.remindersTypes);
-    worker.notifications.remindersTypes.forEach((minutes, type) => {
+    for (const [type, minutes] of worker.notifications.remindersTypes) {
+      if (this.isPassed) {
+        continue;
+      }
+      if (
+        type === BookingReminderType.confirmArrival &&
+        this.confirmedArrival
+      ) {
+        continue;
+      }
       if (
         subDuration(this.bookingDate, new Duration({ minutes: minutes })) <
         addDuration(new Date(), new Duration({ minutes: 1 }))
@@ -940,8 +951,10 @@ export default class Booking extends ScheduleItem {
         if (this.remindersTypes.get(type)! < 10) {
           this.remindersTypes.delete(type);
         }
+      } else {
+        this.remindersTypes.set(type, minutes);
       }
-    });
+    }
     this.debts = new Map(oldBooking.debts);
     this.isUserExist = oldBooking.isUserExist;
     this.createdAt = oldBooking.createdAt;
@@ -1142,7 +1155,6 @@ export default class Booking extends ScheduleItem {
 
     if (
       this.cancelDate !== null ||
-      this.userFcms.size === 0 ||
       this.notificationType === NotificationType.push
     ) {
       return reminders;

@@ -235,6 +235,7 @@ export default class BookingHelper {
     newBooking.updateBookingByBooking({
       oldBooking: oldBooking,
       worker: newWorker,
+      user: UserInitializer.GI().user,
       needToHoldOn: needToHoldOn(newBooking.bookingDate, newWorker),
       business: BusinessInitializer.GI().business,
       newClientNote: newClientNote,

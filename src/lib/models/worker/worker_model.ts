@@ -341,6 +341,7 @@ export default class WorkerModel {
 
     this.onHoldMinutes = workerJson["onHoldMinutes"] || 0;
     this.cancelMinutes = workerJson["cancelMinutes"] || 0;
+    this.devices = new Map();
     if (
       workerJson["devices"] != null &&
       typeof workerJson["devices"] === "object"
