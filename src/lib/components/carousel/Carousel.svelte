@@ -67,7 +67,7 @@
   >
     <slot />
   </div>
-  <button class="px-1 py-1 {showArrows ? 'block' : 'hidden'}" on:click={Back}>
+  <button class="px-2 py-1 {showArrows ? 'block' : 'hidden'}" on:click={Back}>
     <Icon src={ChevronLeft} size="24px" />
   </button>
 </div>
