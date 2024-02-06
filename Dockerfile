@@ -1,4 +1,4 @@
-FROM node:18.17.1-alpha as build
+FROM node:18.17.1-alpine as build
 
 # install dependencies
 WORKDIR /app
