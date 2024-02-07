@@ -1,19 +1,10 @@
 import { logger } from "$lib/consts/application_general";
 import { serverSignature } from "$lib/consts/secrets";
 import { SERVER_BASE_URL } from "$lib/consts/server_variables";
-import fetch from "node-fetch";
 export default class MakeRequest {
-  private static _singleton: MakeRequest = new MakeRequest();
+  private readonly _baseURL: string = `https://${SERVER_BASE_URL}`;
 
-  private constructor() {}
-
-  public static GI(): MakeRequest {
-    return MakeRequest._singleton;
-  }
-
-  private readonly _baseURL: string = SERVER_BASE_URL;
-
-  public async performRequest({
+  public async performRequst({
     endpoint,
     method,
     data,
@@ -26,7 +17,8 @@ export default class MakeRequest {
     queryParameters?: Record<string, any>;
     onFail?: any;
   }): Promise<any> {
-    const url = new URL(`${this._baseURL}/${endpoint}`);
+    const url = new URL(endpoint, this._baseURL);
+
     if (queryParameters) {
       Object.keys(queryParameters).forEach((key) => {
         url.searchParams.append(key, queryParameters[key]);
@@ -50,12 +42,15 @@ export default class MakeRequest {
         headers: headers,
         body: body,
       });
-      logger.info(`request resp body -->\n${response.data}`);
+      console.log(`request resp body -->\n${response.status}`);
+
+      logger.info(`request resp body -->\n${response}`);
 
       if (response.status === 200) {
         // request succeeded
         logger.info("request status -- > Success!");
-        return response.data;
+        console.log(await response.json());
+        return await response.json();
       }
     } catch (error) {
       logger.info(`request Failed --> ${error}`);
@@ -73,7 +68,7 @@ export default class MakeRequest {
     url: URL;
     headers: Record<string, string>;
     body: string;
-  }): Promise<Record<string, any>> {
+  }): Promise<Response> {
     switch (method) {
       case "post":
         return await fetch(url, {

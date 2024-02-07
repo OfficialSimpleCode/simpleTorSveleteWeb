@@ -44,13 +44,12 @@ export function computeLuminance(color: number): number {
 }
 
 export function isLight(color: number, treshhold: number = 155) {
-  console.log(color);
   const hex = color.toString(16);
   const c_r = parseInt(hex.slice(2, 4), 16);
   const c_g = parseInt(hex.slice(4, 6), 16);
   const c_b = parseInt(hex.slice(6, 8), 16);
   const brightness = (c_r * 299 + c_g * 587 + c_b * 114) / 1000;
-  console.log(brightness);
+
   return brightness > treshhold;
 }
 

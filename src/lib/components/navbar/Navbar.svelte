@@ -5,7 +5,6 @@
   import GuestProfile from "./GuestProfile.svelte";
   import LanguageBoard from "./components/LanguageBoard.svelte";
 
-  import NotificationsBoard from "./NotificationsBoard.svelte";
   // Assets
   import ILFlag from "$lib/images/flags/il.svg";
   import USFlag from "$lib/images/flags/us.svg";
@@ -53,20 +52,6 @@
         <GeneralIcon icon="mdi:language"></GeneralIcon>
       </div>
       <LanguageBoard {languages} />
-    </div>
-    <div class="dropdown dropdown-left dropdown-bottom">
-      <div role="button" tabindex="0" class="btn btn-ghost btn-circle">
-        <div class="indicator">
-          <GeneralIcon icon="mdi:notifications-none"></GeneralIcon>
-          {#if unreadNotifications}
-            <span class="badge badge-xs badge-error indicator-item" />
-          {/if}
-        </div>
-      </div>
-      <NotificationsBoard
-        {notifications}
-        on:notification-opend={(e) => markAsRead(e.detail)}
-      />
     </div>
 
     <div

@@ -68,4 +68,22 @@ export default class MessageRepo extends MessagesService {
       phoneNumber,
     });
   }
+
+  async sendMultipleSameSms({
+    destNumbers,
+    message,
+  }: {
+    destNumbers: string[];
+    message: string;
+  }): Promise<boolean> {
+    const recipients: Record<string, string>[] = [];
+    destNumbers.forEach((phoneNumber) => {
+      recipients.push({ ["Phone"]: phoneNumber.replace("-", "") });
+    });
+
+    return await this.sendMultipleSameSmsSRV({
+      recipients: recipients,
+      message,
+    });
+  }
 }

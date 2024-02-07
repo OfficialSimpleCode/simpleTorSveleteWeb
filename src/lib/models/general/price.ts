@@ -45,7 +45,7 @@ export class Price {
       currency: this.currency.code,
     });
 
-    return formatter.format(this.amount).slice(0, -1);
+    return formatter.format(this.amount);
   }
 
   toJson(): any {

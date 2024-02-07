@@ -213,17 +213,20 @@ export default class UserPublicData {
 
   get fcmsTokens(): Set<string> {
     if (!this.allowAppNotification) {
-      return new Set();
+      return new Set<string>();
     }
-    if (this.tempFcm) {
-      return new Set(this.tempFcm);
+
+    if (this.tempFcm != null) {
+      return new Set<string>([this.tempFcm]);
     }
-    const setFcmsTokens: Set<string> = new Set();
-    Object.values(this.devices).forEach((device) => {
+
+    const setFcmsTokens = new Set<string>();
+    this.devices.forEach((device, _) => {
       if (device.activeNotifications) {
         setFcmsTokens.add(device.token);
       }
     });
+
     return setFcmsTokens;
   }
 

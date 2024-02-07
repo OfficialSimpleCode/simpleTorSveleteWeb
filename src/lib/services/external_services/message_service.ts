@@ -3,6 +3,7 @@ import { MESSAGES_END_POINT } from "$lib/consts/server_variables";
 import MakeRequest from "./make_request";
 
 export default class MessagesService {
+  makeRequest: MakeRequest = new MakeRequest();
   async sendScheduleSmsSRV({
     destNumber,
     message,
@@ -14,7 +15,7 @@ export default class MessagesService {
     messageId: string;
     timeToSend: string;
   }): Promise<boolean> {
-    const resp: any = await MakeRequest.GI().performRequest({
+    const resp: any = await this.makeRequest.performRequst({
       onFail: {},
       endpoint: `${MESSAGES_END_POINT}/send_schedule_sms`,
       method: "post",
@@ -32,12 +33,35 @@ export default class MessagesService {
     }
   }
 
+  async sendMultipleSameSmsSRV({
+    message,
+    recipients,
+  }: {
+    message: string;
+    recipients: Record<string, string>[];
+  }): Promise<boolean> {
+    try {
+      const resp = await this.makeRequest.performRequst({
+        endpoint: `${MESSAGES_END_POINT}/send_multiple_same_sms`,
+        method: "post",
+        data: {
+          ["body"]: message,
+          ["recipients"]: recipients,
+        },
+      });
+
+      return resp.data.hasOwnProperty("ok");
+    } catch (error) {
+      return false;
+    }
+  }
+
   async sendMultipleScheduleSmsSRV({
     messages,
   }: {
     messages: Record<string, Record<string, string>>;
   }): Promise<boolean> {
-    const resp: any = await MakeRequest.GI().performRequest({
+    const resp: any = await this.makeRequest.performRequst({
       onFail: {},
       endpoint: `${MESSAGES_END_POINT}/send_multiple_schedule_sms`,
       method: "post",
@@ -51,7 +75,7 @@ export default class MessagesService {
   }: {
     messages: { [key: string]: { [key: string]: string } };
   }): Promise<boolean> {
-    const resp: any = await MakeRequest.GI().performRequest({
+    const resp: any = await this.makeRequest.performRequst({
       onFail: {},
       endpoint: `${MESSAGES_END_POINT}/send_multiple_sms`,
       method: "post",
@@ -69,7 +93,7 @@ export default class MessagesService {
   }: {
     messages: { [key: string]: string };
   }): Promise<boolean> {
-    const resp: any = await MakeRequest.GI().performRequest({
+    const resp: any = await this.makeRequest.performRequst({
       onFail: {},
       endpoint: `${MESSAGES_END_POINT}/cancel_multiple_schedule_messages`,
       method: "post",
@@ -97,7 +121,7 @@ export default class MessagesService {
     oldMessageId: string;
     timeToSend: string;
   }): Promise<boolean> {
-    const resp: any = await MakeRequest.GI().performRequest({
+    const resp: any = await this.makeRequest.performRequst({
       onFail: {},
       endpoint: `${MESSAGES_END_POINT}/update_schedule_sms`,
       method: "post",
@@ -124,7 +148,7 @@ export default class MessagesService {
     messageSid: string;
     phoneNumber: string;
   }): Promise<boolean> {
-    const resp: any = await MakeRequest.GI().performRequest({
+    const resp: any = await this.makeRequest.performRequst({
       onFail: {},
       endpoint: `${MESSAGES_END_POINT}/cancel_schedule_message`,
       queryParameters: {

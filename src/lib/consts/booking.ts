@@ -106,7 +106,7 @@ export const notificationTypeFromStr: { [key: string]: NotificationType } = {
 // Constants
 export const needToRemindAnyWayDuration = new Duration({ hours: 3 });
 
-export const durationToUpdateBooking = { days: 7 };
+export const durationToUpdateBooking = new Duration({ days: 7 });
 
 // Example Booking
 export const exampleBooking = {

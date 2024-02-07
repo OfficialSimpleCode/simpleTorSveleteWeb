@@ -35,6 +35,7 @@
       goto(`${base}/login`);
     }
     BookingController.initializeBookingMaker({});
+
     goto(`${base}/business/order`);
   }
 

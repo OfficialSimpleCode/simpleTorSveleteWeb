@@ -114,7 +114,7 @@ export default class Treatment {
   }
 
   get totalMinutesForBooking(): number {
-    return this.totalMinutes * this.count;
+    return this.totalTotalMinutes * this.count;
   }
 
   get amountInAdvanceForBooking(): number {

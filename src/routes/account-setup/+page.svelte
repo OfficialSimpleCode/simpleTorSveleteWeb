@@ -34,11 +34,8 @@
     verifiedEmail = true;
   }
 
-  console.log(userData);
-
   async function setupAccount() {
     if (!validEmail || !validPhone || !validName) {
-      console.log(validEmail, validPhone, validName);
       return;
     }
     processing = true;
@@ -67,7 +64,6 @@
     phoneNumber = event.detail.value ?? "";
   }
   function handleNameChange(event: CustomEvent<TextFieldEvent>): void {
-    console.log(event.detail.isValid);
     validName = event.detail.isValid;
     fullName = event.detail.value;
   }

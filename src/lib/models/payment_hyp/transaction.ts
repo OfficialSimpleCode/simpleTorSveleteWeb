@@ -13,6 +13,7 @@ import { defaultCurrency } from "../general/currency_model";
 import type IconData from "../general/icon_data";
 import { Price } from "../general/price";
 import TransactionNotificationPayload from "../notifications/transaction_notification_payload";
+import BookingReference from "./booking_reference";
 import { PaymentObject } from "./payment_object";
 
 export default class TransactionModel extends PaymentObject {
@@ -22,14 +23,37 @@ export default class TransactionModel extends PaymentObject {
   info: string = "";
   isDeposit: boolean = false;
   businessName: string = "";
+
+  ///The invoice that created fromthat payment
   invoiceId: string | undefined;
+
+  ///If the transaction canceled
   canceled: boolean = false;
+
+  ///If the customer get refund on the payment - hold the refund transation id
   refundTransactionId: string | undefined;
+
+  ///If the customer get refund on the payment - hold the refund
+  /// transation created at
   refundTransactionCreatedAt: Date | undefined;
+
+  ///If it is transaction that cme from refund
   refundTransaction: boolean = false;
+
+  ///If it is refund transaction its hold the original transaction ref
   originalTransactionRef: string | undefined;
+
+  ///the business that transaction belong to
   businessId: string = "";
+
+  ///the worker that the transaction belong to
   workerId: string = "";
+
+  ///the canceled transaction invoice if not exist  == null
+  canceledTransactionInvoiceId: string | undefined;
+
+  ///If the transaction was on booking
+  bookingRef: BookingReference | undefined;
 
   constructor({});
 
@@ -88,6 +112,7 @@ export default class TransactionModel extends PaymentObject {
     transactionModel.originalTransactionRef = json["OTR"];
     transactionModel.userId = json["UI"] ?? "";
     transactionModel.refundTransaction = json["RT"] ?? false;
+    transactionModel.canceledTransactionInvoiceId = json["CTII"];
     transactionModel.canceled = json["CAN"] ?? false;
     transactionModel.refundTransactionId = json["RTI"];
     transactionModel.userName = json["UN"] ?? "";
@@ -112,6 +137,9 @@ export default class TransactionModel extends PaymentObject {
     if (json["CA"] != null) {
       transactionModel.createdAt = isoToDate(json["CA"]);
     }
+    if (json["BR"] != null) {
+      transactionModel.bookingRef = BookingReference.fromJson(json["BR"]);
+    }
     return transactionModel;
   }
 
@@ -132,6 +160,9 @@ export default class TransactionModel extends PaymentObject {
     newTransactionModel.createdAt = transactionModel.createdAt;
     newTransactionModel.canceled = transactionModel.canceled;
     newTransactionModel.refundTransaction = transactionModel.refundTransaction;
+    newTransactionModel.canceledTransactionInvoiceId =
+      transactionModel.canceledTransactionInvoiceId;
+    newTransactionModel.bookingRef = transactionModel.bookingRef;
     newTransactionModel.refundTransactionId =
       transactionModel.refundTransactionId;
     newTransactionModel.originalTransactionRef =
@@ -179,6 +210,12 @@ export default class TransactionModel extends PaymentObject {
     data["UI"] = this.userId;
     data["BI"] = this.businessId;
     data["WI"] = this.workerId;
+    if (this.canceledTransactionInvoiceId != null) {
+      data["CTII"] = this.canceledTransactionInvoiceId;
+    }
+    if (this.bookingRef != null) {
+      data["BR"] = this.bookingRef.toJson();
+    }
     if (this.canceled) {
       data["CAN"] = this.canceled;
     }

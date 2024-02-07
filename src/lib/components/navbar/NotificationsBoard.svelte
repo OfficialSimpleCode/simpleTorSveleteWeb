@@ -2,7 +2,7 @@
   import { createEventDispatcher } from "svelte";
   const dispath = createEventDispatcher();
 
-  import { translate, _ } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import NotificationDialog from "./NotificationDialog.svelte";
   export let notifications: Array<Record<string, string>>;
 

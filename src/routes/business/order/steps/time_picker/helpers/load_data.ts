@@ -34,7 +34,7 @@ export function loadBookingMakerTimeData(
 ): void {
   const bookingMaker = get(bookingMakerStore);
   BookingController.visibleDates = visibleDates;
-  console.log(bookingMaker);
+
   if (worker == null) {
     return;
   }
@@ -52,14 +52,6 @@ export function loadBookingMakerTimeData(
   let maxLen = 0;
   // setting the new days data
 
-  // console.log(
-  //   "BookingController.worker.workerPublicData.bookingsTimes",
-  //   BookingController.worker.workerPublicData.bookingsTimes
-  // );
-  // console.log(
-  //   "BookingController.worker.recurrence.recurrenceEvents",
-  //   BookingController.worker.recurrence.recurrenceEvents
-  // );
   visibleDates.forEach((visibleDate, index) => {
     // if (BookingController.alreadyLoadedDates.has(dateToDateStr(visibleDate))) {
     //   return;
@@ -185,7 +177,7 @@ export function loadBookingMakerTimeData(
       return;
     }
     const eventMinutes = Math.floor(minutesIn24Hours / maxLen);
-    console.log(eventMinutes);
+
     // put the events inside the events timePickerObjects to display them nex frame
     let minutesToPresent = 0;
     timeList.forEach((timeObj, index) => {

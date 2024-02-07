@@ -4,6 +4,7 @@ import type NotificationPayload from "$lib/models/notifications/notification_pay
 import type UserNotification from "$lib/models/notifications/user_notification";
 import MakeRequest from "./make_request";
 export default class NotificationService {
+  makeRequest: MakeRequest = new MakeRequest();
   async activateWaitingListNotification({
     topic,
     businessId,
@@ -18,7 +19,7 @@ export default class NotificationService {
     payload: NotificationPayload;
   }): Promise<boolean> {
     try {
-      const resp: Record<string, any> = await MakeRequest.GI().performRequest({
+      const resp: Record<string, any> = await this.makeRequest.performRequst({
         endpoint: `${NOTIFICATIONS_END_POINT}/waiting_list`,
         method: "post",
         data: {
@@ -49,7 +50,7 @@ export default class NotificationService {
     payload: NotificationPayload;
   }): Promise<boolean> {
     try {
-      const resp: Record<string, any> = await MakeRequest.GI().performRequest({
+      const resp: Record<string, any> = await this.makeRequest.performRequst({
         endpoint: `${NOTIFICATIONS_END_POINT}/general_message`,
         method: "post",
         data: {
@@ -75,7 +76,7 @@ export default class NotificationService {
     payload: NotificationPayload;
   }): Promise<boolean> {
     try {
-      const resp: Record<string, any> = await MakeRequest.GI().performRequest({
+      const resp: Record<string, any> = await this.makeRequest.performRequst({
         endpoint: `${NOTIFICATIONS_END_POINT}/range_of_waiting_list`,
         method: "post",
         data: { topics: Array.from(topics), payload: payload.toJsonStr() },
@@ -103,7 +104,7 @@ export default class NotificationService {
     payload: NotificationPayload;
     isSilent: boolean;
   }): Promise<boolean> {
-    const resp: Record<string, any> = await MakeRequest.GI().performRequest({
+    const resp: Record<string, any> = await this.makeRequest.performRequst({
       endpoint: `${NOTIFICATIONS_END_POINT}/multyple_specific_notifications`,
       method: "post",
       onFail: {},
@@ -134,7 +135,7 @@ export default class NotificationService {
     users.forEach((user) => {
       userJsons.push(user.toJson());
     });
-    const resp: Record<string, any> = await MakeRequest.GI().performRequest({
+    const resp: Record<string, any> = await this.makeRequest.performRequst({
       endpoint: `${NOTIFICATIONS_END_POINT}/notifications_to_users`,
       method: "post",
       onFail: {},

@@ -23,6 +23,7 @@ import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
 import pkg from "uuid";
 import BookingInvoiceData from "../booking/booking_invoice_data";
+import Booking from "../booking/booking_model";
 import BookingTransactionModel, {
   PaymentTypes,
 } from "../booking/booking_transaction";
@@ -44,13 +45,13 @@ export default class MultiBookingUser {
   remindersTypes: Map<BookingReminderType, number> = new Map();
   isUserExist: boolean = true;
   signOnDeviceCalendar: boolean = false;
-  lastTimeNotifyOnDebt: Date | null = null;
+  lastTimeNotifyOnDebt: Date | undefined = undefined;
   clientMail: string = "";
   finishInvoices: boolean = false;
   showAdressAlert: boolean = false;
   userBookingId: string = "";
   showPhoneAlert: boolean = false;
-  cancelDate: Date | null = null;
+  cancelDate: Date | undefined = undefined;
   wasWaiting: boolean = false;
   createdAt: Date = new Date(0);
   needCancel: boolean = false;
@@ -235,49 +236,118 @@ export default class MultiBookingUser {
     });
   }
 
-  // get toBooking(): Booking {
-  //   const newInvoices: Map<string, BookingInvoiceData> = new Map();
-  //   this.invoices.forEach((invoice, id) => {
-  //     newInvoices.set(id, BookingInvoiceData.fromBookingInvoiceData(invoice));
-  //   });
-  //   const newTransactions: Map<string, BookingTransactionModel> = new Map();
-  //   this.transactions.forEach((id, transaction) => {
-  //     newTransactions.set(
-  //       id,
-  //       BookingTransactionModel.fromTransaction(transaction)
-  //     );
-  //   });
-  //   return ({
-  //     customerName: this.customerName,
-  //     customerPhone: this.customerPhone,
-  //     showAdressAlert: this.showAdressAlert,
-  //     showPhoneAlert: this.showPhoneAlert,
-  //     orderingOptions: this.orderingOptions,
-  //     isUserExist: this.isUserExist,
-  //     needCancel: this.needCancel,
-  //     userGender: this.userGender,
-  //     userDeleted: this.userDeleted,
-  //     bookingId: this.userBookingId,
-  //     signOnDeviceCalendar: this.signOnDeviceCalendar,
-  //     finishInvoices: this.finishInvoices,
-  //     cancelDate: this.cancelDate,
-  //     isVerifiedPhone: this.isVerifiedPhone,
-  //     customerId: this.customerId,
-  //     clientNote: this.clientNote,
-  //     lastTimeNotifyOnDebt: this.lastTimeNotifyOnDebt,
-  //     debts: this.debts,
-  //     status: this.status,
-  //     confirmedArrival: this.confirmedArrival,
-  //     clientMail: this.clientMail,
-  //     notificationType: this.notificationType,
-  //     userFcms: new Set(this.userFcms),
-  //     workerNotificationOption: this.workerNotificationOption,
-  //   }.workerRemindersTypes =
-  //     new Map(this.workerRemindersTypes).createdAt =
-  //     this.createdAt.invoices =
-  //     newInvoices.transactions =
-  //       newTransactions);
-  // }
+  static fromMultiBookingUser(
+    multiBookingUser: MultiBookingUser
+  ): MultiBookingUser {
+    const newMultiBookingUser = new MultiBookingUser();
+    newMultiBookingUser.customerName = multiBookingUser.customerName;
+    newMultiBookingUser.customerPhone = multiBookingUser.customerPhone;
+    newMultiBookingUser.workerRemindersTypes =
+      multiBookingUser.workerRemindersTypes;
+    newMultiBookingUser.lastTimeNotifyOnDebt =
+      multiBookingUser.lastTimeNotifyOnDebt;
+    newMultiBookingUser.showAdressAlert = multiBookingUser.showAdressAlert;
+    newMultiBookingUser.signOnDeviceCalendar =
+      multiBookingUser.signOnDeviceCalendar;
+    newMultiBookingUser.userDeleted = multiBookingUser.userDeleted;
+    newMultiBookingUser.addToClientAt = multiBookingUser.addToClientAt;
+    newMultiBookingUser.showPhoneAlert = multiBookingUser.showPhoneAlert;
+    newMultiBookingUser.orderingOptions = multiBookingUser.orderingOptions;
+    newMultiBookingUser.isVerifiedPhone = multiBookingUser.isVerifiedPhone;
+    newMultiBookingUser.isUserExist = multiBookingUser.isUserExist;
+    newMultiBookingUser.needCancel = multiBookingUser.needCancel;
+    newMultiBookingUser.userGender = multiBookingUser.userGender;
+    newMultiBookingUser.userBookingId = multiBookingUser.userBookingId;
+    newMultiBookingUser.finishInvoices = multiBookingUser.finishInvoices;
+    newMultiBookingUser.cancelDate = multiBookingUser.cancelDate;
+    newMultiBookingUser.customerId = multiBookingUser.customerId;
+    newMultiBookingUser.workerNotificationOption =
+      multiBookingUser.workerNotificationOption;
+    newMultiBookingUser.debts = new Map();
+    multiBookingUser.debts.forEach((debt, id) => {
+      newMultiBookingUser.debts.set(id, Debt.fromDebt(debt));
+    });
+    newMultiBookingUser.invoices = new Map();
+    multiBookingUser.invoices.forEach((invoice, id) => {
+      newMultiBookingUser.invoices.set(
+        id,
+        BookingInvoiceData.fromBookingInvoiceData(invoice)
+      );
+    });
+    newMultiBookingUser.clientNote = multiBookingUser.clientNote;
+    newMultiBookingUser.status = multiBookingUser.status;
+    newMultiBookingUser.confirmedArrival = multiBookingUser.confirmedArrival;
+    newMultiBookingUser.createdAt = multiBookingUser.createdAt;
+    newMultiBookingUser.remindersTypes = { ...multiBookingUser.remindersTypes };
+    newMultiBookingUser.clientMail = multiBookingUser.clientMail;
+
+    newMultiBookingUser.notificationType = multiBookingUser.notificationType;
+    newMultiBookingUser.userFcms = { ...multiBookingUser.userFcms };
+    newMultiBookingUser.transactions = new Map();
+
+    multiBookingUser.transactions.forEach((transation, id) => {
+      newMultiBookingUser.transactions.set(
+        id,
+        BookingTransactionModel.fromTransaction(transation)
+      );
+    });
+    return newMultiBookingUser;
+  }
+
+  get combinedFcms(): string {
+    let txt = "";
+    this.userFcms.forEach((fcm) => {
+      txt += fcm;
+    });
+    return txt;
+  }
+
+  get toBooking(): Booking {
+    const newBooking = new Booking({});
+
+    this.invoices.forEach((invoice, id) => {
+      newBooking.invoices.set(
+        id,
+        BookingInvoiceData.fromBookingInvoiceData(invoice)
+      );
+    });
+
+    this.transactions.forEach((transaction, id) => {
+      newBooking.transactions.set(
+        id,
+        BookingTransactionModel.fromTransaction(transaction)
+      );
+    });
+
+    newBooking.customerName = this.customerName;
+    newBooking.customerPhone = this.customerPhone;
+    newBooking.showAdressAlert = this.showAdressAlert;
+    newBooking.showPhoneAlert = this.showPhoneAlert;
+    newBooking.orderingOptions = this.orderingOptions;
+    newBooking.isUserExist = this.isUserExist;
+    newBooking.needCancel = this.needCancel;
+    newBooking.userGender = this.userGender;
+    newBooking.userDeleted = this.userDeleted;
+    newBooking.bookingId = this.userBookingId;
+    newBooking.signOnDeviceCalendar = this.signOnDeviceCalendar;
+    newBooking.finishInvoices = this.finishInvoices;
+    newBooking.cancelDate = this.cancelDate;
+    newBooking.isVerifiedPhone = this.isVerifiedPhone;
+    newBooking.customerId = this.customerId;
+    newBooking.clientNote = this.clientNote;
+    newBooking.lastTimeNotifyOnDebt = this.lastTimeNotifyOnDebt;
+    newBooking.debts = this.debts;
+    newBooking.status = this.status;
+    newBooking.confirmedArrival = this.confirmedArrival;
+    newBooking.clientMail = this.clientMail;
+    newBooking.notificationType = this.notificationType;
+    newBooking.userFcms = new Set(this.userFcms);
+    newBooking.workerNotificationOption = this.workerNotificationOption;
+    newBooking.workerRemindersTypes = this.workerRemindersTypes;
+    newBooking.createdAt = this.createdAt;
+
+    return newBooking;
+  }
 
   get typesOfEvents(): Map<EventFilterType, number> {
     const types: Map<EventFilterType, number> = new Map();
@@ -294,7 +364,7 @@ export default class MultiBookingUser {
   }
 
   static fromJson(
-    json: any,
+    json: Record<string, any>,
     userBookingId: string,
     workerId: string
   ): MultiBookingUser {
@@ -345,12 +415,12 @@ export default class MultiBookingUser {
     multiBookingUser.finishInvoices = json["finishInvoices"] || false;
     multiBookingUser.cancelDate = json["cancelDate"]
       ? isoToDate(json["cancelDate"])
-      : null;
+      : undefined;
     multiBookingUser.wasWaiting = json["wasWaiting"] || false;
     multiBookingUser.isUserExist = json["isUserExist"] || true;
     multiBookingUser.lastTimeNotifyOnDebt = json["lastTimeNotifyOnDebt"]
       ? isoToDate(json["lastTimeNotifyOnDebt"])
-      : null;
+      : undefined;
     multiBookingUser.invoices = json["invoices"]
       ? new Map(
           Object.entries<Record<string, any>>(json["invoices"]).map(

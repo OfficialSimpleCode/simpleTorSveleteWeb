@@ -1,5 +1,6 @@
 import { logger } from "$lib/consts/application_general";
 import {
+  ArrayCommands,
   dataCollection,
   dataDoc,
   recurrenceBookingsDoc,
@@ -10,6 +11,7 @@ import DbPathesHelper from "$lib/helpers/db_paths_helper";
 import { GeneralData } from "$lib/helpers/general_data";
 import UserRepo from "$lib/helpers/user/user_repo";
 import { VerificationRepo } from "$lib/helpers/verification/verification_repo";
+import LocalDocReference from "$lib/models/general/local_doc_reference";
 import UserModel from "$lib/models/user/user_model";
 import { isConnectedStore, userStore } from "$lib/stores/User";
 import { checkForReminders, sortMyBookings } from "$lib/utils/booking_utils";
@@ -240,5 +242,24 @@ export default class UserInitializer {
     );
 
     await this.loadBookingsDocs(docsToLoad);
+  }
+
+  async addLocalDocToDelete({
+    userId,
+    docId,
+    path,
+  }: {
+    userId: string;
+    docId: string;
+    path: string;
+  }): Promise<boolean> {
+    const updateResult = await this.userRepo.updateFieldInsideDocAsArrayRepo({
+      path: `${usersCollection}/${userId}/${dataCollection}`,
+      docId: dataDoc,
+      fieldName: "localDocsToDelete",
+      value: new LocalDocReference(docId, path).toJson(),
+      command: ArrayCommands.add,
+    });
+    return updateResult;
   }
 }

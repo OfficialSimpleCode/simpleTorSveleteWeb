@@ -190,8 +190,14 @@ export function getWeekdayFromDate(date: Date): string {
 
   return weekdayName;
 }
-export function utcDeltaMinutes(): number {
-  return new Date().getTimezoneOffset();
+
+///Utc delta time is diffrent in some dates because of the light day saving time
+///Ex: utcDeltaMinutes(DateTime(2024,2,4)) == 120 and
+///utcDeltaMinutes(DateTime(2024,5,10)) == 180
+///need to give the func the date you want to calculate the utcDeltaMinutes for
+///and not some random date
+export function utcDeltaMinutes(date: Date): number {
+  return date.getTimezoneOffset();
 }
 
 // enum CustomDurationOptions {

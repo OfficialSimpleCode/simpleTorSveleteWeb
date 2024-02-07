@@ -2,6 +2,7 @@
   import { pushState } from "$app/navigation";
   import { page } from "$app/stores";
   import type Booking from "$lib/models/booking/booking_model";
+  import type WorkerModel from "$lib/models/worker/worker_model";
   import BookingActions from "./BookingActions.svelte";
   import BookingDateAndTime from "./BookingDateAndTime.svelte";
   import BookingPriceAndDuration from "./BookingPriceAndDuration.svelte";
@@ -9,6 +10,7 @@
   import BookingSheet from "./booking-sheet/BookingSheet.svelte";
 
   export let booking: Booking;
+  export let currentWorker: WorkerModel;
 
   let bookingDialog: HTMLDialogElement;
   function openBookingSheet() {
@@ -21,7 +23,11 @@
 
 <!-- booking shhet and dialog -->
 {#if $page.state.showModal}
-  <BookingSheet bind:dialog={bookingDialog} {booking} />
+  <BookingSheet
+    bind:dialog={bookingDialog}
+    {booking}
+    currentWorker={undefined}
+  />
 {/if}
 
 <tr
@@ -47,7 +53,7 @@
   </td>
 
   <td class="text-nowrap">
-    <BookingActions {booking}></BookingActions>
+    <BookingActions {booking} {currentWorker} />
   </td>
 
   <!-- <th class="sm:opacity-0 sm:group-hover:opacity-100">

@@ -4,9 +4,8 @@ import * as schedule from "@syncfusion/ej2-schedule";
 import { get } from "svelte/store";
 
 export function onEventClick(args: schedule.EventClickArgs): void {
-  console.log(args.event);
   const timePickerObj = TimePickerObj.fromScheduleEvent(args.event);
-  console.log(timePickerObj);
+
   const bookingMaker = get(bookingMakerStore);
   bookingMaker.date = timePickerObj.displayDate;
   bookingMaker.currentStep += 1;

@@ -152,26 +152,27 @@ export default class CustomerData {
     return customerData;
   }
 
-  fromCustomerData(customerData: CustomerData): CustomerData {
-    this.name = customerData.name;
-    this.gender = customerData.gender;
-    this.isVerifiedPhone = customerData.isVerifiedPhone;
-    this.phoneNumber = customerData.phoneNumber;
-    this.belongings = customerData.belongings;
-    this.email = customerData.email;
-    this.isDeleted = customerData.isDeleted;
-    this.blocked = customerData.blocked;
-    this.id = customerData.id;
-    this.addedManually = customerData.addedManually;
-    this.freeFromPayments = customerData.freeFromPayments;
-    this.customerUuid = customerData.customerUuid;
-    this.workerNaming = customerData.workerNaming;
-    this.firstBookingsDate = customerData.firstBookingsDate;
-    this.lastBookingsDate = customerData.lastBookingsDate;
-    this.amoutOfBookings = customerData.amoutOfBookings;
-    this.userFirstBookingsDate = customerData.userFirstBookingsDate;
+  static fromCustomerData(customerData: CustomerData): CustomerData {
+    const newCustomer = new CustomerData({});
+    newCustomer.name = customerData.name;
+    newCustomer.gender = customerData.gender;
+    newCustomer.isVerifiedPhone = customerData.isVerifiedPhone;
+    newCustomer.phoneNumber = customerData.phoneNumber;
+    newCustomer.belongings = customerData.belongings;
+    newCustomer.email = customerData.email;
+    newCustomer.isDeleted = customerData.isDeleted;
+    newCustomer.blocked = customerData.blocked;
+    newCustomer.id = customerData.id;
+    newCustomer.addedManually = customerData.addedManually;
+    newCustomer.freeFromPayments = customerData.freeFromPayments;
+    newCustomer.customerUuid = customerData.customerUuid;
+    newCustomer.workerNaming = customerData.workerNaming;
+    newCustomer.firstBookingsDate = customerData.firstBookingsDate;
+    newCustomer.lastBookingsDate = customerData.lastBookingsDate;
+    newCustomer.amoutOfBookings = customerData.amoutOfBookings;
+    newCustomer.userFirstBookingsDate = customerData.userFirstBookingsDate;
 
-    return this;
+    return newCustomer;
   }
 
   get nameForWorker(): string {
@@ -278,8 +279,8 @@ export default class CustomerData {
     return (this.amoutOfBookings / days) * 30;
   }
 
-  toJson(): { [key: string]: any } {
-    const data: { [key: string]: any } = {};
+  toJson(): Record<string, any> {
+    const data: Record<string, any> = {};
     if (this.name !== "") {
       data["name"] = this.name;
     }

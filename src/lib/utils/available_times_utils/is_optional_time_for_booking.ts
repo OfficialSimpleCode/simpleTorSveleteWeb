@@ -104,8 +104,6 @@ export function isOptionalTimeForBooking({
     });
 
   let forbbidenTimes: Date[] = defaultForbbidenTimes ?? takenHoures;
-  console.log("bookingDate", bookingDate);
-  console.log(takenHoures);
 
   // Sorting the lists
   if (!defaultWork) {
@@ -114,7 +112,6 @@ export function isOptionalTimeForBooking({
   if (!defaultForbbidenTimes) {
     forbbidenTimes.sort();
   }
-  console.log("333333333333333333333333333333333333333333");
 
   // Get rid of earlier times - not necessary
   forbbidenTimes = getOnlyEqualOrAfter(forbbidenTimes, timeToOrderOn1970Format);
@@ -156,7 +153,7 @@ export function isOptionalTimeForBooking({
       !workerBookingOnMidnight(endWork, booking)
     ) {
       AppErrorsHelper.GI().error = Errors.endOfWork;
-      console.log("11111111");
+
       return false;
     }
 
@@ -185,12 +182,12 @@ export function isOptionalTimeForBooking({
       )
     ) {
       AppErrorsHelper.GI().error = Errors.currentlyOrderingForTime;
-      console.log("2222");
+
       return false;
     }
-    console.log("2222111111111111111111");
+
     return allowedTime;
   }
-  console.log("1111222222222222222222222wwwwwwwwwwwwwww");
+
   return false;
 }

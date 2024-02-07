@@ -3,30 +3,58 @@ import {
   SERVER_BASE_URL,
 } from "$lib/consts/server_variables";
 import BookingPaymentRequestData from "$lib/models/booking/booking_payment_request";
-import IconData from "$lib/models/general/icon_data";
 import { Price } from "$lib/models/general/price";
 import BusinessPayloadData from "$lib/models/notifications/business_data_payload";
 import PaymentRequestNotificationPayload from "$lib/models/notifications/payment_request_notification_payload";
+import { isNotEmpty } from "$lib/utils/core_utils";
 import { dateIsoStr, dateToMonthStr, isoToDate } from "$lib/utils/times_utils";
 import InvoiceBusinessInfo from "../invoice/invoice_business_info";
 import { PaymentObject } from "../payment_object";
-import PaymentRequestPreview from "./PaymentRequestPreview";
+import PaymentRequestPreview from "./payment_request_preview";
+
 import type PaymentRequestUser from "./payment_request_user";
+import TicketInfo from "./ticket_info";
 
 export default class PaymentRequest extends PaymentObject {
+  ///payment request id
   id: string = "";
+
+  ///the summary of the payment request
   summary: string = "";
+
+  ///the worker that the payment request sign on
   workerInfo: InvoiceWorkerInfo = new InvoiceWorkerInfo();
+
+  ///the business that the payment request sign on
   businessInfo: InvoiceBusinessInfo = new InvoiceBusinessInfo();
+
+  ///amount of time that paid for that payment request
   payers: number = 0;
+
+  ///if there are more than one users sign to this request
   multi: boolean = false;
+
+  ///the request is closed to users that not sign on
   closeForAll: boolean = true;
-  users: { [key: string]: PaymentRequestUser } = {};
+
+  ///users that signed on the request- only for saving
+  users: Record<string, PaymentRequestUser> = {};
+
+  ///Is the payment request is one time
   oneTime: boolean = true;
-  userPayments: { [key: string]: Date } = {};
-  userDecline: boolean = false;
+
+  ///is the request is canceled
   canceled: boolean = false;
-  shopIcon: IconData = new IconData();
+
+  ///onlyfor the user -  the tickets of multi booking that connected to this payment
+  /// requsest - only incase that payment request is of multi booking
+  tickets: Record<string, TicketInfo> = {};
+
+  ///only for the user - the payments that he paid for that request
+  userPayments: Record<string, Date> = {};
+
+  ///only for user - is he decline the request
+  userDecline: boolean = false;
 
   constructor({});
   constructor({
@@ -38,7 +66,6 @@ export default class PaymentRequest extends PaymentObject {
     userDecline = false,
     canceled = false,
     oneTime,
-    shopIcon,
     closeForAll,
     workerInfo,
     businessInfo,
@@ -51,7 +78,6 @@ export default class PaymentRequest extends PaymentObject {
     userDecline?: boolean;
     canceled?: boolean;
     oneTime: boolean;
-    shopIcon: IconData;
     closeForAll: boolean;
     workerInfo: InvoiceWorkerInfo;
     businessInfo: InvoiceBusinessInfo;
@@ -65,7 +91,6 @@ export default class PaymentRequest extends PaymentObject {
     this.userDecline = userDecline;
     this.canceled = canceled;
     this.oneTime = oneTime;
-    this.shopIcon = shopIcon;
     this.closeForAll = closeForAll;
     this.workerInfo = workerInfo;
     this.businessInfo = businessInfo;
@@ -77,12 +102,24 @@ export default class PaymentRequest extends PaymentObject {
       this.id
     );
   }
+  get allPayments(): Record<string, Date> {
+    if (isNotEmpty(this.tickets)) {
+      const payments: Record<string, Date> = {};
+      Object.entries(this.tickets).forEach(([_, ticketInfo]) => {
+        Object.entries(ticketInfo.payments).forEach(([transactionId, date]) => {
+          payments[transactionId] = date;
+        });
+      });
+      return payments;
+    } else {
+      return this.userPayments;
+    }
+  }
 
   get toPaymentRequestPreview(): PaymentRequestPreview {
     const preview = new PaymentRequestPreview({
       id: this.id,
       businessName: this.businessInfo.businessName,
-      shopIcon: this.shopIcon,
       businessId: this.businessInfo.businessId,
       workerId: this.workerInfo.workerId,
       price: this.price,
@@ -103,9 +140,9 @@ export default class PaymentRequest extends PaymentObject {
       businessName: this.businessInfo.businessName,
       date: this.createdAt,
       workerId: this.workerInfo.workerId,
-      shopIcon: this.shopIcon,
+      shopIcon: this.businessInfo.shopIcon,
     });
-    payload.shopIcon = this.shopIcon;
+
     return payload;
   }
 
@@ -113,7 +150,7 @@ export default class PaymentRequest extends PaymentObject {
     const payloadData = new BusinessPayloadData({
       businessName: this.businessInfo.businessName,
       businessId: this.businessInfo.businessId,
-      shopIcon: this.shopIcon,
+      shopIcon: this.businessInfo.shopIcon,
     });
     return payloadData;
   }
@@ -145,9 +182,7 @@ export default class PaymentRequest extends PaymentObject {
     if (json["workerInfo"] != null) {
       newObj.workerInfo = InvoiceWorkerInfo.fromJson(json["workerInfo"]);
     }
-    if (json["shopIcon"] != null) {
-      newObj.shopIcon = IconData.fromJson(json["shopIcon"]);
-    }
+
     newObj.canceled = json["canceled"] ?? false;
     newObj.oneTime = json["oneTime"] ?? true;
     if (json["price"] != null) {
@@ -155,6 +190,18 @@ export default class PaymentRequest extends PaymentObject {
     }
     newObj.multi = json["multi"] ?? false;
     newObj.userDecline = json["userDecline"] ?? false;
+
+    newObj.tickets = {};
+    if (json["tickets"] != null) {
+      Object.entries<Record<string, any>>(json["tickets"]).forEach(
+        ([bookingId, ticketInfoJson]) => {
+          newObj.tickets[bookingId] = TicketInfo.fromJson(
+            ticketInfoJson,
+            bookingId
+          );
+        }
+      );
+    }
     if (
       json["userPayments"] != null &&
       typeof json["userPayments"] === "object"
@@ -202,6 +249,12 @@ export default class PaymentRequest extends PaymentObject {
         data["userPayments"][transactionId] = dateIsoStr(date);
       });
     }
+    if (isNotEmpty(this.tickets)) {
+      data["tickets"] = {};
+      Object.entries(this.tickets).forEach(([bookingId, ticketInfo]) => {
+        data["tickets"][bookingId] = ticketInfo.toJson();
+      });
+    }
     if (this.payers > 0) {
       data["payers"] = this.payers;
     }
@@ -214,7 +267,7 @@ export default class PaymentRequest extends PaymentObject {
     data["price"] = this.price.toJson();
     data["workerInfo"] = this.workerInfo.toJson();
     data["businessInfo"] = this.businessInfo.toJson();
-    data["shopIcon"] = this.shopIcon.toJson();
+
     return data;
   }
 

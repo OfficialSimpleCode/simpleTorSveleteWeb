@@ -22,7 +22,6 @@ export async function signInAction(
       authProvider: VerificationHelper.GI().currentAuthProvider,
     })
     .then(async (phoneDataResp) => {
-      console.log("phoneDataResp", phoneDataResp);
       if (phoneDataResp == null) {
         return null;
       }

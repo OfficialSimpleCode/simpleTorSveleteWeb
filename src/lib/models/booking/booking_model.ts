@@ -20,7 +20,11 @@ import {
   notificationOptionToStr,
 } from "$lib/consts/notification";
 import { EventFilterType } from "$lib/consts/worker_schedule";
-import { dateToRemindBooking, setToMidNight } from "$lib/utils/dates_utils";
+import {
+  dateToRemindBooking,
+  setToMidNight,
+  utcDeltaMinutes,
+} from "$lib/utils/dates_utils";
 import {
   addDuration,
   diffDuration,
@@ -44,7 +48,8 @@ import { CurrencyModel, defaultCurrency } from "../general/currency_model";
 import IconData from "../general/icon_data";
 import { Price } from "../general/price";
 import Treatment from "../general/treatment_model";
-import type MultiBooking from "../multi_booking/multi_booking";
+import MultiBooking from "../multi_booking/multi_booking";
+import MultiBookingUser from "../multi_booking/multi_booking_user";
 import BookingNotificationPayload from "../notifications/booking_notification_payload";
 import BusinessPayloadData from "../notifications/business_data_payload";
 import FutureNotification from "../notifications/future_notification";
@@ -57,6 +62,7 @@ import RecurrenceEvent from "../schedule/recurrence_event";
 import ScheduleItem from "../schedule/schedule_item";
 import type UserModel from "../user/user_model";
 import WorkerModel from "../worker/worker_model";
+import BookingHistoryItem from "./booking_history";
 import BookingInvoiceData from "./booking_invoice_data";
 import BookingPaymentRequestData from "./booking_payment_request";
 import BookingTransactionModel, { PaymentTypes } from "./booking_transaction";
@@ -69,6 +75,10 @@ export default class Booking extends ScheduleItem {
   orderingOptions: OrderingOptions = OrderingOptions.app;
   isVerifiedPhone: boolean = false;
   isUserExist: boolean = true;
+  ///history of the booking update -
+  /// for the developer to know all the changes that
+  /// this booking has in its life time
+  bookingHistory: Record<string, BookingHistoryItem> = {};
   notificationType: NotificationType = NotificationType.none;
   workerNotificationOption: NotificationOption = NotificationOption.PushOrSMS;
   remindersTypes: Map<BookingReminderType, number> = new Map();
@@ -144,7 +154,7 @@ export default class Booking extends ScheduleItem {
 
   static fromBooking(booking: Booking): Booking {
     const newBooking = new Booking({});
-
+    newBooking.bookingHistory = { ...booking.bookingHistory };
     newBooking.customerName = booking.customerName;
     newBooking.customerPhone = booking.customerPhone;
     newBooking.customerId = booking.customerId;
@@ -266,6 +276,7 @@ export default class Booking extends ScheduleItem {
       ) {
         newBooking.isVerifiedPhone = true;
       }
+
       newBooking.isMultiRef = json["isMultiRef"] || false;
       newBooking.needCancel = json["needCancel"] || false;
       if (json["lastTimeNotifyOnDebt"] != null) {
@@ -273,6 +284,7 @@ export default class Booking extends ScheduleItem {
           json["lastTimeNotifyOnDebt"]
         );
       }
+
       newBooking.finishInvoices = json["finishInvoices"] || false;
       if (json["remindersTypes"] != null) {
         Object.entries<number>(json["remindersTypes"]).forEach(
@@ -303,10 +315,22 @@ export default class Booking extends ScheduleItem {
           }
         );
       }
+
       newBooking.clientMail = json["clientMail"] || "";
       if (json["recurrenceNotificationsLastDate"] != null) {
         newBooking.recurrenceNotificationsLastDate = isoToDate(
           json["recurrenceNotificationsLastDate"]
+        );
+      }
+
+      if (json["bookingHistory"] != null) {
+        Object.entries<Record<string, any>>(json["bookingHistory"]).forEach(
+          ([index, bookingHistoryItemJson]) => {
+            newBooking.bookingHistory[index] = BookingHistoryItem.fromJson(
+              bookingHistoryItemJson,
+              index
+            );
+          }
         );
       }
 
@@ -323,6 +347,7 @@ export default class Booking extends ScheduleItem {
           newBooking.debts.set(id, Debt.fromJson(debtJson, id));
         });
       }
+
       if (json["cancelDate"] != null) {
         newBooking.cancelDate = isoToDate(json["cancelDate"]);
       }
@@ -338,10 +363,12 @@ export default class Booking extends ScheduleItem {
           }
         );
       }
+
       if (json["userGender"] != null) {
         newBooking.userGender =
           genderFromStr[json["userGender"]] || Gender.anonymous;
       }
+
       newBooking.status =
         bookingsMassageKeys[json["status"].toString()] ||
         BookingStatuses.approved;
@@ -349,8 +376,7 @@ export default class Booking extends ScheduleItem {
       if (json["bookingDate"] != null) {
         newBooking.bookingDate = isoToDate(json["bookingDate"]) || new Date(0);
       }
-      console.log(newBooking.bookingDate);
-      console.log(json["bookingDate"]);
+
       if (json["treatments"] != null) {
         newBooking.treatments = new Map();
         let index = 0;
@@ -395,6 +421,7 @@ export default class Booking extends ScheduleItem {
       } else if (json["deviceFCM"] != null && json["deviceFCM"] != "") {
         newBooking.userFcms = new Set([json["deviceFCM"]]);
       }
+
       if (json["createdAt"] != null) {
         newBooking.createdAt = isoToDate(json["createdAt"]) || new Date(0);
       }
@@ -427,7 +454,9 @@ export default class Booking extends ScheduleItem {
       }
       return newBooking;
     } catch (e) {
-      logger.error(`Error loading booking doc ${id}: ${e}`);
+      logger.error(
+        `Error loading booking doc ${id}: ${e} date - ${json["bookingDate"]}`
+      );
       return new Booking({});
     }
   }
@@ -502,6 +531,7 @@ export default class Booking extends ScheduleItem {
     this.treatments.forEach((treatment, _) => {
       minutes += treatment.totalMinutesForBooking;
     });
+
     return minutes;
   }
 
@@ -569,7 +599,7 @@ export default class Booking extends ScheduleItem {
   get totalPrice(): Price {
     let totalPrice = new Price({ amount: "0", currency: defaultCurrency });
 
-    Object.values(this.treatments).forEach((treatment: Treatment) => {
+    this.treatments.forEach((treatment, _) => {
       totalPrice.amount += treatment.totalPriceForBooking;
       totalPrice.currency = treatment.price!.currency;
     });
@@ -608,7 +638,7 @@ export default class Booking extends ScheduleItem {
     for (const [type, _] of this.remindersTypes) {
       const reminderTemp = this.reminder(type);
 
-      if (reminderTemp !== null) {
+      if (reminderTemp != null) {
         reminders.push(reminderTemp);
       }
     }
@@ -616,26 +646,26 @@ export default class Booking extends ScheduleItem {
     return reminders;
   }
 
-  reminder(type: BookingReminderType): FutureNotification | null {
+  reminder(type: BookingReminderType): FutureNotification | undefined {
     if (this.notificationType !== NotificationType.push) {
-      return null;
+      return undefined;
     }
 
     const minutes = this.remindersTypes.get(type);
 
-    if (minutes === undefined || minutes === 0) {
-      return null;
+    if (minutes == null || minutes === 0) {
+      return undefined;
     }
 
     const dateToNotify = dateToRemindBooking(this, minutes);
 
     // No need to notify on past bookings
     if (dateToNotify < dateToUtc(new Date())) {
-      return null;
+      return undefined;
     }
 
     if (this.userFcms.size === 0) {
-      return null;
+      return undefined;
     }
 
     return new FutureNotification({
@@ -643,8 +673,7 @@ export default class Booking extends ScheduleItem {
       shopIcon: this.shopIcon,
       address: this.showAdressAlert ? this.adress : "",
       isMulti: this.isMultiRef,
-      isRecurrence:
-        this.recurrenceEvent !== null || this.recurrenceRef !== null,
+      isRecurrence: this.recurrenceEvent != null || this.recurrenceRef != null,
       id: this.reminderId(type),
       dateToNotify,
       phoneToContact: this.showPhoneAlert
@@ -652,7 +681,13 @@ export default class Booking extends ScheduleItem {
         : "",
       businessId: this.buisnessId,
       type: this.treatmentsToStringNotDetailed,
-      minutesToAdd: this.utcDeltaMinutes() + minutes,
+      //give the expected date that the user need to recive that future
+      //notifiation and calculate the delta time from utc accordingly
+      //to that date
+      minutesToAdd:
+        utcDeltaMinutes(
+          subDuration(this.bookingDate, new Duration({ minutes: minutes }))
+        ) + minutes,
       totalEventMinutes: this.totalMinutes,
       fcms: { ...this.userFcms },
     });
@@ -701,6 +736,70 @@ export default class Booking extends ScheduleItem {
     });
 
     return reminders;
+  }
+
+  get toMultiBooking(): MultiBooking {
+    const multiBooking = new MultiBooking({});
+
+    multiBooking.bookingDate = this.bookingDate;
+    multiBooking.treatment = this.treatments.values().next().value;
+    multiBooking.bookingId = dateToTimeStr(this.bookingDate);
+    multiBooking.bookingHistory = { ...this.bookingHistory };
+
+    // ---------------------------- workerData -----------------------
+    multiBooking.workerId = this.workerId;
+    multiBooking.workerPhone = this.workerPhone;
+    multiBooking.workerName = this.workerName;
+    multiBooking.workerGender = this.workerGender;
+    multiBooking.businessName = this.businessName;
+    multiBooking.note = this.note;
+
+    // ------------------------------ business data---------------------
+    multiBooking.buisnessId = this.buisnessId;
+    multiBooking.businessName = this.businessName;
+    multiBooking.adress = this.adress;
+    multiBooking.shopIcon = this.shopIcon;
+
+    // -------------------------------- customer data-------------------------
+    const newMultiBookinguser = new MultiBookingUser();
+    newMultiBookinguser.userFcms = this.userFcms;
+    newMultiBookinguser.customerId = this.customerId;
+    newMultiBookinguser.addToClientAt = this.addToClientAt;
+    newMultiBookinguser.signOnDeviceCalendar = this.signOnDeviceCalendar;
+    newMultiBookinguser.debts = new Map(this.debts);
+    newMultiBookinguser.workerNotificationOption =
+      this.workerNotificationOption;
+    newMultiBookinguser.finishInvoices = this.finishInvoices;
+    newMultiBookinguser.remindersTypes = new Map(this.remindersTypes);
+    newMultiBookinguser.clientNote = this.clientNote;
+    newMultiBookinguser.userBookingId = this.bookingId;
+    newMultiBookinguser.userDeleted = this.userDeleted;
+    newMultiBookinguser.lastTimeNotifyOnDebt = this.lastTimeNotifyOnDebt;
+    newMultiBookinguser.userGender = this.userGender;
+    newMultiBookinguser.status = this.status;
+    newMultiBookinguser.confirmedArrival = this.confirmedArrival;
+    newMultiBookinguser.customerName = this.customerName;
+    newMultiBookinguser.customerPhone = this.customerPhone;
+    newMultiBookinguser.needCancel = this.needCancel;
+    newMultiBookinguser.notificationType = this.notificationType;
+    newMultiBookinguser.workerRemindersTypes = this.workerRemindersTypes;
+
+    multiBooking.users[this.bookingId] = newMultiBookinguser;
+
+    //--------------------------------- general ----------------------------
+
+    multiBooking.createdAt = this.createdAt;
+    multiBooking.paymentRequest = this.paymentRequest;
+
+    // -------------------------------- recurrence -------------------------
+    //no need to pass regular booking
+    multiBooking.recurrenceEvent = undefined;
+    multiBooking.recurrenceEventRefInfo = undefined;
+    multiBooking.recurrenceRef = undefined;
+    multiBooking.recurrenceFatherDate = undefined;
+    multiBooking.recurrenceTimeId = undefined;
+
+    return multiBooking;
   }
 
   get bookingsEventsAsJson(): Map<string, Record<string, any>> {
@@ -822,7 +921,7 @@ export default class Booking extends ScheduleItem {
 
     this.workerNotificationOption = worker.notifications.notificationOption;
     this.workerRemindersTypes = new Map(worker.notifications.remindersTypes);
-    console.log(worker.notifications.remindersTypes);
+
     for (const [type, minutes] of worker.notifications.remindersTypes) {
       if (this.isPassed) {
         continue;
@@ -922,6 +1021,22 @@ export default class Booking extends ScheduleItem {
     } else {
       this.clientNote = oldBooking.clientNote;
     }
+
+    //add the booking history item for that update
+    const oldBookingTreatmentsIds: Record<string, number> = {};
+    oldBooking.treatments.forEach((treatment, _) => {
+      oldBookingTreatmentsIds[treatment.id] = treatment.count;
+    });
+    this.bookingHistory = { ...oldBooking.bookingHistory };
+    this.bookingHistory[oldBooking.bookingHistory.length.toString()] =
+      new BookingHistoryItem({
+        updateTime: new Date(),
+        previousTime: oldBooking.bookingDate,
+        workerId: oldBooking.workerId,
+        workerAction: false,
+        treatmentsIds: oldBookingTreatmentsIds,
+        index: oldBooking.bookingHistory.length.toString(),
+      });
     this.workerNotificationOption = worker.notifications.notificationOption;
     this.workerRemindersTypes = new Map(worker.notifications.remindersTypes);
     for (const [type, minutes] of worker.notifications.remindersTypes) {
@@ -1120,6 +1235,9 @@ export default class Booking extends ScheduleItem {
       return transaction.type === PaymentTypes.deposit;
     }
     return false;
+  }
+  get customerPhoneAsCollection(): string {
+    return this.customerPhone.replaceAll("-", "");
   }
 
   get totalDebtAmount(): number {
@@ -1430,6 +1548,11 @@ export default class Booking extends ScheduleItem {
     if (this.userDeleted) {
       data["userDeleted"] = this.userDeleted;
     }
+
+    data["bookingHistory"] = {};
+    Object.entries(this.bookingHistory).forEach(([id, bookingHistoryItem]) => {
+      data["bookingHistory"][id] = bookingHistoryItem.toJson();
+    });
     data["bookingId"] = this.bookingId;
     data["needCancel"] = this.needCancel;
     data["userGender"] = genderToStr[this.userGender];

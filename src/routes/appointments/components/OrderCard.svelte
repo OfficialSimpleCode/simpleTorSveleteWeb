@@ -73,6 +73,6 @@
   <div class="flex flex-row justify-between w-full items-center">
     <BookingDetails {booking}></BookingDetails>
     <div class="w-2"></div>
-    <BookingActions {booking}></BookingActions>
+    <BookingActions {booking} {currentWorker} />
   </div>
 </button>

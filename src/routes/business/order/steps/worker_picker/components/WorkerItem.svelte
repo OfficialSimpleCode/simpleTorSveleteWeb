@@ -9,7 +9,7 @@
   import { _, translate } from "$lib/utils/translate";
 
   export let worker: WorkerModel;
-  console.log("dddddddddd", $bookingMakerStore.workerId);
+
   // on tap save the worker and load the workes' treatment
   function onTapWorker(worker: WorkerModel) {
     BookingController.setWorkerId(worker.id);

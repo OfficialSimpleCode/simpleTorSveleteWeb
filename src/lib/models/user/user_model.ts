@@ -7,7 +7,9 @@ import { Gender, genderFromStr, genderToStr } from "$lib/consts/gender";
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
 // import { isEqual } from "lodash";
 // import { v4 as uuid } from "uuid";
+import PaymentRequest from "$lib/models/payment_hyp/payment_request/payment_request";
 import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
+import deepEqual from "deep-equal";
 import type Booking from "../booking/booking_model";
 import BusinessInfo from "../business/business_info";
 import CustomerData from "../general/customer_data";
@@ -53,14 +55,14 @@ export default class UserModel {
   userPublicDataListener?: Unsubscribe;
   connectedGoogleEmail: string = "";
   // localData: UserLocalData = new UserLocalData();
-  currentMonthInvoices?: { [key: string]: Invoice };
-  currentMonthPaymentRequest?: { [key: string]: PaymentRequest };
-  currentMonthPayments?: { [key: string]: TransactionModel };
+  currentMonthInvoices?: Record<string, Invoice>;
+  currentMonthPaymentRequest?: Record<string, PaymentRequest>;
+  currentMonthPayments?: Record<string, TransactionModel>;
   existInvoicesDocs: Set<string> = new Set();
   existPaymentsDocs: Set<string> = new Set();
   existPaymentRequestsDocs: Set<string> = new Set();
-  invoices: { [key: string]: Invoice } = {};
-  devices: { [key: string]: Device } = {};
+  invoices: Record<string, Invoice> = {};
+  devices: Record<string, Device> = {};
   bookings: UserBookings = new UserBookings();
   hasOldNotification: boolean = false;
   bookingsToShow: Booking[] = [];
@@ -146,7 +148,7 @@ export default class UserModel {
       isVerifiedPhone: this.isVerifiedPhone,
       isExist: true,
       phone: this.phoneNumber,
-      userDecline: false,
+      userDecline: 0,
     });
   }
 
@@ -432,22 +434,22 @@ export default class UserModel {
   //   };
   // }
 
-  // isSubToWaitingList({
-  //   notificationTopic,
-  // }: {
-  //   notificationTopic: NotificationTopic;
-  // }): NotificationTopic | undefined {
-  //   for (const notification of Object.values(this.waitingListTopics)) {
-  //     const jsonA = notificationTopic.toJson();
-  //     jsonA["workerId"] = "";
-  //     const jsonB = notification.toJson();
-  //     jsonB["workerId"] = "";
-  //     if (isEqual(jsonA, jsonB)) {
-  //       return notification;
-  //     }
-  //   }
-  //   return undefined;
-  // }
+  isSubToWaitingList({
+    notificationTopic,
+  }: {
+    notificationTopic: NotificationTopic;
+  }): NotificationTopic | undefined {
+    for (const notification of Object.values(this.waitingListTopics)) {
+      const jsonA = notificationTopic.toJson();
+      jsonA["workerId"] = "";
+      const jsonB = notification.toJson();
+      jsonB["workerId"] = "";
+      if (deepEqual(jsonA, jsonB)) {
+        return notification;
+      }
+    }
+    return undefined;
+  }
 
   setUserPublicData(dataJson: { [key: string]: any }): void {
     this.name = dataJson["name"] || "";

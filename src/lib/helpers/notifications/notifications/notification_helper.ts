@@ -6,12 +6,17 @@ import {
 import GeneralRepo from "$lib/helpers/general/general_repo";
 import UserInitializer from "$lib/initializers/user_initializer";
 import type Booking from "$lib/models/booking/booking_model";
+import type { CurrencyModel } from "$lib/models/general/currency_model";
 import { Price } from "$lib/models/general/price";
+import type MultiBooking from "$lib/models/multi_booking/multi_booking";
+import type MultiBookingUser from "$lib/models/multi_booking/multi_booking_user";
 import type BusinessPayloadData from "$lib/models/notifications/business_data_payload";
 import NotificationPayload, {
   EnterAction,
 } from "$lib/models/notifications/notification_payload";
 import type NotificationTopic from "$lib/models/notifications/notification_topic";
+import type Invoice from "$lib/models/payment_hyp/invoice/invoice";
+import PaymentRequest from "$lib/models/payment_hyp/payment_request/payment_request";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { dateToRemindBooking } from "$lib/utils/dates_utils";
 import { getFormatedTime } from "$lib/utils/string_utils";
@@ -35,13 +40,14 @@ export default class NotificationsHelper {
   ///       [isWorkerOrder] or the ServerNotificationsClient() order to itself.
   ///
   ///  Execute: send push notifiction if needed
-  public async notifyWorkerAboutOrder(
+  async notifyWorkerAboutOrder(
     worker: WorkerModel,
     booking: Booking
   ): Promise<void> {
     if (!this._notifyToWorker(booking.customerId, worker, booking.status)) {
       return;
     }
+
     let content = "";
     let title = "";
     if (booking.status === BookingStatuses.approved) {
@@ -105,6 +111,9 @@ export default class NotificationsHelper {
             .replaceAll("TIP", tipPrice.toString());
       }
     }
+
+    console.log(content);
+
     // finally activate the notification
     await this.notificationRepo.notifyMultipleUsers({
       fcms: worker.fcmsTokens,
@@ -150,7 +159,7 @@ export default class NotificationsHelper {
   }
 
   /// Get: `booking` and notify the booking worker about user want to delete it
-  public async notifyWorkerAboutUserWantToDelete(
+  async notifyWorkerAboutUserWantToDelete(
     booking: Booking,
     worker: WorkerModel
   ): Promise<void> {
@@ -182,7 +191,7 @@ export default class NotificationsHelper {
   }
 
   /// Get: `booking` and notify the booking worker about user restore the booking from wnat to delete
-  public async notifyWorkerAboutUserRestoreBooking(
+  async notifyWorkerAboutUserRestoreBooking(
     booking: Booking,
     worker: WorkerModel
   ): Promise<void> {
@@ -300,6 +309,231 @@ export default class NotificationsHelper {
         .replace("DATE", getFormatedTime(booking.bookingDate))
         .replace("NAME", booking.customerName),
       isSilent: true,
+    });
+  }
+
+  async notifyWorkerThatUserWantToCancelMultiBookingSigning({
+    userBooking,
+    worker,
+  }: {
+    userBooking: Booking;
+    worker: WorkerModel;
+  }): Promise<void> {
+    if (!worker.notifications.notifyWhenGettingBooking) {
+      return;
+    }
+    if (UserInitializer.GI().user.id === worker.id) {
+      return;
+    }
+    await this.notificationRepo.notifyMultipleUsers({
+      fcms: worker.fcmsTokens,
+      payload: new NotificationPayload({
+        action: EnterAction.openWorkerBooking,
+        bookingData: userBooking.toBookingNotificationPayload,
+      }),
+      title: translate("userWantsToDelete", undefined, false),
+      content: translate("userWantsToDeleteSigningContent", undefined, false)
+        .replace("CUSTOMERNAME", userBooking.customerName)
+        .replace("EVENTNAME", userBooking.treatmentsToStringNotDetailed)
+        .replace("DATE", getFormatedTime(userBooking.bookingDate)),
+    });
+  }
+
+  async notifyWorkerThatClientSignToMultiBooking({
+    multiBooking,
+    worker,
+    multiBookingUser,
+  }: {
+    multiBooking: MultiBooking;
+    worker: WorkerModel;
+    multiBookingUser: MultiBookingUser;
+  }): Promise<void> {
+    if (!worker.notifications.notifyWhenGettingBooking) {
+      return;
+    }
+    if (UserInitializer.GI().user.id === worker.id) {
+      return;
+    }
+
+    const paid = multiBookingUser.isDepositTransaction
+      ? multiBookingUser.transactionsTotalDepositAmount
+      : multiBookingUser.transactionsTotalPaymentAmount;
+    const price: Price = new Price({
+      amount: paid.toString(),
+      currency: multiBooking.treatment.price!.currency,
+    });
+
+    this.notificationRepo.notifyMultipleUsers({
+      fcms: worker.fcmsTokens,
+      payload: new NotificationPayload({
+        action: EnterAction.openWorkerBooking,
+        bookingData: multiBooking.toBookingNotificationPayload,
+      }),
+      title: translate("newSigning", undefined, false),
+      content: translate("newClientOnMulti", undefined, false)
+        .replace(
+          "PAYMENT",
+          paid > 0
+            ? ` ${translate(
+                multiBookingUser.isDepositTransaction
+                  ? "depositAmount"
+                  : "paymentAmount"
+              ).replace("AMOUNT", price.toString())}`
+            : ""
+        )
+        .replace("USERNAME", multiBookingUser.customerName)
+        .replace("EVENTNAME", multiBooking.treatment.name)
+        .replace("DATE", getFormatedTime(multiBooking.bookingDate)),
+      isSilent: paid === 0,
+    });
+  }
+
+  async notifyWorkerThatClientSignToMultiAndWaitForApprove({
+    multiBooking,
+    multiBookingUser,
+    worker,
+  }: {
+    multiBooking: MultiBooking;
+    multiBookingUser: MultiBookingUser;
+    worker: WorkerModel;
+  }): Promise<void> {
+    if (!worker.notifications.notifyWhenGettingBooking) {
+      return;
+    }
+    if (UserInitializer.GI().user.id === worker.id) {
+      return;
+    }
+
+    this.notificationRepo.notifyMultipleUsers({
+      fcms: worker.fcmsTokens,
+      payload: new NotificationPayload({
+        action: EnterAction.openWorkerBooking,
+        bookingData: multiBooking.toBookingNotificationPayload,
+      }),
+      title: translate("signingWaiting", undefined, false),
+      content: translate("signingWaitingForApprove", undefined, false)
+        .replace("CUSTOMERNAME", multiBookingUser.customerName)
+        .replace("EVENTNAME", multiBooking.treatment.name)
+        .replace("DATE", getFormatedTime(multiBooking.bookingDate)),
+      isSilent: true,
+    });
+  }
+
+  async notifyClientsThatWorkerAsignToThemNewPaymentRequest(
+    fcms: Set<string>,
+    paymentRequest: PaymentRequest
+  ): Promise<void> {
+    await this.notificationRepo.notifyMultipleUsers({
+      fcms: fcms,
+      payload: new NotificationPayload({
+        action: EnterAction.openUserPaymentRequest,
+        paymentRequestData: paymentRequest.toPaymentRequestNotificationPayload,
+      }),
+      title: translate("newPaymentRequest", undefined, false),
+      content: translate("newPaymentRequestContent", undefined, false)
+        .replace("WORKERNAME", paymentRequest.workerInfo.workerName)
+        .replace("BUSINESSNAME", paymentRequest.businessInfo.businessName)
+        .replace("PRICE", paymentRequest.price.toString()),
+    });
+  }
+
+  ///----------------------------------- payment request ------------------------------
+  async notifyWorkerThatUserFinishPayOnRequest({
+    paymentRequest,
+    worker,
+    userId,
+    customerName,
+  }: {
+    paymentRequest: PaymentRequest;
+    worker: WorkerModel;
+    userId: string;
+    customerName: string;
+  }) {
+    if (worker.fcmsTokens.size === 0) {
+      return;
+    }
+    if (!worker.notifications.notifyOnPayments) {
+      return;
+    }
+    if (worker.id === userId) {
+      return;
+    }
+    await this.notificationRepo.notifyMultipleUsers({
+      fcms: worker.fcmsTokens,
+      payload: new NotificationPayload({
+        action: EnterAction.openWorkerPaymentRequest,
+        paymentRequestData: paymentRequest.toPaymentRequestNotificationPayload,
+      }),
+      title: translate("paymentRequestPaid", undefined, false),
+      content: translate("paymentRequestPaidContent", undefined, false)
+        .replaceAll("CUSTOMERNAME", customerName)
+        .replaceAll("PRICE", paymentRequest.price.toString()),
+    });
+  }
+
+  async notifyWorkerUserDeclineTheRequest({
+    paymentRequest,
+    worker,
+    userName,
+  }: {
+    paymentRequest: PaymentRequest;
+    worker: WorkerModel;
+    userName: string;
+  }) {
+    if (worker.fcmsTokens.size === 0) {
+      return;
+    }
+    if (!worker.notifications.notifyOnPayments) {
+      return;
+    }
+    if (worker.id === UserInitializer.GI().user.id) {
+      return;
+    }
+    await this.notificationRepo.notifyMultipleUsers({
+      fcms: worker.fcmsTokens,
+      payload: new NotificationPayload({
+        action: EnterAction.openWorkerPaymentRequest,
+        paymentRequestData: paymentRequest.toPaymentRequestNotificationPayload,
+      }),
+      title: translate("paymentRequestDeclined", undefined, false),
+      content: translate("paymentRequestDeclinedContent", undefined, false)
+        .replaceAll("CUSTOMERNAME", userName)
+        .replaceAll("PRICE", paymentRequest.price.toString()),
+    });
+  }
+
+  /// -------------------------------------invoice ------------------------------
+  async notifyUserWorkerCreateInvoice({
+    userFcms,
+    workerName,
+    currency,
+    amount,
+    invoice,
+  }: {
+    userFcms: Set<string>;
+    workerName: string;
+    currency: CurrencyModel;
+    amount: number;
+    invoice: Invoice;
+  }) {
+    if (!userFcms || userFcms.size === 0) {
+      return;
+    }
+
+    const price = `${amount} ${currency}`;
+    const payload = new NotificationPayload({
+      action: EnterAction.openInvoice,
+      invoiceData: invoice.toInvoiceNoticaficationPayload,
+    });
+
+    await this.notificationRepo.notifyMultipleUsers({
+      fcms: userFcms,
+      payload: payload,
+      title: translate("newInvoice", undefined, false),
+      content: translate("workerCreateInvoiceForUser", undefined, false)
+        .replaceAll("BUSINESSNAME", invoice.businessInfo.businessName)
+        .replaceAll("WORKERNAME", workerName)
+        .replaceAll("PRICE", price),
     });
   }
 
@@ -447,15 +681,120 @@ export default class NotificationsHelper {
     });
   }
 
+  async deleteAllScheduleMultiBookingNotifications({
+    multiBooking,
+    usersToDelete,
+  }: {
+    multiBooking: MultiBooking;
+    usersToDelete: Record<string, MultiBookingUser>;
+  }): Promise<boolean> {
+    // Collect all the notifications to delete
+    const datesToDelete: Record<string, Record<string, any>> = {}; // {path:{minute:{bookingId:null}}}
+    const existCombinedFcms: Set<string> = new Set();
+    Object.entries(usersToDelete).forEach(([bookingId, userMultiBooking]) => {
+      // Need to check if there is already a notification for this group of FCMS
+      const combinedFcms = userMultiBooking.combinedFcms;
+      if (existCombinedFcms.has(combinedFcms)) {
+        return;
+      }
+      const reminders = multiBooking.remindersOnUser(userMultiBooking);
+      Object.entries(reminders).forEach(([dateTimeToNotifyStr, data]) => {
+        if (datesToDelete[dateTimeToNotifyStr] == null) {
+          datesToDelete[dateTimeToNotifyStr] = {};
+        }
+        Object.entries(data).forEach(([reminderId, val]) => {
+          datesToDelete[dateTimeToNotifyStr][reminderId] = val;
+        });
+      });
+      // Add the combined FCMS if added to the dates
+      existCombinedFcms.add(combinedFcms);
+    });
+
+    const futures: Promise<boolean>[] = [];
+    Object.entries(datesToDelete).forEach(([dateToNotifyStr, data]) => {
+      const dateToNotify = isoToDate(dateToNotifyStr);
+      futures.push(
+        this.generalRepo.updateMultipleFieldsInsideDocAsMapRepo({
+          insideEnviroments: false,
+          path: `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${
+            dateToNotify.getMonth() + 1
+          }/${dateToNotify.getDate()}/${dateToNotify.getHours()}`,
+          docId: dateToNotify.getMinutes().toString(),
+          data,
+        })
+      );
+    });
+    const results = await Promise.all(futures);
+    return !results.includes(false);
+  }
+
+  async makeScheduleNotificationsToUsers({
+    multiBooking,
+    usersToScheudle,
+  }: {
+    multiBooking: MultiBooking;
+    usersToScheudle: Record<string, MultiBookingUser>;
+  }): Promise<boolean> {
+    if (multiBooking.activeUsers === 0) {
+      return false;
+    }
+
+    const notifications: Record<string, Record<string, any>> = {};
+    const combinedExisFcms: Set<string> = new Set();
+
+    Object.entries(usersToScheudle).forEach(([bookingId, userMultiBooking]) => {
+      // Need to check if there is already schedule message to this group of fcms
+      const combineFcms = userMultiBooking.combinedFcms;
+      if (combinedExisFcms.has(combineFcms)) {
+        return;
+      }
+      const reminders =
+        multiBooking.remindersToFutureNotifications(userMultiBooking);
+
+      reminders.forEach((reminder) => {
+        notifications[dateIsoStr(reminder.dateToNotify)] ??= {};
+        notifications[dateIsoStr(reminder.dateToNotify)][reminder.id] =
+          reminder.toJson();
+      });
+
+      // Add the combine fcms if add the reminuders
+      if (reminders.length > 0) {
+        combinedExisFcms.add(combineFcms);
+      }
+    });
+
+    const futures: Promise<any>[] = [];
+    Object.entries(notifications).forEach(([dateToNotifyStr, data]) => {
+      const dateToNotify = isoToDate(dateToNotifyStr);
+      futures.push(
+        this.generalRepo.setAsMapWithMergeRepo({
+          insideEnviroments: false,
+          path: `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${
+            dateToNotify.getMonth() + 1
+          }/${dateToNotify.getDate()}/${dateToNotify.getHours()}`,
+          docId: dateToNotify.getMinutes().toString(),
+          valueAsJson: data,
+        })
+      );
+    });
+    const resp = await Promise.all(futures);
+    return !resp.includes(false);
+  }
+
+  ///--------------------------------------------------------utils-----------------------------------
+
   private _notifyToWorker(
     customerId: string,
     worker?: WorkerModel,
     bookingStatus?: BookingStatuses
   ): boolean {
-    if (worker === undefined) {
+    console.log("qqqqqqqqqqqqq");
+    if (worker == null) {
+      console.log("4444444");
       return false;
     }
     if (worker.id === customerId) {
+      console.log("3333333333");
       return false; // worker order to himself
     }
     if (
@@ -463,12 +802,15 @@ export default class NotificationsHelper {
       (bookingStatus != BookingStatuses.waiting ||
         !worker.notifications.notifyAboutOrderNearDeadline)
     ) {
+      console.log("444444444444444");
       return false; // the worker dosen't allow notifications while ordering
     }
 
     if (worker.fcmsTokens.size === 0) {
+      console.log("6666666");
       return false; // imposible to notify there isn't fcm
     }
+    console.log("44444444444444444444444444444444444");
     return true;
   }
 }

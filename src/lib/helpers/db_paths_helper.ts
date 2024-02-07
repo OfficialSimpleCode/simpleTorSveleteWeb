@@ -7,10 +7,21 @@ import {
   dataCollection,
   dataDoc,
   likesCollection,
+  phoneDataCollections,
+  phonesCollection,
   usersCollection,
   workersCollection,
 } from "$lib/consts/db";
+import {
+  localBookingsCollection,
+  localBusinessCollection,
+  localPaymentRequestsCollection,
+  localUsersCollection,
+  localWorkersCollection,
+} from "$lib/consts/local_db";
 import type Booking from "$lib/models/booking/booking_model";
+import type MultiBookingUser from "$lib/models/multi_booking/multi_booking_user";
+import PaymentRequest from "$lib/models/payment_hyp/payment_request/payment_request";
 import { GeneralData } from "./general_data";
 
 export default class DbPathesHelper {
@@ -20,6 +31,18 @@ export default class DbPathesHelper {
 
   public static GI(): DbPathesHelper {
     return DbPathesHelper._singleton;
+  }
+
+  userPhoneBookingsPathByMultiBookingUser(
+    multiBookingUser: MultiBookingUser
+  ): string {
+    return `${phonesCollection}/${multiBookingUser.customerHashPhone}/${multiBookingUser.customerPhoneAsCollection}/${phoneDataCollections}/${bookingsCollection}`;
+  }
+
+  userBookingsPathByMultiBookingUser(
+    multiBookingUser: MultiBookingUser
+  ): string {
+    return `${usersCollection}/${multiBookingUser.customerId}/${dataCollection}/${dataDoc}/${bookingsCollection}`;
   }
 
   getLisksChildPath(workerId: string): string {
@@ -66,5 +89,23 @@ export default class DbPathesHelper {
   // Worker-related methods...
   workerBookingsPath(booking: Booking): string {
     return `${buisnessCollection}/${booking.buisnessId}/${workersCollection}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`;
+  }
+
+  workerLocalPaymentsRequestPath(workerId: string, businessId: string): string {
+    return `${localBusinessCollection}/${businessId}/${localWorkersCollection}/${workerId}/${localPaymentRequestsCollection}`;
+  }
+
+  userLocalPaymentsRequestPath(userId: string): string {
+    return `${localUsersCollection}/${userId}/${localPaymentRequestsCollection}`;
+  }
+
+  workerLocalPaymentsRequestPathByRequest(
+    paymentRequest: PaymentRequest
+  ): string {
+    return `${localBusinessCollection}/${paymentRequest.businessInfo.businessId}/${localWorkersCollection}/${paymentRequest.workerInfo.workerId}/${localPaymentRequestsCollection}`;
+  }
+
+  workerLocalBookingsPath(workerId: string, businessId: string) {
+    return `${localBusinessCollection}/${businessId}/${localWorkersCollection}/${workerId}/${localBookingsCollection}`;
   }
 }

@@ -219,9 +219,12 @@ export function removePhoneNumberPrefix(phoneNumber: string): string {
 }
 
 export function printDuration(duration: Duration): string {
+  console.log(duration);
   const twoDigits = (n: number) => n.toString().padStart(2, "0");
-  const twoDigitMinutes = twoDigits(duration.minutes % 60);
-  return `${twoDigits(duration.hours)}:${twoDigitMinutes}`;
+  const twoDigitMinutes = twoDigits(
+    (duration.inMinutes - duration.inHours * 60) % 60
+  );
+  return `${twoDigits(duration.inHours)}:${twoDigitMinutes}`;
 }
 
 export function timeUuid(): string {

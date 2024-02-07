@@ -19,6 +19,7 @@ import "@syncfusion/ej2-navigations/styles/material.css";
 import "@syncfusion/ej2-popups/styles/material.css";
 import * as schedule from "@syncfusion/ej2-schedule";
 
+import type TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
 import { get, writable } from "svelte/store";
 import { loadBookingMakerTimeData } from "../../routes/business/order/steps/time_picker/helpers/load_data";
 interface BookingMaker {
@@ -44,12 +45,12 @@ export default class BookingController {
   static visibleDates: Date[] = [];
   static scheduleObj: schedule.Schedule | undefined;
   static firstDateToShow: Date | undefined;
+  static pickedTimeObj: TimePickerObj | undefined;
   static initializeBookingMaker({
     bookingForUpdate,
   }: {
     bookingForUpdate?: Booking;
   }) {
-    console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
     const initialBookingMaker: BookingMaker = {
       workerId: bookingForUpdate?.workerId,
       showVerificationAlert: false,

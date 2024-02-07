@@ -189,8 +189,6 @@ export function sortMyBookings(user: UserModel): Booking[] {
   ///{id: {current booking id: alreaest date of his children }}
   const alreadyApearRecurrence: Record<string, Record<string, Date>> = {};
 
-  console.log("bookingsCollection.recurrence", bookingsCollection.recurrence);
-
   Object.entries(bookingsCollection.recurrence ?? {}).forEach(
     ([bookingId, booking]) => {
       // if (!MyBookingsUIController().filterBookings.value.isValid(booking)) {
@@ -200,12 +198,12 @@ export function sortMyBookings(user: UserModel): Booking[] {
       if (!booking.recurrenceEvent) {
         return;
       }
-      console.log("eeeeeeeeeeeeeee");
+
       const dateOfNearestBooking =
         booking.recurrenceEvent.nearestFutureAccurenceDate(new Date(), {
           needToBeAfterStart: false,
         });
-      console.log("2222222222222222222");
+
       if (!dateOfNearestBooking) {
         return;
       }
@@ -250,10 +248,7 @@ export function sortMyBookings(user: UserModel): Booking[] {
       }
     }
   );
-  console.log(
-    "bookingsCollection.futureBookings",
-    bookingsCollection.futureBookings
-  );
+
   Object.entries(bookingsCollection.futureBookings).forEach(
     ([monthStr, monthBcookings]) => {
       Object.entries(monthBcookings).forEach(([bookingId, booking]) => {
@@ -291,7 +286,6 @@ export function sortMyBookings(user: UserModel): Booking[] {
   const bookingsList = Object.values(futureBookings).sort((a, b) => {
     return a.currentDisplayDate.getTime() - b.currentDisplayDate.getTime();
   });
-  console.log("bookingsList", bookingsList);
 
   return bookingsList;
 }

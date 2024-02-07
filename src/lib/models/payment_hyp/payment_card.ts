@@ -1,35 +1,36 @@
 import { maxAttemptsPassword } from "$lib/consts/hyp";
+import { decryptText } from "$lib/utils/encryptions";
 
-const paymentBrandsFromStr: { [key: string]: string } = {
-  "1": "PL",
-  "2": "MasterCard",
-  "3": "Visa",
-  "4": "Maestro",
-  "5": "Isracard",
+export const paymentBrandsFromStr: Record<string, string> = {
+  ["1"]: "PL",
+  ["2"]: "MasterCard",
+  ["3"]: "Visa",
+  ["4"]: "Maestro",
+  ["5"]: "Isracard",
 };
 
-const paymentBrandsToStr: { [key: string]: string } = {
-  PL: "1",
-  MasterCard: "2",
-  Visa: "3",
-  Maestro: "4",
-  Isracard: "5",
+export const paymentBrandsToStr: Record<string, string> = {
+  ["PL"]: "1",
+  ["MasterCard"]: "2",
+  ["Visa"]: "3",
+  ["Maestro"]: "4",
+  ["Isracard"]: "5",
 };
 
-const bankFromStr: { [key: string]: string } = {
-  "1": "Isracard",
-  "2": "Visa Cal",
-  "3": "Diners",
-  "4": "Amex",
-  "6": "Leumi Card",
+export const bankFromStr: Record<string, string> = {
+  ["1"]: "Isracard",
+  ["2"]: "Visa Cal",
+  ["3"]: "Diners",
+  ["4"]: "Amex",
+  ["6"]: "Leumi Card",
 };
 
-const bankToStr: { [key: string]: string } = {
-  Isracard: "1",
-  "Visa Cal": "2",
-  Diners: "3",
-  Amex: "4",
-  "Leumi Card": "6",
+export const bankToStr: Record<string, string> = {
+  ["Isracard"]: "1",
+  ["Visa Cal"]: "2",
+  ["Diners"]: "3",
+  ["Amex"]: "4",
+  ["Leumi Card"]: "6",
 };
 
 export default class PaymentCard {

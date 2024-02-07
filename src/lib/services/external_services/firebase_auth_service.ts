@@ -254,22 +254,18 @@ export class FirebaseAuthService {
     element.setAttribute("style", "color:Red");
     document.body.appendChild(element);
 
-    console.log(html);
-    console.log("wwwwwww");
     const recaptchaVerifier = new RecaptchaVerifier(this._auth, element, {
       size: "invisible",
       callback: (response: any) => {
         console.log(response);
       },
     });
-    console.log("222222222222222");
+
     await signInWithPhoneNumber(this._auth, completePhone, recaptchaVerifier)
       .then((confirmationResult) => {
-        console.log("ssssssssssss");
         onCodeSent(confirmationResult.verificationId);
       })
       .catch((error) => {
-        console.log("wwwwwwwwwwwwwwwww");
         if (error instanceof Error) {
           AppErrorsHelper.GI().details = error.message;
           AppErrorsHelper.GI().error =
