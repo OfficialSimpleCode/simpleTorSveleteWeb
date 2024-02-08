@@ -1,17 +1,13 @@
 <script lang="ts">
   import Navbar from "$lib/components/navbar/Navbar.svelte";
 
-  import BookingController, {
-    bookingMakerStore,
-  } from "$lib/controllers/booking_controller";
+  import { bookingMakerStore } from "$lib/controllers/booking_controller";
   import { _, translate } from "$lib/utils/translate";
   import OrderStepper from "./components/OrderStepper.svelte";
   import FinishScreen from "./steps/finish_screen/FinishScreen.svelte";
   import ServicePicker from "./steps/service_picker/ServicePicker.svelte";
   import TimePickerSchedule from "./steps/time_picker/components/TimePickerSchedule.svelte";
   import WorkerPicker from "./steps/worker_picker/WorkerPicker.svelte";
-
-  BookingController.initializeBookingMaker({});
 </script>
 
 <main class="h-screen w-screen flex flex-col items-center gap-2 bg-base-100">

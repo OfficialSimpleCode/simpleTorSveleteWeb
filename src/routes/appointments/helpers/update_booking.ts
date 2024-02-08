@@ -32,7 +32,7 @@ export async function updateBooking({
   if (booking.currentDisplayDate <= new Date()) {
     return;
   }
-  console.log(booking.workerId);
+
   BookingController.initializeBookingMaker({ bookingForUpdate: booking });
   BusinessInitializer.GI().startWorkerListening(worker);
   BusinessInitializer.GI().startTimesListening(worker, false);

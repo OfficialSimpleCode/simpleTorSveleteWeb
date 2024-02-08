@@ -169,6 +169,9 @@ export class FirebaseAuthService {
     otp: string;
   }): Promise<boolean> {
     const credential = PhoneAuthProvider.credential(verificationId, otp);
+    console.log("dddddddddddddddddPhone");
+    await this._auth.currentUser?.reload();
+    console.log(this.existsProvidersSRV);
 
     try {
       switch (loginType) {
@@ -322,7 +325,7 @@ export class FirebaseAuthService {
   }
 
   get existsProvidersSRV(): Set<string> {
-    if (this._auth.currentUser === null) {
+    if (this._auth.currentUser == null) {
       return new Set();
     }
     const providersIds = new Set<string>();

@@ -20,6 +20,7 @@ import {
   notificationOptionToStr,
 } from "$lib/consts/notification";
 import { EventFilterType } from "$lib/consts/worker_schedule";
+import { length } from "$lib/utils/core_utils";
 import {
   dateToRemindBooking,
   setToMidNight,
@@ -1028,14 +1029,14 @@ export default class Booking extends ScheduleItem {
       oldBookingTreatmentsIds[treatment.id] = treatment.count;
     });
     this.bookingHistory = { ...oldBooking.bookingHistory };
-    this.bookingHistory[oldBooking.bookingHistory.length.toString()] =
+    this.bookingHistory[length(oldBooking.bookingHistory).toString()] =
       new BookingHistoryItem({
         updateTime: new Date(),
         previousTime: oldBooking.bookingDate,
         workerId: oldBooking.workerId,
         workerAction: false,
         treatmentsIds: oldBookingTreatmentsIds,
-        index: oldBooking.bookingHistory.length.toString(),
+        index: length(oldBooking.bookingHistory).toString(),
       });
     this.workerNotificationOption = worker.notifications.notificationOption;
     this.workerRemindersTypes = new Map(worker.notifications.remindersTypes);

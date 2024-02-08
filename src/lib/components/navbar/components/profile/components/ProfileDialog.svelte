@@ -4,7 +4,10 @@
   import Avatar from "$lib/components/Avatar.svelte";
   import InfoTooltipButton from "$lib/components/InfoTooltipButton.svelte";
   import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
+  import VerifiedIcon from "$lib/components/custom_components/VerifiedIcon.svelte";
+  import PhoneDialog from "$lib/components/login/components/PhoneDialog.svelte";
   import GenderPicker from "$lib/components/pickers/gender_picker/GenderPicker.svelte";
+  import { LoginReason } from "$lib/consts/auth";
   import type { Gender } from "$lib/consts/gender";
   import UserHelper from "$lib/helpers/user/user_helper";
   import { userStore } from "$lib/stores/User";
@@ -29,6 +32,7 @@
   import { translate } from "$lib/utils/translate";
   import { emailValidation, nameValidation } from "$lib/utils/validation_utils";
   import clipboard from "clipboardy";
+  import { handleVerification } from "../helpers/handle_verification";
   import AuthOptions from "./AuthOptions.svelte";
   import ChangeAtrributeDialog from "./ChangeAtrributeDialog.svelte";
   import ChangePhoneDialog from "./ChangePhoneDialog.svelte";
@@ -37,6 +41,7 @@
   let emailDialog: HTMLDialogElement;
   let nameDialog: HTMLDialogElement;
   let phoneDialog: HTMLDialogElement;
+  let verificationDialog: HTMLDialogElement;
   let loadingLogout: boolean = false;
   let copiedUserId: boolean = false;
   console.log($userStore.id);
@@ -94,6 +99,9 @@
   async function onUpdatePhone(phone: string) {
     return (await UserHelper.GI().updatePhone(phone, false)) != null;
   }
+  async function onClickVerified() {
+    await handleVerification(verificationDialog);
+  }
 
   async function onDeleteUser() {
     VerificationHelper.GI().setupLoggin();
@@ -125,6 +133,11 @@
     initialValue={UserInitializer.GI().user.userPublicData.phoneNumber}
     onUpdate={onUpdatePhone}
     bind:dialog={phoneDialog}
+  />
+  <PhoneDialog
+    loginReason={LoginReason.phoneVerification}
+    insideOtp={true}
+    bind:dialog={verificationDialog}
   />
 {/if}
 
@@ -172,6 +185,7 @@
           </div>
         </button>
         <div class="divider h-[1px]" />
+
         <button
           class="btn btn-ghost join-item flex justify-between items-center"
           on:click={openPhoneDialog}
@@ -181,10 +195,14 @@
             {$_("phoneNumber")}
           </div>
           <div class="flex items-center text-gray-500">
+            {#if $userStore.userPublicData.isVerifiedPhone}
+              <VerifiedIcon />
+            {/if}
+            <div class="w-[5px]" />
             {$userStore.phoneNumber}
             <CustomArrow />
-          </div>
-        </button>
+          </div></button
+        >
         <div class="divider h-[1px]" />
         <button
           class="btn btn-ghost join-item flex justify-between items-center"
@@ -195,6 +213,10 @@
             {$_("email")}
           </div>
           <div class="flex items-center text-gray-500">
+            {#if $userStore.userPublicData.isVerifiedEmail}
+              <VerifiedIcon />
+            {/if}
+            <div class="w-[5px]" />
             {$userStore.userPublicData.email}
             <CustomArrow />
           </div>
@@ -223,6 +245,27 @@
             {:else}
               <CustomArrow />
             {/if}
+          </div>
+        </button>
+      </section>
+
+      <!-- Profile Information -->
+      <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
+        <button
+          class="btn btn-ghost join-item flex justify-between items-center"
+          on:click={onClickVerified}
+        >
+          <div class="flex items-center gap-2">
+            <VerifiedIcon size={23} />
+            {$_("phoneVerification")}
+          </div>
+          <div class="flex items-center text-gray-500">
+            {translate(
+              $userStore.userPublicData.isVerifiedPhone
+                ? "verified"
+                : "notVerified"
+            )}
+            <CustomArrow />
           </div>
         </button>
       </section>

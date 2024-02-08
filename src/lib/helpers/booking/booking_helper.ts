@@ -164,7 +164,7 @@ export default class BookingHelper {
     //   ) {
     //     MyBookingsUIController.markedBookings.clear();
     //   }
-    console.log("booking.isPassed", booking.isPassed);
+
     const resp = await this.bookingRepo.deleteBooking({
       booking,
       deleteAllBooking,

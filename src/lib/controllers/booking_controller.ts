@@ -109,7 +109,7 @@ export default class BookingController {
 
   static updateWorkerData(workerObj: WorkerModel) {
     const bookingMaker = get(bookingMakerStore);
-    console.log("rrrrrrrrrrrrrrrr", bookingMaker);
+
     logger.debug("Getting new data for the worker");
 
     // If treatments had changed
@@ -198,7 +198,11 @@ export default class BookingController {
       return;
     }
 
-    if (bookingMaker.isUpdate && treatment.amountInAdvance > 0) {
+    if (
+      bookingMaker.isUpdate &&
+      bookingMaker.services[treatment.id] == null &&
+      treatment.amountInAdvance > 0
+    ) {
       ShowToast({
         text: translate("cantChoosePaymentServiceOnBookingUpdate"),
         status: "warning",

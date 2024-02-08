@@ -11,7 +11,8 @@
   import { LoadAppHelper } from "$lib/helpers/load_app_helper";
   import { handleLocaleChanges } from "$lib/language/loader";
   import { businessStore } from "$lib/stores/Business";
-
+  import { hashId } from "$lib/utils/encryptions";
+  console.log(hashId({ id: "oMKVtHVopvZgetHxlXfUuVyVLhs1" }));
   async function loadBusiness() {
     handleLocaleChanges(localStorage, document);
 

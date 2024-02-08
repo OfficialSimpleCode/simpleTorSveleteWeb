@@ -7,6 +7,7 @@ import {
 import { Gender, genderFromStr, genderToStr } from "$lib/consts/gender";
 import { EventFilterType } from "$lib/consts/worker_schedule";
 import { needToHoldOn } from "$lib/utils/booking_utils";
+import { length } from "$lib/utils/core_utils";
 import {
   dateToRemindMultiBooking,
   utcDeltaMinutes,
@@ -582,7 +583,7 @@ export default class MultiBooking extends ScheduleItem {
 
     //add the booking history item for that update
     this.bookingHistory = { ...oldMultiBooking.bookingHistory };
-    this.bookingHistory[oldMultiBooking.bookingHistory.length.toString()] =
+    this.bookingHistory[length(oldMultiBooking.bookingHistory).toString()] =
       new BookingHistoryItem({
         updateTime: new Date(),
         previousTime: oldMultiBooking.bookingDate,
@@ -591,7 +592,7 @@ export default class MultiBooking extends ScheduleItem {
         treatmentsIds: {
           [oldMultiBooking.treatment.id]: oldMultiBooking.treatment.count,
         },
-        index: oldMultiBooking.bookingHistory.length.toString(),
+        index: length(oldMultiBooking.bookingHistory).toString(),
       });
     this.recurrenceEvent = undefined;
     if (!keepRecurrence) {
