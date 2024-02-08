@@ -1,134 +1,119 @@
 <script lang="ts">
-  import { Calendar, ChevronLeft, ChevronRight, Icon } from "svelte-hero-icons";
-  import { _ } from "svelte-i18n";
-  import DateButton from "../../components/DateButton.svelte";
+  import BookingController from "$lib/controllers/booking_controller";
+  import { Duration } from "$lib/models/core/duration";
+  import { setToMidNight } from "$lib/utils/dates_utils";
+  import { addDuration } from "$lib/utils/duration_utils";
+  import * as sync from "@syncfusion/ej2-base";
+  import "@syncfusion/ej2-base/styles/material.css";
+  import "@syncfusion/ej2-buttons/styles/material.css";
+  import "@syncfusion/ej2-calendars/styles/material.css";
+  import "@syncfusion/ej2-dropdowns/styles/material.css";
+  import "@syncfusion/ej2-inputs/styles/material.css";
+  import "@syncfusion/ej2-lists/styles/material.css";
+  import "@syncfusion/ej2-navigations/styles/material.css";
+  import "@syncfusion/ej2-popups/styles/material.css";
+  import * as schedule from "@syncfusion/ej2-schedule";
+  import { Schedule } from "@syncfusion/ej2-schedule";
+  import "@syncfusion/ej2-schedule/styles/material.css";
+  import "@syncfusion/ej2-splitbuttons/styles/material.css";
+  import { onMount } from "svelte";
+  import { applyCategoryColor } from "./helpers/event_renderer";
 
-  export let selectedDateAndTime: Record<string, string>;
+  import { loadBookingMakerTimeData } from "$lib/utils/booking_maker";
+  import { onEventClick } from "./helpers/on_tap_time_obj";
+  const { Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop } = schedule;
 
-  let now: Date = new Date();
-  let monthName: string = now.toLocaleString("default", { month: "long" });
-  export let duration: string;
+  sync.registerLicense(
+    "Ngo9BigBOggjHTQxAR8/V1NAaF5cWWRCfEx0Q3xbf1x0ZFRHallSTnZYUiweQnxTdEFjWHxecHZQQWRbWEB+Wg=="
+  );
 
-  let availableHours: Record<string, Array<string>> = {
-    "01-20-2024": ["15:00", "17:00", "20:30"],
-    "01-21-2024": ["10:00", "15:00", "17:00", "20:30"],
-    "01-22-2024": ["15:00", "17:00", "20:30"],
-    "01-23-2024": ["15:00", "17:00", "20:30"],
-    "01-24-2024": [
-      "10:25",
-      "12:45",
-      "13: 30",
-      "15:00",
-      "17:00",
-      "20:30",
-      "21:45",
-      "22:12",
-      "23:35",
-    ],
-    "01-25-2024": ["15:00", "17:00", "20:30"],
-  };
+  onMount(() => {
+    Schedule.Inject(Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop);
+    BookingController.scheduleObj = new schedule.Schedule({
+      currentView: "Week",
+      dateFormat: "dd-MMM-yyyy",
+      width: "100%",
+      height: "100%",
+      views: ["Week"],
+      cssClass: "schedule-cell-dimension bg-primary",
+      allowDragAndDrop: false,
+      showTimeIndicator: true,
+      workHours: { highlight: false },
+      showQuickInfo: false,
+      cellHeaderTemplate:
+        '<div class="templatewrap">${getDate(data.date)}</div>',
+      eventClick: onEventClick,
+      minDate: setToMidNight(new Date()),
+      // timeScale: {},
+      maxDate: addDuration(
+        new Date(),
+        new Duration({ days: BookingController.worker.daysToAllowBookings })
+      ),
+      headerRows: [{ option: "Month" }, { option: "Date" }],
+      timeScale: {
+        enable: true,
+        interval: 60,
+        slotCount: 3,
+      },
+      eventSettings: {
+        fields: {
+          id: "id",
+          subject: { name: "displayDate" },
+          startTime: { name: "from" },
+          endTime: { name: "to" },
+        },
+        enableMaxHeight: true,
 
-  let longestDayLength: number = Object.values(availableHours).reduce((a, b) =>
-    a.length > b.length ? a : b
-  ).length;
+        allowEditing: false,
+      },
+      eventRendered: (args: schedule.EventRenderedArgs) =>
+        applyCategoryColor(args),
+    });
 
-  function addDays(date: Date, days: number): Date {
-    var result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-  }
+    BookingController.scheduleObj.appendTo("#schedule");
 
-  function formatDateToMMDDYY(date: Date): string {
-    let day: any = date.getDate();
-    let month: any = date.getMonth() + 1; // Adding 1 because getMonth() returns values from 0 to 11
-    let year: any = date.getFullYear();
+    //initial the first time lod the calendar
+    //delete the exsit events
+    BookingController.scheduleObj!.deleteEvent(
+      Object.values(BookingController.timePickerObjects)
+    );
+    loadBookingMakerTimeData(
+      BookingController.scheduleObj!.getCurrentViewDates(),
+      BookingController.worker,
+      [30]
+    );
 
-    // Add leading zero if day or month is less than 10
-    day = day < 10 ? "0" + day : day;
-    month = month < 10 ? "0" + month : month;
+    BookingController.scheduleObj!.addEvent(
+      Object.values(BookingController.timePickerObjects)
+    );
 
-    return month + "-" + day + "-" + year;
-  }
+    //when the user interact with the schedule and navigate between
+    //dates need to load the new dates
+    BookingController.scheduleObj.actionComplete = (args) => {
+      if (
+        args.requestType === "viewNavigate" ||
+        args.requestType === "dateNavigate"
+      ) {
+        if (BookingController.scheduleObj == null) {
+          return;
+        }
+        //delete the exsit events
+        BookingController.scheduleObj!.deleteEvent(
+          Object.values(BookingController.timePickerObjects)
+        );
+        loadBookingMakerTimeData(
+          BookingController.scheduleObj!.getCurrentViewDates(),
+          BookingController.worker,
+          [30]
+        );
 
-  function haveHours(date: Date): boolean {
-    let dateFormat: string = formatDateToMMDDYY(date);
-    return availableHours[dateFormat] && availableHours[dateFormat].length > 0;
-  }
-
-  function getAvailableHourForDate(date: Date): string {
-    let dateFormat: string = formatDateToMMDDYY(date);
-    let hour: string = availableHours[dateFormat][0];
-    availableHours[dateFormat].splice(0, 1);
-    return hour;
-  }
+        BookingController.scheduleObj!.addEvent(
+          Object.values(BookingController.timePickerObjects)
+        );
+      }
+    };
+    console.log(BookingController.timePickerObjects);
+  });
 </script>
 
-<section id="date-step" class="w-full flex flex-col items-center gap-2">
-  <div class="text-center">
-    <h1 class="text-2xl">{$_("timeOfBooking")}</h1>
-    <h3 class="text-gray-500">{$_("theWholeTime")}: {duration}</h3>
-  </div>
-  <div class="w-full">
-    <div class="divider" />
-    <div class="flex justify-between items-center">
-      <div class="flex items-center mx-4 gap-2">
-        <Icon src={Calendar} size="28px" />
-        <button class="btn btn-s">
-          <Icon src={ChevronLeft} size="24px" />
-        </button>
-      </div>
-      <h3>
-        {$_(monthName)}
-        {now.getFullYear()}
-      </h3>
-      <div class="mx-4">
-        <button class="btn btn-s">
-          <Icon src={ChevronRight} size="24px" />
-        </button>
-      </div>
-    </div>
-    <div class="divider" />
-    <div class="overflow-x-auto mb-8">
-      <table class="table table-xs sm:table">
-        <thead>
-          <tr>
-            {#each { length: 5 } as _, i}
-              <th>
-                <div class="flex flex-col items-center">
-                  <div class:text-primary={i == 0}>
-                    {addDays(now, i)
-                      .toLocaleString("en-us", {
-                        weekday: "long",
-                      })
-                      .substring(0, 3)}
-                  </div>
-                  <div class:text-primary={i == 0}>
-                    {addDays(now, i).getDate()}
-                  </div>
-                </div>
-              </th>
-            {/each}
-          </tr>
-        </thead>
-        <tbody class="overflow-scroll">
-          {#each { length: longestDayLength } as _, i}
-            <tr class="h-12 sm:h-20">
-              {#each { length: 5 } as _, i}
-                <td class="text-center">
-                  {#if haveHours(addDays(now, i))}
-                    <DateButton
-                      bind:selectedDateAndTime
-                      date={formatDateToMMDDYY(addDays(now, i))}
-                      time={getAvailableHourForDate(addDays(now, i))}
-                      on:dateAndTime
-                    />
-                  {/if}
-                </td>
-              {/each}
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
+<div id="schedule"></div>

@@ -8,6 +8,9 @@ export default class PhoneDataResult {
   invoices: Record<string, Record<string, Invoice>> = {};
   paymentsRequests: Record<string, Record<string, PaymentRequest>> = {};
 
+  //.only for booking maker page - if we need to push the sheet of successfully verified phone
+  needToPopSheet: boolean = true;
+
   clientAt: Record<string, Set<string>> = {};
 
   constructor() {}

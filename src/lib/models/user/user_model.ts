@@ -14,6 +14,7 @@ import type Booking from "../booking/booking_model";
 import BusinessInfo from "../business/business_info";
 import CustomerData from "../general/customer_data";
 import Device from "../general/device";
+import MultiBookingUser from "../multi_booking/multi_booking_user";
 import NotificationTopic from "../notifications/notification_topic";
 import type Invoice from "../payment_hyp/invoice/invoice";
 import PaymentCard from "../payment_hyp/payment_card";
@@ -183,6 +184,17 @@ export default class UserModel {
         initDate: needDelete ? initDate : booking.bookingDate,
       }),
     });
+  }
+
+  get toMultiBookingUser(): MultiBookingUser {
+    const mutliUser = new MultiBookingUser();
+    mutliUser.userFcms = this.fcmsTokens;
+    mutliUser.customerName = this.name;
+
+    mutliUser.customerPhone = this.phoneNumber;
+    mutliUser.customerId = this.id;
+    mutliUser.userGender = this.gender;
+    return mutliUser;
   }
 
   get fcmsTokens(): Set<string> {

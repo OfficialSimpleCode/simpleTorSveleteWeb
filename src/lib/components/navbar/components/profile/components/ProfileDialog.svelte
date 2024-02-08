@@ -137,6 +137,10 @@
   <PhoneDialog
     loginReason={LoginReason.phoneVerification}
     insideOtp={true}
+    on:onVerifyPhone={(phoneDataResult) => {
+      //TODO phone verification sheet
+      history.back();
+    }}
     bind:dialog={verificationDialog}
   />
 {/if}

@@ -32,16 +32,14 @@ export function hashText(text: string, salt: string = "simpleCode"): string {
   return SHA256(text + salt).toString(enc.Hex);
 }
 
-/// Get `id` and return the hash of it with salt (max 10 chars)
 export function hashId({ id }: { id: string }): string {
   if (id.length < 7) {
     return "";
   }
   const salt = id.substring(3, 6); // unic salt prevent pre-hash attack
   const hashValue = SHA256(id + salt).toString(enc.Hex);
-  return hashValue
-    .substring(0, Math.min(10, hashValue.length))
-    .replace(/[/.*]/g, "");
+  const hashBytes = enc.Hex.parse(hashValue.toString());
+  return hashBytes.toString(enc.Hex).substring(0, 10).replace(/[/.*]/g, "");
 }
 
 export function isVerifiedPasswordForHash({

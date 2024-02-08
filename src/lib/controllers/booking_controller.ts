@@ -19,9 +19,12 @@ import "@syncfusion/ej2-navigations/styles/material.css";
 import "@syncfusion/ej2-popups/styles/material.css";
 import * as schedule from "@syncfusion/ej2-schedule";
 
+import MultiBooking from "$lib/models/multi_booking/multi_booking";
+import type PhoneDataResult from "$lib/models/resps/phone_data_result";
 import type TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
+import { loadBookingMakerTimeData } from "$lib/utils/booking_maker";
+import { length } from "$lib/utils/core_utils";
 import { get, writable } from "svelte/store";
-import { loadBookingMakerTimeData } from "../../routes/business/order/steps/time_picker/helpers/load_data";
 interface BookingMaker {
   workerId?: string;
   showVerificationAlert: boolean;
@@ -45,6 +48,7 @@ export default class BookingController {
   static visibleDates: Date[] = [];
   static scheduleObj: schedule.Schedule | undefined;
   static firstDateToShow: Date | undefined;
+  static phoneVerificationResult: PhoneDataResult | undefined;
   static pickedTimeObj: TimePickerObj | undefined;
   static initializeBookingMaker({
     bookingForUpdate,
@@ -184,6 +188,31 @@ export default class BookingController {
     booking.treatments = services;
     return booking;
   }
+  static get multiBookingFromValues(): MultiBooking {
+    const bookingMaker = get(bookingMakerStore);
+    const multiBooking = new MultiBooking({});
+    multiBooking.bookingDate = bookingMaker.date ?? new Date(0);
+
+    const worker = this.worker;
+
+    if (!worker) {
+      return multiBooking;
+    }
+
+    if (length(bookingMaker.services) > 0) {
+      multiBooking.treatment = Object.values(bookingMaker.services)[0];
+    }
+
+    multiBooking.copyDataToOrder({
+      worker: worker,
+      customers: {},
+      user: UserInitializer.GI().user,
+      business: BusinessInitializer.GI().business,
+      workerAction: false,
+    });
+
+    return multiBooking;
+  }
 
   static onTapService(treatment: Treatment): void {
     const bookingMaker = get(bookingMakerStore);
@@ -257,6 +286,7 @@ export default class BookingController {
     }
 
     BusinessInitializer.GI().startTimesListening(worker, treatment.isMulti);
+    bookingMaker.isMultiEvent = true;
     bookingMaker.currentStep += 1;
     bookingMakerStore.set(bookingMaker);
   }
@@ -339,6 +369,7 @@ export default class BookingController {
       bookingMaker.currentStep += 1;
     }
     bookingMaker.services[treatment.id] = treatment;
+    bookingMaker.isMultiEvent = false;
     bookingMakerStore.set(bookingMaker);
   }
 

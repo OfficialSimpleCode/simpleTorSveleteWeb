@@ -437,6 +437,36 @@ export default class NotificationsHelper {
     });
   }
 
+  async notifyWorkerThatClientRemoveHimSelfFromMultiBooking({
+    multiBooking,
+    worker,
+    userName,
+  }: {
+    multiBooking: MultiBooking;
+    worker: WorkerModel;
+    userName: string;
+  }): Promise<void> {
+    if (!worker.notifications.notifyWhenGettingBooking) {
+      return;
+    }
+    if (UserInitializer.GI().user.id === worker.id) {
+      return;
+    }
+    await this.notificationRepo.notifyMultipleUsers({
+      fcms: worker.fcmsTokens,
+      payload: new NotificationPayload({
+        action: EnterAction.openWorkerBooking,
+        bookingData: multiBooking.toBookingNotificationPayload,
+      }),
+      title: translate("signOutMultiBooking", undefined, false),
+      content: translate("removeClientFromMulti", undefined, false)
+        .replace("CUSTOMERNAME", userName)
+        .replace("EVENTNAME", multiBooking.treatment.name)
+        .replace("DATE", getFormatedTime(multiBooking.bookingDate)),
+      isSilent: true,
+    });
+  }
+
   ///----------------------------------- payment request ------------------------------
   async notifyWorkerThatUserFinishPayOnRequest({
     paymentRequest,

@@ -8,7 +8,7 @@
   import AddNote from "./components/AddNote.svelte";
   import FinishButton from "./components/FinishButton.svelte";
   import ServicesPreview from "./components/ServicesPreview.svelte";
-
+  export let verificationDialog: HTMLDialogElement;
   let paymentDialog: HTMLDialogElement;
   let amount: number;
 </script>
@@ -38,5 +38,5 @@
   <AddNote />
 
   <!-- finish button (could be pay or deposin) -->
-  <FinishButton />
+  <FinishButton {verificationDialog} />
 </section>

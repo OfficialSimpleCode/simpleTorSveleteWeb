@@ -530,7 +530,7 @@ export default class NotificationHandler {
     Object.entries(multiBooking.users).forEach(
       ([bookingUserId, multiBookingUser]) => {
         if (
-          multiBookingUser.cancelDate ||
+          multiBookingUser.cancelDate != null ||
           !removedUserBookingsIds.has(bookingUserId)
         ) {
           return;
@@ -563,15 +563,25 @@ export default class NotificationHandler {
         }
       }
     );
+    if (!workerAction) {
+      //if user action there is only one customer been deleted
+      NotificationsHelper.GI().notifyWorkerThatClientRemoveHimSelfFromMultiBooking(
+        {
+          multiBooking: multiBooking,
+          worker: worker,
+          userName: UserInitializer.GI().user.name,
+        }
+      );
+    }
 
     //----------------------------- Remove schedule notifications -------------------
-    if (Object.entries(scheduleWithNotifications).length > 0) {
+    if (isNotEmpty(scheduleWithNotifications)) {
       NotificationsHelper.GI().deleteAllScheduleMultiBookingNotifications({
         multiBooking: multiBooking,
         usersToDelete: scheduleWithNotifications,
       });
     }
-    if (Object.entries(scheduleWithMessages).length > 0) {
+    if (isNotEmpty(scheduleWithMessages)) {
       MessagesHelper.GI().cancelScheduleMultiBookingMessagesToUsers({
         multiBooking: multiBooking,
         multiBookingUsers: scheduleWithMessages,

@@ -56,7 +56,7 @@ export function relevantMultiEventTime({
       }
 
       const maxParticipants = timeObj.maxParticipants ?? treatment.participants;
-
+      console.log("Eeeeeeeeeeeeeeeeeee", displayDate);
       finalTimes.push(
         new TimePickerObj({
           isMulti: true,
@@ -76,9 +76,20 @@ export function relevantMultiEventTime({
   Object.entries(worker.recurrence.recurrenceEvents).forEach(
     ([_, eventsDay]) => {
       Object.entries(eventsDay).forEach(([timeStr, event]) => {
+        if (event.recurrenceEvent?.start?.getDate() === 12) {
+          console.log(event.recurrenceEvent?.start);
+          console.log(
+            !event.isMulti,
+            event.recurrenceEvent == null,
+            event.treatmentId !== treatment.id,
+            !event.recurrenceEvent?.isAccureInDate({ date: dateForCheck }),
+            event.eventIndex !== 0
+          );
+        }
+
         if (
           !event.isMulti ||
-          event.recurrenceEvent === null ||
+          event.recurrenceEvent == null ||
           event.treatmentId !== treatment.id ||
           !event.recurrenceEvent?.isAccureInDate({ date: dateForCheck }) ||
           event.eventIndex !== 0
@@ -94,6 +105,7 @@ export function relevantMultiEventTime({
           startTime.getHours(),
           startTime.getMinutes()
         );
+        console.log("3333333333333", displayDate);
 
         finalTimes.push(
           new TimePickerObj({

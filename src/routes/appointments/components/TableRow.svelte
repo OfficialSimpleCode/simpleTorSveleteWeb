@@ -3,6 +3,8 @@
   import { page } from "$app/stores";
   import type Booking from "$lib/models/booking/booking_model";
   import type WorkerModel from "$lib/models/worker/worker_model";
+  import { businessStore } from "$lib/stores/Business";
+  import { workersStore } from "$lib/stores/Workers";
   import BookingActions from "./BookingActions.svelte";
   import BookingDateAndTime from "./BookingDateAndTime.svelte";
   import BookingPriceAndDuration from "./BookingPriceAndDuration.svelte";
@@ -10,9 +12,15 @@
   import BookingSheet from "./booking-sheet/BookingSheet.svelte";
 
   export let booking: Booking;
-  export let currentWorker: WorkerModel;
 
   let bookingDialog: HTMLDialogElement;
+
+  let currentWorker: WorkerModel | undefined;
+
+  if (booking.buisnessId === $businessStore.businessId) {
+    currentWorker = $workersStore[booking.workerId]!;
+  }
+
   function openBookingSheet() {
     pushState("", {
       showModal: true,

@@ -73,7 +73,7 @@ export default class MultiBookingUser {
     needToHoldOn,
     workerAction,
     bookingDate,
-    addToCalendar,
+
     business,
     user,
     noteText = "",
@@ -82,7 +82,7 @@ export default class MultiBookingUser {
     needToHoldOn: boolean;
     workerAction: boolean;
     bookingDate: Date;
-    addToCalendar: boolean;
+
     business: BusinessModel;
     user: UserModel;
     noteText?: string;
@@ -100,7 +100,7 @@ export default class MultiBookingUser {
         this.confirmedArrival = true;
       }
     }
-    this.signOnDeviceCalendar = addToCalendar;
+
     this.workerNotificationOption = worker.notifications.notificationOption;
     this.workerRemindersTypes = new Map(worker.notifications.remindersTypes);
     worker.notifications.remindersTypes.forEach((minutes, type) => {

@@ -142,10 +142,10 @@ export default class BookingHelper {
   }: {
     booking: Booking;
     worker: WorkerModel;
-  }): Promise<Booking[] | null> {
+  }): Promise<Booking[] | undefined> {
     if (!UserInitializer.GI().isConnected) {
       AppErrorsHelper.GI().error = Errors.notLogedIn;
-      return null;
+      return undefined;
     }
 
     const cancelDate = new Date();
@@ -197,7 +197,7 @@ export default class BookingHelper {
       return resp;
     }
 
-    return null;
+    return undefined;
   }
 
   async updateBooking({
@@ -582,7 +582,7 @@ export default class BookingHelper {
       recurrenceBooking.bookingDate < setToMidNight(new Date())
     ) {
       recurrenceBooking.recurrenceEvent.exceptionDates.add(
-        setToMidNight(booking.bookingDate)
+        dateToDateStr(booking.bookingDate)
       );
       UserInitializer.GI().addLocalDocToDelete({
         userId: worker.id,

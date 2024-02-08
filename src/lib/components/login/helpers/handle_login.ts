@@ -10,17 +10,20 @@ import { VerificationHelper } from "$lib/helpers/verification/verification_helpe
 import UserInitializer from "$lib/initializers/user_initializer";
 import type PhoneDataResult from "$lib/models/resps/phone_data_result";
 import { isConnectedStore } from "$lib/stores/User";
+import type { EventDispatcher } from "svelte";
 import { get } from "svelte/store";
 
 export async function handleLogin({
   provider,
   otp = "",
   loginReason,
+  dispatch,
 }: {
   provider: AuthProvider;
   loginReason: LoginReason;
   otp?: string;
-}) {
+  dispatch: EventDispatcher<any>;
+}): Promise<PhoneDataResult | undefined> {
   const resp = await VerificationHelper.GI().handleLogin({
     provider: provider,
     loginType: loginReasonToLoginType.get(loginReason)!,
@@ -59,10 +62,13 @@ export async function handleLogin({
         userClaims["phone_number"] ===
           VerificationHelper.GI().submitedPhone.replaceAll("-", "");
       if (!isUserPhone) {
-        return null;
+        return undefined;
       }
 
-      return await updatePhone({ customIsVerifiedPhone: true });
+      const resp = await updatePhone({ customIsVerifiedPhone: true });
+      if (resp) {
+        dispatch("onVerifyPhone", resp);
+      }
     }
   }
 
@@ -78,6 +84,7 @@ export async function handleLogin({
     history.back();
   }
   history.back();
+  dispatch("onLogin");
 }
 
 async function deleteUser() {
@@ -95,7 +102,7 @@ async function updatePhone({
     customIsVerifiedPhone ?? UserInitializer.GI().user.isVerifiedPhone
   );
   if (phoneDataResp == null) {
-    return null;
+    return undefined;
   }
 
   return phoneDataResp;

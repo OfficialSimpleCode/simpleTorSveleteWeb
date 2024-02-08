@@ -252,7 +252,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     path: string;
   }): Promise<Record<string, Record<string, any>>> {
     try {
-      const ref = collection(this._firestore, `$envKey/${path}`);
+      const ref = collection(this._firestore, `${envKey}/${path}`);
       const docs = await getDocs(ref);
 
       const docsResult: Record<string, Record<string, any>> = {};

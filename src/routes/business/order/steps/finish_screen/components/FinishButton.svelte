@@ -4,7 +4,7 @@
   import { _, translate } from "$lib/utils/translate";
   import { getPublicCustomer } from "../helpers/get_public_user";
   import { onFinishNavigator } from "../helpers/on_finish_navigator";
-
+  export let verificationDialog: HTMLDialogElement;
   let isLoading: boolean = false;
 
   const publicCustomer: PublicCustomer = getPublicCustomer();
@@ -12,7 +12,10 @@
   async function handleClick() {
     if (isLoading) {
     } else {
-      await onFinishNavigator({ clientNote: "" });
+      await onFinishNavigator({
+        clientNote: "",
+        verificationDialog: verificationDialog,
+      });
       isLoading = true;
     }
   }

@@ -31,7 +31,6 @@ import {
   dateToMonthStr,
   dateToTimeStr,
   setTo1970,
-  setToMidNight,
 } from "$lib/utils/times_utils";
 import { Timestamp, increment, type Transaction } from "firebase/firestore";
 import AppErrorsHelper from "../app_errors";
@@ -104,7 +103,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       if (
         dateForRecurrenceChild != null &&
         updatedBooking.recurrenceEvent!.exceptionDates.has(
-          setToMidNight(dateForRecurrenceChild)
+          dateToDateStr(dateForRecurrenceChild)
         )
       ) {
         AppErrorsHelper.GI().details = "";

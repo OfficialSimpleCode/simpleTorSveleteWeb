@@ -33,23 +33,21 @@ export default class MultiBookingHelper {
     recurrenceMultiBooking,
     dateForNewBooking,
     worker,
-    addToCalendar,
+
     workerAction,
     fromPayment,
     multiBookingsPerCustomer,
     clientNote = "",
-    noteText = "",
   }: {
     recurrenceMultiBooking: MultiBooking;
     dateForNewBooking: Date;
     worker: WorkerModel;
-    addToCalendar: boolean;
+
     workerAction: boolean;
     fromPayment: boolean;
     multiBookingsPerCustomer: Record<string, MultiBookingUsersPerCustomer>;
     clientNote?: string;
-    noteText?: string;
-  }): Promise<MultiBooking | null> {
+  }): Promise<MultiBooking | undefined> {
     const newMultiBooking =
       recurrenceMultiBooking.copyRecurrenceMultiBooking(dateForNewBooking);
     const newUsersBookingIds = new Set<string>();
@@ -59,7 +57,7 @@ export default class MultiBookingHelper {
         ([_, userMultiBookingObj]) => {
           userMultiBookingObj.copyDataToOrder({
             workerAction: workerAction,
-            addToCalendar: false,
+
             worker: worker,
             business: BusinessInitializer.GI().business,
             user: UserInitializer.GI().user,
@@ -119,7 +117,7 @@ export default class MultiBookingHelper {
       });
       return newMultiBooking;
     }
-    return null;
+    return undefined;
   }
 
   async signUsers({
@@ -127,7 +125,6 @@ export default class MultiBookingHelper {
     worker,
     workerAction,
     payemntRequestId,
-    addToCalendar,
     multiBookingsPerCustomer,
     fromPayment = false,
     clientNote = "",
@@ -135,12 +132,12 @@ export default class MultiBookingHelper {
     multiBooking: MultiBooking;
     worker: WorkerModel;
     workerAction: boolean;
-    payemntRequestId: string | null;
-    addToCalendar: boolean;
+    payemntRequestId: string | undefined;
     multiBookingsPerCustomer: Record<string, MultiBookingUsersPerCustomer>;
     fromPayment?: boolean;
     clientNote?: string;
-  }): Promise<MultiBooking | null> {
+  }): Promise<MultiBooking | undefined> {
+    console.log("wwwwwwwwwwwwwwww");
     let newOnHoldUsers = 0;
     let invoiceCoverCounter = 0;
     const newUsersObj: Record<string, MultiBookingUser> = {};
@@ -154,7 +151,7 @@ export default class MultiBookingHelper {
             worker: worker,
             business: BusinessInitializer.GI().business,
             user: UserInitializer.GI().user,
-            addToCalendar: addToCalendar,
+
             bookingDate: multiBooking.bookingDate,
             needToHoldOn: needToHoldOn(multiBooking.bookingDate, worker),
             noteText: clientNote,
@@ -182,7 +179,7 @@ export default class MultiBookingHelper {
               booking: regularBooking,
             });
 
-            if (customersToSave[regularBooking.customerId] !== undefined) {
+            if (customersToSave[regularBooking.customerId] != null) {
               customer.amoutOfBookings =
                 customersToSave[regularBooking.customerId].amoutOfBookings;
             }
@@ -209,11 +206,13 @@ export default class MultiBookingHelper {
         payemntRequestPreview?.toBookingPaymentRequestData;
     }
 
+    console.log("eeeeeeeeeeeeeeeeeeeeee");
+
     const value = await this.multiBookingRepo.signUsersToMultiBooking({
       invoiceCoverCounter,
       multiBooking,
       customersToSave,
-      multiBookingsPerCustomer,
+
       workerAction,
       newOnHoldUsers,
       fromPayment,
@@ -221,6 +220,7 @@ export default class MultiBookingHelper {
       worker,
     });
     if (value) {
+      console.log(value);
       this._addUsersLocally({
         multiBookingUsers: newUsersObj,
       });
@@ -232,6 +232,7 @@ export default class MultiBookingHelper {
         workerAction,
       });
 
+      //add the payment request on the multi booking to the user
       if (payemntRequestPreview != null) {
         const paymentUsers: { [customerId: string]: PaymentRequestUser } = {};
         for (const [userBookingId, user] of Object.entries(newUsersObj)) {
@@ -261,7 +262,7 @@ export default class MultiBookingHelper {
 
       return multiBooking;
     }
-    return null;
+    return undefined;
   }
 
   async signOutUserUserAction({
@@ -310,7 +311,7 @@ export default class MultiBookingHelper {
           NotificationHandler.GI().afterSignOutFromMultiBooking({
             multiBooking: booking.toMultiBooking,
             removedUserBookingsIds: new Set([booking.bookingId]),
-            worker,
+            worker: worker,
             workerAction: false,
           });
         }

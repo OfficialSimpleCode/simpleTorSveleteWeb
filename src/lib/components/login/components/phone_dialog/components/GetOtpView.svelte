@@ -6,10 +6,12 @@
   import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
   import { InputOptions, type TextFieldEvent } from "$lib/consts/text_fields";
   import { translate } from "$lib/utils/translate";
+  import type { EventDispatcher } from "svelte";
   import { Icon, XCircle } from "svelte-hero-icons";
   import { handleLogin } from "../../../helpers/handle_login";
   export let dialog: HTMLDialogElement;
   export let loginReason: LoginReason;
+  export let dispatch: EventDispatcher<any>;
   let otp: string = "";
   let valid: boolean = false;
   let loading: boolean = false;
@@ -29,6 +31,7 @@
         provider: AuthProvider.Phone,
         loginReason: loginReason,
         otp,
+        dispatch,
       });
     } finally {
       loading = false;

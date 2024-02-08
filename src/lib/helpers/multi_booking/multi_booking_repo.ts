@@ -25,18 +25,16 @@ import type MultiBookingTime from "$lib/models/multi_booking/multi_booking_time"
 import type MultiBookingUser from "$lib/models/multi_booking/multi_booking_user";
 import type MultiBookingUsersPerCustomer from "$lib/models/multi_booking/multi_booking_users_per_customer";
 import type RecurrenceEvent from "$lib/models/schedule/recurrence_event";
-import UserPublicData from "$lib/models/user/user_public_data";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { Errors } from "$lib/services/errors/messages";
 import { hasPlaceInMultiBooking } from "$lib/utils/available_times_utils/has_place_in_multi";
-import { sendMessageForMulti } from "$lib/utils/notifications_utils";
+import { isNotEmpty, length } from "$lib/utils/core_utils";
 import {
   dateIsoStr,
   dateToDateStr,
   dateToDayStr,
   dateToMonthStr,
   dateToTimeStr,
-  setToMidNight,
 } from "$lib/utils/times_utils";
 import { increment, type Transaction } from "firebase/firestore";
 import AppErrorsHelper from "../app_errors";
@@ -49,99 +47,102 @@ export default class MultiBookingRepo
   extends GeneralRepo
   implements MultiBookingApi
 {
-  async makeSureUsersExist({
-    transaction,
-    workerAction,
-    worker,
-    multiBooking,
-    users,
-    multiBookingsPerCustomer,
-    isUpdate = false,
-  }: {
-    transaction: Transaction;
-    workerAction: boolean;
-    worker: WorkerModel;
-    multiBooking: MultiBooking;
-    users: Record<string, MultiBookingUser>;
-    multiBookingsPerCustomer: Record<string, MultiBookingUsersPerCustomer>;
-    isUpdate?: boolean;
-  }): Promise<void> {
-    if (!workerAction) {
-      return;
-    }
-    const futures: Promise<void>[] = [];
-    Object.entries(multiBookingsPerCustomer).forEach(([_, customer]) => {
-      futures.push(
-        new Promise<void>(async () => {
-          let isUserExist = customer.isVerifiedPhone || !customer.addedManually;
-          if (
-            customer.addedManually &&
-            customer.customerUuid === customer.phoneNumber &&
-            !customer.isVerifiedPhone
-          ) {
-            const userPhoneDoc = await this.transactionGet(
-              transaction,
-              phonesCollection,
-              customer.customerHashPhone
-            );
-            const id = userPhoneDoc.data()?.userId;
-            if (id == null) {
-              Object.entries(customer.multiBookingUsers).forEach(
-                ([bookingId, _]) => {
-                  if (users[bookingId] != null) {
-                    users[bookingId].isUserExist = false;
-                  }
-                }
-              );
-              isUserExist = false;
-            } else {
-              Object.entries(customer.multiBookingUsers).forEach(
-                ([bookingId, _]) => {
-                  if (users[bookingId] != null) {
-                    users[bookingId].isUserExist = true;
-                    users[bookingId].customerId = id;
-                  }
-                }
-              );
-              customer.customerUuid = id;
-              isUserExist = true;
-            }
-          }
-          if (isUserExist) {
-            const user = await this.transactionGet(
-              transaction,
-              `${usersCollection}/${customer.customerUuid}/${dataCollection}`,
-              dataDoc
-            );
-            if (user.exists() && user.data() !== null) {
-              const publicDataUser = UserPublicData.fromJson(user.data());
-              Object.entries(customer.multiBookingUsers).forEach(
-                ([bookingId, _]) => {
-                  if (users[bookingId] == null) {
-                    return;
-                  }
-                  users[bookingId]!.userFcms = publicDataUser.fcmsTokens;
-                  const clientAt = publicDataUser.clientAt;
-                  users[bookingId]!.addToClientAt =
-                    !clientAt.hasOwnProperty(multiBooking.buisnessId) ||
-                    !clientAt
-                      .get(multiBooking.buisnessId)!
-                      .has(multiBooking.workerId);
-                  users[bookingId]!.isVerifiedPhone =
-                    publicDataUser.isVerifiedPhone;
-                  users[bookingId]!.notificationType = sendMessageForMulti(
-                    users[bookingId]!,
-                    worker
-                  );
-                }
-              );
-            }
-          }
-        })
-      );
-    });
-    await Promise.all(futures);
-  }
+  // async makeSureUsersExist({
+  //   transaction,
+  //   workerAction,
+  //   worker,
+  //   multiBooking,
+  //   users,
+  //   multiBookingsPerCustomer,
+  //   isUpdate = false,
+  // }: {
+  //   transaction: Transaction;
+  //   workerAction: boolean;
+  //   worker: WorkerModel;
+  //   multiBooking: MultiBooking;
+  //   users: Record<string, MultiBookingUser>;
+  //   multiBookingsPerCustomer: Record<string, MultiBookingUsersPerCustomer>;
+  //   isUpdate?: boolean;
+  // }): Promise<void> {
+  //   if (!workerAction) {
+  //     return;
+  //   }
+  //   const futures: Promise<void>[] = [];
+  //   console.log("3333333333");
+  //   Object.entries(multiBookingsPerCustomer).forEach(([_, customer]) => {
+  //     futures.push(
+  //       new Promise<void>(async () => {
+  //         let isUserExist = customer.isVerifiedPhone || !customer.addedManually;
+  //         if (
+  //           customer.addedManually &&
+  //           customer.customerUuid === customer.phoneNumber &&
+  //           !customer.isVerifiedPhone
+  //         ) {
+  //           const userPhoneDoc = await this.transactionGet(
+  //             transaction,
+  //             phonesCollection,
+  //             customer.customerHashPhone
+  //           );
+  //           const id = userPhoneDoc.data()?.userId;
+  //           if (id == null) {
+  //             Object.entries(customer.multiBookingUsers).forEach(
+  //               ([bookingId, _]) => {
+  //                 if (users[bookingId] != null) {
+  //                   users[bookingId].isUserExist = false;
+  //                 }
+  //               }
+  //             );
+  //             isUserExist = false;
+  //           } else {
+  //             Object.entries(customer.multiBookingUsers).forEach(
+  //               ([bookingId, _]) => {
+  //                 if (users[bookingId] != null) {
+  //                   users[bookingId].isUserExist = true;
+  //                   users[bookingId].customerId = id;
+  //                 }
+  //               }
+  //             );
+  //             customer.customerUuid = id;
+  //             isUserExist = true;
+  //           }
+  //         }
+  //         console.log("1111111111111111111");
+  //         if (isUserExist) {
+  //           const user = await this.transactionGet(
+  //             transaction,
+  //             `${usersCollection}/${customer.customerUuid}/${dataCollection}`,
+  //             dataDoc
+  //           );
+  //           if (user.exists() && user.data() !== null) {
+  //             const publicDataUser = UserPublicData.fromJson(user.data());
+  //             Object.entries(customer.multiBookingUsers).forEach(
+  //               ([bookingId, _]) => {
+  //                 if (users[bookingId] == null) {
+  //                   return;
+  //                 }
+  //                 users[bookingId]!.userFcms = publicDataUser.fcmsTokens;
+  //                 const clientAt = publicDataUser.clientAt;
+  //                 users[bookingId]!.addToClientAt =
+  //                   !clientAt.hasOwnProperty(multiBooking.buisnessId) ||
+  //                   !clientAt
+  //                     .get(multiBooking.buisnessId)!
+  //                     .has(multiBooking.workerId);
+  //                 users[bookingId]!.isVerifiedPhone =
+  //                   publicDataUser.isVerifiedPhone;
+  //                 users[bookingId]!.notificationType = sendMessageForMulti(
+  //                   users[bookingId]!,
+  //                   worker
+  //                 );
+  //               }
+  //             );
+  //           }
+  //         }
+  //       })
+  //     );
+  //   });
+  //   console.log(futures);
+  //   await Promise.all(futures);
+  // }
 
   async getUpdatedMultiBookingDate({
     transaction,
@@ -169,7 +170,7 @@ export default class MultiBookingRepo
         .then((json) => {
           if (json.exists() && json.data() != null) {
             const bookingJson = json.data()[multiBookingUser.userBookingId];
-            if (bookingJson !== null) {
+            if (bookingJson != null) {
               updatedBooking = Booking.fromJson(
                 bookingJson,
                 multiBookingUser.userBookingId
@@ -203,7 +204,7 @@ export default class MultiBookingRepo
       if (
         dateForRecurrenceChild != null &&
         updatedMultiBooking.recurrenceEvent.exceptionDates.has(
-          setToMidNight(dateForRecurrenceChild)
+          dateToDateStr(dateForRecurrenceChild)
         )
       ) {
         AppErrorsHelper.GI().details = "";
@@ -234,7 +235,7 @@ export default class MultiBookingRepo
       if (
         dateForRecurrenceChild != null &&
         updatedBooking.recurrenceEvent.exceptionDates.has(
-          setToMidNight(dateForRecurrenceChild)
+          dateToDateStr(dateForRecurrenceChild)
         )
       ) {
         AppErrorsHelper.GI().details = "";
@@ -348,7 +349,7 @@ export default class MultiBookingRepo
           fromPayment: fromPayment,
           newUsers: newMultiBooking.users,
           workerAction: workerAction,
-          multiBookingsPerCustomer: multiBookingsPerCustomer,
+
           customersToSave: customersToSave,
           invoiceCoverCounter: newMultiBooking.invoiceCoverCounter,
           needToCheckMultiEventsTimes: false,
@@ -360,16 +361,16 @@ export default class MultiBookingRepo
           return await signUsersCommands(transaction);
         }
       }
-      //get the users public data docs if this is worker action
-      await this.makeSureUsersExist({
-        transaction: transaction,
-        workerAction: true,
-        worker: worker,
+      // //get the users public data docs if this is worker action
+      // await this.makeSureUsersExist({
+      //   transaction: transaction,
+      //   workerAction: true,
+      //   worker: worker,
 
-        multiBooking: newMultiBooking,
-        users: newMultiBooking.users,
-        multiBookingsPerCustomer: multiBookingsPerCustomer,
-      });
+      //   multiBooking: newMultiBooking,
+      //   users: newMultiBooking.users,
+      //   multiBookingsPerCustomer: multiBookingsPerCustomer,
+      // });
       if (Object.keys(customersJson).length > 0) {
         //put the new customer data
         this.transactionUpdateMultipleFieldsAsMap({
@@ -482,7 +483,7 @@ export default class MultiBookingRepo
 
   async signUsersToMultiBooking({
     multiBooking,
-    multiBookingsPerCustomer,
+
     newOnHoldUsers,
     fromPayment,
     newUsers,
@@ -494,7 +495,7 @@ export default class MultiBookingRepo
     sendCommends = false,
   }: {
     multiBooking: MultiBooking;
-    multiBookingsPerCustomer: Record<string, MultiBookingUsersPerCustomer>;
+
     newOnHoldUsers: number;
     fromPayment: boolean;
     newUsers: Record<string, MultiBookingUser>;
@@ -506,13 +507,8 @@ export default class MultiBookingRepo
     sendCommends?: boolean;
   }): Promise<any> {
     const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
-    const signingDay = multiBooking.bookingDate
-      .getDate()
-      .toString()
-      .padStart(2, "0");
-    const signingMonth = `${(multiBooking.bookingDate.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}-${multiBooking.bookingDate.getFullYear()}`;
+    const signingDay = dateToDayStr(multiBooking.bookingDate);
+    const signingMonth = dateToMonthStr(multiBooking.bookingDate);
     const signingDate = dateToDateStr(multiBooking.bookingDate);
     const customersJson: { [key: string]: any } = {};
     Object.entries(customersToSave).forEach(([customerId, customer]) => {
@@ -524,9 +520,8 @@ export default class MultiBookingRepo
       });
     });
     // create the commands for the transactions
-    const transacionCommands: (
-      transaction: Transaction
-    ) => Promise<any> = async (transaction) => {
+    const transacionCommands = async (transaction: Transaction) => {
+      console.log("eeeeeeeeeee");
       //if workeraction no need to chack for place
       if (!workerAction && !fromPayment && needToCheckMultiEventsTimes) {
         await this.transactionGet(
@@ -559,6 +554,7 @@ export default class MultiBookingRepo
       }
       //check if the booking is still exist after the payment
       if (fromPayment) {
+        console.log("wwwwwwwww");
         if (Object.entries(newUsers).length !== 1) {
           return false;
         }
@@ -579,18 +575,21 @@ export default class MultiBookingRepo
           newUsers[firstKey].isUserExist = updatedBooking.isUserExist;
         }
       }
-      //get the users public data docs if this is worker action
-      await this.makeSureUsersExist({
-        transaction: transaction,
-        workerAction: true,
-        worker: worker,
-        users: newUsers,
-        multiBooking: multiBooking,
-        multiBookingsPerCustomer: multiBookingsPerCustomer,
-      });
+
+      console.log("wwwwwwwwww2222222222");
+      // //get the users public data docs if this is worker action
+      // await this.makeSureUsersExist({
+      //   transaction: transaction,
+      //   workerAction: true,
+      //   worker: worker,
+      //   users: newUsers,
+      //   multiBooking: multiBooking,
+      //   multiBookingsPerCustomer: multiBookingsPerCustomer,
+      // });
+      console.log("3333333333333");
       //remove the item in the multiEventTimeDoc that take
       //the place fo the order during the payment
-      if (Object.keys(customersJson).length > 0) {
+      if (isNotEmpty(customersJson)) {
         this.transactionUpdateMultipleFieldsAsMap({
           transaction: transaction,
           path: `${path}/${multiBooking.workerId}/${dataCollection}`,
@@ -598,11 +597,13 @@ export default class MultiBookingRepo
           data: customersJson,
         });
       }
-      const workerData: { [key: string]: any } = {};
+      console.log("3333334444444443333333");
+      const workerData: Record<string, any> = {};
       Object.entries(newUsers).forEach(([bookingId, userToAdd]) => {
         workerData[`${multiBooking.bookingId}.users.${bookingId}`] =
           userToAdd.toJson();
       });
+      console.log(workerData);
       // add the user object from the worker collection
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
@@ -610,6 +611,8 @@ export default class MultiBookingRepo
         docId: signingDate,
         data: workerData,
       });
+      console.log("44444444");
+      console.log(multiBooking.bookingsForUsers);
       Object.entries(multiBooking.bookingsForUsers).forEach(
         ([bookingId, booking]) => {
           //add the bookings only for the new clients
@@ -652,10 +655,11 @@ export default class MultiBookingRepo
           }
         }
       );
+      console.log("222222222222");
       const timeData: Record<string, any> = {};
       Object.entries(multiBooking.times).forEach(([time, _]) => {
         timeData[`eventsTimes.${signingDate}.${time}.CP`] = increment(
-          Object.entries(newUsers).length
+          length(newUsers)
         );
       });
       //increment the counter in the time doc
@@ -665,7 +669,8 @@ export default class MultiBookingRepo
         docId: multiEventsTimesDoc,
         data: timeData,
       });
-      const eventData: { [key: string]: any } = {};
+      console.log("33333333333333");
+      const eventData: Record<string, any> = {};
       Object.entries(multiBooking.times).forEach(([time, _]) => {
         eventData[`${signingDay}.${time}.CP`] = increment(
           Object.entries(newUsers).length
@@ -682,12 +687,14 @@ export default class MultiBookingRepo
         }
         if (
           !workerAction &&
-          Object.entries(newUsers).length === 1 &&
-          Object.entries(newUsers).values().next().value.confirmedArrival
+          length(newUsers) === 1 &&
+          Object.values(newUsers)[0].confirmedArrival
         ) {
           eventData[`${signingDay}.${time}.CAA`] = increment(1);
         }
       });
+      console.log("3333333333322sssssssssssssss");
+      console.log(eventData);
       //increment the counter in the events doc
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
@@ -711,15 +718,20 @@ export default class MultiBookingRepo
             multiBooking.bookingDate
           )}.${dateToTimeStr(multiBooking.bookingDate)}`,
           value:
-            (timeObj?.currentParticipants ?? 0) <= 0 ? null : timeObj!.toJson(),
+            (timeObj?.currentParticipants ?? 0) <= 0
+              ? undefined
+              : timeObj!.toJson(),
         });
       }
+      console.log("3333333333333");
       return true;
     };
     //return true if the given transaction is no null
     if (sendCommends) {
+      console.log("22222222222222222");
       return transacionCommands;
     } else {
+      console.log("2222221111111111111111111111122222222222");
       return await this.runTransaction(transacionCommands).then(
         async (value) => {
           if (value) {
@@ -734,13 +746,13 @@ export default class MultiBookingRepo
               types: multiBookingCopy.typesOfEvents,
             });
           } else {
-            if (Object.entries(newUsers).length !== 1 || !fromPayment) {
+            if (length(newUsers) !== 1 || !fromPayment) {
               return false;
             }
             await this.deleteUserFromTimeDuringPayment({
               multiBooking: multiBooking,
               worker: worker,
-              multiBookingUser: Object.entries(newUsers).values().next().value,
+              multiBookingUser: Object.values(newUsers)[0],
             });
           }
           return value;
@@ -853,8 +865,8 @@ export default class MultiBookingRepo
         multiBookingToUpdate: multiBooking,
 
         multiBookingUser:
-          Object.entries(multiBooking.users).length > 0
-            ? Object.values(multiBooking.users).values().next().value
+          length(multiBooking.users) > 0
+            ? Object.values(multiBooking.users)[0]
             : undefined,
         workerAction,
       });
@@ -862,8 +874,8 @@ export default class MultiBookingRepo
         return false;
       } else {
         multiBooking.bookingDate = updateResp.bookingDate;
-        if (Object.entries(multiBooking.users).length > 0) {
-          Object.values(multiBooking.users).values().next().value.isUserExist =
+        if (length(multiBooking.users) > 0) {
+          Object.values(multiBooking.users)[0].isUserExist =
             updateResp.isUserExist;
         }
       }
@@ -881,7 +893,7 @@ export default class MultiBookingRepo
           path: `${path}/${worker.id}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`,
           docId: signingDate,
           fieldName: `${signingTime}.users.${userBooking.bookingId}.cancelDate`,
-          value: cancelDate.toString(),
+          value: dateIsoStr(cancelDate),
         });
       } else {
         // Delete the user object from the worker collection
@@ -893,9 +905,9 @@ export default class MultiBookingRepo
         });
       }
 
-      let eventsDataMap: { [key: string]: any } = {};
-      let timesDataMap: { [key: string]: any } = {};
-      userBooking.bookingsEventsAsEvents.forEach((time, event) => {
+      let eventsDataMap: Record<string, any> = {};
+      let timesDataMap: Record<string, any> = {};
+      Object.entries(multiBooking.times).forEach(([time, _]) => {
         timesDataMap[`eventsTimes.${signingDate}.${time}.CP`] =
           NumericCommands.decrement;
         eventsDataMap[`${signingDay}.${time}.CP`] = NumericCommands.decrement;
@@ -1102,7 +1114,7 @@ export default class MultiBookingRepo
             dateToDateStr(recurrenceFatherDate)
           ]?.[recurrenceTimeId]?.recurrenceEvent;
         hasException = recurrenceEvent?.exceptionDates.has(
-          setToMidNight(multiBooking.bookingDate)
+          dateToDateStr(multiBooking.bookingDate)
         );
       }
 
@@ -1255,8 +1267,8 @@ export default class MultiBookingRepo
     const bookingMonth = dateToMonthStr(newMultiBooking.bookingDate);
     const bookingDate = dateToDateStr(newMultiBooking.bookingDate);
 
-    const eventsTimesData: { [key: string]: any } = {};
-    const bookingsTimesData: { [key: string]: any } = {};
+    const eventsTimesData: Record<string, any> = {};
+    const bookingsTimesData: Record<string, any> = {};
 
     // Prepare the new booking times data
     eventsTimesData["eventsTimes"] = {};
@@ -1271,7 +1283,7 @@ export default class MultiBookingRepo
     }
 
     // Put the new booking as exception date
-    const recurrenceData: { [key: string]: any } = {};
+    const recurrenceData: Record<string, any> = {};
     for (const [timeId, event] of Object.entries(
       recurrenceMultiBooking.bookingsEventsAsEvents
     )) {
@@ -1280,7 +1292,7 @@ export default class MultiBookingRepo
     }
 
     // Add the new booking to the events
-    const bookingsEventsData: { [key: string]: any } = {};
+    const bookingsEventsData: Record<string, any> = {};
     for (const [time, event] of Object.entries(
       newMultiBooking.bookingsEventsAsJson
     )) {
@@ -1512,7 +1524,7 @@ export default class MultiBookingRepo
     const docId = dateToMonthStr(booking.bookingDate);
     const previewData: Record<string, any> = {};
 
-    if (command !== undefined) {
+    if (command != null) {
       previewData[`bookingsPreviews.${docId}.bookingCount`] = command;
     }
     previewData[`bookingsPreviews.${docId}.lastUpdateTime`] = dateIsoStr(

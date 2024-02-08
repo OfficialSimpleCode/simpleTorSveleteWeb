@@ -278,8 +278,8 @@ export default class Booking extends ScheduleItem {
         newBooking.isVerifiedPhone = true;
       }
 
-      newBooking.isMultiRef = json["isMultiRef"] || false;
-      newBooking.needCancel = json["needCancel"] || false;
+      newBooking.isMultiRef = json["isMultiRef"] ?? false;
+      newBooking.needCancel = json["needCancel"] ?? false;
       if (json["lastTimeNotifyOnDebt"] != null) {
         newBooking.lastTimeNotifyOnDebt = isoToDate(
           json["lastTimeNotifyOnDebt"]
@@ -1486,7 +1486,7 @@ export default class Booking extends ScheduleItem {
       newBooking.recurrenceEventRefInfo = RecurrenceEvent.fromRecurrenceEvent(
         this.recurrenceEvent
       );
-      newBooking.recurrenceEventRefInfo.exceptionDates = new Set<Date>();
+      newBooking.recurrenceEventRefInfo.exceptionDates = new Set<string>();
     }
 
     newBooking.bookingId = useId ? newBooking.bookingId : v4();

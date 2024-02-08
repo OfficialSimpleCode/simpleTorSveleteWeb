@@ -140,7 +140,7 @@ export default class MultiBooking extends ScheduleItem {
     for (const userObj of Object.values(this.users)) {
       if (
         userObj.status === BookingStatuses.waiting &&
-        userObj.cancelDate === null
+        userObj.cancelDate == null
       ) {
         counter++;
       }
@@ -150,7 +150,7 @@ export default class MultiBooking extends ScheduleItem {
   get wantDeleteUsers(): number {
     let counter = 0;
     for (const userObj of Object.values(this.users)) {
-      if (userObj.needCancel && userObj.cancelDate === null) {
+      if (userObj.needCancel && userObj.cancelDate == null) {
         counter++;
       }
     }
@@ -159,7 +159,7 @@ export default class MultiBooking extends ScheduleItem {
   get activeUsers(): number {
     let counter = 0;
     for (const userObj of Object.values(this.users)) {
-      if (userObj.cancelDate === null) {
+      if (userObj.cancelDate == null) {
         counter++;
       }
     }
@@ -208,7 +208,7 @@ export default class MultiBooking extends ScheduleItem {
       currency: this.treatment.price!.currency,
     });
     for (const userObj of Object.values(this.users)) {
-      if (userObj.cancelDate !== null) {
+      if (userObj.cancelDate != null) {
         continue;
       }
       price.amount += userObj.transactionsTotalPaymentAmount;
@@ -300,7 +300,7 @@ export default class MultiBooking extends ScheduleItem {
   get totalTransactionsPerUser(): number {
     let counter = 0;
     for (const userObj of Object.values(this.users)) {
-      if (userObj.cancelDate !== null || userObj.transactions.size === 0) {
+      if (userObj.cancelDate != null || userObj.transactions.size === 0) {
         continue;
       }
       counter++;
@@ -403,7 +403,7 @@ export default class MultiBooking extends ScheduleItem {
       id: this.bookingId,
       businessName: this.businessName,
       totalMinutes: this.totalMinutes,
-      isRecurrence: this.recurrenceEvent !== null,
+      isRecurrence: this.recurrenceEvent != null,
       date: this.bookingDate,
       workerId: this.workerId,
       shopIcon: this.shopIcon,
@@ -413,7 +413,7 @@ export default class MultiBooking extends ScheduleItem {
     multiBookingUser: MultiBookingUser
   ): Record<string, Record<string, any>> {
     const reminders: { [key: string]: { [key: string]: any } } = {};
-    if (multiBookingUser.cancelDate !== null) {
+    if (multiBookingUser.cancelDate != null) {
       return {};
     }
     if (multiBookingUser.userFcms.size === 0) {
@@ -439,7 +439,7 @@ export default class MultiBooking extends ScheduleItem {
   }
   messageRemindersOnUser(multiBookingUser: MultiBookingUser): string[] {
     const reminders: string[] = [];
-    if (multiBookingUser.cancelDate !== null) {
+    if (multiBookingUser.cancelDate != null) {
       return [];
     }
     if (multiBookingUser.userFcms.size === 0) {
@@ -464,7 +464,7 @@ export default class MultiBooking extends ScheduleItem {
     worker,
     customers,
     workerAction,
-    newShopIcon,
+
     user,
     business,
     clientNote = "",
@@ -475,40 +475,38 @@ export default class MultiBooking extends ScheduleItem {
     workerAction: boolean;
     business: BusinessModel;
     user: UserModel;
-    newShopIcon: IconData;
+
     clientNote?: string;
     noteText?: string;
   }): void {
     this.adress = business.adress;
     this.note = noteText;
-    this.shopIcon = newShopIcon;
+    this.shopIcon = business.design.shopIconData;
     this.workerId = worker.id;
     this.workerPhone = worker.phone;
     this.workerName = worker.name;
     this.workerGender = worker.gender;
     if (customers != null) {
       this.users = {};
-      Object.entries(customers).forEach(([customerId, customer]) => {
-        Object.entries(customer).forEach(
-          ([userBookingId, multiBookingUser]) => {
-            multiBookingUser.copyDataToOrder({
-              worker: worker,
-              bookingDate: this.bookingDate,
-              noteText: clientNote,
-              business: business,
-              user: user,
-              workerAction: workerAction,
-              needToHoldOn: needToHoldOn(this.bookingDate, worker),
-              addToCalendar: false,
-            });
-            this.users[multiBookingUser.userBookingId] = multiBookingUser;
-          }
-        );
+      Object.entries(customers).forEach(([__, customer]) => {
+        Object.entries(customer).forEach(([_, multiBookingUser]) => {
+          multiBookingUser.copyDataToOrder({
+            worker: worker,
+            bookingDate: this.bookingDate,
+            noteText: clientNote,
+            business: business,
+            user: user,
+            workerAction: workerAction,
+            needToHoldOn: needToHoldOn(this.bookingDate, worker),
+            addToCalendar: false,
+          });
+          this.users[multiBookingUser.userBookingId] = multiBookingUser;
+        });
       });
     }
     this.businessName = business.shopName;
     this.bookingId =
-      this.recurrenceEvent === null ? dateToTimeStr(this.bookingDate) : v4();
+      this.recurrenceEvent == null ? dateToTimeStr(this.bookingDate) : v4();
     this.buisnessId = business.businessId;
   }
   updateBookingByBooking({
@@ -543,7 +541,7 @@ export default class MultiBooking extends ScheduleItem {
     const previousUsers = { ...this.users };
     const canceledUsers: { [key: string]: MultiBookingUser } = {};
     for (const [bookingId, userObj] of Object.entries(this.users)) {
-      if (userObj.cancelDate !== null) {
+      if (userObj.cancelDate != null) {
         canceledUsers[bookingId] = userObj;
       }
     }
@@ -563,7 +561,6 @@ export default class MultiBooking extends ScheduleItem {
               bookingDate: this.bookingDate,
               workerAction: workerAction,
               needToHoldOn: needToHoldOn(this.bookingDate, worker),
-              addToCalendar: false,
             });
           }
           this.users[multiBookingUser.userBookingId] = multiBookingUser;
@@ -646,7 +643,7 @@ export default class MultiBooking extends ScheduleItem {
         ? RecurrenceEvent.fromRecurrenceEvent(this.recurrenceEvent!)
         : undefined;
     if (newRecurrenceEvent != null) {
-      newRecurrenceEvent.exceptionDates = new Set<Date>();
+      newRecurrenceEvent.exceptionDates = new Set<string>();
     }
 
     newMulti.bookingId = dateToTimeStr(newDateForRecurrence);
@@ -689,7 +686,9 @@ export default class MultiBooking extends ScheduleItem {
     booking.userDeleted = userObj.userDeleted;
     booking.showPhoneAlert = userObj.showPhoneAlert;
     booking.showAdressAlert = userObj.showAdressAlert;
-    booking.remindersTypes = { ...userObj.remindersTypes };
+    booking.remindersTypes = new Map(userObj.remindersTypes);
+    booking.workerNotificationOption = userObj.workerNotificationOption;
+    booking.workerRemindersTypes = new Map(userObj.workerRemindersTypes);
     booking.notificationType = userObj.notificationType;
     booking.status = userObj.status;
     booking.createdAt = userObj.createdAt;
@@ -914,7 +913,7 @@ export default class MultiBooking extends ScheduleItem {
     let counter = 0;
     for (const multiBookingUser of Object.values(this.users)) {
       if (
-        multiBookingUser.cancelDate !== null ||
+        multiBookingUser.cancelDate != null ||
         multiBookingUser.finishInvoices ||
         multiBookingUser.invoicePriceAmount >= this.treatment.price!.amount
       ) {
@@ -927,7 +926,7 @@ export default class MultiBooking extends ScheduleItem {
     let counter = 0;
     for (const multiBookingUser of Object.values(this.users)) {
       if (
-        multiBookingUser.cancelDate !== null ||
+        multiBookingUser.cancelDate != null ||
         multiBookingUser.debts.size > 0
       ) {
         counter++;
@@ -939,7 +938,7 @@ export default class MultiBooking extends ScheduleItem {
     let count = 0;
     for (const multiBookingUser of Object.values(this.users)) {
       if (
-        multiBookingUser.cancelDate !== null ||
+        multiBookingUser.cancelDate != null ||
         multiBookingUser.confirmedArrival
       ) {
         count++;

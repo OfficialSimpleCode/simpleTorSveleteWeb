@@ -1,7 +1,7 @@
 <script lang="ts">
   import type Booking from "$lib/models/booking/booking_model";
 
-  import { translate, _ } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import TableRow from "../components/TableRow.svelte";
 
   export let bookings: Booking[];

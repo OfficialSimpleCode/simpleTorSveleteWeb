@@ -12,7 +12,6 @@ import {
 import { translate } from "$lib/utils/translate";
 import { addMonths, format } from "date-fns";
 import { Duration } from "../core/duration";
-import { SplayTreeSet } from "../general/splay_tree_set";
 
 export enum FreqRecurrence {
   years,
@@ -78,13 +77,13 @@ export default class RecurrenceEvent {
 
   ///only if the freqRecurrence is on weekly and its declare
   ///which days of the week we need to repeat
-  weekDays: SplayTreeSet<number> = new SplayTreeSet();
+  weekDays: Set<number> = new Set();
 
   /// The condition to end this event (amount of repets\date\endless)
   endOption: RecurrenceEventEnd = RecurrenceEventEnd.repeats;
 
   ///exception dates that not included in the RecurrenceEvent
-  exceptionDates: Set<Date> = new Set();
+  exceptionDates: Set<string> = new Set();
 
   /// end date for ui porpuses
   customEndDate?: Date;
@@ -95,7 +94,7 @@ export default class RecurrenceEvent {
     endDate,
     repeats = 10,
     interval = 1,
-    weekDays = new SplayTreeSet<number>(),
+    weekDays = new Set<number>(),
     customEndDate,
     freqRecurrence = FreqRecurrence.days,
     exceptionDates = new Set(),
@@ -104,11 +103,11 @@ export default class RecurrenceEvent {
     start?: Date;
     endDate?: Date;
     repeats?: number;
-    weekDays?: SplayTreeSet<number>;
+    weekDays?: Set<number>;
     interval?: number;
     customEndDate?: Date;
     freqRecurrence?: FreqRecurrence;
-    exceptionDates?: Set<Date>;
+    exceptionDates?: Set<string>;
   }) {
     this.start = start;
     this.weekDays = weekDays;
@@ -139,11 +138,19 @@ export default class RecurrenceEvent {
 
     newObj.interval = json["I"] || 1;
 
-    newObj.weekDays = new SplayTreeSet(json["WD"] || []);
+    newObj.weekDays = new Set();
+    if (json["WD"] != null) {
+      Object.values<number>(json["WD"]).forEach((weekDay) => {
+        newObj.weekDays.add(weekDay);
+      });
+    }
 
-    newObj.exceptionDates = new Set(
-      Object.keys(json["EDA"] || {}).map(dateStrToDate)
-    );
+    newObj.exceptionDates = new Set();
+    if (json["EDA"] != null) {
+      Object.entries(json["EDA"]).forEach(([dateStr, _]) => {
+        newObj.exceptionDates.add(dateStr);
+      });
+    }
 
     newObj.freqRecurrence =
       freqRecurrenceFromStr[json["FR"]] || FreqRecurrence.days;
@@ -184,7 +191,7 @@ export default class RecurrenceEvent {
     if (saveException && this.exceptionDates.size > 0) {
       data["EDA"] = {};
       this.exceptionDates.forEach((date) => {
-        data["EDA"][dateToDateStr(date)] = "";
+        data["EDA"][date] = "";
       });
     }
 
@@ -206,7 +213,7 @@ export default class RecurrenceEvent {
       repeats: recurrenceEvent.repeats,
       interval: recurrenceEvent.interval,
       freqRecurrence: recurrenceEvent.freqRecurrence,
-      weekDays: new SplayTreeSet(recurrenceEvent.weekDays),
+      weekDays: new Set(recurrenceEvent.weekDays),
       endOption: recurrenceEvent.endOption,
       exceptionDates: new Set(recurrenceEvent.exceptionDates),
     });
@@ -334,7 +341,7 @@ export default class RecurrenceEvent {
 
       //consider exception only the excption that before the end date
       this.exceptionDates.forEach((date) => {
-        if (date <= this.endDate!) {
+        if (dateStrToDate(date) <= this.endDate!) {
           exceptionLength++;
         }
       });
@@ -437,18 +444,17 @@ export default class RecurrenceEvent {
         );
 
         const sunday = getStartOfWeek(startWithWeekJumps);
-        this.weekDays = new SplayTreeSet<number>(
-          this.weekDays,
-          (a, b) => a - b
-        );
+
         try {
+          const arr = [...this.weekDays];
+          arr.sort();
           return addDuration(
             sunday,
             new Duration({
               days:
                 daysJumps - 1 < 0
-                  ? this.weekDays.last
-                  : this.weekDays.elementAt(daysJumps - 1),
+                  ? arr[this.weekDays.size - 1]
+                  : arr[daysJumps - 1],
             })
           );
         } catch (e) {
@@ -526,14 +532,14 @@ export default class RecurrenceEvent {
     date: Date;
     considerException?: boolean;
   }): boolean {
-    if (this.start === undefined || setToMidNight(this.start!) > date) {
+    if (this.start == null || setToMidNight(this.start!) > date) {
       return false;
     }
     const eventEnd = this.endOfTheEvent;
-    if (eventEnd !== undefined && eventEnd < setToMidNight(date)) {
+    if (eventEnd != null && eventEnd < setToMidNight(date)) {
       return false;
     }
-    if (considerException && this.exceptionDates.has(setToMidNight(date))) {
+    if (considerException && this.exceptionDates.has(dateToDateStr(date))) {
       return false;
     }
     const rangeBetween = new Duration({
@@ -541,13 +547,29 @@ export default class RecurrenceEvent {
         freqRecurrenceToDuration[this.freqRecurrence].inMinutes * this.interval,
     });
     const intervalFromStart = diffDuration(date, setToMidNight(this.start!));
-    const startWeekDay = this.start!.getDay() === 7 ? 0 : this.start!.getDay();
-    const dateWeekDay = date.getDay() === 7 ? 0 : date.getDay();
+    console.log("intervalFromStart", intervalFromStart);
+    const startWeekDay = this.start!.getDay();
+    console.log("startWeekDay", startWeekDay);
+
+    const dateWeekDay = date.getDay();
+    console.log("dateWeekDay", dateWeekDay);
     if (this.freqRecurrence === FreqRecurrence.weeks) {
-      const maxDelta = 7 - startWeekDay;
+      // days to finish this week
+      const maxDelta = 6 - startWeekDay;
+      console.log("maxDelta", maxDelta);
+      // days from start of this week
       const minDelta = rangeBetween.inDays - startWeekDay;
+      console.log("minDelta", minDelta);
       const restOFdays =
         (intervalFromStart.inDays + rangeBetween.inDays) % rangeBetween.inDays;
+      console.log("restOFdays", restOFdays);
+      console.log(
+        restOFdays < maxDelta || restOFdays >= minDelta,
+        this.weekDays.has(dateWeekDay)
+      );
+
+      console.log(dateWeekDay);
+      console.log(this.weekDays);
       return (
         (restOFdays < maxDelta || restOFdays >= minDelta) &&
         this.weekDays.has(dateWeekDay)
@@ -629,10 +651,10 @@ export default class RecurrenceEvent {
     date: Date,
     { needToBeAfterStart = true }: { needToBeAfterStart?: boolean } = {}
   ): Date | undefined {
-    console.log("eeeeeeeeeeeee", this.endOfTheEvent);
     if (this.endOfTheEvent != undefined && date > this.endOfTheEvent!) {
       return undefined;
     }
+    const endOfTheEventTemp = this.endOfTheEvent;
 
     if (
       this.start === undefined ||
@@ -657,34 +679,24 @@ export default class RecurrenceEvent {
       );
 
       let sunday: Date = getStartOfWeek(nearestDate);
-      for (const dayToCheck of this.weekDays) {
-        const dateToCheck = addDuration(
-          sunday,
-          new Duration({ days: dayToCheck })
-        );
-
-        if (
-          dateToCheck >= date &&
-          (this.endOfTheEvent === undefined ||
-            nearestDate <= this.endOfTheEvent!)
-        ) {
-          return dateToCheck;
+      while (
+        endOfTheEventTemp == null ||
+        setToMidNight(sunday) <= endOfTheEventTemp
+      ) {
+        for (let dayToCheck of this.weekDays) {
+          const dateToCheck = addDuration(
+            sunday,
+            new Duration({ days: dayToCheck })
+          );
+          if (
+            dateToCheck >= date &&
+            (endOfTheEventTemp == null || dateToCheck <= endOfTheEventTemp) &&
+            this.isAccureInDate({ date: dateToCheck })
+          ) {
+            return dateToCheck;
+          }
         }
-      }
-      nearestDate = addDuration(nearestDate, this.rangeBetweenInterval);
-      sunday = getStartOfWeek(nearestDate);
-      for (const dayToCheck of this.weekDays) {
-        const dateToCheck = addDuration(
-          sunday,
-          new Duration({ days: dayToCheck })
-        );
-        if (
-          dateToCheck >= date &&
-          (this.endOfTheEvent === undefined ||
-            nearestDate <= this.endOfTheEvent!)
-        ) {
-          return dateToCheck;
-        }
+        sunday = this.addRangeBetween(sunday);
       }
       return undefined;
     }

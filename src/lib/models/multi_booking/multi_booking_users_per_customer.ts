@@ -4,10 +4,13 @@ import MultiBookingUser from "./multi_booking_user";
 export default class MultiBookingUsersPerCustomer extends CustomerData {
   multiBookingUsers: Record<string, MultiBookingUser>;
 
-  constructor(
-    customer: CustomerData,
-    multiBookingUsers: { [bookingId: string]: MultiBookingUser }
-  ) {
+  constructor({
+    customer,
+    multiBookingUsers,
+  }: {
+    customer: CustomerData;
+    multiBookingUsers: Record<string, MultiBookingUser>;
+  }) {
     super(customer);
     this.multiBookingUsers = multiBookingUsers;
   }
@@ -26,6 +29,6 @@ export default class MultiBookingUsersPerCustomer extends CustomerData {
       }
     }
 
-    return new MultiBookingUsersPerCustomer(customer, multiBookingUsers);
+    return new MultiBookingUsersPerCustomer({ customer, multiBookingUsers });
   }
 }

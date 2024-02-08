@@ -143,7 +143,6 @@ export default class UserHelper {
     }
 
     await this._beforeLogout();
-    console.log("wwwwwwwwww");
 
     // Delete all the worker objects of me from all the businesses
     const permissions = [
@@ -160,7 +159,7 @@ export default class UserHelper {
         }
       })
     );
-    console.log("           qqqqqqqqq");
+
     // Delete all my businesses
     const duplicate = [
       ...UserInitializer.GI().user.userPublicData.myBuisnessesIds,
@@ -176,21 +175,20 @@ export default class UserHelper {
         );
       })
     );
-    console.log("wwwwwwwqqqqqqqqq");
+
     await UserInitializer.GI().getAllBookingsDocs();
-    console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
+
     await this.markUserDeletedOnAllWorkerBookings();
 
     ///TODO notifiication
     // await NotificationHandler.GI().cancelAllBookingsScheduleNoification(
     //   UserInitializer().user.bookings.all
     // );
-    console.log("wwwwwwwwwwwwwwww");
+
     await this.userRepo.deleteUser({ user });
 
     return await this.verificationRepo.deleteUser().then(async (value) => {
       if (value) {
-        console.log("eeeeeeeeeeee");
         console.log(value);
         UserInitializer.GI().user = new UserModel({
           name: "guest",
@@ -316,15 +314,15 @@ export default class UserHelper {
     if (email === UserInitializer.GI().user.userPublicData.email) {
       return true;
     }
-    // if (
-    //   addDuration(
-    //     UserInitializer.GI().user.lastTimeUpdateEmail,
-    //     new Duration({ days: 1 })
-    //   ) > new Date()
-    // ) {
-    //   AppErrorsHelper.GI().error = Errors.cantUpdateEmailTooShortTimeBetween;
-    //   return false;
-    // }
+    if (
+      addDuration(
+        UserInitializer.GI().user.lastTimeUpdateEmail,
+        new Duration({ days: 1 })
+      ) > new Date()
+    ) {
+      AppErrorsHelper.GI().error = Errors.cantUpdateEmailTooShortTimeBetween;
+      return false;
+    }
 
     UserInitializer.GI().user.userPublicData.email = email;
     return await this.userRepo
@@ -388,26 +386,20 @@ export default class UserHelper {
 
   async setGender(gender: Gender): Promise<boolean> {
     if (gender === UserInitializer.GI().user.gender) {
-      console.log("22222222222222222222");
       return true;
     }
-    console.log("eeeeeeeeeeeeeeeee");
+
     UserInitializer.GI().user.gender = gender;
     userStore.set(UserInitializer.GI().user);
 
-    return await this.userRepo
-      .updatePublicUserField({
-        userId: UserInitializer.GI().user.id,
-        fieldName: "gender",
-        value: genderToStr[gender],
-        businessesIds: Object.keys(
-          UserInitializer.GI().user.userPublicData.permission
-        ),
-      })
-      .then((value) => {
-        console.log("33333333333", value);
-        return value;
-      });
+    return await this.userRepo.updatePublicUserField({
+      userId: UserInitializer.GI().user.id,
+      fieldName: "gender",
+      value: genderToStr[gender],
+      businessesIds: Object.keys(
+        UserInitializer.GI().user.userPublicData.permission
+      ),
+    });
   }
 
   async updateName(name: string): Promise<boolean> {
