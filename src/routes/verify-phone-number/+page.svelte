@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { base } from "$app/paths";
   import { goto } from "$app/navigation";
+  import { base } from "$app/paths";
   import { onMount } from "svelte";
   import OtpInput from "svelte-otp";
 
-  import { openProfileDialog } from "$lib/utils/ui_utils";
   import UpdatePageHeader from "$lib/components/UpdatePageHeader.svelte";
   import { userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
@@ -29,9 +28,7 @@
     if (event.detail.isInputComplete) {
       // auto verify
       isVerifing = true;
-      console.log("compleated", event.detail.completevalue);
     }
-    console.log("emittedValue", event.detail);
   }
 </script>
 
@@ -39,7 +36,6 @@
   <UpdatePageHeader
     title={translate("verifyPhoneMechanizem", $_)}
     helpMessage={translate("phoneVerificationPageExplain", $_)}
-    onBack={openProfileDialog}
   />
 
   <div class="flex items-center justify-center w-full h-[60%]">

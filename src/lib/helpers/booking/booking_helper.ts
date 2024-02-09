@@ -1,14 +1,23 @@
 import { logger } from "$lib/consts/application_general";
 import { BookingReminderType, BookingStatuses } from "$lib/consts/booking";
 import { NumericCommands } from "$lib/consts/db";
+import { EventFilterType } from "$lib/consts/worker_schedule";
+import MyBookingsUIController from "$lib/controllers/my_bookings_controller";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
+import type BookingInvoiceData from "$lib/models/booking/booking_invoice_data";
 import Booking from "$lib/models/booking/booking_model";
+import type BookingTransactionModel from "$lib/models/booking/booking_transaction";
+import type Invoice from "$lib/models/payment_hyp/invoice/invoice";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { Errors } from "$lib/services/errors/messages";
 import { needToHoldOn } from "$lib/utils/booking_utils";
+import { setToMidNight } from "$lib/utils/dates_utils";
+import { dateToDateStr } from "$lib/utils/times_utils";
 import AppErrorsHelper from "../app_errors";
+import DbPathesHelper from "../db_paths_helper";
 import NotificationHandler from "../notifications/notification_handler";
+import NotificationsHelper from "../notifications/notifications/notification_helper";
 import { BookingRepo } from "./booking_repo";
 
 export default class BookingHelper {
@@ -38,7 +47,7 @@ export default class BookingHelper {
       AppErrorsHelper.GI().error = Errors.notLogedIn;
       return undefined;
     }
-    console.log("22222222222222222");
+
     if (booking.treatments.size === 0) {
       AppErrorsHelper.GI().error = Errors.noTreatment;
       return undefined;
@@ -54,14 +63,13 @@ export default class BookingHelper {
       });
     }
 
-    console.log("eeeeeeeeeeeeeeeeeeee");
     const newCustomerData = UserInitializer.GI().user.customerDataFromBooking({
       booking: booking,
     });
-    // if (!needPayInAdvance) {
-    //   MyBookingsUIController.getInstance().markedBookings = [booking.bookingId];
-    // }
-    // await BusinessInitializer.GI().cancelAllWorkersRegularListenings();
+    if (!needPayInAdvance) {
+      MyBookingsUIController.markedBookings = new Set([booking.bookingId]);
+    }
+    await BusinessInitializer.GI().cancelAllWorkersRegularListenings();
     return await this.bookingRepo
       .addBooking({
         booking: booking,
@@ -79,14 +87,13 @@ export default class BookingHelper {
           // this._addBookingLocally({
           //   booking,
           //   worker,
-          //   workerAction,
           //   newCustomerData,
           //   needPayInAdvance,
           // });
-          // NotificationHandler.GI().afterAddBooking({
-          //   booking,
-          //   worker,
-          // });
+          await NotificationHandler.GI().afterAddBooking({
+            booking,
+            worker,
+          });
         }
         return value;
       });
@@ -135,10 +142,10 @@ export default class BookingHelper {
   }: {
     booking: Booking;
     worker: WorkerModel;
-  }): Promise<Booking[] | null> {
+  }): Promise<Booking[] | undefined> {
     if (!UserInitializer.GI().isConnected) {
       AppErrorsHelper.GI().error = Errors.notLogedIn;
-      return null;
+      return undefined;
     }
 
     const cancelDate = new Date();
@@ -157,7 +164,7 @@ export default class BookingHelper {
     //   ) {
     //     MyBookingsUIController.markedBookings.clear();
     //   }
-    console.log("booking.isPassed", booking.isPassed);
+
     const resp = await this.bookingRepo.deleteBooking({
       booking,
       deleteAllBooking,
@@ -181,16 +188,16 @@ export default class BookingHelper {
         //   cancelDate,
         // });
         // Handle notification for the deleted booking
-        // NotificationHandler.GI().afterDeleteBooking({
-        //   booking: deletedBooking,
-        //   worker,
-        // });
+        NotificationHandler.GI().afterDeleteBooking({
+          booking: deletedBooking,
+          worker,
+        });
       });
 
       return resp;
     }
 
-    return null;
+    return undefined;
   }
 
   async updateBooking({
@@ -304,16 +311,16 @@ export default class BookingHelper {
           //     needPayInAdvance: false,
           //     fromUpdate: true,
           //   });
-          // NotificationHandler.GI().afterUpdateBooking({
-          //   newBooking,
-          //   oldBooking,
-          //   newWorker,
-          //   keepRecurrence,
-          //   oldWorker,
-          //   workerAction,
-          //   isOldBoookingPassed,
-          //   oldBookingDateForReccurence,
-          // });
+          NotificationHandler.GI().afterUpdateBooking({
+            newBooking,
+            oldBooking,
+            newWorker,
+            keepRecurrence,
+            oldWorker,
+            workerAction,
+            isOldBoookingPassed,
+            oldBookingDateForReccurence,
+          });
         }
 
         return value;
@@ -363,8 +370,8 @@ export default class BookingHelper {
         : await this.bookingRepo.updateFieldsInBooking({
             booking: booking,
             data: {
-              confirmedArrival: true,
-              "remindersTypes.confirmArrival": null,
+              ["confirmedArrival"]: true,
+              ["remindersTypes.confirmArrival"]: null,
             },
             changeInEvents: true,
             eventFieldName: booking.isMultiRef ? "CAA" : "CA",
@@ -380,5 +387,275 @@ export default class BookingHelper {
       });
     }
     return resp;
+  }
+
+  async updateBookingTransaction({
+    booking,
+    bookingTransaction,
+    bookingInvoice,
+    invoice,
+    newBookingForReurrence,
+  }: {
+    booking: Booking;
+    bookingTransaction: BookingTransactionModel;
+    bookingInvoice: BookingInvoiceData | undefined;
+    invoice: Invoice | undefined;
+    newBookingForReurrence: Booking | undefined;
+    oldBookingDateForReccurence?: Date;
+  }) {
+    if (newBookingForReurrence) {
+      // Add the transaction to the new booking for saving it
+      newBookingForReurrence.transactions.set(
+        bookingTransaction.id,
+        bookingTransaction
+      );
+
+      // Save the invoice in the new booking
+      if (bookingInvoice != null) {
+        newBookingForReurrence.invoices.set(
+          bookingInvoice.invoiceId,
+          bookingInvoice
+        );
+      }
+    } else {
+      // Add the transaction to the original booking for saving it
+      booking.transactions.set(bookingTransaction.id, bookingTransaction);
+
+      // Save the invoice in the original booking
+      if (bookingInvoice != null) {
+        booking.invoices.set(bookingInvoice.invoiceId, bookingInvoice);
+      }
+    }
+
+    // Call the appropriate repository method based on whether it's a new booking for recurrence or not
+    const resp = newBookingForReurrence
+      ? await this.bookingRepo.makeNewBookingFromReccurence({
+          reccurenceBooking: booking,
+          newBooking: newBookingForReurrence,
+          workerAction: false,
+        })
+      : await this.bookingRepo.saveBookingTransaction({
+          booking,
+          bookingTransaction,
+          bookingInvoice,
+        });
+
+    if (resp) {
+      // Delete the worker local booking if it's in the past
+      const today = new Date();
+      if (booking.bookingDate < setToMidNight(today)) {
+        UserInitializer.GI().addLocalDocToDelete({
+          userId: booking.workerId,
+          path: DbPathesHelper.GI().workerLocalBookingsPath(
+            booking.workerId,
+            booking.buisnessId
+          ),
+          docId: dateToDateStr(booking.bookingDate),
+        });
+      }
+
+      // Delete the worker local booking for recurrence if it's in the past
+      if (
+        newBookingForReurrence &&
+        newBookingForReurrence.bookingDate < setToMidNight(today)
+      ) {
+        UserInitializer.GI().addLocalDocToDelete({
+          userId: booking.workerId,
+          path: DbPathesHelper.GI().workerLocalBookingsPath(
+            newBookingForReurrence.workerId,
+            newBookingForReurrence.buisnessId
+          ),
+          docId: dateToDateStr(newBookingForReurrence.bookingDate),
+        });
+      }
+
+      // Notify user and worker about the created invoice
+      if (bookingInvoice && invoice) {
+        NotificationsHelper.GI().notifyUserWorkerCreateInvoice({
+          userFcms: booking.userFcms,
+          workerName: booking.workerName,
+          amount: bookingInvoice.amount,
+          currency: booking.currency,
+          invoice,
+        });
+      }
+    }
+    return resp;
+  }
+
+  async updateNeedCancel({
+    booking,
+    needCancel,
+    worker,
+    bookingDateForReccurence,
+  }: {
+    booking: Booking;
+    needCancel: boolean;
+    worker: WorkerModel;
+    bookingDateForReccurence?: Date;
+  }) {
+    let newBooking;
+
+    if (booking.recurrenceEvent && bookingDateForReccurence) {
+      newBooking = booking.createRegularBookingFromRecurrence(
+        bookingDateForReccurence
+      );
+      newBooking.needCancel = needCancel;
+    } else {
+      booking.needCancel = needCancel;
+    }
+
+    const resp = newBooking
+      ? await this.bookingRepo.makeNewBookingFromReccurence({
+          reccurenceBooking: booking,
+          newBooking,
+          workerAction: false,
+        })
+      : await this.bookingRepo.updateFieldsInBooking({
+          changeInEvents: true,
+
+          eventValue: booking.isMultiRef
+            ? needCancel
+              ? NumericCommands.increment
+              : NumericCommands.decrement
+            : needCancel,
+          counterType: EventFilterType.needCancel,
+          eventFieldName: booking.isMultiRef ? "WDC" : "wD",
+          booking,
+          incrementCounters: needCancel,
+          data: {
+            needCancel: needCancel,
+          },
+        });
+
+    if (resp) {
+      if (!booking.isMultiRef) {
+        // Save the new recurrence booking with the new exception dates
+        this.saveBookingLocaly({
+          booking: newBooking || booking,
+          worker,
+          recurrenceBooking: newBooking ? booking : undefined,
+        });
+      }
+
+      if (needCancel) {
+        NotificationsHelper.GI().notifyWorkerAboutUserWantToDelete(
+          booking,
+          worker
+        );
+      } else {
+        NotificationsHelper.GI().notifyWorkerAboutUserRestoreBooking(
+          booking,
+          worker
+        );
+      }
+    }
+
+    return resp;
+  }
+
+  async saveBookingLocaly({
+    booking,
+    worker,
+    recurrenceBooking,
+  }: {
+    booking: Booking;
+    worker: WorkerModel;
+    recurrenceBooking: Booking | undefined;
+  }) {
+    // Add the days to delete the bookings data to the worker
+    // The data that is currently in the worker phone is not updated
+    // Need to update it when the worker enters the app
+    if (booking.bookingDate < setToMidNight(new Date())) {
+      UserInitializer.GI().addLocalDocToDelete({
+        userId: worker.id,
+        path: DbPathesHelper.GI().workerLocalBookingsPath(
+          booking.workerId,
+          booking.buisnessId
+        ),
+        docId: dateToDateStr(booking.bookingDate),
+      });
+    }
+    if (
+      recurrenceBooking &&
+      recurrenceBooking.recurrenceEvent &&
+      recurrenceBooking.bookingDate < setToMidNight(new Date())
+    ) {
+      recurrenceBooking.recurrenceEvent.exceptionDates.add(
+        dateToDateStr(booking.bookingDate)
+      );
+      UserInitializer.GI().addLocalDocToDelete({
+        userId: worker.id,
+        path: DbPathesHelper.GI().workerLocalBookingsPath(
+          recurrenceBooking.workerId,
+          recurrenceBooking.buisnessId
+        ),
+        docId: dateToDateStr(recurrenceBooking.bookingDate),
+      });
+    }
+  }
+
+  async addExceptionDateToRecurreceBooking({
+    recurrenceBooking,
+    date,
+    worker,
+    workerAction,
+  }: {
+    recurrenceBooking: Booking;
+    date: Date;
+    worker: WorkerModel | undefined;
+    workerAction: boolean;
+  }): Promise<boolean> {
+    if (!recurrenceBooking.recurrenceEvent) {
+      return false;
+    }
+    recurrenceBooking.recurrenceEvent.exceptionDates.add(dateToDateStr(date));
+
+    //create newbooking that will be saved in the worker
+    //collection as canceled booking
+    const canceledBooking =
+      recurrenceBooking.createRegularBookingFromRecurrence(date);
+
+    canceledBooking.cancelDate = new Date();
+
+    // Simulate getting customer data
+    const customerData = UserInitializer.GI().user.customerDataFromBooking({
+      booking: recurrenceBooking,
+      needDelete: true,
+    });
+
+    // Simulate adding exception date to recurrence booking in repository
+    const value = await this.bookingRepo.addExceptionDateToRecurrenceBooking({
+      recurrenceBooking,
+      canceledBooking,
+      exceptionDate: date,
+      customerData,
+      workerAction,
+    });
+
+    if (
+      worker &&
+      recurrenceBooking.recurrenceNotificationsLastDate &&
+      date <= recurrenceBooking.recurrenceNotificationsLastDate
+    ) {
+      // Make a booking for the notification deletion
+      const bookingTemp = Booking.fromBooking(recurrenceBooking);
+      bookingTemp.recurrenceEvent = undefined;
+      bookingTemp.recurrenceRef = recurrenceBooking.bookingId;
+      bookingTemp.bookingDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        recurrenceBooking.bookingDate.getHours(),
+        recurrenceBooking.bookingDate.getMinutes()
+      );
+
+      NotificationHandler.GI().afterDeleteBooking({
+        booking: bookingTemp,
+        worker,
+      });
+    }
+
+    return value === true;
   }
 }

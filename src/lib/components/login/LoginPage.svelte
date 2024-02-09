@@ -12,10 +12,13 @@
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { ShowToast } from "$lib/stores/ToastManager";
   import { _, translate } from "$lib/utils/translate";
+  import { createEventDispatcher } from "svelte";
   import LogoAndName from "../custom_components/LogoAndName.svelte";
   import PhoneDialog from "./components/PhoneDialog.svelte";
   import { handleLogin } from "./helpers/handle_login";
   export let loginReason: LoginReason = LoginReason.login;
+  const dispatch = createEventDispatcher();
+
   let phoneDialog: HTMLDialogElement;
   let loading: boolean = false;
 
@@ -99,7 +102,11 @@
     }
     loading = true;
     try {
-      await handleLogin({ provider: authProvider, loginReason: loginReason });
+      await handleLogin({
+        provider: authProvider,
+        loginReason: loginReason,
+        dispatch: dispatch,
+      });
     } finally {
       loading = false;
     }
@@ -115,7 +122,7 @@
 
 <!-- Dialog -->
 {#if $page.state.showModal}
-  <PhoneDialog {loginReason} bind:dialog={phoneDialog} />
+  <PhoneDialog {loginReason} {dispatch} bind:dialog={phoneDialog} />
 {/if}
 
 <main class="flex w-full h-full">

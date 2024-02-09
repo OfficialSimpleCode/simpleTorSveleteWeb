@@ -178,18 +178,29 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     docId,
     fieldName,
     value,
+    command,
   }: {
     transaction: Transaction;
     path: string;
     docId: string;
     fieldName: string;
     value?: any;
+    command?: NumericCommands;
   }): Promise<any> {
     try {
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);
       const docRef = doc(collectionRef, docId);
-      const updateData = { [fieldName]: value ? value : deleteField() };
-      transaction.update(docRef, updateData);
+
+      if (command == null) {
+        transaction.update(docRef, { fieldName: value ?? deleteField() });
+      } else {
+        transaction.update(docRef, {
+          fieldName:
+            command === NumericCommands.increment
+              ? increment(1)
+              : increment(-1),
+        });
+      }
     } catch (e) {
       logger.error("Error while updating document in transaction -->", e);
       if (e instanceof Error) {
@@ -241,7 +252,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     path: string;
   }): Promise<Record<string, Record<string, any>>> {
     try {
-      const ref = collection(this._firestore, `$envKey/${path}`);
+      const ref = collection(this._firestore, `${envKey}/${path}`);
       const docs = await getDocs(ref);
 
       const docsResult: Record<string, Record<string, any>> = {};
@@ -341,7 +352,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);
       const docRef = doc(collectionRef, docId);
       const setData = this.organizeData(data);
-      console.log(setData);
+
       transaction.set(docRef, setData, { merge: true });
     } catch (e) {
       logger.error("Error while setting document as map in transaction -->", e);

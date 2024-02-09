@@ -164,12 +164,7 @@ export default class WorkerModel {
     // regular shifts
     const defaultShifts =
       this.workTime.get(format(day, "EEEE").toLowerCase()) || [];
-    console.log("this.workTime", this.workTime);
-    console.log(
-      "format(day, EEEE).toLowerCase()",
-      format(day, "EEEE").toLowerCase()
-    );
-    console.log("defaultShifts", defaultShifts);
+
     // specific changes
     for (const specifiRangeObj of Object.values(this.specificRangeChanges)) {
       if (
@@ -195,18 +190,22 @@ export default class WorkerModel {
       return new Set<string>();
     }
 
-    if (this.tempFcm != undefined) {
+    if (this.tempFcm != null) {
       return new Set<string>([this.tempFcm]);
     }
 
     const setFcmsTokens = new Set<string>();
-    for (const device of Object.values(this.devices)) {
+    this.devices.forEach((device, _) => {
       if (device.activeNotifications) {
         setFcmsTokens.add(device.token);
       }
-    }
+    });
 
     return setFcmsTokens;
+  }
+
+  get invoiceWorkerInfo(): InvoiceWorkerInfo {
+    return new InvoiceWorkerInfo({ workerId: this.id, workerName: this.name });
   }
 
   // Returns whether this day is closing day or not

@@ -1,7 +1,7 @@
 import { Errors } from "../messages";
 import "../messages.dart";
 
-const hypErrors = {
+export const hypErrors: Record<string, Errors> = {
   "1": Errors.blockCard,
   "2": Errors.stolenCard,
   "3": Errors.callCreditCompany,

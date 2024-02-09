@@ -76,6 +76,7 @@ export default class NotificationsRepo extends NotificationService {
     payload: NotificationPayload;
     isSilent?: boolean;
   }): Promise<boolean> {
+    console.log(fcms);
     return await this.sendMultypleSpecificNotifications({
       fcms: fcms,
       msg: content,

@@ -1,6 +1,7 @@
 import { goto } from "$app/navigation";
 import { base } from "$app/paths";
 import BookingController from "$lib/controllers/booking_controller";
+import { GeneralData } from "$lib/helpers/general_data";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import type Booking from "$lib/models/booking/booking_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
@@ -22,6 +23,30 @@ export async function updateBooking({
     });
     return;
   }
+  if (booking.buisnessId != GeneralData.currentBusinesssId) {
+    ShowToast({
+      status: "info",
+      text: translate("needToLoadBusiness", undefined, false),
+    });
+
+    return;
+  }
+  if (booking.isMultiRef) {
+    ShowToast({
+      status: "info",
+      text: translate("cantUpdateEvent", undefined, false),
+    });
+
+    return;
+  }
+
+  if (booking.isPassed) {
+    ShowToast({
+      status: "fail",
+      text: translate("alreadyPassed", undefined, false),
+    });
+    return;
+  }
   if (worker == null) {
     await deleteNotAvaliableWorkerBooking({
       booking: booking,
@@ -32,7 +57,7 @@ export async function updateBooking({
   if (booking.currentDisplayDate <= new Date()) {
     return;
   }
-  console.log(booking.workerId);
+
   BookingController.initializeBookingMaker({ bookingForUpdate: booking });
   BusinessInitializer.GI().startWorkerListening(worker);
   BusinessInitializer.GI().startTimesListening(worker, false);

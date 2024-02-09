@@ -27,13 +27,6 @@ export class Duration {
   static readonly zero: Duration = new Duration({ seconds: 0 });
   private readonly _duration: number;
 
-  days: number = 0;
-  hours: number = 0;
-  minutes: number = 0;
-  seconds: number = 0;
-  milliseconds: number = 0;
-  microseconds: number = 0;
-
   constructor({
     days = 0,
     hours = 0,

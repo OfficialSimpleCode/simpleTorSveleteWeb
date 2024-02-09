@@ -3,9 +3,14 @@ import { CurrencyModel } from "$lib/models/general/currency_model";
 /// Thes file is saving the const vars of the "hyp" P2p service
 /// example: the currencies umbers
 
-export const currencyToInt = { ILS: 1, USD: 2, EUR: 3, GBP: 4 };
+export const currencyToInt: Record<string, number> = {
+  ["ILS"]: 1,
+  ["USD"]: 2,
+  ["EUR"]: 3,
+  ["GBP"]: 4,
+};
 
-export const hypValidCurrencies: { [key in string]: CurrencyModel } = {
+export const hypValidCurrencies: Record<string, CurrencyModel> = {
   ILS: new CurrencyModel({ code: "ILS", name: "Israel Shekel", symbol: "₪" }),
   USD: new CurrencyModel({
     code: "USD",

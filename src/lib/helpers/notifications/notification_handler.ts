@@ -6,8 +6,16 @@ import {
 import UserInitializer from "$lib/initializers/user_initializer";
 import Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
+import type MultiBooking from "$lib/models/multi_booking/multi_booking";
+import type MultiBookingUser from "$lib/models/multi_booking/multi_booking_user";
+import { EnterAction } from "$lib/models/notifications/notification_payload";
+import type UserNotification from "$lib/models/notifications/user_notification";
+import PaymentRequest from "$lib/models/payment_hyp/payment_request/payment_request";
+import type PaymentRequestUser from "$lib/models/payment_hyp/payment_request/payment_request_user";
 import type WorkerModel from "$lib/models/worker/worker_model";
+import { isNotEmpty } from "$lib/utils/core_utils";
 import { subDuration } from "$lib/utils/duration_utils";
+import { sendMessagePaymentRequest } from "$lib/utils/notifications_utils";
 import { dateToDateStr } from "$lib/utils/times_utils";
 import MessagesHelper from "./messages/messages_helper";
 import NotificationsHelper from "./notifications/notification_helper";
@@ -34,7 +42,7 @@ export default class NotificationHandler {
     worker: WorkerModel;
   }): Promise<void> {
     // Notify the worker that the user ordered a booking for him
-    NotificationsHelper.GI().notifyWorkerAboutOrder(worker, booking);
+    await NotificationsHelper.GI().notifyWorkerAboutOrder(worker, booking);
 
     if (booking.status === BookingStatuses.approved) {
       // Make scheduled notifications/messages
@@ -48,29 +56,22 @@ export default class NotificationHandler {
         NotificationsHelper.GI().makeScheduleBookingNotification({ booking });
       }
     }
-
-    // // Delete the waiting list for that day if it exists
-    // const notificationTopic = UserInitializer.GI().user.isSubToWaitingList({
-    //   notificationTopic: booking.notificationTopic,
-    // });
-
-    // if (notificationTopic !== null) {
-    //   // Remove subscription from the waiting list if it exists
-    //   await this.userHelper().loadLibrary();
-    //   await this.userHelper().unSubToWaitingList({ notificationTopic });
-    // }
   }
 
   async afterDeleteBooking({
     booking,
     worker,
     isChildOfReccurence = false,
+
+    fromDeleteWorker = false,
   }: {
     booking: Booking;
     worker?: WorkerModel;
     isChildOfReccurence?: boolean;
     notifyWorker?: boolean;
+    fromDeleteWorker?: boolean;
   }): Promise<void> {
+    console.log("ddddddddddddddddd");
     if (booking.recurrenceEvent === undefined) {
       if (booking.status === BookingStatuses.approved) {
         if (
@@ -82,9 +83,14 @@ export default class NotificationHandler {
           // is not scheduled for this date
           if (
             !isChildOfReccurence ||
-            booking.recurrenceNotificationsLastDate === undefined ||
+            booking.recurrenceNotificationsLastDate == null ||
             booking.bookingDate <= booking.recurrenceNotificationsLastDate
           ) {
+            if (booking.recurrenceRef != null) {
+              booking.bookingId = `${booking.recurrenceRef}--${dateToDateStr(
+                booking.bookingDate
+              )}`;
+            }
             // Delete the schedule message if it exists
             MessagesHelper.GI().cancelScheduleMessageToMultipleBookings({
               [booking.bookingId]: booking,
@@ -99,10 +105,11 @@ export default class NotificationHandler {
         }
       }
     }
-    if (worker === undefined) {
+    console.log("ddddddddddddddddd");
+    if (worker == null) {
       return;
     }
-
+    console.log("ddddddddddddddddd");
     // No need to notify on passed bookings
     if (!booking.isPassed) {
       // Notify the worker if the user deletes the booking
@@ -111,7 +118,7 @@ export default class NotificationHandler {
         worker
       );
     }
-
+    console.log("ddddddddddddddddd");
     // Notify the waiting list if the deleted booking opens new possible times
     NotificationsHelper.GI().notifyWaitingListTopic(
       booking.notificationTopic,
@@ -400,6 +407,259 @@ export default class NotificationHandler {
           booking: booking,
           reminderType: BookingReminderType.confirmArrival,
           minutesBefore: minutesBeforeAlert,
+        }
+      );
+    }
+  }
+
+  async afterNeedCancelToMultiBookingSigning({
+    userBooking,
+    worker,
+  }: {
+    userBooking: Booking;
+    worker: WorkerModel;
+  }): Promise<void> {
+    await NotificationsHelper.GI().notifyWorkerThatUserWantToCancelMultiBookingSigning(
+      { userBooking, worker }
+    );
+  }
+
+  async afterSignUsersToMultiBooking({
+    multiBooking,
+    addedUsersBookingsIds,
+    worker,
+    workerAction,
+  }: {
+    multiBooking: MultiBooking;
+    addedUsersBookingsIds: Set<string>;
+    worker: WorkerModel;
+    workerAction: boolean;
+  }): Promise<void> {
+    const usersToNotify: Set<UserNotification> = new Set();
+    const numbersToMessage: Set<string> = new Set();
+    const numbersToNewUserMessage: Set<string> = new Set();
+    const scheduleWithNotifications: Record<string, MultiBookingUser> = {};
+    const scheduleWithMessages: Record<string, MultiBookingUser> = {};
+
+    Object.entries(multiBooking.users).forEach(
+      ([bookingUserId, multiBookingUser]) => {
+        if (
+          multiBookingUser.cancelDate ||
+          !addedUsersBookingsIds.has(bookingUserId)
+        ) {
+          return;
+        }
+        if (multiBookingUser.notificationType === NotificationType.message) {
+          if (UserInitializer.GI().user.id !== multiBookingUser.customerId) {
+            if (multiBookingUser.isUserExist) {
+              numbersToMessage.add(multiBookingUser.customerPhone);
+            } else {
+              numbersToNewUserMessage.add(multiBookingUser.customerPhone);
+            }
+          }
+          if (multiBookingUser.status === BookingStatuses.approved) {
+            scheduleWithMessages[multiBookingUser.userBookingId] =
+              multiBookingUser;
+          }
+        } else if (
+          multiBookingUser.notificationType === NotificationType.push
+        ) {
+          if (UserInitializer.GI().user.id !== multiBookingUser.customerId) {
+            usersToNotify.add(
+              multiBooking.toUserNotification(
+                EnterAction.openUserBooking,
+                multiBookingUser
+              )
+            );
+          }
+          if (multiBookingUser.status === BookingStatuses.approved) {
+            scheduleWithNotifications[multiBookingUser.userBookingId] =
+              multiBookingUser;
+          }
+        }
+      }
+    );
+
+    //-----------------------------notify to customers ----------------------
+
+    const addedMultiBookingUser =
+      multiBooking.users[addedUsersBookingsIds.values().next().value];
+
+    if (addedMultiBookingUser) {
+      if (addedMultiBookingUser.status === BookingStatuses.approved) {
+        NotificationsHelper.GI().notifyWorkerThatClientSignToMultiBooking({
+          multiBooking,
+          multiBookingUser: addedMultiBookingUser,
+          worker,
+        });
+      } else {
+        NotificationsHelper.GI().notifyWorkerThatClientSignToMultiAndWaitForApprove(
+          {
+            multiBooking,
+            multiBookingUser: addedMultiBookingUser,
+            worker,
+          }
+        );
+      }
+    }
+
+    //-----------------------------schedule the customers -------------------
+    if (isNotEmpty(scheduleWithNotifications)) {
+      NotificationsHelper.GI().makeScheduleNotificationsToUsers({
+        multiBooking: multiBooking,
+        usersToScheudle: scheduleWithNotifications,
+      });
+    }
+    if (isNotEmpty(scheduleWithMessages)) {
+      MessagesHelper.GI().scheduleMultiBookingMessagesToUsers({
+        multiBooking: multiBooking,
+        multiBookingUsers: scheduleWithMessages,
+      });
+    }
+  }
+
+  async afterSignOutFromMultiBooking({
+    multiBooking,
+    removedUserBookingsIds,
+    worker,
+    workerAction,
+  }: {
+    multiBooking: MultiBooking;
+    removedUserBookingsIds: Set<string>;
+    worker: WorkerModel;
+    workerAction: boolean;
+  }): Promise<void> {
+    // Collect all the data from the customers
+    const usersToNotify: Set<UserNotification> = new Set();
+    const numbersToMessage: Set<string> = new Set();
+    const scheduleWithNotifications: Record<string, MultiBookingUser> = {};
+    const scheduleWithMessages: Record<string, MultiBookingUser> = {};
+
+    Object.entries(multiBooking.users).forEach(
+      ([bookingUserId, multiBookingUser]) => {
+        if (
+          multiBookingUser.cancelDate != null ||
+          !removedUserBookingsIds.has(bookingUserId)
+        ) {
+          return;
+        }
+        if (multiBookingUser.notificationType === NotificationType.message) {
+          // No need to notify to oneself
+          if (UserInitializer.GI().user.id !== multiBookingUser.customerId) {
+            numbersToMessage.add(multiBookingUser.customerPhone);
+          }
+          if (multiBookingUser.status === BookingStatuses.approved) {
+            scheduleWithMessages[multiBookingUser.userBookingId] =
+              multiBookingUser;
+          }
+        } else if (
+          multiBookingUser.notificationType === NotificationType.push
+        ) {
+          // No need to notify to oneself
+          if (UserInitializer.GI().user.id !== multiBookingUser.customerId) {
+            usersToNotify.add(
+              multiBooking.toUserNotification(
+                EnterAction.openUserBooking,
+                multiBookingUser
+              )
+            );
+          }
+          if (multiBookingUser.status === BookingStatuses.approved) {
+            scheduleWithNotifications[multiBookingUser.userBookingId] =
+              multiBookingUser;
+          }
+        }
+      }
+    );
+    if (!workerAction) {
+      //if user action there is only one customer been deleted
+      NotificationsHelper.GI().notifyWorkerThatClientRemoveHimSelfFromMultiBooking(
+        {
+          multiBooking: multiBooking,
+          worker: worker,
+          userName: UserInitializer.GI().user.name,
+        }
+      );
+    }
+
+    //----------------------------- Remove schedule notifications -------------------
+    if (isNotEmpty(scheduleWithNotifications)) {
+      NotificationsHelper.GI().deleteAllScheduleMultiBookingNotifications({
+        multiBooking: multiBooking,
+        usersToDelete: scheduleWithNotifications,
+      });
+    }
+    if (isNotEmpty(scheduleWithMessages)) {
+      MessagesHelper.GI().cancelScheduleMultiBookingMessagesToUsers({
+        multiBooking: multiBooking,
+        multiBookingUsers: scheduleWithMessages,
+      });
+    }
+
+    // Notify the waitingList
+    if (
+      !workerAction ||
+      multiBooking.activeUsers - removedUserBookingsIds.size <
+        multiBooking.treatment.participants
+    ) {
+      NotificationsHelper.GI().notifyWaitingListTopic(
+        multiBooking.notificationTopic,
+        multiBooking.businessPayloadData
+      );
+    }
+  }
+
+  async afterSavePaymentRequest(
+    paymentRequest: PaymentRequest,
+    users: Record<string, PaymentRequestUser>,
+    worker: WorkerModel
+  ): Promise<void> {
+    const fcmsToNotify: Set<string> = new Set();
+    const numbersToMessage: Set<string> = new Set();
+    const numbersToNewUserMessage: Set<string> = new Set();
+
+    Object.entries(users).forEach(([userId, user]) => {
+      const notificationType = sendMessagePaymentRequest(user, worker);
+      if (notificationType === NotificationType.message) {
+        //no need to notify to him self
+        if (UserInitializer.GI().user.id !== user.userId) {
+          if (user.isExist) {
+            numbersToMessage.add(user.phone);
+          } else {
+            numbersToNewUserMessage.add(user.phone);
+          }
+        }
+      } else if (notificationType === NotificationType.push) {
+        //no need to notify to him self
+        if (UserInitializer.GI().user.id !== user.userId) {
+          if (user.fcmTokens) {
+            for (const fcmToken of user.fcmTokens) {
+              fcmsToNotify.add(fcmToken);
+            }
+          }
+        }
+      }
+    });
+
+    if (fcmsToNotify.size > 0) {
+      await NotificationsHelper.GI().notifyClientsThatWorkerAsignToThemNewPaymentRequest(
+        fcmsToNotify,
+        paymentRequest
+      );
+    }
+
+    if (numbersToMessage.size > 0) {
+      await MessagesHelper.GI().messageClientsThatWorkerAsignToThemNewPaymentRequest(
+        numbersToMessage,
+        paymentRequest
+      );
+    }
+
+    if (numbersToNewUserMessage.size > 0) {
+      await MessagesHelper.GI().messageNotExistClientsThatWorkerAsignToThemNewPaymentRequest(
+        {
+          numbers: numbersToNewUserMessage,
+          paymentRequest: paymentRequest,
         }
       );
     }

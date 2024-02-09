@@ -4,7 +4,11 @@ import {
   dataCollection,
   dataDoc,
   multiEventsTimesDoc,
+  onlinePaymentsCollection,
+  paymentsCollection,
+  paymentsRequestsPreviewsCollection,
   recurrenceEventsDoc,
+  usersCollection,
   workersCollection,
   type NumericCommands,
 } from "$lib/consts/db";
@@ -13,10 +17,12 @@ import {
   type EventFilterType,
 } from "$lib/consts/worker_schedule";
 
+import type Booking from "$lib/models/booking/booking_model";
 import BusinessModel from "$lib/models/business/business_model";
 import type CustomerData from "$lib/models/general/customer_data";
 import WorkerModel from "$lib/models/worker/worker_model";
 import FirestoreDataBase from "$lib/services/external_services/firestore";
+import { dateToMonthStr } from "$lib/utils/times_utils";
 import {
   Transaction,
   type DocumentData,
@@ -416,6 +422,67 @@ export default class GeneralRepo extends FirestoreDataBase {
     return await this.incrementMultipleNumberChild({
       childPath: counterPath,
       data: data,
+    });
+  }
+  async updateTransactionBookingReference({
+    transaction,
+    booking,
+    delete: deleteBooking = false,
+    onlyFromUser = false,
+  }: {
+    transaction: Transaction;
+    booking: Booking;
+    delete?: boolean;
+    onlyFromUser?: boolean;
+  }) {
+    for (const [bookingTransactionId, bookingTransaction] of Object.entries(
+      booking.transactions
+    )) {
+      if (!booking.userDeleted) {
+        this.transactionUpdateAsMap({
+          transaction,
+          path: `${usersCollection}/${booking.customerId}/${dataCollection}/${dataDoc}/${paymentsCollection}`,
+          docId: dateToMonthStr(bookingTransaction.createdAt),
+          fieldName: `${bookingTransactionId}.BR`,
+          value: deleteBooking
+            ? null
+            : booking.toBookingReferencePaymentObj.toJson(),
+        });
+      }
+      if (!onlyFromUser) {
+        this.transactionUpdateAsMap({
+          transaction,
+          path: `${buisnessCollection}/${booking.buisnessId}/${paymentsCollection}/${booking.workerId}/${onlinePaymentsCollection}`,
+          docId: dateToMonthStr(bookingTransaction.createdAt),
+          fieldName: `${bookingTransactionId}.BR`,
+          value: deleteBooking
+            ? null
+            : booking.toBookingReferencePaymentObj.toJson(),
+        });
+      }
+    }
+  }
+
+  async updatePaymentRequsetBookingReference({
+    transaction,
+    booking,
+    delete: deleteBooking = false,
+  }: {
+    transaction: Transaction;
+    booking: Booking;
+    delete?: boolean;
+  }) {
+    if (!booking.paymentRequest) {
+      return;
+    }
+    this.transactionUpdateAsMap({
+      transaction,
+      path: paymentsRequestsPreviewsCollection,
+      docId: booking.paymentRequest.id,
+      fieldName: "bookingReference",
+      value: deleteBooking
+        ? null
+        : booking.toBookingReferencePaymentObj.toJson(),
     });
   }
 }

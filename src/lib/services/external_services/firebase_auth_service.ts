@@ -169,6 +169,9 @@ export class FirebaseAuthService {
     otp: string;
   }): Promise<boolean> {
     const credential = PhoneAuthProvider.credential(verificationId, otp);
+    console.log("dddddddddddddddddPhone");
+    await this._auth.currentUser?.reload();
+    console.log(this.existsProvidersSRV);
 
     try {
       switch (loginType) {
@@ -254,22 +257,18 @@ export class FirebaseAuthService {
     element.setAttribute("style", "color:Red");
     document.body.appendChild(element);
 
-    console.log(html);
-    console.log("wwwwwww");
     const recaptchaVerifier = new RecaptchaVerifier(this._auth, element, {
       size: "invisible",
       callback: (response: any) => {
         console.log(response);
       },
     });
-    console.log("222222222222222");
+
     await signInWithPhoneNumber(this._auth, completePhone, recaptchaVerifier)
       .then((confirmationResult) => {
-        console.log("ssssssssssss");
         onCodeSent(confirmationResult.verificationId);
       })
       .catch((error) => {
-        console.log("wwwwwwwwwwwwwwwww");
         if (error instanceof Error) {
           AppErrorsHelper.GI().details = error.message;
           AppErrorsHelper.GI().error =
@@ -326,7 +325,7 @@ export class FirebaseAuthService {
   }
 
   get existsProvidersSRV(): Set<string> {
-    if (this._auth.currentUser === null) {
+    if (this._auth.currentUser == null) {
       return new Set();
     }
     const providersIds = new Set<string>();

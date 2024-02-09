@@ -8,7 +8,7 @@
   import AddNote from "./components/AddNote.svelte";
   import FinishButton from "./components/FinishButton.svelte";
   import ServicesPreview from "./components/ServicesPreview.svelte";
-
+  export let verificationDialog: HTMLDialogElement;
   let paymentDialog: HTMLDialogElement;
   let amount: number;
 </script>
@@ -19,7 +19,7 @@
 <section class="flex flex-col items-center gap-8 w-[90%] sm:w-[70%]">
   <!-- the worker name indicator -->
   <h1 class="text-3xl text-center">
-    {$_("bookAnOrder")}
+    {$_($bookingMakerStore.isUpdate ? "updateBooking" : "bookAnOrder")}
     {$_("to")}
     <span class="font-bold text-primary">{BookingController.worker.name}</span>
   </h1>
@@ -38,5 +38,5 @@
   <AddNote />
 
   <!-- finish button (could be pay or deposin) -->
-  <FinishButton />
+  <FinishButton {verificationDialog} />
 </section>

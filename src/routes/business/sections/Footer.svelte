@@ -1,5 +1,6 @@
 <script>
   import Logo from "$lib/components/Logo.svelte";
+  import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
   import { businessStore } from "$lib/stores/Business";
   import { downloadSimpleTor } from "$lib/utils/links_utils";
   import { _, translate } from "$lib/utils/translate";
@@ -65,13 +66,7 @@
     </p>
   </aside>
 
-  <!-- download simple tor app -->
-  <button
-    on:click={() => downloadSimpleTor(dynamicLink)}
-    class="btn lg:btn-lg bg-primary btn-primary flex items-center justify-center"
-  >
-    {translate("downloadSimpleTor", $_)}
-  </button>
+  <DownloadAppButton />
 
   <!-- social links -->
   <FooterSocialIcons></FooterSocialIcons>

@@ -1,15 +1,19 @@
 <script lang="ts">
   import { LoginReason } from "$lib/consts/auth";
+  import { createEventDispatcher, type EventDispatcher } from "svelte";
   import GetOtpView from "./phone_dialog/components/GetOtpView.svelte";
   import GetPhoneView from "./phone_dialog/components/GetPhoneView.svelte";
   export let loginReason: LoginReason;
   export let dialog: HTMLDialogElement;
-  let insideOtp: boolean = false;
+  export let insideOtp: boolean = false;
+  export let dispatch: EventDispatcher<any> = createEventDispatcher();
+
+  console.log("44444444444444");
 </script>
 
 <dialog
   bind:this={dialog}
-  class="modal modal-bottom sm:modal-middle"
+  class="modal modal-middle w-[500px]"
   on:close={() => {
     insideOtp = false;
 
@@ -25,7 +29,7 @@
         }}
       />
     {:else}
-      <GetOtpView {loginReason} {dialog} />
+      <GetOtpView {loginReason} {dialog} {dispatch} />
     {/if}
   </div>
   <form method="dialog" class="modal-backdrop">

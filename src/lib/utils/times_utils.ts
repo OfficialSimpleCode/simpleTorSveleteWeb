@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format, startOfWeek } from "date-fns";
 
 import Booking from "$lib/models/booking/booking_model.js";
 import { Duration } from "$lib/models/core/duration.js";
@@ -209,10 +209,10 @@ export function convertStringToTime(times: string[]): Date[] {
 }
 
 export function getStartOfWeek(date: Date): Date {
-  const dayOfWeek = date.getDay();
-  const diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Adjust when the day is Sunday
+  // Get the start of the week (Sunday) for the given date
+  const startOfTheWeek = startOfWeek(date, { weekStartsOn: 0 }); // Assuming Sunday is the first day of the week
 
-  return new Date(date.setDate(diff));
+  return startOfTheWeek;
 }
 
 export function fixDateMonth(date: Date): Date {

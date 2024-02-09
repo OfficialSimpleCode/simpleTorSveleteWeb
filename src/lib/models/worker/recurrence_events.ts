@@ -83,6 +83,8 @@ export default class RecurrenceEvents {
         }
       );
     });
+
+    console.log(this.recurrenceEvents);
   }
 
   vacationInDate(date: Date): Vacation | undefined {

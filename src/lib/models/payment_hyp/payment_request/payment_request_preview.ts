@@ -2,6 +2,7 @@ import {
   PAYMENT_REQUEST_END_POINT,
   SERVER_BASE_URL,
 } from "$lib/consts/server_variables";
+import BookingPaymentRequestData from "$lib/models/booking/booking_payment_request";
 import IconData from "$lib/models/general/icon_data";
 import { Price } from "$lib/models/general/price";
 import PaymentRequestNotificationPayload from "$lib/models/notifications/payment_request_notification_payload";
@@ -13,21 +14,38 @@ import PaymentRequest from "./payment_request";
 import PaymentRequestUser from "./payment_request_user";
 
 export default class PaymentRequestPreview extends PaymentObject {
+  ///Uuid of the payment request used as doc id
   id: string = "";
+
+  ///Some text that appear on the page of the request when the
+  ///client presss the link
   summary: string = "";
+
+  ///The worker info of the worker that reqeust that payment
   workerId: string = "";
+
+  ///The business name of the business that request that payment
   businessName: string = "";
+
+  /// Worker that the request sign on
   workerName: string = "";
+
+  ///The business id of the business that request that payment
   businessId: string;
 
-  multi: boolean = false;
+  ///Close for unknown users only for the users that appear on the preview
   closeForAll: boolean = true;
+
+  ///Users that signed to this payment request
   users: Record<string, PaymentRequestUser> = {};
+
+  ///Is the payment request is one time
   oneTime: boolean = true;
-  userPayments: Record<string, Date> = {};
-  userDecline: boolean = false;
-  canceled: boolean = false;
+
+  ///Booking data that the payment requset sign on
   bookingReference?: BookingReferencePaymentObj;
+
+  /// shop icon data
   shopIcon: IconData = new IconData();
   constructor({});
   constructor({
@@ -111,6 +129,14 @@ export default class PaymentRequestPreview extends PaymentObject {
     });
     newObj.createdAt = this.createdAt;
     return newObj;
+  }
+
+  get toBookingPaymentRequestData(): BookingPaymentRequestData {
+    const bookingPaymentRequest = new BookingPaymentRequestData({});
+    bookingPaymentRequest.id = this.id;
+    bookingPaymentRequest.workerId = this.workerId;
+    bookingPaymentRequest.createdAt = this.createdAt;
+    return bookingPaymentRequest;
   }
 
   get toPaymentRequestNotificationPayload() {

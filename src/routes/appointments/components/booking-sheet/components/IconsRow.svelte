@@ -64,6 +64,7 @@
     hadleClick={onDelete}
   />
   <CustomCircleIcon
+    active={!booking.isMultiRef}
     icon="mdi:edit-outline"
     translateKey="edit"
     hadleClick={onUpdate}

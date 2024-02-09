@@ -6,10 +6,17 @@ import { NumericCommands } from "$lib/consts/db";
 import { emojisRegex } from "$lib/consts/string";
 import DbPathesHelper from "$lib/helpers/db_paths_helper";
 import GeneralRepo from "$lib/helpers/general/general_repo";
+import BusinessInitializer from "$lib/initializers/business_initializer";
+import UserInitializer from "$lib/initializers/user_initializer";
 import type Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
+import type MultiBooking from "$lib/models/multi_booking/multi_booking";
+import type MultiBookingUser from "$lib/models/multi_booking/multi_booking_user";
+import PaymentRequest from "$lib/models/payment_hyp/payment_request/payment_request";
+import { isEmpty } from "$lib/utils/core_utils";
 import { subDuration } from "$lib/utils/duration_utils";
 import { removePhoneNumberPrefix } from "$lib/utils/string_utils";
+import { translate } from "$lib/utils/translate";
 import MessageRepo from "./messages_repo";
 export default class MessagesHelper {
   private static _singleton: MessagesHelper = new MessagesHelper();
@@ -118,7 +125,7 @@ export default class MessagesHelper {
     }
     const messages: Record<string, string> = {};
     const businessToDecrease: Map<string, number> = new Map();
-    Object.entries(bookings).forEach(([bookingId, booking]) => {
+    Object.entries(bookings).forEach(([_, booking]) => {
       const reminders = booking.messageRemindersOnBooking;
       reminders.forEach((reminderId) => {
         messages[reminderId] = removePhoneNumberPrefix(booking.customerPhone);
@@ -131,7 +138,7 @@ export default class MessagesHelper {
         businessToDecrease.get(booking.buisnessId)! + reminders.length
       );
     });
-    if (Object.keys(messages).length === 0) {
+    if (isEmpty(messages)) {
       return true;
     }
     return await this._cancelMultipleScheduleAccordingToPlatfrom({
@@ -139,9 +146,179 @@ export default class MessagesHelper {
     });
   }
 
-  private removePhoneNumberPrefix(number: string): string {
-    // Implement this method according to your needs
-    return number;
+  async scheduleMultiBookingMessagesToUsers({
+    multiBooking,
+    multiBookingUsers,
+  }: {
+    multiBooking: MultiBooking;
+    multiBookingUsers: Record<string, MultiBookingUser>;
+  }): Promise<boolean> {
+    if (isEmpty(multiBookingUsers)) {
+      return true;
+    }
+    const messages: ScheduleMessage[] = [];
+    const businessToDecrease: Record<string, number> = {};
+    const existNumbers: Set<string> = new Set();
+
+    Object.entries(multiBookingUsers).forEach(([_, multiBookingUser]) => {
+      if (existNumbers.has(multiBookingUser.customerPhone)) {
+        return;
+      }
+      const reminders =
+        multiBooking.remindersToScheduleMessages(multiBookingUser);
+
+      messages.push(...reminders);
+      if (reminders.length > 0) {
+        existNumbers.add(multiBookingUser.customerPhone);
+      }
+
+      businessToDecrease[multiBooking.buisnessId] ??= 0;
+      businessToDecrease[multiBooking.buisnessId] += reminders.length;
+    });
+
+    // no possibility to Non-valid data
+    const value = await this.sendMultipleScheduleAccordingToPlatfrom({
+      messages,
+    });
+    if (value) {
+      Object.entries(businessToDecrease).forEach(([businessId, count]) => {
+        this.decreaseMessageCounter(businessId, count);
+      });
+    }
+    return value;
+  }
+
+  async cancelScheduleMultiBookingMessagesToUsers({
+    multiBooking,
+    multiBookingUsers,
+  }: {
+    multiBooking: MultiBooking;
+    multiBookingUsers: Record<string, MultiBookingUser>;
+  }): Promise<boolean> {
+    if (Object.entries(multiBookingUsers).length === 0) {
+      return true;
+    }
+    const messages: Record<string, string> = {};
+    const businessToDecrease: Record<string, number> = {};
+    const existNumbers: Set<string> = new Set();
+    Object.entries(multiBookingUsers).forEach(
+      ([bookingId, multiBookingUser]) => {
+        if (existNumbers.has(multiBookingUser.customerPhone)) {
+          return;
+        }
+        const reminders = multiBooking.messageRemindersOnUser(multiBookingUser);
+
+        reminders.forEach((reminderId) => {
+          messages[reminderId] = removePhoneNumberPrefix(
+            multiBookingUser.customerPhone
+          );
+        });
+
+        if (reminders.length > 0) {
+          existNumbers.add(multiBookingUser.customerPhone);
+        }
+
+        businessToDecrease[multiBooking.buisnessId] ??= 0;
+        businessToDecrease[multiBooking.buisnessId] += reminders.length;
+      }
+    );
+
+    const result = await this._cancelMultipleScheduleAccordingToPlatfrom({
+      messages,
+    });
+
+    if (result) {
+      Object.entries(businessToDecrease).forEach(([businessId, value]) => {
+        this.increaseMessageCounter(businessId, value);
+      });
+    }
+
+    return result;
+  }
+
+  async messageClientsThatWorkerAsignToThemNewPaymentRequest(
+    numbers: Set<string>,
+    paymentRequest: PaymentRequest
+  ): Promise<void> {
+    const validNumbers = this.filterValidNumbers(numbers);
+    await this.sendMultipleSameSmsAccordingPlatform({
+      isWhatsapp: false,
+      destNumbers: validNumbers,
+      content: translate("newPaymentRequestContent", undefined, false)
+        .replace("WORKERNAME", paymentRequest.workerInfo.workerName)
+        .replace("BUSINESSNAME", paymentRequest.businessInfo.businessName)
+        .replace("PRICE", paymentRequest.price.toString()),
+    }).then((value) => {
+      if (value) {
+        this.decreaseMessageCounter(
+          paymentRequest.businessInfo.businessId,
+          validNumbers.size
+        );
+      }
+      return value;
+    });
+  }
+
+  async messageNotExistClientsThatWorkerAsignToThemNewPaymentRequest({
+    numbers,
+    paymentRequest,
+  }: {
+    numbers: Set<string>;
+    paymentRequest: PaymentRequest;
+  }) {
+    try {
+      const validNumbers = this.filterValidNumbers(numbers);
+      const content = translate(
+        "notExistNewPaymentRequestContent",
+        undefined,
+        false
+      )
+        .replace("WORKERNAME", paymentRequest.workerInfo.workerName)
+        .replace("BUSINESSNAME", paymentRequest.businessInfo.businessName)
+        .replace("LINK", BusinessInitializer.GI().business.dynamicLink)
+        .replace("PRICE", paymentRequest.price.toString());
+
+      const resp = await this.sendMultipleSameSmsAccordingPlatform({
+        isWhatsapp: false,
+        destNumbers: validNumbers,
+        content: content,
+      });
+
+      if (resp) {
+        this.decreaseMessageCounter(
+          paymentRequest.businessInfo.businessId,
+          validNumbers.size
+        );
+      }
+
+      return resp;
+    } catch (error) {
+      console.error("Error sending SMS:", error);
+      return false;
+    }
+  }
+
+  async sendMultipleSameSmsAccordingPlatform({
+    isWhatsapp,
+    destNumbers,
+    content,
+  }: {
+    isWhatsapp: boolean;
+    destNumbers: Set<string>;
+    content: string;
+  }): Promise<boolean> {
+    //get rid off symbols
+    content = content.replace(emojisRegex, "");
+    // seconds from now to the time that need to notify
+    if (isWhatsapp) {
+      // Uncomment the following lines once you have the appropriate implementation
+      // return await ServerMessagesClient()
+      //     .sendWhatsappMessage(destNumber: number, message: content);
+    }
+    return await this.messageRepo.sendMultipleSameSms({
+      destNumbers: Array.from(destNumbers),
+      message: content,
+    });
   }
 
   async sendScheduleAccordingPlatform({
@@ -163,28 +340,24 @@ export default class MessagesHelper {
       return true;
     }
 
-    const timeToSend = subDuration(
+    // seconds from now to the time that need to notify
+    const timeToSend: Date = subDuration(
       eventTime,
       new Duration({ minutes: minutesBeforeNotify })
     );
-
-    if (timeToSend.getTime() < new Date().getTime()) {
+    // the event is before now no need to send a remainder
+    if (timeToSend < new Date()) {
       return true;
     }
-
     if (isWhatsapp) {
-      // return await ServerMessagesClient.sendScheduleWhatsappMessage({
-      //   destNumber: number,
-      //   message: content,
-      //   secondsDelata: secondsDelata,
-      // });
+      // return await ServerMessagesClient().sendScheduleWhatsappMessage(
+      //     destNumber: number, message: content, secondsDelata: secondsDelata);
     }
 
-    // get rid of symbols
-    content = content.replace(emojisRegex, "");
-
+    //get rid off symbols
+    content = content.replaceAll(emojisRegex, "");
     return await this.messageRepo.sendScheduleSms(
-      this.removePhoneNumberPrefix(number),
+      removePhoneNumberPrefix(number),
       content,
       messageId,
       timeToSend
@@ -240,5 +413,19 @@ export default class MessagesHelper {
       delta: count,
       command: NumericCommands.increment,
     });
+  }
+
+  filterValidNumbers(phoneNumbers: Set<string>): Set<string> {
+    const validNumbers = new Set<string>();
+    phoneNumbers.forEach((phoneNumber) => {
+      if (this.needSendDirectMessage(phoneNumber)) {
+        validNumbers.add(phoneNumber);
+      }
+    });
+    return validNumbers;
+  }
+
+  needSendDirectMessage(phoneNumber: string): boolean {
+    return phoneNumber !== UserInitializer.GI().user.phoneNumber;
   }
 }

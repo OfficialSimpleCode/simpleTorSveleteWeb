@@ -1,14 +1,21 @@
 <script lang="ts">
   import { bookingMakerStore } from "$lib/controllers/booking_controller";
+  import PublicCustomer from "$lib/models/worker/public_customer";
   import { _, translate } from "$lib/utils/translate";
+  import { getPublicCustomer } from "../helpers/get_public_user";
   import { onFinishNavigator } from "../helpers/on_finish_navigator";
-
+  export let verificationDialog: HTMLDialogElement;
   let isLoading: boolean = false;
 
-  function handleClick() {
+  const publicCustomer: PublicCustomer = getPublicCustomer();
+
+  async function handleClick() {
     if (isLoading) {
     } else {
-      onFinishNavigator({ clientNote: "" });
+      await onFinishNavigator({
+        clientNote: "",
+        verificationDialog: verificationDialog,
+      });
       isLoading = true;
     }
   }
@@ -19,11 +26,22 @@
   <button
     class="btn sm:text-xl btn-primary w-full {isLoading ? 'opacity-55' : ''}"
     on:click={handleClick}
-    >{isLoading
-      ? "Loading"
-      : translate(
-          $bookingMakerStore.isUpdate ? "update" : "setBooking",
-          $_
-        )}</button
   >
+    {#if isLoading}
+      <div class="loading loading-spinner" />
+    {:else}
+      {translate(
+        publicCustomer.blocked
+          ? "blockUser"
+          : $bookingMakerStore.isUpdate
+            ? "update"
+            : "order2",
+        $_
+      )}
+    {/if}
+
+    {#if publicCustomer.blocked}
+      <h3 class="text-sm">{translate("blockedUserCantOrder", $_)}</h3>
+    {/if}
+  </button>
 </div>

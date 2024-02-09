@@ -29,33 +29,33 @@
       <IconsRow {booking} {currentWorker} mainDialog={dialog} />
 
       <!-- general data container -->
-      <TopDetails {booking}></TopDetails>
+      <TopDetails {booking} {currentWorker} />
 
       <!-- payments container -->
-      <PaymentsContainer {booking}></PaymentsContainer>
+      <PaymentsContainer {booking} />
 
       <!-- table about the time, date and other informations -->
       <div class="w-full">
         <!-- created at indicator -->
-        <CreatedAtIndicator {booking}></CreatedAtIndicator>
+        <CreatedAtIndicator {booking} />
 
         <!-- summary of times, price and duration -->
         <div
           class="flex flex-col bg-base-300 rounded-lg py-4 px-5 gap-6 items-center"
         >
           <div class="text-lg">
-            <DateString date={booking.currentDisplayDate}></DateString>
+            <DateString date={booking.currentDisplayDate} />
           </div>
 
-          <SummaryTable {booking}></SummaryTable>
+          <SummaryTable {booking} />
         </div>
       </div>
 
       <!-- debt indicator -->
-      <DebtIndicator {booking}></DebtIndicator>
+      <DebtIndicator {booking} />
       <!-- in case there are multy treatments - convinient list of them -->
       {#if booking.treatments.size > 1}
-        <BookingTreatmentsList {booking}></BookingTreatmentsList>
+        <BookingTreatmentsList {booking} />
       {/if}
 
       <!-- padding at the end -->

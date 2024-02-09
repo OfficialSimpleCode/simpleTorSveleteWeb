@@ -9,7 +9,7 @@
   import { sendSms } from "../helpers/send_sms";
   const dispatch = createEventDispatcher();
   export let dialog: HTMLDialogElement;
-  //export let loginReason: LoginReason;
+
   let validPhone: boolean = false;
   let phoneNumber: string = "";
 

@@ -18,7 +18,7 @@ export function durationToString(
   let days = "";
   let weeks = "";
   let months = "";
-  let daysInt = duration.days;
+  let daysInt = duration.inDays;
   if (Math.floor(daysInt / 30) > 0) {
     if (Math.floor(daysInt / 30) === 1) {
       months = translate("month");
@@ -52,7 +52,7 @@ export function durationToString(
   if (daysInt > 2) {
     days = `${daysInt} ` + translate("days");
   }
-  let hoursInt = duration.hours - duration.days * 24;
+  let hoursInt = duration.inHours - duration.inDays * 24;
   if (hoursInt === 1) {
     hours = translate("hour");
   }
@@ -62,9 +62,9 @@ export function durationToString(
   if (hoursInt > 2) {
     hours = `${hoursInt}` + translate("hoursChar");
   }
-  let minutesInt = duration.minutes - duration.hours * 60;
+  let minutesInt = duration.inMinutes - duration.inHours * 60;
   minutes = minutesInt > 0 ? `${minutesInt}` + translate("minutesChar") : "";
-  let secondsInt = duration.seconds - duration.minutes * 60;
+  let secondsInt = duration.inSeconds - duration.inMinutes * 60;
   if (secondsInt === 1) {
     seconds = translate("second", undefined, false);
   }
@@ -72,10 +72,10 @@ export function durationToString(
     seconds = `${secondsInt}` + " " + translate("seconds");
   }
   let text = "";
-  if (duration.days === 365) {
+  if (duration.inDays === 365) {
     text = translate("year");
-  } else if (duration.days % 365 === 0 && duration.days > 365) {
-    text = (duration.days / 365).toFixed(0) + " " + translate("years");
+  } else if (duration.inDays % 365 === 0 && duration.inDays > 365) {
+    text = (duration.inDays / 365).toFixed(0) + " " + translate("years");
   } else if (weeks === "" && months !== "" && days === "") {
     text = months;
   } else if (weeks !== "" && months === "" && days === "") {
@@ -116,12 +116,6 @@ export function durationToString(
 
 export function getUsablePhone(phoneNumber: string): string {
   return phoneNumber.replace("-", "");
-}
-
-export function durationFormated(duration: Duration): string {
-  const twoDigits = (n: number) => n.toString().padStart(2, "0");
-  const twoDigitMinutes = twoDigits(duration.minutes % 60);
-  return `${twoDigits(duration.hours)}:${twoDigitMinutes}`;
 }
 
 export function shortName(longName: string): string {
@@ -219,9 +213,12 @@ export function removePhoneNumberPrefix(phoneNumber: string): string {
 }
 
 export function printDuration(duration: Duration): string {
+  console.log(duration);
   const twoDigits = (n: number) => n.toString().padStart(2, "0");
-  const twoDigitMinutes = twoDigits(duration.minutes % 60);
-  return `${twoDigits(duration.hours)}:${twoDigitMinutes}`;
+  const twoDigitMinutes = twoDigits(
+    (duration.inMinutes - duration.inHours * 60) % 60
+  );
+  return `${twoDigits(duration.inHours)}:${twoDigitMinutes}`;
 }
 
 export function timeUuid(): string {

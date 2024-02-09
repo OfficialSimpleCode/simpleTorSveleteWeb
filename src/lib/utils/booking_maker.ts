@@ -23,6 +23,7 @@ import {
   isHoliday,
 } from "$lib/utils/times_utils";
 import { get } from "svelte/store";
+import { length } from "./core_utils";
 
 export function loadBookingMakerTimeData(
   visibleDates: Date[],
@@ -34,7 +35,7 @@ export function loadBookingMakerTimeData(
 ): void {
   const bookingMaker = get(bookingMakerStore);
   BookingController.visibleDates = visibleDates;
-  console.log(bookingMaker);
+
   if (worker == null) {
     return;
   }
@@ -48,25 +49,13 @@ export function loadBookingMakerTimeData(
   if (lastDateTemp === undefined) {
     return;
   }
+
   const daysTimes: Record<string, TimePickerObj[]> = {};
   let maxLen = 0;
   // setting the new days data
 
-  // console.log(
-  //   "BookingController.worker.workerPublicData.bookingsTimes",
-  //   BookingController.worker.workerPublicData.bookingsTimes
-  // );
-  // console.log(
-  //   "BookingController.worker.recurrence.recurrenceEvents",
-  //   BookingController.worker.recurrence.recurrenceEvents
-  // );
-  visibleDates.forEach((visibleDate, index) => {
-    // if (BookingController.alreadyLoadedDates.has(dateToDateStr(visibleDate))) {
-    //   return;
-    // }
-
-    // BookingController.alreadyLoadedDates.add(dateToDateStr(visibleDate));
-    // generate only for days the user allowed to order
+  visibleDates.forEach((visibleDate) => {
+    // generate only for days the worker allowed to order
     if (
       visibleDate >= lastDateTemp ||
       visibleDate < setToMidNight(new Date())
@@ -75,8 +64,8 @@ export function loadBookingMakerTimeData(
     }
     // get the times for this booking
     let dayTimes: TimePickerObj[] = [];
-    if (bookingMaker.isMultiEvent === true) {
-      if (Object.keys(bookingMaker.services).length === 1) {
+    if (bookingMaker.isMultiEvent) {
+      if (length(bookingMaker.services) === 1) {
         dayTimes = relevantMultiEventTime({
           worker: worker!,
           dateForCheck: visibleDate,
@@ -185,7 +174,7 @@ export function loadBookingMakerTimeData(
       return;
     }
     const eventMinutes = Math.floor(minutesIn24Hours / maxLen);
-    console.log(eventMinutes);
+
     // put the events inside the events timePickerObjects to display them nex frame
     let minutesToPresent = 0;
     timeList.forEach((timeObj, index) => {

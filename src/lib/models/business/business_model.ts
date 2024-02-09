@@ -8,6 +8,7 @@ import {
 } from "$lib/consts/business_types";
 import { hypPathFromStr, type HypPaths } from "$lib/consts/hyp_pathes";
 import { dateStrToDate, isoToDate } from "$lib/utils/times_utils";
+import InvoiceBusinessInfo from "../payment_hyp/invoice/invoice_business_info";
 import { BusinessData } from "./business_data";
 import { BusinessDesign } from "./business_design";
 import { ProductModel } from "./product_model";
@@ -242,6 +243,17 @@ export default class BusinessModel {
       this.lastTimeConnected =
         isoToDate(json["lastTimeConnected"]) || new Date();
     }
+  }
+
+  get invoiceBusinessInfo(): InvoiceBusinessInfo {
+    return new InvoiceBusinessInfo({
+      masofNumber: this.masofNumber,
+      businessName: this.shopName,
+      adress: this.adress,
+      shopIcon: this.design.shopIconData,
+      businessId: this.businessId,
+      businessNumber: this.companyNumber,
+    });
   }
 
   toJson(): Record<string, any> {
