@@ -24,6 +24,7 @@ import WorkerModel from "$lib/models/worker/worker_model";
 import FirestoreDataBase from "$lib/services/external_services/firestore";
 import { dateToMonthStr } from "$lib/utils/times_utils";
 import {
+  FieldValue,
   Transaction,
   type DocumentData,
   type DocumentSnapshot,
@@ -336,7 +337,7 @@ export default class GeneralRepo extends FirestoreDataBase {
     saveExtraData = false,
   }: {
     customerData: CustomerData;
-    amountOfBookingsCommand: any;
+    amountOfBookingsCommand: FieldValue;
     useUserFirstBookingsDate?: boolean;
     saveExtraData?: boolean;
   }): Record<string, any> {

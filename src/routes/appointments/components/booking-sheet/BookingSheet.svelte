@@ -2,6 +2,7 @@
   import DateString from "$lib/components/DateString.svelte";
   import Booking from "$lib/models/booking/booking_model";
   import type WorkerModel from "$lib/models/worker/worker_model";
+  import { length } from "$lib/utils/core_utils";
   import BookingTreatmentsList from "./components/BookingTreatmentsList.svelte";
   import CreatedAtIndicator from "./components/CreatedAtIndicator.svelte";
   import DebtIndicator from "./components/DebtIndicator.svelte";
@@ -54,7 +55,7 @@
       <!-- debt indicator -->
       <DebtIndicator {booking} />
       <!-- in case there are multy treatments - convinient list of them -->
-      {#if booking.treatments.size > 1}
+      {#if length(booking.treatments) > 1}
         <BookingTreatmentsList {booking} />
       {/if}
 

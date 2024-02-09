@@ -34,7 +34,7 @@
         ></BookingList>
       </div>
     {:else}
-      <EmptyBookingPage></EmptyBookingPage>
+      <EmptyBookingPage />
     {/if}
     <!-- back button -->
     <div class="pb-4 w-[90%]">

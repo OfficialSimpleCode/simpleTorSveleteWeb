@@ -5,6 +5,7 @@
   export let booking: Booking;
 </script>
 
-{#each booking.treatments as [key, treatment]}
-  <TreatmentContainer {treatment}></TreatmentContainer>
+{#each Object.entries(booking.treatments) as [index, treatment]}
+  <TreatmentContainer {treatment} {booking} treatmentIndex={index}
+  ></TreatmentContainer>
 {/each}

@@ -96,7 +96,7 @@ export default class Booking extends ScheduleItem {
   wasWaiting: boolean = false;
   note: string = "";
   needCancel: boolean = false;
-  treatments: Map<string, Treatment> = new Map();
+  treatments: Record<string, Treatment> = {};
   userGender: Gender = Gender.anonymous;
   workerGender: Gender = Gender.anonymous;
   status: BookingStatuses = BookingStatuses.approved;
@@ -170,12 +170,12 @@ export default class Booking extends ScheduleItem {
 
     newBooking.recurrenceTimeId = booking.recurrenceTimeId;
     newBooking.note = booking.note;
-    newBooking.workerRemindersTypes = { ...booking.workerRemindersTypes };
+    newBooking.workerRemindersTypes = new Map(booking.workerRemindersTypes);
     newBooking.signOnDeviceCalendar = booking.signOnDeviceCalendar;
     newBooking.userDeleted = booking.userDeleted;
     newBooking.workerNotificationOption = booking.workerNotificationOption;
     newBooking.paymentRequest = booking.paymentRequest;
-    newBooking.remindersTypes = { ...booking.remindersTypes };
+    newBooking.remindersTypes = new Map(booking.remindersTypes);
     newBooking.isVerifiedPhone = booking.isVerifiedPhone;
     newBooking.workerDeleted = booking.workerDeleted;
     newBooking.finishInvoices = booking.finishInvoices;
@@ -209,11 +209,11 @@ export default class Booking extends ScheduleItem {
       newBooking.debts.set(id, Debt.fromDebt(debt));
     });
 
-    newBooking.treatments = new Map();
-    booking.treatments.forEach((treatment, index) => {
+    newBooking.treatments = {};
+    Object.entries(booking.treatments).forEach(([index, treatment]) => {
       const tempTreatment = Treatment.fromTreatment(treatment);
       tempTreatment.index = index;
-      newBooking.treatments.set(index, treatment);
+      newBooking.treatments[index] = treatment;
     });
 
     newBooking.invoices = new Map();
@@ -379,19 +379,19 @@ export default class Booking extends ScheduleItem {
       }
 
       if (json["treatments"] != null) {
-        newBooking.treatments = new Map();
+        newBooking.treatments = {};
         let index = 0;
         Object.entries(json["treatments"]).forEach(([_, __]) => {
           const treatmentJson = json["treatments"][index.toString()];
-          newBooking.treatments.set(
-            index.toString(),
-            Treatment.fromJson(treatmentJson, index.toString())
+          newBooking.treatments[index.toString()] = Treatment.fromJson(
+            treatmentJson,
+            index.toString()
           );
           index += 1;
         });
       } else if (json["treatment"] != null) {
         const tempTreatment = Treatment.fromJson(json["treatment"], "0");
-        newBooking.treatments.set("0", tempTreatment);
+        newBooking.treatments["0"] = tempTreatment;
       }
 
       newBooking.showAdressAlert = json["showAdressAlert"] || false;
@@ -462,7 +462,7 @@ export default class Booking extends ScheduleItem {
     }
   }
   get treatmentLength(): number {
-    return Array.from(this.treatments.values()).reduce(
+    return Object.values(this.treatments).reduce(
       (previousValue, treatment) => treatment.count + previousValue,
       0
     );
@@ -475,13 +475,13 @@ export default class Booking extends ScheduleItem {
 
   get treatmentsToStringNotDetailed(): string {
     if (this.treatmentLength === 1) {
-      return this.treatments.values().next().value.name;
-    } else if (this.treatments.size === 1) {
-      return `${this.treatments.values().next().value.name}x${
+      return Object.values(this.treatments)[0].name;
+    } else if (length(this.treatments) === 1) {
+      return `${Object.values(this.treatments)[0].name}x${
         this.treatmentLength
       }`;
     } else {
-      return `${this.treatments.values().next().value.name}+${
+      return `${Object.values(this.treatments)[0].name}+${
         this.treatmentLength - 1
       }`;
     }
@@ -529,7 +529,7 @@ export default class Booking extends ScheduleItem {
 
   get totalMinutes(): number {
     let minutes = 0;
-    this.treatments.forEach((treatment, _) => {
+    Object.entries(this.treatments).forEach(([_, treatment]) => {
       minutes += treatment.totalMinutesForBooking;
     });
 
@@ -544,7 +544,7 @@ export default class Booking extends ScheduleItem {
     const bookingWorkTimesMap: Map<string, number> = new Map();
     let lastTime = this.bookingDate;
 
-    this.treatments.forEach((treatment, _) => {
+    Object.entries(this.treatments).forEach(([_, treatment]) => {
       // Generate the treatment as time as the counter
       Array.from({ length: treatment.count }).forEach(() => {
         treatment.times.forEach((timeData, __) => {
@@ -572,17 +572,17 @@ export default class Booking extends ScheduleItem {
 
   get totalEventsCount(): number {
     let counter = 0;
-    Object.values(this.treatments).forEach((treatment) => {
-      counter += treatment.times.length * treatment.count;
+    Object.entries(this.treatments).forEach(([_, treatment]) => {
+      counter += treatment.times.size * treatment.count;
     });
     return counter;
   }
 
   get currency(): CurrencyModel {
-    if (this.treatments.size === 0) {
+    if (length(this.treatments) === 0) {
       return defaultCurrency;
     }
-    return this.treatments.values().next().value.price!.currency;
+    return Object.values(this.treatments)[0].price!.currency;
   }
 
   get invoicesCoverPrice(): boolean {
@@ -600,7 +600,7 @@ export default class Booking extends ScheduleItem {
   get totalPrice(): Price {
     let totalPrice = new Price({ amount: "0", currency: defaultCurrency });
 
-    this.treatments.forEach((treatment, _) => {
+    Object.entries(this.treatments).forEach(([_, treatment]) => {
       totalPrice.amount += treatment.totalPriceForBooking;
       totalPrice.currency = treatment.price!.currency;
     });
@@ -743,7 +743,7 @@ export default class Booking extends ScheduleItem {
     const multiBooking = new MultiBooking({});
 
     multiBooking.bookingDate = this.bookingDate;
-    multiBooking.treatment = this.treatments.values().next().value;
+    multiBooking.treatment = Object.values(this.treatments)[0];
     multiBooking.bookingId = dateToTimeStr(this.bookingDate);
     multiBooking.bookingHistory = { ...this.bookingHistory };
 
@@ -810,7 +810,7 @@ export default class Booking extends ScheduleItem {
     let eventIndex = 0;
     const hasInvoice = this.invoicesCoverPrice;
 
-    this.treatments.forEach((treatment, treatmentIndex) => {
+    Object.entries(this.treatments).forEach(([treatmentIndex, treatment]) => {
       // Generate the treatment as time as the counter
       Array.from({ length: treatment.count }).forEach(() => {
         treatment.times.forEach((timeData, timeIndex) => {
@@ -996,22 +996,25 @@ export default class Booking extends ScheduleItem {
     this.userFcms = user.fcmsTokens;
 
     if (oldBooking.treatments.size > this.treatments.size) {
-      const newBookingNewTreatments: Map<string, Treatment> = new Map();
+      const newBookingNewTreatments: Record<string, Treatment> = {};
       let index = 0;
-      for (const [_, treatment] of Object.entries(this.treatments)) {
-        newBookingNewTreatments.set(index.toString(), treatment);
+      Object.entries(this.treatments).forEach(([_, treatment]) => {
+        newBookingNewTreatments[index.toString()] = treatment;
         index += 1;
-      }
+      });
       this.treatments = newBookingNewTreatments;
     }
 
-    const oldBookingNewTreatments: Map<string, Treatment> = new Map(
-      [...oldBooking.treatments.entries()].sort((entry1, entry2) =>
-        entry1[0].localeCompare(entry2[0])
-      )
+    //fix the order of the treatments to be accoring to the index
+    const oldBookingNewTreatments: Record<string, Treatment> = {};
+    const oldBookingNewTreatmentsKeys = Object.keys(oldBooking.treatments).sort(
+      (entry1, entry2) => entry1[0].localeCompare(entry2[0])
     );
-
+    oldBookingNewTreatmentsKeys.forEach((key) => {
+      oldBookingNewTreatments[key] = oldBooking.treatments[key];
+    });
     oldBooking.treatments = oldBookingNewTreatments;
+
     if (oldBooking.customerPhone != this.customerPhone) {
       this.orderingOptions = OrderingOptions.byWorker;
     } else {
@@ -1025,7 +1028,7 @@ export default class Booking extends ScheduleItem {
 
     //add the booking history item for that update
     const oldBookingTreatmentsIds: Record<string, number> = {};
-    oldBooking.treatments.forEach((treatment, _) => {
+    Object.entries(oldBooking.treatments).forEach(([_, treatment]) => {
       oldBookingTreatmentsIds[treatment.id] = treatment.count;
     });
     this.bookingHistory = { ...oldBooking.bookingHistory };
@@ -1099,7 +1102,7 @@ export default class Booking extends ScheduleItem {
 
     this.businessName = business.shopName;
     this.bookingId =
-      oldBooking.bookingId === "" || oldBooking.recurrenceEvent != undefined
+      oldBooking.bookingId === "" || oldBooking.recurrenceEvent != null
         ? v4()
         : oldBooking.bookingId;
     this.buisnessId = oldBooking.buisnessId;
@@ -1388,7 +1391,7 @@ export default class Booking extends ScheduleItem {
     let eventIndex = 0;
     const hasInvoice = this.invoicesCoverPrice;
 
-    this.treatments.forEach((treatment, treatmentIndex) => {
+    Object.entries(this.treatments).forEach(([treatmentIndex, treatment]) => {
       // Generate the treatment as time as the counter
       Array.from({ length: treatment.count }).forEach(() => {
         treatment.times.forEach((timeData, timeIndex) => {
@@ -1456,15 +1459,14 @@ export default class Booking extends ScheduleItem {
       return false;
     }
 
-    for (const [treatmentIndex, treatment] of this.treatments) {
+    Object.entries(this.treatments).forEach(([treatmentIndex, treatment]) => {
       if (
-        booking.treatments.get(treatmentIndex)?.id != treatment.id ||
-        booking.treatments.get(treatmentIndex)?.count != treatment!.count
+        booking.treatments[treatmentIndex]?.id != treatment.id ||
+        booking.treatments[treatmentIndex]?.count != treatment!.count
       ) {
         sameTreatment = false;
-        break;
       }
-    }
+    });
 
     return (
       sameTreatment &&
@@ -1571,7 +1573,7 @@ export default class Booking extends ScheduleItem {
     if (this.recurreneFatherDate != null) {
       data["recurreneFatherDate"] = this.recurreneFatherDate;
     }
-    this.treatments.forEach((treatment, index) => {
+    Object.entries(this.treatments).forEach(([index, treatment]) => {
       data["treatments"][index.toString()] = treatment.toJson();
     });
     data["invoices"] = {};

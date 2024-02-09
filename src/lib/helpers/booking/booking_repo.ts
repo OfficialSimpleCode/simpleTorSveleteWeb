@@ -330,7 +330,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     const formatedCustomrsData: Record<string, any> =
       this.toFormatedCustomerData({
         customerData: customerData,
-        amountOfBookingsCommand: NumericCommands.decrement,
+        amountOfBookingsCommand: increment(-1),
       });
     const transacionCommands: (transaction: any) => Promise<any> = async (
       transaction
@@ -623,7 +623,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       const formatedNewCustomrsData: Record<string, any> =
         this.toFormatedCustomerData({
           customerData: newBookingCustomerData,
-          amountOfBookingsCommand: NumericCommands.increment,
+          amountOfBookingsCommand: increment(1),
           useUserFirstBookingsDate: true,
           saveExtraData: true,
         });
@@ -636,7 +636,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       const formatedOldCustomrsData: Record<string, any> =
         this.toFormatedCustomerData({
           customerData: oldBookingCustomerData,
-          amountOfBookingsCommand: NumericCommands.decrement,
+          amountOfBookingsCommand: increment(-1),
         });
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
@@ -1389,7 +1389,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     recurrenceBooking: Booking;
     exceptionDate: Date;
     workerAction: boolean;
-    customerData: CustomerData;
+    customerData: CustomerData | undefined;
     canceledBooking?: Booking;
   }): Promise<boolean> {
     const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
@@ -1420,30 +1420,19 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           data: { [canceledBooking.bookingId]: canceledBooking },
         });
       }
-
-      // Update the customerData
-      const formatedCustomrsData: Record<string, any> = {};
-      if (customerData.lastBookingsDate) {
-        formatedCustomrsData[
-          `data.${customerData.customerUuid}.lastBookingsDate`
-        ] = customerData.lastBookingsDate.toISOString();
+      if (customerData) {
+        const formatedCustomrsData = this.toFormatedCustomerData({
+          customerData,
+          amountOfBookingsCommand: increment(-1),
+        });
+        // Delete all the booking times
+        this.transactionUpdateMultipleFieldsAsMap({
+          transaction,
+          path: `${buisnessCollection}/${recurrenceBooking.buisnessId}/${workersCollection}/${recurrenceBooking.workerId}/${dataCollection}`,
+          docId: customersDataDoc,
+          data: formatedCustomrsData,
+        });
       }
-      if (customerData.firstBookingsDate) {
-        formatedCustomrsData[
-          `data.${customerData.customerUuid}.firstBookingsDate`
-        ] = customerData.firstBookingsDate.toISOString();
-      }
-      formatedCustomrsData[
-        `data.${customerData.customerUuid}.amoutOfBookings`
-      ] = increment(-1);
-
-      // Delete all the booking times
-      this.transactionUpdateMultipleFieldsAsMap({
-        transaction,
-        path: `${buisnessCollection}/${recurrenceBooking.buisnessId}/${workersCollection}/${recurrenceBooking.workerId}/${dataCollection}`,
-        docId: customersDataDoc,
-        data: formatedCustomrsData,
-      });
 
       const reccurenceEventsData: Record<string, any> = {};
       Object.entries(recurrenceBooking.bookingsEventsAsJson).forEach(

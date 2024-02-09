@@ -12,8 +12,10 @@ import type Invoice from "$lib/models/payment_hyp/invoice/invoice";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { Errors } from "$lib/services/errors/messages";
 import { needToHoldOn } from "$lib/utils/booking_utils";
+import { isEmpty } from "$lib/utils/core_utils";
 import { setToMidNight } from "$lib/utils/dates_utils";
 import { dateToDateStr } from "$lib/utils/times_utils";
+
 import AppErrorsHelper from "../app_errors";
 import DbPathesHelper from "../db_paths_helper";
 import NotificationHandler from "../notifications/notification_handler";
@@ -48,7 +50,7 @@ export default class BookingHelper {
       return undefined;
     }
 
-    if (booking.treatments.size === 0) {
+    if (isEmpty(booking.treatments)) {
       AppErrorsHelper.GI().error = Errors.noTreatment;
       return undefined;
     }
@@ -619,10 +621,12 @@ export default class BookingHelper {
     canceledBooking.cancelDate = new Date();
 
     // Simulate getting customer data
-    const customerData = UserInitializer.GI().user.customerDataFromBooking({
-      booking: recurrenceBooking,
-      needDelete: true,
-    });
+    const customerData = workerAction
+      ? undefined
+      : UserInitializer.GI().user.customerDataFromBooking({
+          booking: recurrenceBooking,
+          needDelete: true,
+        });
 
     // Simulate adding exception date to recurrence booking in repository
     const value = await this.bookingRepo.addExceptionDateToRecurrenceBooking({

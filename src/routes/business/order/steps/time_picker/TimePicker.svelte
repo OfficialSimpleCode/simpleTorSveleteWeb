@@ -62,7 +62,7 @@
           startTime: { name: "from" },
           endTime: { name: "to" },
         },
-
+        template: "#apptemplate",
         enableMaxHeight: true,
         allowEditing: false,
       },

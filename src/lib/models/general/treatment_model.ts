@@ -160,15 +160,15 @@ export default class Treatment {
     return newTreatment;
   }
 
-  static fromTreatmentsMap(treatments: Map<string, Treatment>): Treatment {
+  static fromTreatmentsMap(treatments: Record<string, Treatment>): Treatment {
     let index = 0;
     const newTreatment = new Treatment({
       price: new Price({ amount: "0", currency: defaultCurrency }),
     });
 
-    treatments.forEach((treatment, treatmentIndex) => {
+    Object.entries(treatments).forEach(([_, treatment]) => {
       for (let i = 0; i < treatment.count; i++) {
-        treatment.times.forEach((time, timeIndex) => {
+        treatment.times.forEach((time, _) => {
           newTreatment.times.set(index.toString(), time);
           index++;
         });
