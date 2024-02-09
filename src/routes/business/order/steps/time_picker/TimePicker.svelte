@@ -122,3 +122,10 @@
 {/if}
 
 <div id="schedule"></div>
+
+<!-- <div id="apptemplate" type="text/x-template">
+  <div class="template-wrap" style="background">
+    <div class="subject" style="background:">nkrnkjfek</div>
+    <div class="time" style="background"></div>
+  </div>
+</div> -->

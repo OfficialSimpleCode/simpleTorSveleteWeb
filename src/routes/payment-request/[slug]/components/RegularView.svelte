@@ -35,7 +35,7 @@
   <h3 class="text-2xl">{translate("paymentRequest")}</h3>
 
   <!-- content -->
-  <div class="flex flex-col justify-center items-center">
+  <div class="flex flex-col justify-center items-center gap-2">
     <!-- payment title -->
     <h3 class="text-md">
       {translate("paymentRequestExplain").replaceAll(

@@ -34,7 +34,7 @@
       <h3 class="text-sm text-center mx-6">
         {translate("downloadTheAppExplain")}
       </h3>
-      <LottieAnimation animationFile={sendMessageAnimation} />
+      <LottieAnimation animationFile={sendMessageAnimation} loop={true} />
       <DownloadAppButton />
     </div>
   </div>
