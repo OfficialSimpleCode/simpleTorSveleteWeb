@@ -8,5 +8,5 @@ export function imageByGender(gender: Gender): string {
 }
 
 export function logoByBackground(): string {
-  return true ? DarkLogo : LightLogo;
+  return false ? DarkLogo : LightLogo;
 }
