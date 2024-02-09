@@ -45,5 +45,5 @@
       : "mdi:checkbox-blank-circle-outline"}
     onClick={onclick}
     {bgColor}
-  ></ActionsContainer>
+  />
 {/if}

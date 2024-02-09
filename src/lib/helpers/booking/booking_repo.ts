@@ -1378,4 +1378,113 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           data: data,
         });
   }
+
+  async addExceptionDateToRecurrenceBooking({
+    recurrenceBooking,
+    exceptionDate,
+    workerAction,
+    customerData,
+    canceledBooking,
+  }: {
+    recurrenceBooking: Booking;
+    exceptionDate: Date;
+    workerAction: boolean;
+    customerData: CustomerData;
+    canceledBooking?: Booking;
+  }): Promise<boolean> {
+    const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
+    const bookingDateStr = dateToDateStr(recurrenceBooking.bookingDate);
+
+    const transacionCommands: (transaction: any) => Promise<boolean> = async (
+      transaction
+    ) => {
+      const updateResp = await this.getUpdatedBookingDate({
+        transaction,
+        bookingToUpdate: recurrenceBooking,
+        dateForRecurrenceChild: exceptionDate,
+      });
+
+      if (!updateResp) {
+        return false;
+      } else {
+        recurrenceBooking.bookingDate = updateResp.bookingDate;
+        recurrenceBooking.isUserExist = updateResp.isUserExist;
+      }
+
+      if (!workerAction && canceledBooking) {
+        // Add the new booking as a canceled booking
+        this.transactionSetAsMap({
+          transaction,
+          path: `${buisnessCollection}/${recurrenceBooking.buisnessId}/${workersCollection}/${recurrenceBooking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`,
+          docId: dateToDateStr(canceledBooking.bookingDate),
+          data: { [canceledBooking.bookingId]: canceledBooking },
+        });
+      }
+
+      // Update the customerData
+      const formatedCustomrsData: Record<string, any> = {};
+      if (customerData.lastBookingsDate) {
+        formatedCustomrsData[
+          `data.${customerData.customerUuid}.lastBookingsDate`
+        ] = customerData.lastBookingsDate.toISOString();
+      }
+      if (customerData.firstBookingsDate) {
+        formatedCustomrsData[
+          `data.${customerData.customerUuid}.firstBookingsDate`
+        ] = customerData.firstBookingsDate.toISOString();
+      }
+      formatedCustomrsData[
+        `data.${customerData.customerUuid}.amoutOfBookings`
+      ] = increment(-1);
+
+      // Delete all the booking times
+      this.transactionUpdateMultipleFieldsAsMap({
+        transaction,
+        path: `${buisnessCollection}/${recurrenceBooking.buisnessId}/${workersCollection}/${recurrenceBooking.workerId}/${dataCollection}`,
+        docId: customersDataDoc,
+        data: formatedCustomrsData,
+      });
+
+      const reccurenceEventsData: Record<string, any> = {};
+      Object.entries(recurrenceBooking.bookingsEventsAsJson).forEach(
+        ([time, event]) => {
+          reccurenceEventsData[
+            `${bookingDateStr}.${time}.RE.EDA.${dateToDateStr(exceptionDate)}`
+          ] = "";
+        }
+      );
+      // Put the booking event in the doc and create one if doesn't exist
+      this.transactionUpdateMultipleFieldsAsMap({
+        transaction,
+        path: `${path}/${recurrenceBooking.workerId}/${dataCollection}`,
+        docId: recurrenceEventsDoc,
+        data: reccurenceEventsData,
+      });
+
+      // Update the worker booking
+      this.transactionUpdateAsMap({
+        transaction,
+        path: `${path}/${recurrenceBooking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`,
+        docId: dateToDateStr(recurrenceBooking.bookingDate),
+        fieldName: `${recurrenceBooking.bookingId}.RE.EDA.${dateToDateStr(
+          exceptionDate
+        )}`,
+        value: "",
+      });
+
+      this.updateUserBooking({
+        transaction,
+        booking: recurrenceBooking,
+        data: {
+          [`${recurrenceBooking.bookingId}.RE.EDA.${dateToDateStr(
+            exceptionDate
+          )}`]: "",
+        },
+      });
+
+      return true;
+    };
+
+    return await this.runTransaction(transacionCommands);
+  }
 }

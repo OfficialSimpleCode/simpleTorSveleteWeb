@@ -311,16 +311,16 @@ export default class BookingHelper {
           //     needPayInAdvance: false,
           //     fromUpdate: true,
           //   });
-          // NotificationHandler.GI().afterUpdateBooking({
-          //   newBooking,
-          //   oldBooking,
-          //   newWorker,
-          //   keepRecurrence,
-          //   oldWorker,
-          //   workerAction,
-          //   isOldBoookingPassed,
-          //   oldBookingDateForReccurence,
-          // });
+          NotificationHandler.GI().afterUpdateBooking({
+            newBooking,
+            oldBooking,
+            newWorker,
+            keepRecurrence,
+            oldWorker,
+            workerAction,
+            isOldBoookingPassed,
+            oldBookingDateForReccurence,
+          });
         }
 
         return value;
@@ -593,5 +593,69 @@ export default class BookingHelper {
         docId: dateToDateStr(recurrenceBooking.bookingDate),
       });
     }
+  }
+
+  async addExceptionDateToRecurreceBooking({
+    recurrenceBooking,
+    date,
+    worker,
+    workerAction,
+  }: {
+    recurrenceBooking: Booking;
+    date: Date;
+    worker: WorkerModel | undefined;
+    workerAction: boolean;
+  }): Promise<boolean> {
+    if (!recurrenceBooking.recurrenceEvent) {
+      return false;
+    }
+    recurrenceBooking.recurrenceEvent.exceptionDates.add(dateToDateStr(date));
+
+    //create newbooking that will be saved in the worker
+    //collection as canceled booking
+    const canceledBooking =
+      recurrenceBooking.createRegularBookingFromRecurrence(date);
+
+    canceledBooking.cancelDate = new Date();
+
+    // Simulate getting customer data
+    const customerData = UserInitializer.GI().user.customerDataFromBooking({
+      booking: recurrenceBooking,
+      needDelete: true,
+    });
+
+    // Simulate adding exception date to recurrence booking in repository
+    const value = await this.bookingRepo.addExceptionDateToRecurrenceBooking({
+      recurrenceBooking,
+      canceledBooking,
+      exceptionDate: date,
+      customerData,
+      workerAction,
+    });
+
+    if (
+      worker &&
+      recurrenceBooking.recurrenceNotificationsLastDate &&
+      date <= recurrenceBooking.recurrenceNotificationsLastDate
+    ) {
+      // Make a booking for the notification deletion
+      const bookingTemp = Booking.fromBooking(recurrenceBooking);
+      bookingTemp.recurrenceEvent = undefined;
+      bookingTemp.recurrenceRef = recurrenceBooking.bookingId;
+      bookingTemp.bookingDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        recurrenceBooking.bookingDate.getHours(),
+        recurrenceBooking.bookingDate.getMinutes()
+      );
+
+      NotificationHandler.GI().afterDeleteBooking({
+        booking: bookingTemp,
+        worker,
+      });
+    }
+
+    return value === true;
   }
 }

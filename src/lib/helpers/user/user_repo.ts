@@ -154,7 +154,7 @@ export default class UserRepo extends GeneralRepo implements UserApi {
     userId: string;
     name: string;
   }): Promise<PhoneDataResult | undefined> {
-    const phoneDataResult = new PhoneDataResult();
+    const phoneDataResult = new PhoneDataResult({ phone: phone });
     const encryptedPhone = phoneToDocId(phone);
     const phoneAsCollection = phone.replaceAll("-", "");
 

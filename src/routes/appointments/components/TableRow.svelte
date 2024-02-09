@@ -12,6 +12,7 @@
   import BookingSheet from "./booking-sheet/BookingSheet.svelte";
 
   export let booking: Booking;
+  export let forceOpenBookingSheet: boolean;
 
   let bookingDialog: HTMLDialogElement;
 
@@ -61,7 +62,7 @@
   </td>
 
   <td class="text-nowrap">
-    <BookingActions {booking} {currentWorker} />
+    <BookingActions {booking} {currentWorker} {forceOpenBookingSheet} />
   </td>
 
   <!-- <th class="sm:opacity-0 sm:group-hover:opacity-100">

@@ -5,6 +5,7 @@
   import TableRow from "../components/TableRow.svelte";
 
   export let bookings: Booking[];
+  export let forceOpenBookingSheet: boolean;
 </script>
 
 <table class="table">
@@ -20,7 +21,7 @@
   </thead>
   <tbody>
     {#each bookings as booking}
-      <TableRow {booking} />
+      <TableRow {booking} {forceOpenBookingSheet} />
     {/each}
   </tbody>
 </table>

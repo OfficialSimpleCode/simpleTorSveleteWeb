@@ -62,11 +62,14 @@ export default class NotificationHandler {
     booking,
     worker,
     isChildOfReccurence = false,
+
+    fromDeleteWorker = false,
   }: {
     booking: Booking;
     worker?: WorkerModel;
     isChildOfReccurence?: boolean;
     notifyWorker?: boolean;
+    fromDeleteWorker?: boolean;
   }): Promise<void> {
     console.log("ddddddddddddddddd");
     if (booking.recurrenceEvent === undefined) {
@@ -80,9 +83,14 @@ export default class NotificationHandler {
           // is not scheduled for this date
           if (
             !isChildOfReccurence ||
-            booking.recurrenceNotificationsLastDate === undefined ||
+            booking.recurrenceNotificationsLastDate == null ||
             booking.bookingDate <= booking.recurrenceNotificationsLastDate
           ) {
+            if (booking.recurrenceRef != null) {
+              booking.bookingId = `${booking.recurrenceRef}--${dateToDateStr(
+                booking.bookingDate
+              )}`;
+            }
             // Delete the schedule message if it exists
             MessagesHelper.GI().cancelScheduleMessageToMultipleBookings({
               [booking.bookingId]: booking,

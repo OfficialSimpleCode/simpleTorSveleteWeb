@@ -13,7 +13,7 @@ export async function handlePhoneVerification(
 ): Promise<PhoneDataResult | undefined> {
   if (!get(bookingMakerStore).showVerificationAlert) {
     // Send empty phone result to avoid exiting from the booking flow
-    const newPhoneResult = new PhoneDataResult();
+    const newPhoneResult = new PhoneDataResult({ phone: "" });
     newPhoneResult.needToPopSheet = false;
     return newPhoneResult;
   }

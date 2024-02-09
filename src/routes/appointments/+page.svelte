@@ -18,14 +18,20 @@
     {#if Object.values($userStore.bookingsToShow).length !== 0}
       <!-- table object in widge screens -->
       <div class="overflow-x-auto w-full hidden md:block min-h-[400px] mx-10">
-        <BookingsTable bookings={$userStore.bookingsToShow}></BookingsTable>
+        <BookingsTable
+          bookings={$userStore.bookingsToShow}
+          forceOpenBookingSheet={true}
+        ></BookingsTable>
       </div>
 
       <!-- list of booking in small screens -->
       <div
         class="flex flex-col md:hidden max-w-[95%] sm:max-w-[80%] w-full gap-3"
       >
-        <BookingList bookings={$userStore.bookingsToShow}></BookingList>
+        <BookingList
+          bookings={$userStore.bookingsToShow}
+          forceOpenBookingSheet={true}
+        ></BookingList>
       </div>
     {:else}
       <EmptyBookingPage></EmptyBookingPage>

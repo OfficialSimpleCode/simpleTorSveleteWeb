@@ -14,6 +14,7 @@
   import TopIndicators from "./TopIndicators.svelte";
 
   export let booking: Booking;
+  export let forceOpenBookingSheet: boolean;
 
   let bookingDialog: HTMLDialogElement;
 
@@ -73,6 +74,6 @@
   <div class="flex flex-row justify-between w-full items-center">
     <BookingDetails {booking}></BookingDetails>
     <div class="w-2"></div>
-    <BookingActions {booking} {currentWorker} />
+    <BookingActions {booking} {currentWorker} {forceOpenBookingSheet} />
   </div>
 </button>

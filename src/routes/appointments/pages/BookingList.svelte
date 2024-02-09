@@ -3,8 +3,9 @@
   import OrderCard from "../components/OrderCard.svelte";
 
   export let bookings: Booking[];
+  export let forceOpenBookingSheet: boolean;
 </script>
 
 {#each bookings as booking}
-  <OrderCard {booking} />
+  <OrderCard {booking} {forceOpenBookingSheet} />
 {/each}

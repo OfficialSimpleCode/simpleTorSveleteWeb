@@ -126,7 +126,7 @@ export default class UserHelper {
       return undefined;
     }
 
-    return phoneVerifiedResp || new PhoneDataResult();
+    return phoneVerifiedResp || new PhoneDataResult({ phone: phone });
   }
 
   async deleteUser(user: UserModel): Promise<boolean> {
@@ -553,7 +553,7 @@ export default class UserHelper {
     email?: string;
   }): Promise<PhoneDataResult | undefined> {
     if (UserInitializer.GI().user.authProviders.has(provider)) {
-      return new PhoneDataResult();
+      return new PhoneDataResult({ phone: phone ?? "" });
     }
 
     const addedTime = new Date();
@@ -577,7 +577,9 @@ export default class UserHelper {
       // not successful, delete the added provider
       UserInitializer.GI().user.authProviders.delete(provider);
     } else {
-      let dataResult: PhoneDataResult | undefined = new PhoneDataResult();
+      let dataResult: PhoneDataResult | undefined = new PhoneDataResult({
+        phone: phone ?? "",
+      });
       if (phone != null && isVerifiedPhone === true) {
         dataResult = await this.updatePhone(phone, isVerifiedPhone === true);
       }
@@ -588,7 +590,7 @@ export default class UserHelper {
       return dataResult;
     }
 
-    return new PhoneDataResult();
+    return new PhoneDataResult({ phone: phone ?? "" });
   }
 
   async updatePhone(
@@ -600,7 +602,7 @@ export default class UserHelper {
       UserInitializer.GI().user.phoneNumber === phone &&
       isVerified === UserInitializer.GI().user.isVerifiedPhone
     ) {
-      return new PhoneDataResult();
+      return new PhoneDataResult({ phone: phone });
     }
 
     if (
@@ -628,7 +630,7 @@ export default class UserHelper {
           UserInitializer.GI().user.phoneNumber === phone &&
           isVerified === UserInitializer.GI().user.isVerifiedPhone
         ) {
-          return new PhoneDataResult();
+          return new PhoneDataResult({ phone: phone });
         }
       }
     }
@@ -694,7 +696,7 @@ export default class UserHelper {
       UserInitializer.GI().user.userPublicData.isVerifiedPhone = isVerified;
       userStore.set(UserInitializer.GI().user);
 
-      return phoneVerifiedResp ?? new PhoneDataResult();
+      return phoneVerifiedResp ?? new PhoneDataResult({ phone: phone });
     }
 
     return undefined;

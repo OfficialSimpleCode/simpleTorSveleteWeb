@@ -10,11 +10,12 @@
   export let booking: Booking;
   export let bgColor: string = "bg-base-300";
   export let currentWorker: WorkerModel | undefined;
+  export let forceOpenBookingSheet: boolean;
 
   const showAttention =
     !booking.isPassed &&
     (booking.status !== BookingStatuses.approved || booking.needCancel);
-  const forceOpenBookingSheet: boolean = false;
+
   const a: boolean = booking.buisnessId != $businessStore.businessId;
 </script>
 

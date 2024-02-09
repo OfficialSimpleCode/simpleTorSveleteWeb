@@ -125,7 +125,7 @@ export default class MessagesHelper {
     }
     const messages: Record<string, string> = {};
     const businessToDecrease: Map<string, number> = new Map();
-    Object.entries(bookings).forEach(([bookingId, booking]) => {
+    Object.entries(bookings).forEach(([_, booking]) => {
       const reminders = booking.messageRemindersOnBooking;
       reminders.forEach((reminderId) => {
         messages[reminderId] = removePhoneNumberPrefix(booking.customerPhone);
@@ -138,7 +138,7 @@ export default class MessagesHelper {
         businessToDecrease.get(booking.buisnessId)! + reminders.length
       );
     });
-    if (Object.keys(messages).length === 0) {
+    if (isEmpty(messages)) {
       return true;
     }
     return await this._cancelMultipleScheduleAccordingToPlatfrom({

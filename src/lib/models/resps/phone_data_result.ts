@@ -4,6 +4,7 @@ import type Invoice from "../payment_hyp/invoice/invoice";
 import type PaymentRequest from "../payment_hyp/payment_request/payment_request";
 import BookingsPreview from "../user/booking_month_preview";
 export default class PhoneDataResult {
+  phone: string = "";
   bookings: Record<string, Record<string, Booking>> = {};
   invoices: Record<string, Record<string, Invoice>> = {};
   paymentsRequests: Record<string, Record<string, PaymentRequest>> = {};
@@ -13,7 +14,9 @@ export default class PhoneDataResult {
 
   clientAt: Record<string, Set<string>> = {};
 
-  constructor() {}
+  constructor({ phone }: { phone: string }) {
+    this.phone = phone;
+  }
 
   get isEmpty(): boolean {
     return (

@@ -661,9 +661,11 @@ export default class NotificationsHelper {
     });
 
     const futures: Promise<boolean>[] = [];
-    for (const [dateStr, data] of Object.entries(datesToDelete)) {
+    Object.entries(datesToDelete).forEach(([dateStr, data]) => {
       const dateToNotify = isoToDate(dateStr);
-      const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${dateToNotify.getMonth()}/${dateToNotify.getDay()}/${dateToNotify.getHours()}`;
+      const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${
+        dateToNotify.getMonth() + 1
+      }/${dateToNotify.getDay()}/${dateToNotify.getHours()}`;
 
       futures.push(
         this.generalRepo.updateMultipleFieldsInsideDocAsMapRepo({
@@ -673,7 +675,7 @@ export default class NotificationsHelper {
           data: data,
         })
       );
-    }
+    });
 
     const results = await Promise.all(futures);
     return !results.includes(false);
@@ -699,7 +701,9 @@ export default class NotificationsHelper {
     }
 
     // No possibility for non-valid data
-    const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${dateToNotify.getMonth()}/${dateToNotify.getDate()}/${dateToNotify.getHours()}`;
+    const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${
+      dateToNotify.getMonth() + 1
+    }/${dateToNotify.getDate()}/${dateToNotify.getHours()}`;
     const docId = dateToNotify.getMinutes().toString();
     const fieldName = booking.reminderId(reminderType);
 
