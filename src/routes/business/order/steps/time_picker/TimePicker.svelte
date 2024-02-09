@@ -19,16 +19,19 @@
   import { onMount } from "svelte";
   import { applyCategoryColor } from "./helpers/event_renderer";
 
+  import { page } from "$app/stores";
+  import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
   import { loadBookingMakerTimeData } from "$lib/utils/booking_maker";
   import { onEventClick } from "./helpers/on_tap_time_obj";
   const { Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop } = schedule;
-
+  let downloadAppDialog: HTMLDialogElement;
   sync.registerLicense(
     "Ngo9BigBOggjHTQxAR8/V1NAaF5cWWRCfEx0Q3xbf1x0ZFRHallSTnZYUiweQnxTdEFjWHxecHZQQWRbWEB+Wg=="
   );
 
   onMount(() => {
     Schedule.Inject(Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop);
+
     BookingController.scheduleObj = new schedule.Schedule({
       currentView: "Week",
       dateFormat: "dd-MMM-yyyy",
@@ -40,9 +43,7 @@
       showTimeIndicator: true,
       workHours: { highlight: false },
       showQuickInfo: false,
-      cellHeaderTemplate:
-        '<div class="templatewrap">${getDate(data.date)}</div>',
-      eventClick: onEventClick,
+      eventClick: (args) => onEventClick(args, downloadAppDialog),
       minDate: setToMidNight(new Date()),
       // timeScale: {},
       maxDate: addDuration(
@@ -58,12 +59,11 @@
       eventSettings: {
         fields: {
           id: "id",
-          subject: { name: "displayDate" },
           startTime: { name: "from" },
           endTime: { name: "to" },
         },
-        enableMaxHeight: true,
 
+        enableMaxHeight: true,
         allowEditing: false,
       },
       eventRendered: (args: schedule.EventRenderedArgs) =>
@@ -115,5 +115,10 @@
     console.log(BookingController.timePickerObjects);
   });
 </script>
+
+<!-- Dialog -->
+{#if $page.state.showModal}
+  <DownloadAppDialog bind:dialog={downloadAppDialog} />
+{/if}
 
 <div id="schedule"></div>

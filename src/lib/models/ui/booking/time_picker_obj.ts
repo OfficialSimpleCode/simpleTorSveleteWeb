@@ -117,6 +117,8 @@ export default class TimePickerObj {
     clonedTimePickerObj.isMulti = event.isMulti ?? false;
     clonedTimePickerObj.signedPaymentRequestId = event.signedPaymentRequestId;
     clonedTimePickerObj.maxParticipants = event.maxParticipants ?? 0;
+
+    clonedTimePickerObj.isWaitingList = event.isWaitingList;
     clonedTimePickerObj.currentParticipants = event.currentParticipants ?? 0;
     clonedTimePickerObj.showParticipants = event.showParticipants ?? true;
     clonedTimePickerObj.recurrenceFatherBookingId =
@@ -141,8 +143,12 @@ export default class TimePickerObj {
     data["duration"] = this.duration.inMinutes;
 
     data["to"] = addDuration(this.from, this.duration);
+    if (this.displayDate != null) {
+      data["displayDate"] = this.displayDate;
+    }
 
-    data["displayDate"] = this.displayDate ?? "";
+    data["isWaitingList"] = this.isWaitingList;
+
     if (this.recurrenceTimeId != undefined) {
       data["recurrenceTimeId"] = this.recurrenceTimeId;
     }

@@ -230,27 +230,31 @@
           class="btn btn-ghost join-item flex justify-between items-center"
           on:click={copyToUserIdClipboard}
         >
-          <div class="flex items-center gap-2">
+          <div class="flex flex-row gap-2">
             <Icon src={User} size="26px" />
             {$_("userId")}
-          </div>
-          <div
-            class={copiedUserId
-              ? "flex items-center text-gray-500 gap-2"
-              : "flex items-center text-gray-500"}
-          >
-            {#if copiedUserId}
-              {translate("Copied", $_)}
-            {:else}
-              {$userStore.id}
-            {/if}
-            {#if copiedUserId}
-              <Icon src={CheckCircle} size="22px" />
-            {:else}
-              <CustomArrow />
-            {/if}
-          </div>
-        </button>
+
+            <div
+              class="flex flex-row{copiedUserId
+                ? 'flex items-center text-gray-500 gap-2'
+                : 'flex items-center text-gray-500'}"
+            >
+              <div class="w-[200px] truncate overflow-hidden">
+                {#if copiedUserId}
+                  {translate("Copied", $_)}
+                {:else}
+                  {$userStore.id}
+                {/if}
+              </div>
+
+              {#if copiedUserId}
+                <Icon src={CheckCircle} size="22px" />
+              {:else}
+                <CustomArrow />
+              {/if}
+            </div>
+          </div></button
+        >
       </section>
 
       <!-- Profile Information -->

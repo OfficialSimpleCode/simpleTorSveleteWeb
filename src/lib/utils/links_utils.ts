@@ -2,7 +2,7 @@ import { isAppleUser } from "$lib/consts/platform";
 
 export function downloadSimpleTor(dynamicLink: string = "") {
   // Check if dynamicLink is empty
-  if (dynamicLink) {
+  if (dynamicLink !== "") {
     window.open(dynamicLink, "_blank");
   } else {
     // Define the links

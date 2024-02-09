@@ -40,7 +40,7 @@ export default class MultiEventsTimes {
       });
     }
 
-    if (json["eventsTimeDuringPayment"] !== null && includeDuringPayment) {
+    if (json["eventsTimeDuringPayment"] != null && includeDuringPayment) {
       Object.entries<Record<string, any>>(
         json["eventsTimeDuringPayment"]
       ).forEach(([dateString, dayTimes]) => {
