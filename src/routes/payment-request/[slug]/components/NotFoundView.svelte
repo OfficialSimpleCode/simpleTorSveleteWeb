@@ -4,11 +4,20 @@
   import { translate } from "$lib/utils/translate";
 </script>
 
-<main class="flex flex-col items-center mx-4 mt-0 gap-10">
-  <h3 class="text-xl">{translate("requestNotFound")}</h3>
-  <h3 class="text-md">
-    {translate("requestNotFoundExplain")}
-  </h3>
-  <GeneralIcon icon="material-symbols:error-outline" size={70} />
+<div
+  class="flex flex-col items-center sm:h-[90%] h-[85%] pt-10 justify-between"
+>
+  <!-- page title -->
+  <h3 class="text-2xl">{translate("requestNotFound")}</h3>
+
+  <!-- content -->
+  <div class="flex flex-col justify-center items-center">
+    <h3 class="text-md">
+      {translate("requestNotFoundExplain")}
+    </h3>
+    <GeneralIcon icon="material-symbols:error-outline-rounded" size={70} />
+  </div>
+
+  <!-- botton logo and name -->
   <LogoAndName />
-</main>
+</div>

@@ -10,13 +10,11 @@ const config = {
   preprocess: vitePreprocess(),
 
   kit: {
-    adapter: adapter({}
-      // {
-      //   strict: false,
-      //   pages: "docs",
-      //   assets: "docs",
-      // }
-    ),
+    adapter: adapter({
+      strict: false,
+      pages: "docs",
+      assets: "docs",
+    }),
     paths: {
       // change below to your repo name
       base: dev ? "" : "/your-repo-name",
