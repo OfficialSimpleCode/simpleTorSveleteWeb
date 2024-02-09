@@ -17,7 +17,7 @@
   initialPaymentRequestStore(paymentRequestId);
 </script>
 
-<main class="flex flex-col items-center mx-4 mt-0 gap-10">
+<main class="w-full h-full text-center">
   <Navbar />
   {#if $paymentRequestStore.preview}
     <ViewsNavigator />
