@@ -7,7 +7,12 @@ import {
   businessTypeFromStr,
 } from "$lib/consts/business_types";
 import { hypPathFromStr, type HypPaths } from "$lib/consts/hyp_pathes";
-import { dateStrToDate, isoToDate } from "$lib/utils/times_utils";
+import {
+  dateIsoStr,
+  dateStrToDate,
+  dateToDateStr,
+  isoToDate,
+} from "$lib/utils/times_utils";
 import InvoiceBusinessInfo from "../payment_hyp/invoice/invoice_business_info";
 import { BusinessData } from "./business_data";
 import { BusinessDesign } from "./business_design";
@@ -172,9 +177,6 @@ export default class BusinessModel {
 
     this.notifyOnNewCustomer = json["notifyOnNewCustomer"] ?? true;
 
-    // json["workersPermissions"] ??= {};
-    // this.workersPermissions = WorkersPermissions.fromJson(json["workersPermissions"]);
-
     this.companyNumber = json["companyNumber"] ?? "";
 
     if (json["hypPath"] != null) {
@@ -285,7 +287,7 @@ export default class BusinessModel {
     }
 
     data.companyNumber = this.companyNumber;
-    data.expiredDate = this.expiredDate;
+    data.expiredDate = dateToDateStr(this.expiredDate);
 
     data.businesseType = this.businesseType;
     data.ownersName = this.ownersName;
@@ -295,12 +297,8 @@ export default class BusinessModel {
     data.workersPermissions = this.workersPermissions.toJson();
 
     data.workersIds = this.workersIds;
-    data.createdAt = this.createdAt;
-    data.lastTimeConnected = this.lastTimeConnected;
-
-    // if (Object.keys(data.workersPermissions).length === 0) {
-    //   delete data.workersPermissions;
-    // }
+    data.createdAt = dateIsoStr(this.createdAt);
+    data.lastTimeConnected = dateIsoStr(this.lastTimeConnected);
 
     if (this.isLandingPageMode) {
       data.isLandingPageMode = this.isLandingPageMode;

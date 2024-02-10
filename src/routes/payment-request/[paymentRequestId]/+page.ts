@@ -1,33 +1,30 @@
 import PaymentRequestHelper from "$lib/helpers/payment_request/payment_request_helper";
 import UserInitializer from "$lib/initializers/user_initializer";
-import type PaymentRequest from "$lib/models/payment_hyp/payment_request/payment_request";
 import PaymentRequestPreview from "$lib/models/payment_hyp/payment_request/payment_request_preview";
+import { get } from "svelte/store";
+
 import PaymentRequestUser from "$lib/models/payment_hyp/payment_request/payment_request_user";
-import { get, writable } from "svelte/store";
+import { paymentRequestStore } from "./payment_request_controller";
 
-interface PaymentRequestStore {
-  bookingId?: string | undefined;
-  paymentRequest?: PaymentRequest | undefined;
-  preview?: PaymentRequestPreview | undefined;
-  user?: PaymentRequestUser | undefined;
-}
-export let paymentRequestStore = writable<PaymentRequestStore>({});
+export const load = async ({ params }) => {
+  const id = params.paymentRequestId;
 
-export async function initialPaymentRequestStore(id: string): Promise<void> {
   const data = get(paymentRequestStore);
-  console.log(id === "");
+
   if (id === "") {
     data.preview = new PaymentRequestPreview({});
     paymentRequestStore.set(data);
-    return;
+    return {};
   }
   const resp = await PaymentRequestHelper.GI().getPaymentRequestPreviewById(id);
+
   if (resp == null) {
     data.preview = new PaymentRequestPreview({});
     paymentRequestStore.set(data);
-    return;
+    return {};
   }
   data.preview = resp;
+
   if (resp.bookingReference?.isMultiBooking == true) {
     if (data.paymentRequest == null) {
       data.paymentRequest =
@@ -76,4 +73,5 @@ export async function initialPaymentRequestStore(id: string): Promise<void> {
   }
 
   paymentRequestStore.set(data);
-}
+  return {};
+};

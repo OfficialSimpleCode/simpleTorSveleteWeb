@@ -1,7 +1,6 @@
 <!-- CustomEventTemplate.svelte -->
 <script lang="ts">
   export let event: Record<string, any>;
-  console.log("333333333333333333333333");
 </script>
 
 <div class="custom-event">

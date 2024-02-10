@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import { Price } from "../general/price";
 
 export class ProductModel {
@@ -48,8 +49,10 @@ export class ProductModel {
       imageUrl: json["imageUrl"],
       name: json["name"],
     });
+    if (json["createdAt"] != null) {
+      newProduct.createdAt = (json["createdAt"] as Timestamp).toDate();
+    }
 
-    newProduct.createdAt = json["createdAt"];
     return newProduct;
   }
 
@@ -59,7 +62,7 @@ export class ProductModel {
       price: this.price ? this.price.toJson() : null,
       imageUrl: this.imageUrl,
       name: this.name,
-      createdAt: this.createdAt,
+      createdAt: Timestamp.fromDate(this.createdAt),
     };
   }
 

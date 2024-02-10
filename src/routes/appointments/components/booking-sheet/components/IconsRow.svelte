@@ -61,17 +61,17 @@
     icon="mdi:trash-can-outline"
     translateKey="delete"
     loading={loadingDelete}
-    hadleClick={onDelete}
+    handleClick={onDelete}
   />
   <CustomCircleIcon
     active={!booking.isMultiRef}
     icon="mdi:edit-outline"
     translateKey="edit"
-    hadleClick={onUpdate}
+    handleClick={onUpdate}
   />
   <CustomCircleIcon
     icon="mdi:map-marker-outline"
     translateKey="navigate"
-    hadleClick={openNavigationDialog}
+    handleClick={openNavigationDialog}
   />
 </div>

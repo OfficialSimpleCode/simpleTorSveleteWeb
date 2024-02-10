@@ -14,15 +14,17 @@
   const recurrenceEvent: RecurrenceEvent | undefined =
     booking.recurrenceEvent ?? booking.recurrenceEventRefInfo;
 
-  const recurrenceInfo: RecurrenceEvent =
+  const recurrenceInfo: RecurrenceEvent | undefined =
     recurrenceEvent != null
       ? RecurrenceEvent.fromRecurrenceEvent(recurrenceEvent!)
-      : new RecurrenceEvent({});
-  recurrenceInfo.exceptionDates = new Set();
-  recurrenceInfo.endOption = RecurrenceEventEnd.endless;
+      : undefined;
+  if (recurrenceInfo) {
+    recurrenceInfo!.exceptionDates = new Set();
+    recurrenceInfo!.endOption = RecurrenceEventEnd.endless;
+  }
 </script>
 
-{#if recurrenceEvent != null}
+{#if recurrenceInfo != null}
   <!-- recurrance indicator -->
   <div
     class="{absolute

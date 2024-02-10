@@ -6,7 +6,6 @@ export async function deleteTreatment(
   booking: Booking,
   treatmentIndex: string
 ) {
-  console.log("33333333");
   if (booking.treatments[treatmentIndex] == null) {
     return false;
   }
@@ -26,12 +25,11 @@ export async function deleteTreatment(
   //     return false;
   //   }
   // }
-  console.log("eeeeeeeee");
+
   const worker = BusinessInitializer.GI().workers[booking.workerId];
   if (worker == null) {
     return false;
   }
-  console.log("1111111111");
 
   //prepare the new booking - delete the treatment
   const newBooking = Booking.fromBooking(booking);
@@ -40,7 +38,7 @@ export async function deleteTreatment(
   } else {
     delete newBooking.treatments[treatmentIndex];
   }
-  console.log("1111111122222222");
+
   BusinessInitializer.GI().cancelAllWorkersRegularListenings();
   const resp = await BookingHelper.GI().updateBooking({
     newBooking: newBooking,

@@ -79,7 +79,7 @@ export function relevantHoures({
   work.sort();
 
   const treatment = Treatment.fromTreatmentsMap(booking.treatments);
-
+  console.log(booking.treatments);
   console.log("work", work);
   console.log("forbbidenTimes", forbbidenTimes);
   console.log("treatment", treatment);

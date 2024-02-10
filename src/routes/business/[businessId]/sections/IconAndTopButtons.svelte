@@ -15,6 +15,7 @@
   import BookingController from "$lib/controllers/booking_controller";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import "iconify-icon";
+  import { get } from "svelte/store";
   import ShareDialog from "../components/ShareDialog.svelte";
 
   let shareDialog: HTMLDialogElement;
@@ -36,7 +37,7 @@
     }
     BookingController.initializeBookingMaker({});
 
-    goto(`${base}/business/order`);
+    goto(`${base}/business/${get(businessStore).businessId}/order`);
   }
 
   // open the bsuiness share screen

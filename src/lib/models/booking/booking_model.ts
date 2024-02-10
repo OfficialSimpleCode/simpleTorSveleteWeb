@@ -213,7 +213,7 @@ export default class Booking extends ScheduleItem {
     Object.entries(booking.treatments).forEach(([index, treatment]) => {
       const tempTreatment = Treatment.fromTreatment(treatment);
       tempTreatment.index = index;
-      newBooking.treatments[index] = treatment;
+      newBooking.treatments[index] = tempTreatment;
     });
 
     newBooking.invoices = new Map();
@@ -995,7 +995,7 @@ export default class Booking extends ScheduleItem {
     this.note = oldBooking.note;
     this.userFcms = user.fcmsTokens;
 
-    if (oldBooking.treatments.size > this.treatments.size) {
+    if (length(oldBooking.treatments) > length(this.treatments)) {
       const newBookingNewTreatments: Record<string, Treatment> = {};
       let index = 0;
       Object.entries(this.treatments).forEach(([_, treatment]) => {
@@ -1455,7 +1455,7 @@ export default class Booking extends ScheduleItem {
   }): boolean {
     let sameTreatment = true;
 
-    if (this.treatments.size !== booking.treatments.size) {
+    if (length(this.treatments) !== length(booking.treatments)) {
       return false;
     }
 

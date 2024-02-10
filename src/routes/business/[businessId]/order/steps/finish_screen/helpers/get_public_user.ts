@@ -10,8 +10,6 @@ export function getPublicCustomer(): PublicCustomer {
   publicCustomer = (BookingController.worker?.publicCustomers
     .publicCustomersData ?? {})[hashId({ id: UserInitializer.GI().user.id })];
 
-  console.log(hashId({ id: UserInitializer.GI().user.id }));
-
   // check if its phone in the public customers
   if (publicCustomer == null) {
     publicCustomer = (BookingController.worker?.publicCustomers

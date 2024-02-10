@@ -6,28 +6,28 @@
 
   // other (utils / stores)
   import Navbar from "$lib/components/navbar/Navbar.svelte";
-  import { businessTypeToStr } from "$lib/consts/business_types";
   import { businessStore } from "$lib/stores/Business.js";
   import {
     getOklachValues,
     getTheme,
     loadColorFromTheme,
   } from "$lib/utils/colors";
-  import { _, translate } from "$lib/utils/translate";
 
+  import { businessTypeToStr } from "$lib/consts/business_types";
   import { computeLuminance } from "$lib/utils/general_utils";
+  import { _, translate } from "$lib/utils/translate";
   import ChangingImages from "./sections/ChangingImages.svelte";
   import Footer from "./sections/Footer.svelte";
   import IconAndTopButtons from "./sections/IconAndTopButtons.svelte";
   import ProductsSection from "./sections/ProductsSection.svelte";
   import StoryImages from "./sections/StoryImages.svelte";
   import Updates from "./sections/Updates.svelte";
-
-  let themeKey: string = $businessStore.design.pickedThemeKey;
-  let themes = $businessStore.design.businessThemes;
-  let theme = getTheme(themeKey, themes);
+  export let data;
 
   onMount(() => {
+    let themeKey: string = $businessStore.design.pickedThemeKey;
+    let themes = $businessStore.design.businessThemes;
+    let theme = getTheme(themeKey, themes);
     document.documentElement.style.setProperty(
       "--p",
       getOklachValues(loadColorFromTheme("primary", themeKey, themes))
@@ -67,40 +67,6 @@
     );
     head.appendChild(fontLinkElement);
   });
-
-  // Dialogs
-  let screenHeight = window.innerHeight;
-  const storyImagesRatioX = 9;
-  const storyImagesRatioY = 16;
-
-  $: storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
-  $: storyImagesWidth = Math.floor(
-    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
-  );
-
-  // Update screenWidth on window resize
-  window.addEventListener("resize", () => {
-    screenHeight = window.innerHeight;
-
-    storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
-    storyImagesWidth = Math.floor(
-      storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
-    );
-
-    console.log("screenHeight", screenHeight);
-    console.log("storyImagesHeigth", storyImagesHeigth);
-    console.log(`h-[${storyImagesHeigth}px]`, `w-[${storyImagesWidth}px]`);
-  });
-
-  function validation(val: string) {
-    if (val.length < 5) return "TO_SHORT";
-    else if (val.length > 10) return "TO_LONG";
-    return "";
-  }
-
-  function fun(event: CustomEvent<any>): void {
-    console.log("val1", event.detail.value);
-  }
 </script>
 
 <svelte:head>

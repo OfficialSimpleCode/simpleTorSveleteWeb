@@ -166,7 +166,7 @@ export default class Treatment {
       price: new Price({ amount: "0", currency: defaultCurrency }),
     });
 
-    Object.entries(treatments).forEach(([_, treatment]) => {
+    Object.entries(treatments).forEach(([__, treatment]) => {
       for (let i = 0; i < treatment.count; i++) {
         treatment.times.forEach((time, _) => {
           newTreatment.times.set(index.toString(), time);

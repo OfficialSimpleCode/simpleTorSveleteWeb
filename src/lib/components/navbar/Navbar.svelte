@@ -17,7 +17,7 @@
 >
   <div>
     <a
-      href="{base}/business?BusinessId={$businessStore.businessId}"
+      href="{base}/business/{$businessStore ? $businessStore.businessId : ''}"
       class="btn btn-ghost text-xl">SimpleTor</a
     >
   </div>

@@ -11,12 +11,16 @@
 
   async function handleClick() {
     if (isLoading) {
-    } else {
+      return;
+    }
+    isLoading = true;
+    try {
       await onFinishNavigator({
         clientNote: "",
         verificationDialog: verificationDialog,
       });
-      isLoading = true;
+    } finally {
+      isLoading = false;
     }
   }
 </script>

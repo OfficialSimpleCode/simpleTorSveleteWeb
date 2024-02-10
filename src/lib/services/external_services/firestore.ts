@@ -192,10 +192,10 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       const docRef = doc(collectionRef, docId);
 
       if (command == null) {
-        transaction.update(docRef, { fieldName: value ?? deleteField() });
+        transaction.update(docRef, { [fieldName]: value ?? deleteField() });
       } else {
         transaction.update(docRef, {
-          fieldName:
+          [fieldName]:
             command === NumericCommands.increment
               ? increment(1)
               : increment(-1),

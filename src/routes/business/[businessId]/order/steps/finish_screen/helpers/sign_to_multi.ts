@@ -87,7 +87,6 @@ async function handleSinging({
   fromPaymentHandler?: boolean;
   paymentResp?: PaymentResp | undefined;
 }): Promise<boolean> {
-  console.log("wwwwwwwwwwwww");
   //   // In case the user needs to pay before and failed
   //   if ((paymentResp === null || paymentResp.transaction === null) && fromPaymentHandler) {
   //     return await handleFailedPayment({ multiBooking, userMultiBooking, worker });
@@ -106,7 +105,7 @@ async function handleSinging({
       );
     }
   }
-  console.log("eeeeeeeeeeeee");
+
   const customer = new MultiBookingUsersPerCustomer({
     customer: UserInitializer.GI().user.userPublicData.customerData,
     multiBookingUsers: { [userMultiBooking.userBookingId]: userMultiBooking },
@@ -165,7 +164,7 @@ async function handleSinging({
       business: BusinessInitializer.GI().business,
       user: UserInitializer.GI().user,
     });
-    console.log("11111111");
+
     resp = await MultiBookingHelper.GI().signUsers({
       multiBooking: updatedMultiBooking,
       multiBookingsPerCustomer: {

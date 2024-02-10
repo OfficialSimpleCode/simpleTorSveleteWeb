@@ -23,6 +23,7 @@ const { v4 } = pkg;
 // import { v4 as uuid } from "uuid";
 import GeneralRepo from "./general/general_repo";
 import { GeneralData } from "./general_data";
+import NotificationsHelper from "./notifications/notifications/notification_helper";
 
 export default class DeveloperHelper {
   private static _singleton: DeveloperHelper = new DeveloperHelper();
@@ -125,7 +126,11 @@ export default class DeveloperHelper {
       })
       .then((value) => {
         if (value) {
-          //NotificationsHelper.notifyDevelopersAboutError({ userId, errorType });
+          NotificationsHelper.GI().notifyDevelopersAboutError({
+            userId,
+            errorType,
+            errorCode,
+          });
         }
       });
   }

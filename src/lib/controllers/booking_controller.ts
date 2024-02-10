@@ -23,7 +23,7 @@ import MultiBooking from "$lib/models/multi_booking/multi_booking";
 import type PhoneDataResult from "$lib/models/resps/phone_data_result";
 import type TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
 import { loadBookingMakerTimeData } from "$lib/utils/booking_maker";
-import { length } from "$lib/utils/core_utils";
+import { isNotEmpty } from "$lib/utils/core_utils";
 import { get, writable } from "svelte/store";
 interface BookingMaker {
   workerId?: string;
@@ -71,9 +71,11 @@ export default class BookingController {
       isMultiEvent: false,
     };
 
-    bookingForUpdate?.treatments.forEach((treatment, index) => {
-      initialBookingMaker.services[treatment.id] = treatment;
-    });
+    Object.entries(bookingForUpdate?.treatments ?? {}).forEach(
+      ([index, treatment]) => {
+        initialBookingMaker.services[treatment.id] = treatment;
+      }
+    );
     console.log(initialBookingMaker);
     BookingController.oldBooking = bookingForUpdate;
     bookingMakerStore.set(initialBookingMaker);
@@ -179,10 +181,10 @@ export default class BookingController {
       return booking;
     }
 
-    const services: Map<string, Treatment> = new Map();
+    const services: Record<string, Treatment> = {};
     let index = 0;
     Object.entries(bookingMaker.services).forEach(([id, service]) => {
-      services.set(index.toString(), service);
+      services[index.toString()] = service;
       index += 1;
     });
     booking.treatments = services;
@@ -199,7 +201,7 @@ export default class BookingController {
       return multiBooking;
     }
 
-    if (length(bookingMaker.services) > 0) {
+    if (isNotEmpty(bookingMaker.services)) {
       multiBooking.treatment = Object.values(bookingMaker.services)[0];
     }
 

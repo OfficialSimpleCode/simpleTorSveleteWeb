@@ -240,6 +240,9 @@ export default class BookingHelper {
       );
       return true;
     }
+    console.log("32222222222222222222222222222222222222222222");
+    console.log(oldBooking);
+    console.log(newBooking);
 
     newBooking.updateBookingByBooking({
       oldBooking: oldBooking,
@@ -250,6 +253,10 @@ export default class BookingHelper {
       newClientNote: newClientNote,
       keepRecurrence: keepRecurrence,
     });
+
+    console.log("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+    console.log(newBooking);
+    console.log(oldBooking);
 
     const sameDestination =
       oldBooking.customerId === newBooking.customerId &&

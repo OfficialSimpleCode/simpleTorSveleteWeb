@@ -11,10 +11,7 @@ export function onEventClick(
   const timePickerObj = TimePickerObj.fromScheduleEvent(args.event);
 
   const bookingMaker = get(bookingMakerStore);
-
-  console.log("2222222222222222222222");
   if (timePickerObj.isWaitingList) {
-    console.log("Eeeeeeeeeeeeeeee");
     pushState("", {
       showModal: true,
     });

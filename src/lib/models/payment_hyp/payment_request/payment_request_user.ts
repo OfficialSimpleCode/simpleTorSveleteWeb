@@ -145,6 +145,10 @@ export default class PaymentRequestUser {
     return data;
   }
 
+  toJSON() {
+    return this.toJson();
+  }
+
   toString(): string {
     return JSON.stringify(this.toJson(), null, "  ");
   }

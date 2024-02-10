@@ -264,12 +264,14 @@ export class LoadAppHelper {
   private async reportIssue(
     exception: Error,
     stage: string,
+
     options?: { strIssue?: string }
   ): Promise<void> {
     await DeveloperHelper.GI().logErrorToDb({
       userId: UserInitializer.GI().userId,
       errorType: ErrorsTypeLog.enter,
       exceptions: [exception],
+      errorCode: stage,
       strIssue: options?.strIssue,
       extras: {
         StageOfCrush: stage,
