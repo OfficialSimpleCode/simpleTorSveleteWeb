@@ -4,16 +4,16 @@
   import { handleLocaleChanges } from "$lib/language/loader";
   import "../app.css";
 
-  async function loadBusiness() {
+  async function loadLocale() {
     await handleLocaleChanges(localStorage, document);
   }
 
-  const loadingBusiness = loadBusiness();
+  const loadingLocale = loadLocale();
 </script>
 
 <ToastManager />
 <div class="h-screen w-screen">
-  {#await loadingBusiness}
+  {#await loadingLocale}
     <div
       class="h-full w-full flex flex-col items-center justify-center gap-8 bg-black"
     >

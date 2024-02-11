@@ -1,7 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import PhoneDialog from "$lib/components/login/components/PhoneDialog.svelte";
-  import Navbar from "$lib/components/navbar/Navbar.svelte";
   import { LoginReason } from "$lib/consts/auth";
 
   import { bookingMakerStore } from "$lib/controllers/booking_controller";
@@ -23,8 +22,6 @@
   />
 {/if}
 <main class="h-screen w-screen flex flex-col items-center gap-2 bg-base-100">
-  <!-- application nav bar -->
-  <Navbar />
   <!-- stepper -->
   <OrderStepper />
 

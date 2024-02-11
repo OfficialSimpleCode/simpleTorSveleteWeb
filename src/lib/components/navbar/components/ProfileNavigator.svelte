@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { goto, pushState } from "$app/navigation";
-  import { page } from "$app/stores";
+  import { goto } from "$app/navigation";
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
 
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
@@ -10,27 +9,16 @@
   import { get } from "svelte/store";
 
   import { base } from "$app/paths";
-  import ProfileDialog from "./components/ProfileDialog.svelte";
-
-  let profileDialog: HTMLDialogElement;
 
   function onTap() {
     if (!get(isConnectedStore)) {
       VerificationHelper.GI().setupLoggin();
       goto(`${base}/login`);
     } else {
-      pushState("", {
-        showModal: true,
-      });
-      setTimeout(() => profileDialog.showModal(), 200);
+      goto(`${base}/profile`);
     }
   }
 </script>
-
-<!-- Dialog -->
-{#if $page.state.showModal}
-  <ProfileDialog bind:dialog={profileDialog} />
-{/if}
 
 <button class="btn btn-ghost btn-circle avatar" on:click={onTap}>
   {#if $isConnectedStore}

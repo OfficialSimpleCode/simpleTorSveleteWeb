@@ -53,8 +53,9 @@ export async function handleLogin({
     }
   }
   if (loginReason === LoginReason.phoneVerification) {
+    let resp: PhoneDataResult | undefined;
     if (VerificationHelper.GI().phoneVerificationWithFirebase) {
-      return await addProvider(provider);
+      resp = await addProvider(provider);
     } else {
       const userClaims = await VerificationHelper.GI().userClaims();
       const isUserPhone =
@@ -65,10 +66,10 @@ export async function handleLogin({
         return undefined;
       }
 
-      const resp = await updatePhone({ customIsVerifiedPhone: true });
-      if (resp) {
-        dispatch("onVerifyPhone", resp);
-      }
+      resp = await updatePhone({ customIsVerifiedPhone: true });
+    }
+    if (resp) {
+      dispatch("onVerifyPhone", resp);
     }
   }
 

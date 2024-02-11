@@ -7,11 +7,11 @@
   import { businessStore } from "$lib/stores/Business";
   import { workersStore } from "$lib/stores/Workers";
   import { _, translate } from "$lib/utils/translate";
-  import BookingActions from "../components/BookingActions.svelte";
-  import BookingDetails from "../components/BookingDetails.svelte";
-  import CircleIcons from "../components/CircleIcons.svelte";
-  import BookingSheet from "../components/booking-sheet/BookingSheet.svelte";
+  import BookingActions from "./BookingActions.svelte";
+  import BookingDetails from "./BookingDetails.svelte";
+  import CircleIcons from "./CircleIcons.svelte";
   import TopIndicators from "./TopIndicators.svelte";
+  import BookingSheet from "./booking-sheet/BookingSheet.svelte";
 
   export let booking: Booking;
   export let forceOpenBookingSheet: boolean;

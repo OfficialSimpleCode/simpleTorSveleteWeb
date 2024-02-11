@@ -1,12 +1,14 @@
 <script lang="ts">
-  import { successAnimation } from "$lib/consts/resources";
-  import type PhoneDataResult from "$lib/models/resps/phone_data_result";
+  import PhoneDataResult from "$lib/models/resps/phone_data_result";
   import { formatedPhone } from "$lib/utils/string_utils";
   import { translate } from "$lib/utils/translate";
-  import LottieAnimation from "../LottieAnimation.svelte";
 
   export let dialog: HTMLDialogElement;
-  export let phoneDataResult: PhoneDataResult;
+  export function show(phoneDataResult: PhoneDataResult) {
+    dialog.showModal();
+    phoneData = phoneDataResult;
+  }
+  let phoneData: PhoneDataResult = new PhoneDataResult({ phone: "" });
 </script>
 
 <dialog
@@ -23,20 +25,20 @@
     </h3>
 
     <!-- success anomation  -->
-    <LottieAnimation animationFile={successAnimation} />
+    <!-- <LottieAnimation animationFile={sendMessageAnimation} /> -->
 
     <!-- explanation text -->
     <h3 class="text-md">
       {translate("nowWeCanRecognizeYou").replaceAll(
         "PHONE",
-        formatedPhone(phoneDataResult.phone)
+        formatedPhone(phoneData.phone)
       )}
     </h3>
 
     <!-- text to explain what data we have merged to this user -->
-    {#if !phoneDataResult.isEmpty}
+    {#if !phoneData.isEmpty}
       <h3 class="text-sm">
-        {phoneDataResult.whatWeFoundStr}
+        {phoneData.whatWeFoundStr}
       </h3>
     {/if}
 

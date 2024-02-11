@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Navbar from "$lib/components/navbar/Navbar.svelte";
   import { userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
 
@@ -9,8 +8,6 @@
 </script>
 
 <main class=" h-full">
-  <!-- application nav bar -->
-  <Navbar />
   <div class="md:pt-20 pt-2 flex flex-col gap-8 items-center h-full">
     <!-- title -->
     <h1 class="text-3xl mx-10">{translate("myBookings", $_)}</h1>

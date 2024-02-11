@@ -67,8 +67,6 @@ export default class UserInitializer {
     logoutIfDosentExist?: boolean;
   }): Promise<boolean> {
     try {
-      isConnectedStore.set(false);
-
       logger.info(`The user id is -> ${newUserId}`);
       if (newUserId.length < 5) {
         await this.verificationRepo.logout();
@@ -77,7 +75,7 @@ export default class UserInitializer {
       console.log("eeeeeeeeeeeeeeeee");
       /*If user came from logging his doc already in the userDoc 
       and there is no need to read again from the db*/
-      if (this.userDoc === undefined) {
+      if (this.userDoc == null) {
         this.userDoc = await this.userRepo.getDocSRV({
           path: usersCollection,
           docId: newUserId,
@@ -86,7 +84,7 @@ export default class UserInitializer {
       console.log("qqqqqqqqq");
       if (
         !logoutIfDosentExist &&
-        (this.userDoc === undefined || !this.userDoc.exists())
+        (this.userDoc == null || !this.userDoc.exists())
       ) {
         this.userDoc = undefined;
         return true; // new user log-in and not registered yet -> leave him logged-in
@@ -109,6 +107,7 @@ export default class UserInitializer {
         logger.error(`Error while setting up the user --> ${e}`);
         AppErrorsHelper.GI().addError({ details: e.toString() });
       }
+      isConnectedStore.set(false);
 
       return false;
     }

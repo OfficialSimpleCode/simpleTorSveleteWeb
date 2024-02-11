@@ -5,7 +5,6 @@
   import SocialLinks from "./sections/SocialLinks.svelte";
 
   // other (utils / stores)
-  import Navbar from "$lib/components/navbar/Navbar.svelte";
   import { businessStore } from "$lib/stores/Business.js";
   import {
     getOklachValues,
@@ -101,8 +100,6 @@
 </svelte:head>
 
 <main class="w-full h-full">
-  <Navbar />
-
   <!-- background image -->
   <ChangingImages />
 

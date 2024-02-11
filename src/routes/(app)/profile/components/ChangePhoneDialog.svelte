@@ -41,7 +41,7 @@
 
 <dialog
   bind:this={dialog}
-  class="modal modal-middle w-[400px] bg-center"
+  class="modal modal-middle bg-center"
   on:close={() => history.back()}
 >
   <div class="modal-box bg-base-200 pb-10">

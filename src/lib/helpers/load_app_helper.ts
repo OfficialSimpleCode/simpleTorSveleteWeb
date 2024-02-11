@@ -10,6 +10,7 @@ import AppErrorsHelper from "./app_errors";
 import DeveloperHelper from "./developer_helper";
 import { GeneralData } from "./general_data";
 // import LinksHelper from "./links_helper";
+import { isConnectedStore } from "$lib/stores/User";
 import LinksHelper from "./links_helper";
 import ThemeHelper from "./theme_helper";
 import { VerificationHelper } from "./verification/verification_helper";
@@ -131,6 +132,7 @@ export class LoadAppHelper {
   private async loadUser(): Promise<void> {
     console.log(`user -> ${UserInitializer.GI().userId}`);
     if (!UserInitializer.GI().isConnected) {
+      isConnectedStore.set(false);
       return;
     }
     const resp = await UserInitializer.GI().setupUser({
