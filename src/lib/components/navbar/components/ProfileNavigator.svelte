@@ -21,11 +21,13 @@
 </script>
 
 <button class="btn btn-ghost btn-circle avatar" on:click={onTap}>
-  {#if $isConnectedStore}
+  {#if $isConnectedStore == null}
+    <div class="loading loading-spinner" />
+  {:else if $isConnectedStore === false}
+    <GeneralIcon icon="ic:baseline-login" />s
+  {:else}
     <div class="w-10 rounded-full">
       <img alt="profile" src={imageByGender($userStore.gender)} />
     </div>
-  {:else}
-    <GeneralIcon icon="ic:baseline-login" />s
   {/if}
 </button>

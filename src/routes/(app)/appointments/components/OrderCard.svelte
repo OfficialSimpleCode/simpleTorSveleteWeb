@@ -68,11 +68,11 @@
   </div>
 
   <!-- divider -->
-  <div class="h-[1px] w-full bg-slate-300 opacity-35 my-4"></div>
+  <div class="h-[1px] w-full bg-slate-300 opacity-25 my-3"></div>
 
   <!-- booking details and actions (below the divider) -->
   <div class="flex flex-row justify-between w-full items-center">
-    <BookingDetails {booking}></BookingDetails>
+    <BookingDetails {booking} />
     <div class="w-2"></div>
     <BookingActions {booking} {currentWorker} {forceOpenBookingSheet} />
   </div>

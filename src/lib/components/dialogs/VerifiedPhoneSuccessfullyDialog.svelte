@@ -1,20 +1,15 @@
 <script lang="ts">
-  import PhoneDataResult from "$lib/models/resps/phone_data_result";
   import { formatedPhone } from "$lib/utils/string_utils";
   import { translate } from "$lib/utils/translate";
+  import { authDataStore } from "../../../routes/(auth)/auth_controller";
 
   export let dialog: HTMLDialogElement;
-  export function show(phoneDataResult: PhoneDataResult) {
-    dialog.showModal();
-    phoneData = phoneDataResult;
-  }
-  let phoneData: PhoneDataResult = new PhoneDataResult({ phone: "" });
 </script>
 
 <dialog
   bind:this={dialog}
   on:close={() => history.back()}
-  class="modal modal-bottom sm:modal-middle"
+  class="modal modal-middle"
 >
   <div
     class="modal-box flex flex-col gap-4 bg-base-200 items-center text-center"
@@ -31,14 +26,14 @@
     <h3 class="text-md">
       {translate("nowWeCanRecognizeYou").replaceAll(
         "PHONE",
-        formatedPhone(phoneData.phone)
+        formatedPhone($authDataStore.phoneData.phone)
       )}
     </h3>
 
     <!-- text to explain what data we have merged to this user -->
-    {#if !phoneData.isEmpty}
+    {#if !$authDataStore.phoneData.isEmpty}
       <h3 class="text-sm">
-        {phoneData.whatWeFoundStr}
+        {$authDataStore.phoneData.whatWeFoundStr}
       </h3>
     {/if}
 

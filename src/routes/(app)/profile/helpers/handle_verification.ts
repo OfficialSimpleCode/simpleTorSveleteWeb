@@ -4,13 +4,15 @@ import { userStore } from "$lib/stores/User";
 import { get } from "svelte/store";
 
 export async function handleVerification(
-  verificationDialog: HTMLDialogElement
+  verificationDialog: HTMLDialogElement,
+  herf?: string
 ) {
   if (get(userStore).userPublicData.isVerifiedPhone) {
+    console.log("Rrrrrrrrrrrrrrrrrr");
     return;
   }
   sendSms({ phone: get(userStore).userPublicData.phoneNumber });
-  pushState("", {
+  pushState(herf ?? "", {
     showModal: true,
   });
   setTimeout(() => verificationDialog.showModal(), 200);

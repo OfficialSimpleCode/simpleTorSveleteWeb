@@ -48,14 +48,17 @@ export class BusinessDesign {
     this.pickedThemeKey = pickedThemeKey;
   }
 
-  static fromJson(json: Record<string, any>): BusinessDesign {
+  static fromJson(
+    json: Record<string, any>,
+    withOutTimestamp?: boolean
+  ): BusinessDesign {
     const newObj = new BusinessDesign();
 
     Object.entries(json.products).forEach(
       ([productId, product]: [string, any]) => {
         newObj.products.set(
           productId,
-          ProductModel.fromJson(product, productId)
+          ProductModel.fromJson(product, productId, withOutTimestamp)
         );
       }
     );
@@ -156,7 +159,7 @@ export class BusinessDesign {
     return newObj;
   }
 
-  toJson(): Record<string, any> {
+  toJson(withOutTimestamp?: boolean): Record<string, any> {
     const data: Record<string, any> = {};
     if (this.storyView !== Arrangement.EndlessCarousel) {
       data.storyView = arrangementToStr[this.storyView];
@@ -167,7 +170,7 @@ export class BusinessDesign {
     data.changingImages = this.changingImages;
     data.products = {};
     this.products.forEach((product, key) => {
-      data.products[key] = product.toJson();
+      data.products[key] = product.toJson(withOutTimestamp);
     });
 
     data.updates = {};

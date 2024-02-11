@@ -2,7 +2,6 @@
   import SearchBusiness from "$lib/components/SearchBusiness.svelte";
   import { storyImagesRatioX, storyImagesRatioY } from "$lib/consts/sizes";
 
-  // Dialogs
   let screenHeight = window.innerHeight;
 
   $: storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));

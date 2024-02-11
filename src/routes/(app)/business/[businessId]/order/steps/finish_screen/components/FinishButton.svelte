@@ -1,7 +1,15 @@
 <script lang="ts">
-  import { bookingMakerStore } from "$lib/controllers/booking_controller";
+  import { page } from "$app/stores";
+  import PhoneDialog from "$lib/components/login/components/PhoneDialog.svelte";
+  import { LoginReason } from "$lib/consts/auth";
+  import BookingController, {
+    bookingMakerStore,
+  } from "$lib/controllers/booking_controller";
   import PublicCustomer from "$lib/models/worker/public_customer";
+  import { needToHoldOn } from "$lib/utils/booking_utils";
   import { _, translate } from "$lib/utils/translate";
+  import { get } from "svelte/store";
+  import { handleVerification } from "../../../../../../profile/helpers/handle_verification";
   import { getPublicCustomer } from "../helpers/get_public_user";
   import { onFinishNavigator } from "../helpers/on_finish_navigator";
   export let verificationDialog: HTMLDialogElement;
@@ -9,22 +17,51 @@
 
   const publicCustomer: PublicCustomer = getPublicCustomer();
 
-  async function handleClick() {
+  const worker = BookingController.worker;
+
+  const needOnHold = needToHoldOn(
+    get(bookingMakerStore).date ?? new Date(0),
+    worker
+  );
+  console.log(get(bookingMakerStore).showVerificationAlert);
+  async function addBooking() {
+    console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
     if (isLoading) {
       return;
     }
+    console.log("1111111111111111111111");
     isLoading = true;
+
     try {
       await onFinishNavigator({
         clientNote: "",
-        verificationDialog: verificationDialog,
       });
     } finally {
       isLoading = false;
     }
   }
+  async function handleClick() {
+    if (get(bookingMakerStore).showVerificationAlert) {
+      console.log("444444444");
+      await handleVerification(verificationDialog);
+    } else {
+      await addBooking();
+    }
+  }
 </script>
 
+{#if $page.state.showModal}
+  <PhoneDialog
+    loginReason={LoginReason.phoneVerification}
+    insideOtp={true}
+    on:onVerifyPhone={() => {
+      //remove the otp dialog
+      history.back();
+      addBooking();
+    }}
+    bind:dialog={verificationDialog}
+  />
+{/if}
 <!-- xs:px-10 px-3 -->
 <div class="w-full">
   <button
@@ -37,9 +74,11 @@
       {translate(
         publicCustomer.blocked
           ? "blockUser"
-          : $bookingMakerStore.isUpdate
-            ? "update"
-            : "order2",
+          : needOnHold
+            ? "askForConfirmation"
+            : $bookingMakerStore.isUpdate
+              ? "update"
+              : "order2",
         $_
       )}
     {/if}
@@ -48,4 +87,10 @@
       <h3 class="text-sm">{translate("blockedUserCantOrder", $_)}</h3>
     {/if}
   </button>
+  {#if needOnHold}
+    <h3 class="text-sm opacity-70 text-center">
+      {worker?.orderNeerDedlineBookingMessage ??
+        translate("bookingNeedConfirmation")}
+    </h3>
+  {/if}
 </div>

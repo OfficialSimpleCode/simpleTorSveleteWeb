@@ -106,17 +106,22 @@ export default class BusinessModel {
 
   static fromJson(
     json: Record<string, any>,
-    businessId: string
+    businessId: string,
+    withOutTimestamp?: boolean
   ): BusinessModel {
     const instance = new BusinessModel({
       businessId,
       design: new BusinessDesign(),
     });
-    instance.setData(json, businessId);
+    instance.setData(json, businessId, withOutTimestamp);
     return instance;
   }
 
-  setData(json: Record<string, any>, newBusinessId: string): void {
+  setData(
+    json: Record<string, any>,
+    newBusinessId: string,
+    withOutTimestamp?: boolean
+  ): void {
     this.businessId = newBusinessId;
 
     if (json["currency"]) {
@@ -124,7 +129,7 @@ export default class BusinessModel {
     }
 
     if (json["design"]) {
-      this.design = BusinessDesign.fromJson(json["design"]);
+      this.design = BusinessDesign.fromJson(json["design"], withOutTimestamp);
     } else {
       const theme = json["theme"]; // themeFromStr[json['theme']] ?? Themes.dark;
       this.design.pickedThemeKey = theme;
@@ -132,7 +137,7 @@ export default class BusinessModel {
         ([productId, productJson]) => {
           this.design.products.set(
             productId,
-            ProductModel.fromJson(productJson, productId)
+            ProductModel.fromJson(productJson, productId, withOutTimestamp)
           );
         }
       );
@@ -258,7 +263,7 @@ export default class BusinessModel {
     });
   }
 
-  toJson(): Record<string, any> {
+  toJson(withOutTimestamp?: boolean): Record<string, any> {
     const data: Record<string, any> = {};
 
     data.notifyOnNewCustomer = this.notifyOnNewCustomer;
@@ -303,7 +308,7 @@ export default class BusinessModel {
     if (this.isLandingPageMode) {
       data.isLandingPageMode = this.isLandingPageMode;
     }
-    data.design = this.design.toJson();
+    data.design = this.design.toJson(withOutTimestamp);
 
     return data;
   }

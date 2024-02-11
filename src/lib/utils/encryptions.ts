@@ -1,7 +1,7 @@
 import pkg from "crypto-js";
 const { AES, enc, SHA256 } = pkg;
 
-const iv16len = "16charactersiv!"; // Replace this with your actual initialization vector (IV)
+const iv16len: string = "qwertyuiiuytrewq";
 
 export function encryptText(text: string, password: string): string {
   const key = generateKey(password);
