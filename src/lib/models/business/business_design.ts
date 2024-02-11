@@ -7,7 +7,8 @@ import {
 import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import IconData from "../general/icon_data";
 import { BusinessTheme } from "./business_theme";
-import { ProductModel } from "./ProductModel";
+import { ProductModel } from "./product_model";
+
 import { Update } from "./update_model";
 
 export class BusinessDesign {

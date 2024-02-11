@@ -71,7 +71,7 @@ export default class BusinessInitializer {
       //   UserInitializer.GI().currentBusiness = businessId;
       //makeLongTimeNoSeeAlert();
       // --------------------------------------
-
+      console.log(businessId);
       const resps = await Promise.all([
         this._loadSettingsDoc(businessId),
         this._loadBusinessWorkers(businessId),
@@ -170,15 +170,20 @@ export default class BusinessInitializer {
       //     { needOverlayHandling: !fromSearch }
       //   );
 
-      workersStore.set(BusinessInitializer.GI().workers);
-      businessStore.set(BusinessInitializer.GI().business);
-      //   UiManager.insertUpdate(Providers.settings);
+      workersStore.set(this.workers);
+      businessStore.set(this.business);
+      console.log(this.business);
+      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+
       return true;
     } catch (e) {
       //   //   logger.e(`Error loading settings --> ${e}`);
       //   // Empty business data - no need to await for device cache deletion
-      //   BusinessInitializer.GI().emptyBusinessData();
-      //   AppErrorsHelper.GI().details = e.message;
+      this.emptyBusinessData();
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().details = e.message;
+      }
+
       return false;
     }
   }
@@ -190,36 +195,20 @@ export default class BusinessInitializer {
         docId: businessId,
       });
 
-      if (doc === undefined || !doc.exists || doc.data() === null) {
+      if (doc == null || !doc.exists || doc.data() == null) {
         AppErrorsHelper.GI().error = Errors.notFoundBusiness;
         return false;
       }
-
+      console.log("eee");
+      console.log(doc.data());
       this.business = BusinessModel.fromJson(doc.data()!, businessId);
-
-      //   // Cache the changing images
-      //   changingImages = cacheImages(
-      //     business.design.changingImages,
-      //     context,
-      //     gWidthOriginal * 2,
-      //     changingImagesHeight * 2,
-      //     ScreenController.getInstance().longTimeCacheManager
-      //   );
-
-      //   // Cache the products images
-      //   productsCacheImages = cacheImages(
-      //     Array.from(business.design.products.values()).map(
-      //       (product) => product.imageUrl
-      //     ),
-      //     context,
-      //     gWidth,
-      //     gWidth * (productImageRatioY / productImageRatioX),
-      //     ScreenController.getInstance().shortTimeCacheManager
-      //   );
-
       return true;
     } catch (e) {
-      //logger.e(`Error while loading the settings doc --> ${e}`);
+      if (e instanceof Error) {
+        logger.error(`Error while loading the settings doc --> ${e}`);
+        logger.error(e.stack);
+      }
+
       return false;
     }
   }

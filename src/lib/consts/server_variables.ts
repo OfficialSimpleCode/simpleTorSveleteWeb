@@ -8,7 +8,7 @@ export const CANCEL_VERIFICATION_END_POINT =
   "/phone_verification/cancel_verification";
 export const COMMIT_TRANSACTION_END_POINT = "/hyp/commit_transaction";
 export const PAY_WITH_TOKEN_END_POINT = "/hyp/pay_with_token";
-export const BUSINESS_LINK_END_POINT = "businesses?BusinessId=BUISNESS_ID";
+export const BUSINESS_LINK_END_POINT = "businesses/BUISNESS_ID";
 export const PAYMENT_REQUEST_END_POINT = "?PaymentId=PAYMENT_ID";
 export const NOTIFICATIONS_END_POINT = "notifications";
 export const MESSAGES_END_POINT = "messages";

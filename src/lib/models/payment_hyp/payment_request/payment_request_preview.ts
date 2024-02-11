@@ -220,6 +220,10 @@ export default class PaymentRequestPreview extends PaymentObject {
     return data;
   }
 
+  toJSON() {
+    return this.toJson();
+  }
+
   toString() {
     return JSON.stringify(this.toJson(), null, "  ");
   }

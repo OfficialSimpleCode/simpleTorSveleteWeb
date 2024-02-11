@@ -8,7 +8,7 @@
   import { businessStore } from "$lib/stores/Business";
   import { userStore } from "$lib/stores/User";
   import GeneralIcon from "../GeneralIcon.svelte";
-  import ProfileNavigator from "./components/profile/ProfileNavigator.svelte";
+  import ProfileNavigator from "./components/ProfileNavigator.svelte";
 </script>
 
 <div
@@ -17,7 +17,7 @@
 >
   <div>
     <a
-      href="{base}/business?BusinessId={$businessStore.businessId}"
+      href="{base}/business/{$businessStore ? $businessStore.businessId : ''}"
       class="btn btn-ghost text-xl">SimpleTor</a
     >
   </div>

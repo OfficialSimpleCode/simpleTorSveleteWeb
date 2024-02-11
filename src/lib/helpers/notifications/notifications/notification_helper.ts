@@ -1,8 +1,10 @@
+import { ErrorsTypeLog } from "$lib/consts/application_general";
 import { BookingReminderType, BookingStatuses } from "$lib/consts/booking";
 import {
   notifcationsCollection,
   scheduleNotificationDoc,
 } from "$lib/consts/db";
+import DeveloperHelper from "$lib/helpers/developer_helper";
 import GeneralRepo from "$lib/helpers/general/general_repo";
 import UserInitializer from "$lib/initializers/user_initializer";
 import type Booking from "$lib/models/booking/booking_model";
@@ -579,6 +581,34 @@ export default class NotificationsHelper {
         businessData: businessData,
       }),
       topic: topic,
+    });
+  }
+
+  //------------------------------------developer --------------------------------------
+  async notifyDevelopersAboutError({
+    userId,
+    errorType,
+    errorCode,
+  }: {
+    userId: string;
+    errorType: ErrorsTypeLog;
+    errorCode: string;
+  }): Promise<void> {
+    const developersFcm = await DeveloperHelper.GI().getDevelopersFcms();
+
+    this.notificationRepo.notifyMultipleUsers({
+      fcms: developersFcm,
+      payload: new NotificationPayload(),
+      title: translate(
+        errorType === ErrorsTypeLog.login ? "newLoginError" : "newEnterError",
+        undefined,
+        false
+      ),
+      content:
+        "WEB " +
+        translate("newErrorContent", undefined, false)
+          .replaceAll("USER", userId)
+          .replaceAll("CODE", errorCode),
     });
   }
 
