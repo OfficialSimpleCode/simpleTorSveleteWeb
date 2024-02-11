@@ -55,9 +55,10 @@ export class ProductModel {
       name: json["name"],
     });
     if (json["createdAt"] != null) {
-      newProduct.createdAt = withOutTimestamp
-        ? isoToDate(json["createdAt"])
-        : (json["createdAt"] as Timestamp).toDate();
+      newProduct.createdAt =
+        json["createdAt"] instanceof Timestamp
+          ? (json["createdAt"] as Timestamp).toDate()
+          : isoToDate(json["createdAt"]);
     }
 
     return newProduct;

@@ -19,11 +19,17 @@ import { BusinessData } from "$lib/models/business/business_data";
 import { BusinessDesign } from "$lib/models/business/business_design";
 import BusinessModel from "$lib/models/business/business_model";
 import WorkerModel from "$lib/models/worker/worker_model";
-import { Errors } from "$lib/services/errors/messages";
 import { businessStore } from "$lib/stores/Business";
+import { userStore } from "$lib/stores/User";
 import { workersStore } from "$lib/stores/Workers";
+import { checkForReminders } from "$lib/utils/booking_utils";
 import { subTypeFromProductId } from "$lib/utils/subscription_utils";
-import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
+import { dateIsoStr } from "$lib/utils/times_utils";
+import {
+  Timestamp,
+  type DocumentData,
+  type DocumentSnapshot,
+} from "firebase/firestore";
 import UserInitializer from "./user_initializer";
 
 export default class BusinessInitializer {
@@ -41,6 +47,8 @@ export default class BusinessInitializer {
 
   generalRepo: GeneralRepo = new GeneralRepo();
 
+  loadedBusinessJson: Record<string, any> | undefined;
+
   business: BusinessModel = new BusinessModel({
     businessId: "",
     design: new BusinessDesign(),
@@ -52,10 +60,7 @@ export default class BusinessInitializer {
 
   businessSubtype: SubType = SubType.trial;
 
-  async initSettings(
-    businessId: string,
-    { fromLoading = false }: { fromLoading?: boolean } = {}
-  ): Promise<boolean> {
+  initBusiness(businessId: string): boolean {
     try {
       //businessSubtype = SubType.trial;
       this.workers = {};
@@ -71,21 +76,20 @@ export default class BusinessInitializer {
       //   UserInitializer.GI().currentBusiness = businessId;
       //makeLongTimeNoSeeAlert();
       // --------------------------------------
-      console.log(businessId);
-      const resps = await Promise.all([
-        this._loadSettingsDoc(businessId),
-        this._loadBusinessWorkers(businessId),
-      ]);
 
-      //   // Update the subtype before continuing to the rest of the loading
+      //parse the loaded business
+      const businessResp = this._loadSettingsDoc(businessId);
+      if (!businessResp) {
+        return false;
+      }
+      //get the workers of the business no need to wait for
+      this._loadBusinessWorkers(businessId);
+
+      // Update the subtype before continuing to the rest of the loading
       this.businessSubtype = subTypeFromProductId(
         this.business.productId,
         businessId
       );
-
-      if (resps.length > 0 && resps[0] === false) {
-        return false;
-      }
 
       // Make the business data listener from the real-time database
       this.makeBusinessDataListener();
@@ -104,16 +108,9 @@ export default class BusinessInitializer {
     }
   }
 
-  async loadBusiness(
-    businessId: string,
-    userId: string,
-    {
-      fromLoading = false,
-      fromSearch = false,
-    }: { fromLoading?: boolean; fromSearch?: boolean } = {}
-  ): Promise<boolean> {
+  loadBusiness(businessId: string): boolean {
     // Clean business data
-    // ScreenController.getInstance().initOffsets();
+
     // BusinessUIController.getInstance().changingPhotoIndex = 0;
     // SearchUIController.getInstance().searchController.text = "";
     // SearchUIController.getInstance().searchTapped.value = false;
@@ -122,9 +119,7 @@ export default class BusinessInitializer {
 
     try {
       // Initialize settings
-      const resp = await this.initSettings(businessId, {
-        fromLoading,
-      });
+      const resp = this.initBusiness(businessId);
 
       //   if (!resp) {
       //     BusinessInitializer.GI().emptyBusinessData();
@@ -136,16 +131,12 @@ export default class BusinessInitializer {
       //     return false;
       //   }
 
-      //   // Check for reminders in this current business
-      //   UserInitializer.GI().user.userPublicData.reminders =
-      //     await this.checkForReminders();
+      // Check for reminders in this current business
 
-      //   // In case the business is not found
-      //   if (!resp) {
-      //     BusinessInitializer.GI().emptyBusinessData();
-      //     AppErrors.getInstance().error = Errors.unknown;
-      //     return fromLoading;
-      //   }
+      checkForReminders().then((value) => {
+        UserInitializer.GI().user.userPublicData.reminders = value;
+        userStore.set(UserInitializer.GI().user);
+      });
 
       // We don't want to initialize the business when the theme is changed
       if (!ThemeHelper.GI().themeCauseMainBuilt) {
@@ -170,38 +161,77 @@ export default class BusinessInitializer {
       //     { needOverlayHandling: !fromSearch }
       //   );
 
-      workersStore.set(this.workers);
-      businessStore.set(this.business);
-      console.log(this.business);
-      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-
       return true;
     } catch (e) {
-      //   //   logger.e(`Error loading settings --> ${e}`);
-      //   // Empty business data - no need to await for device cache deletion
+      // Empty business data - no need to await for device cache deletion
       this.emptyBusinessData();
       if (e instanceof Error) {
         AppErrorsHelper.GI().details = e.message;
       }
+      logger.error(`Error loading settings --> ${e}`);
 
       return false;
     }
   }
 
+  ///NOTICE: this func run on the server
+  async getBusinessDoc(
+    businessId: string
+  ): Promise<Record<string, any> | undefined> {
+    const doc = await this.generalRepo.getDocRepo({
+      path: buisnessCollection,
+      docId: businessId,
+    });
+
+    return this.fixBusinessDoc(doc.data());
+  }
+
+  //we need to return the business doc from the server and cant return object that cant be stringify
+  //so remove all the timestamp from the doc and replace them with strings
+  fixBusinessDoc(
+    businessDoc: Record<string, any> | undefined
+  ): Record<string, any> | undefined {
+    if (businessDoc == null) {
+      return undefined;
+    }
+
+    //dix the product that on design obj
+
+    let products: Record<string, any>;
+
+    products =
+      businessDoc["design"] != null
+        ? { ...(businessDoc["design"]["products"] ?? {}) }
+        : { ...(businessDoc["products"] ?? {}) };
+
+    //if the design exist in the doc no need the other products
+    if (businessDoc["design"] != null) {
+      delete businessDoc["products"];
+    }
+
+    Object.entries(products).forEach(([productId, productJson]) => {
+      const createdAt = productJson["createdAt"];
+      if (createdAt instanceof Timestamp) {
+        businessDoc["design"]["products"][productId]["createdAt"] = dateIsoStr(
+          createdAt.toDate()
+        );
+      }
+    });
+
+    return businessDoc;
+  }
   async _loadSettingsDoc(businessId: string): Promise<boolean> {
     try {
-      const doc = await this.generalRepo.getDocRepo({
-        path: buisnessCollection,
-        docId: businessId,
-      });
-
-      if (doc == null || !doc.exists || doc.data() == null) {
-        AppErrorsHelper.GI().error = Errors.notFoundBusiness;
+      //get the loaded doc of the business idf exist
+      if (this.loadedBusinessJson == null) {
         return false;
       }
-      console.log("eee");
-      console.log(doc.data());
-      this.business = BusinessModel.fromJson(doc.data()!, businessId);
+      console.log("eeeeeeee");
+      this.business = BusinessModel.fromJson(
+        this.loadedBusinessJson,
+        businessId
+      );
+      businessStore.set(this.business);
       return true;
     } catch (e) {
       if (e instanceof Error) {
@@ -235,6 +265,7 @@ export default class BusinessInitializer {
           }
 
           this.workers[workerObj.id] = workerObj;
+          workersStore.set(this.workers);
         });
       }
 

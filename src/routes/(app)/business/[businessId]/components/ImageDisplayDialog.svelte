@@ -11,7 +11,7 @@
 
   export let dialog: HTMLDialogElement;
   export let workersStories: Record<string, string>;
-  export let storyHearts: Map<string, number>;
+  export let storyHearts: Record<string, number>;
   export let storyId: string;
 
   function isLast(storyId: string): boolean {
@@ -86,7 +86,7 @@
       class="absolute bottom-4 right-4 h-8 w-16 rounded-3xl bg-base-200 flex justify-center items-center"
       on:click={giveHeart}
     >
-      {storyHearts.get(storyId) || 0}
+      {storyHearts[storyId] ?? 0}
       <Icon src={Heart} size="26px" />
     </button>
   </div>

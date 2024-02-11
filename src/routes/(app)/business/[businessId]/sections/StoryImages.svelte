@@ -5,19 +5,19 @@
   import ImageDisplayDialog from "../components/ImageDisplayDialog.svelte";
 
   let workersStories: Record<string, string> = {};
-  Object.values($workersStore).forEach((worker) => {
-    Object.entries(worker.storyImages).forEach(([imageId, image]) => {
-      workersStories[imageId] = image;
+  let storyHearts: Record<string, number> = {};
+  workersStore.subscribe((workers) => {
+    Object.values(workers).forEach((worker) => {
+      Object.entries(worker.storyImages).forEach(([imageId, image]) => {
+        workersStories[imageId] = image;
+      });
+    });
+    Object.values(workers).forEach((worker) => {
+      Object.entries(worker.storylikesAmount).forEach(([imageId, amount]) => {
+        storyHearts[imageId] = amount;
+      });
     });
   });
-
-  let storyHearts: Map<string, number> = Object.values($workersStore)
-    .map((w) => w.storylikesAmount)
-    .reduce(
-      (result, currentMap) =>
-        new Map([...result, ...Object.entries(currentMap)]),
-      new Map()
-    );
 
   let imageDisplayDialog: HTMLDialogElement;
   let selectedStoryId: string = Object.keys(workersStories)[0] || "";

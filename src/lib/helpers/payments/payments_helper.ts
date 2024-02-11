@@ -1,20 +1,16 @@
 import { currencyToInt, hypValidCurrencies } from "$lib/consts/hyp";
 import { convertUrlToMap } from "$lib/consts/string";
 import type { CurrencyModel } from "$lib/models/general/currency_model";
-import { Price } from "$lib/models/general/price";
 import type BookingReference from "$lib/models/payment_hyp/booking_reference";
 import type InvoiceBusinessInfo from "$lib/models/payment_hyp/invoice/invoice_business_info";
 import type PaymentCard from "$lib/models/payment_hyp/payment_card";
-import type TransactionModel from "$lib/models/payment_hyp/transaction";
 import PaymentResp from "$lib/models/resps/payment_resp";
 import type UserModel from "$lib/models/user/user_model";
 import HypClient from "$lib/services/clients/hyp_client";
 import { hypErrors } from "$lib/services/errors/interpeters/hyp_errors_interpeter";
 import { Errors } from "$lib/services/errors/messages";
-import { dateToMonthStr } from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
 import AppErrorsHelper from "../app_errors";
-import UserHelper from "../user/user_helper";
 import PaymentsRepo from "./payments_repo";
 
 export default class PaymentsHelper {
@@ -164,7 +160,7 @@ async  payAmount({
     paidAmount: number;
     totalAmount: number;
   }) => string;
-  afterPayment: (resp: PaymentResp | null) => Promise<boolean>;
+  afterPayment: (resp: PaymentResp | undefined) => Promise<boolean>;
   currencyModel: CurrencyModel;
   timer: number | undefined;
   bookingRefernce: BookingReference | undefined;
@@ -172,18 +168,18 @@ async  payAmount({
   successText: string | undefined;
   showSuccess?: boolean;
   isDeposit?: boolean;
-}): Promise<PaymentResp | null> {
+}): Promise<PaymentResp | undefined> {
   AppErrorsHelper.GI().error = Errors.unknown;
-  if (!hypValidCurrencies.(currencyModel.code)) {
+  if (!hypValidCurrencies[currencyModel.code]) {
     AppErrorsHelper.GI().error = Errors.currencyTypeIsNotAllowed;
-    afterPayment(null);
-    return null;
+    afterPayment(undefined);
+    return undefined;
   }
   const showTip = amountToPay + paidAmount >= totalAmount;
   if (timer != null) {
     ScreenController().startPaymentTimer(timer);
   }
-  let paymentResp: PaymentResp | null = await openCheckoutPage({
+  let paymentResp: PaymentResp | undefined = await this.openCheckoutPage({
     
     totalAmount: totalAmount,
     workerInfo: workerInfo,
@@ -200,291 +196,262 @@ async  payAmount({
     showSuccess: showSuccess,
     afterPayment: afterPayment,
   });
-  ScreenController().cancelPaymentTimer();
-  if (paymentResp == null) {
-    return null;
-  }
-  if (!paymentResp.paidWithPaymentCard) {
-    if (paymentResp.email != "" && paymentResp.email != null) {
-      userHelper.loadLibrary().then((value) => {
-        userHelper.UserHelper().updateEmail(paymentResp.email!);
-      });
-    }
-    await _makeNewCard({
+  // ScreenController().cancelPaymentTimer();
+  // if (paymentResp == null) {
+  //   return null;
+  // }
+  // if (!paymentResp.paidWithPaymentCard) {
+  //   if (paymentResp.email != "" && paymentResp.email != null) {
+  //     userHelper.loadLibrary().then((value) => {
+  //       userHelper.UserHelper().updateEmail(paymentResp.email!);
+  //     });
+  //   }
+  //   await _makeNewCard({
      
-      paymentResp: paymentResp,
-      businessId: businessInfo.businessId,
-      businessName: businessInfo.businessName,
-      terminal: businessInfo.masofNumber,
-    });
-  }
-  if (showTip && paymentResp.amount != null) {
-    const alreadyPaidAmount = paidAmount;
-    const tip = alreadyPaidAmount + paymentResp.amount! - totalAmount;
-    const tipPrecentage = Math.ceil((100 * tip) / totalAmount);
-    if (
-      tipPrecentage !== UserInitializer().user.preferdTipPercentage
-    ) {
-      paymentsRepo
-        .updateFieldInsideDocAsMapRepo({
-          path: usersCollection,
-          docId: UserInitializer().user.id,
-          fieldName: "preferdTipPercentage",
-          value: tipPrecentage,
-        })
-        .then((value) => {
-          if (value) {
-            UserInitializer().user.preferdTipPercentage = tipPrecentage;
-          }
-        });
-    }
-  }
+  //     paymentResp: paymentResp,
+  //     businessId: businessInfo.businessId,
+  //     businessName: businessInfo.businessName,
+  //     terminal: businessInfo.masofNumber,
+  //   });
+  // }
+  // if (showTip && paymentResp.amount != null) {
+  //   const alreadyPaidAmount = paidAmount;
+  //   const tip = alreadyPaidAmount + paymentResp.amount! - totalAmount;
+  //   const tipPrecentage = Math.ceil((100 * tip) / totalAmount);
+  //   if (
+  //     tipPrecentage !== UserInitializer().user.preferdTipPercentage
+  //   ) {
+  //     paymentsRepo
+  //       .updateFieldInsideDocAsMapRepo({
+  //         path: usersCollection,
+  //         docId: UserInitializer().user.id,
+  //         fieldName: "preferdTipPercentage",
+  //         value: tipPrecentage,
+  //       })
+  //       .then((value) => {
+  //         if (value) {
+  //           UserInitializer().user.preferdTipPercentage = tipPrecentage;
+  //         }
+  //       });
+  //   }
+  // }
   return paymentResp;
 }
 
-async  getUserPassword(
+// async  getUserPassword(
  
-): Promise<string | null> {
-  if (UserInitializer().user.cardPaymentsPass === "") {
-    return await openSignPaymentCardSheet({
+// ): Promise<string | null> {
+//   if (UserInitializer().user.cardPaymentsPass === "") {
+//     return await openSignPaymentCardSheet({
       
-      forNewCard: true,
-    });
-  }
-  return await openSignPaymentCardSheet({
+//       forNewCard: true,
+//     });
+//   }
+//   return await openSignPaymentCardSheet({
    
-    forNewCard: false,
-  });
-}
+//     forNewCard: false,
+//   });
+// }
 
-async  _makeNewCard({
+// async  _makeNewCard({
  
-  terminal,
-  paymentResp,
-  businessId,
-  businessName,
-}: {
+//   terminal,
+//   paymentResp,
+//   businessId,
+//   businessName,
+// }: {
   
-  terminal: string;
-  paymentResp: PaymentResp;
-  businessId: string;
-  businessName: string;
-}): Promise<void> {
-  if (paymentResp.paymentCard == null) {
-    return;
-  }
-  if (
-    UserInitializer().user.isCardFromJsonExist(
-      paymentResp.paymentCard!,
-      businessId
-    )
-  ) {
-    return;
-  }
-  const cardPassword = await getUserPassword(context);
-  if (cardPassword == null || cardPassword === "") {
-    return;
-  }
-  await Loading({
-    context: context,
-    navigator: Navigator.of(context),
-    future: userHelper.loadLibrary().then((value) => {
-      return makeNewCardAction({
-        terminal: terminal,
-        paymentResp: paymentResp,
-        businessId: businessId,
-        cardPassword: cardPassword,
-      });
-    }),
-    msg: translate("cardSaved"),
-  }).dialog();
-}
+//   terminal: string;
+//   paymentResp: PaymentResp;
+//   businessId: string;
+//   businessName: string;
+// }): Promise<void> {
+//   if (paymentResp.paymentCard == null) {
+//     return;
+//   }
+//   if (
+//     UserInitializer().user.isCardFromJsonExist(
+//       paymentResp.paymentCard!,
+//       businessId
+//     )
+//   ) {
+//     return;
+//   }
+//   const cardPassword = await getUserPassword(context);
+//   if (cardPassword == null || cardPassword === "") {
+//     return;
+//   }
+//   await Loading({
+//     context: context,
+//     navigator: Navigator.of(context),
+//     future: userHelper.loadLibrary().then((value) => {
+//       return makeNewCardAction({
+//         terminal: terminal,
+//         paymentResp: paymentResp,
+//         businessId: businessId,
+//         cardPassword: cardPassword,
+//       });
+//     }),
+//     msg: translate("cardSaved"),
+//   }).dialog();
+// }
 
-async makeNewCardAction({
-  terminal,
-  paymentResp,
-  businessId,
-  cardPassword,
-}: {
-  terminal: string;
-  paymentResp: PaymentResp;
-  businessId: string;
-  cardPassword: string;
-}): Promise<boolean> {
-  const token = await this.getPaymentToken({
-    businessId: businessId,
-    terminal: terminal,
-    transactionId: paymentResp.paymentId ?? "",
-  });
-  if (token === "") {
-    logger.e(
-      "Error accured while requesting card Token - don't create card"
-    );
-    return false;
-  }
-  const newPaymentCard = paymentResp.newPaymentCard({
-    token: token,
-    cardPassword: cardPassword,
-  });
-  if (newPaymentCard == null) {
-    return false;
-  }
-  return await UserHelper.GI().addPaymentCard({
-    businessId: businessId,
-    card: newPaymentCard,
-    newCardPassword: cardPassword,
-  });
-}
+// async makeNewCardAction({
+//   terminal,
+//   paymentResp,
+//   businessId,
+//   cardPassword,
+// }: {
+//   terminal: string;
+//   paymentResp: PaymentResp;
+//   businessId: string;
+//   cardPassword: string;
+// }): Promise<boolean> {
+//   const token = await this.getPaymentToken({
+//     businessId: businessId,
+//     terminal: terminal,
+//     transactionId: paymentResp.paymentId ?? "",
+//   });
+//   if (token === "") {
+//     logger.e(
+//       "Error accured while requesting card Token - don't create card"
+//     );
+//     return false;
+//   }
+//   const newPaymentCard = paymentResp.newPaymentCard({
+//     token: token,
+//     cardPassword: cardPassword,
+//   });
+//   if (newPaymentCard == null) {
+//     return false;
+//   }
+//   return await UserHelper.GI().addPaymentCard({
+//     businessId: businessId,
+//     card: newPaymentCard,
+//     newCardPassword: cardPassword,
+//   });
+// }
 
 
-async  getTransactionByIdUserAction({
-  date,
-  user,
-  transactionId,
-}: {
-  date: Date;
-  user: UserModel;
-  transactionId: string;
-}): Promise<TransactionModel | null> {
-  let transactions: Record<string, TransactionModel> | undefined;
-  const monthStr = dateToMonthStr(date);
+// async  getTransactionByIdUserAction({
+//   date,
+//   user,
+//   transactionId,
+// }: {
+//   date: Date;
+//   user: UserModel;
+//   transactionId: string;
+// }): Promise<TransactionModel | null> {
+//   let transactions: Record<string, TransactionModel> | undefined;
+//   const monthStr = dateToMonthStr(date);
   
-  transactions = user.currentMonthPayments;
+//   transactions = user.currentMonthPayments;
   
-  if (transactions != null) {
-    const transaction = transactions.get(transactionId);
-    if (transaction != null) {
-      return transaction;
-    }
-  }
-  transactions = await _loadUserPaymentsFromDb({
-    monthStr: monthStr,
-    userId: user.id,
-  });
-  user.existPaymentRequestsDocs.add(monthStr);
-  if (isWeb || isCurrentDoc(date)) {
-    user.currentMonthPayments = transactions;
-  } else {
-    setUserPaymentsOnLocalCache({
-      transactionModels: transactions,
-      monthStr: monthStr,
-      userId: user.id,
-    });
-  }
-  return transactions.get(transactionId) ?? null;
-}
+//   if (transactions != null) {
+//     const transaction = transactions.get(transactionId);
+//     if (transaction != null) {
+//       return transaction;
+//     }
+//   }
+//   transactions = await _loadUserPaymentsFromDb({
+//     monthStr: monthStr,
+//     userId: user.id,
+//   });
+//   user.existPaymentRequestsDocs.add(monthStr);
+//   if (isWeb || isCurrentDoc(date)) {
+//     user.currentMonthPayments = transactions;
+//   } else {
+//     setUserPaymentsOnLocalCache({
+//       transactionModels: transactions,
+//       monthStr: monthStr,
+//       userId: user.id,
+//     });
+//   }
+//   return transactions.get(transactionId) ?? null;
+// }
 
-async  openCheckoutPage({
+// async  openCheckoutPage({
 
-  user,
-  totalAmount,
-  bookingRefernce,
-  workerInfo,
-  paidAmount,
-  businessInfo,
-  amountToPay,
-  showTip,
-  successText,
-  currencyModel,
-  afterPayment,
-  infoGenerator,
-  showSuccess,
-  isDeposit = false,
-}: {
+//   user,
+//   totalAmount,
+//   bookingRefernce,
+//   workerInfo,
+//   paidAmount,
+//   businessInfo,
+//   amountToPay,
+//   showTip,
+//   successText,
+//   currencyModel,
+//   afterPayment,
+//   infoGenerator,
+//   showSuccess,
+//   isDeposit = false,
+//   card
+// }: {
  
-  user: UserModel,
-  totalAmount: number,
-  bookingRefernce: BookingReference | undefined,
-  workerInfo: InvoiceWorkerInfo,
-  paidAmount: number,
-  businessInfo: InvoiceBusinessInfo,
-  amountToPay: number,
-  showTip: boolean;
-  successText: string | undefined;
-  currencyModel: CurrencyModel;
-  afterPayment: (resp: PaymentResp | null) => Promise<boolean>;
-  infoGenerator: (params: {
-    totalAmount: number;
-    paidAmount: number;
-    currentAmount: number;
-    isDeposit: boolean;
-  }) => string;
-  showSuccess: boolean;
-  isDeposit?: boolean;
-}): Promise<PaymentResp | null> {
-  let result: PaymentCard | null = null;
-  const cards: PaymentCard[] = [];
-  const usersCards = UserInitializer().user.paymentCards;
-  if (usersCards.containsKey(businessInfo.businessId)) {
-    cards = usersCards[businessInfo.businessId]!.values.toList();
-  }
-  const amountListener = new ValueNotifier(amountToPay);
-  if (cards.isEmpty && !showTip) {
-    result = null;
-  } else {
-    result = await openPaymentSheet({
-      context: context,
-      cards: cards,
-      isDeposit: isDeposit,
-      totalPrice: new Price({
-        amount: totalAmount.toString(),
-        currency: currencyModel,
-      }),
-      amountListener: amountListener,
-      showTip: showTip,
-    });
-  }
-  if (result == null) {
-    afterPayment(null);
-    return null;
-  }
-  let infoStr = infoGenerator({
-    currentAmount: amountListener.value,
-    totalAmount: totalAmount,
-    paidAmount: paidAmount,
-    isDeposit: isDeposit,
-  });
-  if (result instanceof PaymentCard) {
-    return await payWithCard({
+//   user: UserModel,
+//   totalAmount: number,
+//   bookingRefernce: BookingReference | undefined,
+//   workerInfo: InvoiceWorkerInfo,
+//   paidAmount: number,
+//   businessInfo: InvoiceBusinessInfo,
+//   amountToPay: number,
+//   showTip: boolean;
+//   successText: string | undefined;
+//   currencyModel: CurrencyModel;
+//   afterPayment: (resp: PaymentResp | null) => Promise<boolean>;
+//   infoGenerator: (params: {
+//     totalAmount: number;
+//     paidAmount: number;
+//     currentAmount: number;
+//     isDeposit: boolean;
+//   }) => string;
+//   card?:PaymentCard,
+//   showSuccess: boolean;
+//   isDeposit?: boolean;
+// }): Promise<PaymentResp | undefined> {
+
+//   if (card) {
+//     return await this.payWithCard({
       
-      card: result,
-      user: user,
-      showSuccess: showSuccess,
-      totalAmount: totalAmount,
-      paidAmount: paidAmount,
-      bookingRefernce: bookingRefernce,
-      businessInfo: businessInfo,
-      workerInfo: workerInfo,
-      amountToPay: amountToPay,
-      showTip: showTip,
-      isDeposit: isDeposit,
-      successText: successText,
-      currencyModel: currencyModel,
-      afterPayment: afterPayment,
-      amountListener: amountListener,
-      infoStr: infoStr,
-    });
-  } else {
-    return await payWithHypPage({
+//       card: result,
+//       user: user,
+//       showSuccess: showSuccess,
+//       totalAmount: totalAmount,
+//       paidAmount: paidAmount,
+//       bookingRefernce: bookingRefernce,
+//       businessInfo: businessInfo,
+//       workerInfo: workerInfo,
+//       amountToPay: amountToPay,
+//       showTip: showTip,
+//       isDeposit: isDeposit,
+//       successText: successText,
+//       currencyModel: currencyModel,
+//       afterPayment: afterPayment,
+//       amountListener: amountListener,
+//       infoStr: infoStr,
+//     });
+//   } else {
+//     return await this.payWithHypPage({
      
-      user: user,
-      totalAmount: totalAmount,
-      paidAmount: paidAmount,
-      showSuccess: showSuccess,
-      bookingRefernce: bookingRefernce,
-      successText: successText,
-      businessInfo: businessInfo,
-      workerInfo: workerInfo,
-      isDeposit: isDeposit,
-      amountToPay: amountToPay,
-      showTip: showTip,
-      currencyModel: currencyModel,
-      afterPayment: afterPayment,
-      amountListener: amountListener,
-      infoStr: infoStr,
-    });
-  }
-}
+//       user: user,
+//       totalAmount: totalAmount,
+//       paidAmount: paidAmount,
+//       showSuccess: showSuccess,
+//       bookingRefernce: bookingRefernce,
+//       successText: successText,
+//       businessInfo: businessInfo,
+//       workerInfo: workerInfo,
+//       isDeposit: isDeposit,
+//       amountToPay: amountToPay,
+//       showTip: showTip,
+//       currencyModel: currencyModel,
+//       afterPayment: afterPayment,
+//       amountListener: amountListener,
+//       infoStr: infoStr,
+//     });
+//   }
+// }
 
 async  payWithCard({
  
@@ -519,18 +486,10 @@ async  payWithCard({
   showTip: boolean;
   currencyModel: CurrencyModel;
   afterPayment: (resp: PaymentResp | undefined) => Promise<boolean>;
-  amountListener: ValueNotifier<number>;
   infoStr: string;
   isDeposit?: boolean;
 }): Promise<PaymentResp | undefined> {
-  const password = await confirmPasswordDialog({
-   
-    isDeposit: isDeposit,
-    priceToCharge: new Price({
-      amount: amountListener.value.toString(),
-      currency: currencyModel,
-    }),
-  });
+ 
   if (!(typeof password === "string") || password.length < 1) {
     afterPayment(undefined);
     return undefined;
@@ -570,7 +529,7 @@ async  payWithCard({
             newBusinessInfo: businessInfo,
             infoStr: infoStr,
           });
-          savePaymentRespOnDb({
+          this.savePaymentRespOnDb({
             paymentResp: paymentResp!,
             user: user,
             isUserExist: true,
@@ -616,11 +575,11 @@ async  payWithHypPage({
   showSuccess: boolean;
   currencyModel: CurrencyModel;
   afterPayment: (resp: PaymentResp | undefined) => Promise<boolean>;
-  amountListener: ValueNotifier<number>;
+  
   infoStr: string;
   isDeposit?: boolean;
 }): Promise<PaymentResp | undefined> {
-  const resp = await openCheckOutScreen({
+  const resp = await this.openCheckOutScreen({
 
     businessInfo: businessInfo,
     transactionInfo: infoStr,

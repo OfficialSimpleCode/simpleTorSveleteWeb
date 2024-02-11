@@ -8,8 +8,13 @@
   } from "$lib/utils/colors";
   import { _, translate } from "$lib/utils/translate";
 
+  import BusinessInitializer from "$lib/initializers/business_initializer.js";
   import { computeLuminance } from "$lib/utils/general_utils";
   import { onMount } from "svelte";
+
+  export let data;
+  BusinessInitializer.GI().loadedBusinessJson = data.business;
+  BusinessInitializer.GI().loadBusiness(data.businessId);
 
   onMount(() => {
     let themeKey: string = $businessStore.design.pickedThemeKey;

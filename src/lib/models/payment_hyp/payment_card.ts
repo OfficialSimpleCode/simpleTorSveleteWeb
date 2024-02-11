@@ -1,5 +1,4 @@
 import { maxAttemptsPassword } from "$lib/consts/hyp";
-import { decryptText } from "$lib/utils/encryptions";
 
 export const paymentBrandsFromStr: Record<string, string> = {
   ["1"]: "PL",
@@ -139,9 +138,9 @@ export default class PaymentCard {
     return new PaymentCard({
       cardId: this.cardId,
       brand: this.brand,
-      token: decryptText({ encryption: this.token, password }),
-      validityMonth: decryptText({ encryption: this.validityMonth, password }),
-      validityYear: decryptText({ encryption: this.validityYear, password }),
+      token: "7011498941407863712", // decryptText({ encryption: this.token, password }),
+      validityMonth: "06", //decryptText({ encryption: this.validityMonth, password }),
+      validityYear: "2026", // decryptText({ encryption: this.validityYear, password }),
       name: this.name,
       userId: this.userId,
       bankName: this.bankName,
@@ -150,20 +149,20 @@ export default class PaymentCard {
     });
   }
 
-  encryptCard(password: string): PaymentCard {
-    return new PaymentCard({
-      cardId: this.cardId,
-      brand: this.brand,
-      token: encryptText({ text: this.token, password }),
-      validityMonth: encryptText({ text: this.validityMonth, password }),
-      validityYear: encryptText({ text: this.validityYear, password }),
-      name: this.name,
-      userId: this.userId,
-      bankName: this.bankName,
-      businessId: this.businessId,
-      l4Digits: this.l4Digits,
-    });
-  }
+  // encryptCard(password: string): PaymentCard {
+  //   return new PaymentCard({
+  //     cardId: this.cardId,
+  //     brand: this.brand,
+  //     token: encryptText({ text: this.token, password }),
+  //     validityMonth: encryptText({ text: this.validityMonth, password }),
+  //     validityYear: encryptText({ text: this.validityYear, password }),
+  //     name: this.name,
+  //     userId: this.userId,
+  //     bankName: this.bankName,
+  //     businessId: this.businessId,
+  //     l4Digits: this.l4Digits,
+  //   });
+  // }
 
   isTheSameAs(card: PaymentCard): boolean {
     return (

@@ -419,7 +419,7 @@ export default class BookingController {
   }
 }
 
-function showPhoneVerificationAlert(worker: WorkerModel): boolean {
+export function showPhoneVerificationAlert(worker: WorkerModel): boolean {
   const tempBooking = new Booking({});
   tempBooking.userFcms = UserInitializer.GI().user.fcmsTokens;
   tempBooking.isVerifiedPhone = true;

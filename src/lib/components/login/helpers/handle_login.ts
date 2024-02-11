@@ -18,12 +18,12 @@ export async function handleLogin({
   provider,
   otp = "",
   loginReason,
-  dispatch,
+  dispatch = undefined,
 }: {
   provider: AuthProvider;
   loginReason: LoginReason;
   otp?: string;
-  dispatch: EventDispatcher<any>;
+  dispatch?: EventDispatcher<any>;
 }): Promise<PhoneDataResult | undefined> {
   const resp = await VerificationHelper.GI().handleLogin({
     provider: provider,
@@ -55,8 +55,11 @@ export async function handleLogin({
   }
   if (loginReason === LoginReason.phoneVerification) {
     let resp: PhoneDataResult | undefined;
+    console.log("1111111111111111111111111");
     if (VerificationHelper.GI().phoneVerificationWithFirebase) {
+      console.log("333333333333");
       resp = await addProvider(provider);
+      console.log("ssssssssssssssssssssssssssss", resp);
     } else {
       const userClaims = await VerificationHelper.GI().userClaims();
       const isUserPhone =
@@ -69,13 +72,20 @@ export async function handleLogin({
 
       resp = await updatePhone({ customIsVerifiedPhone: true });
     }
-    if (resp) {
-      //put the new phone data result inside the auth store
-      const authDataStoreTemp = get(authDataStore);
-      authDataStoreTemp.phoneData = resp;
-      authDataStore.set(authDataStoreTemp);
-      dispatch("onVerifyPhone");
+    console.log("555555555555555");
+    if (resp != null) {
+      console.log("666666666666");
+
+      //update the auth store for the new phone data result
+      authDataStore.update((val) => {
+        val.phoneData = resp!;
+        return val;
+      });
+      if (dispatch != null) {
+        dispatch("onVerifyPhone");
+      }
     }
+    return;
   }
 
   await setUpUser();
@@ -90,7 +100,6 @@ export async function handleLogin({
     history.back();
   }
   history.back();
-  dispatch("onLogin");
 }
 
 async function deleteUser() {
