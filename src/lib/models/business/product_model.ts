@@ -1,3 +1,4 @@
+import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import { Timestamp } from "firebase/firestore";
 import { Price } from "../general/price";
 
@@ -41,7 +42,11 @@ export class ProductModel {
     return newProduct;
   }
 
-  static fromJson(json: Record<string, any>, newId: string): ProductModel {
+  static fromJson(
+    json: Record<string, any>,
+    newId: string,
+    withOutTimestamp?: boolean
+  ): ProductModel {
     const newProduct = new ProductModel({
       id: newId,
       description: json["description"],
@@ -50,19 +55,23 @@ export class ProductModel {
       name: json["name"],
     });
     if (json["createdAt"] != null) {
-      newProduct.createdAt = (json["createdAt"] as Timestamp).toDate();
+      newProduct.createdAt = withOutTimestamp
+        ? isoToDate(json["createdAt"])
+        : (json["createdAt"] as Timestamp).toDate();
     }
 
     return newProduct;
   }
 
-  toJson(): Record<string, any> {
+  toJson(withOutTimestamp?: boolean): Record<string, any> {
     return {
       description: this.description,
       price: this.price ? this.price.toJson() : null,
       imageUrl: this.imageUrl,
       name: this.name,
-      createdAt: Timestamp.fromDate(this.createdAt),
+      createdAt: withOutTimestamp
+        ? dateIsoStr(this.createdAt)
+        : Timestamp.fromDate(this.createdAt),
     };
   }
 

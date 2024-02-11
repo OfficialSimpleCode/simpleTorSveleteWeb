@@ -78,7 +78,7 @@ export default class WorkerModel {
   mustVerifyPhone: boolean = true;
   allowBookingConfirmations: boolean = true;
   devices: Map<string, Device> = new Map();
-  storyImages: Map<string, string> = new Map();
+  storyImages: Record<string, string> = {};
   createdAt: Date = new Date(0);
   workTime: Map<string, string[]> = new Map([
     ["sunday", []],
@@ -432,11 +432,11 @@ export default class WorkerModel {
         }
       });
     }
-    this.storyImages = new Map();
+    this.storyImages = {};
     if (workerJson["storyImages"]) {
       Object.entries<string>(workerJson["storyImages"]).forEach(
         ([imageId, image]) => {
-          this.storyImages.set(imageId, image);
+          this.storyImages[imageId] = image;
         }
       );
     }
@@ -589,7 +589,7 @@ export default class WorkerModel {
     }
     data["profileImg"] = this.profileImg;
     data["about"] = this.about;
-    data["name"] = name;
+    data["name"] = this.name;
     data["phone"] = this.phone;
     data["id"] = this.id;
     data["storyImages"] = {};

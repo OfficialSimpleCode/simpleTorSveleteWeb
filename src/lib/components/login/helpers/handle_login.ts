@@ -8,10 +8,11 @@ import {
 import UserHelper from "$lib/helpers/user/user_helper";
 import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
 import UserInitializer from "$lib/initializers/user_initializer";
-import type PhoneDataResult from "$lib/models/resps/phone_data_result";
+import PhoneDataResult from "$lib/models/resps/phone_data_result";
 import { isConnectedStore } from "$lib/stores/User";
 import type { EventDispatcher } from "svelte";
 import { get } from "svelte/store";
+import { authDataStore } from "../../../../routes/(auth)/auth_controller";
 
 export async function handleLogin({
   provider,
@@ -69,7 +70,11 @@ export async function handleLogin({
       resp = await updatePhone({ customIsVerifiedPhone: true });
     }
     if (resp) {
-      dispatch("onVerifyPhone", resp);
+      //put the new phone data result inside the auth store
+      const authDataStoreTemp = get(authDataStore);
+      authDataStoreTemp.phoneData = resp;
+      authDataStore.set(authDataStoreTemp);
+      dispatch("onVerifyPhone");
     }
   }
 

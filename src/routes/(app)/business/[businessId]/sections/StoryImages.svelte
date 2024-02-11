@@ -4,12 +4,13 @@
   import { workersStore } from "$lib/stores/Workers.js";
   import ImageDisplayDialog from "../components/ImageDisplayDialog.svelte";
 
-  let workersStories: Map<string, string> = Object.values($workersStore)
-    .map((w) => w.storyImages)
-    .reduce(
-      (result, currentMap) => new Map([...result, ...currentMap]),
-      new Map()
-    );
+  let workersStories: Record<string, string> = {};
+  Object.values($workersStore).forEach((worker) => {
+    Object.entries(worker.storyImages).forEach(([imageId, image]) => {
+      workersStories[imageId] = image;
+    });
+  });
+
   let storyHearts: Map<string, number> = Object.values($workersStore)
     .map((w) => w.storylikesAmount)
     .reduce(
@@ -45,7 +46,7 @@
   <div
     class="w-full self-center flex items-center mt-1 justify-center xs:gap-6 gap-4 flex-wrap"
   >
-    {#each workersStories as [storyId, image]}
+    {#each Object.entries(workersStories) as [storyId, image]}
       <button on:click={() => openImageDisplayDialog(storyId)}>
         <!-- h-[${storyImagesHeigth}px] w-[${storyImagesWidth}px] -->
         <img

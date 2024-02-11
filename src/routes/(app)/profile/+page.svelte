@@ -2,8 +2,6 @@
   import { goto, pushState } from "$app/navigation";
   import { base } from "$app/paths";
   import Avatar from "$lib/components/Avatar.svelte";
-  import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
-  import VerifiedIcon from "$lib/components/custom_components/VerifiedIcon.svelte";
   import PhoneDialog from "$lib/components/login/components/PhoneDialog.svelte";
   import GenderPicker from "$lib/components/pickers/gender_picker/GenderPicker.svelte";
   import { LoginReason } from "$lib/consts/auth";
@@ -12,19 +10,12 @@
   import { isConnectedStore, userStore } from "$lib/stores/User";
   import { imageByGender } from "$lib/utils/images_utils";
   import { dateToDateStr } from "$lib/utils/times_utils";
-  import {
-    ArrowRightOnRectangle,
-    CheckCircle,
-    Envelope,
-    Icon,
-    Identification,
-    Phone,
-    Trash,
-    User,
-  } from "svelte-hero-icons";
+  import { CheckCircle, Icon } from "svelte-hero-icons";
   import { _ } from "svelte-i18n";
 
   import { page } from "$app/stores";
+  import SettingsItem from "$lib/components/custom_components/SettingsItem.svelte";
+  import VerifiedIcon from "$lib/components/custom_components/VerifiedIcon.svelte";
   import VerifiedPhoneSuccessfullyDialog from "$lib/components/dialogs/VerifiedPhoneSuccessfullyDialog.svelte";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import UserInitializer from "$lib/initializers/user_initializer";
@@ -39,32 +30,33 @@
   let nameDialog: HTMLDialogElement;
   let phoneDialog: HTMLDialogElement;
   let verificationDialog: HTMLDialogElement;
-  let verificationSuccessfully: any;
+  let verificationSuccessfully: HTMLDialogElement;
   let loadingLogout: boolean = false;
   let copiedUserId: boolean = false;
   console.log($userStore.id);
 
   isConnectedStore.subscribe((value) => {
+    //redirect to the login page if the user is not connected
     if (value === false) {
       goto(`${base}/login`);
     }
   });
   function openEmailDialog() {
-    pushState("profile/email", {
+    pushState(`${base}/profile/email`, {
       showModal: true,
     });
     setTimeout(() => emailDialog.showModal(), 200);
   }
 
   function openNameDialog() {
-    pushState("profile/name", {
+    pushState(`${base}/profile/name`, {
       showModal: true,
     });
     setTimeout(() => nameDialog.showModal(), 200);
   }
 
   function openPhoneDialog() {
-    pushState("profile/phone", {
+    pushState(`${base}/profile/phone`, {
       showModal: true,
     });
     setTimeout(() => phoneDialog.showModal(), 200);
@@ -73,13 +65,7 @@
   function copyToUserIdClipboard() {
     clipboard.write($userStore.id);
     copiedUserId = true;
-
-    // TODO: copy to clipboard
     setTimeout(() => (copiedUserId = false), 1500);
-  }
-
-  async function updateGender(newGender: Gender) {
-    await UserHelper.GI().setGender(newGender);
   }
 
   async function onLogout() {
@@ -103,8 +89,16 @@
   async function onUpdatePhone(phone: string) {
     return (await UserHelper.GI().updatePhone(phone, false)) != null;
   }
+
+  async function updateGender(newGender: Gender) {
+    await UserHelper.GI().setGender(newGender);
+  }
+
   async function onClickVerified() {
-    await handleVerification(verificationDialog);
+    await handleVerification(
+      verificationDialog,
+      `${base}/profile/phone-verification`
+    );
   }
 
   async function onDeleteUser() {
@@ -138,35 +132,22 @@
     onUpdate={onUpdatePhone}
     bind:dialog={phoneDialog}
   />
-  <PhoneDialog
-    loginReason={LoginReason.phoneVerification}
-    insideOtp={true}
-    on:onVerifyPhone={(phoneDataResult) => {
-      //TODO phone verification sheet
-      history.back();
-    }}
-    bind:dialog={verificationDialog}
-  />
 
   <PhoneDialog
     loginReason={LoginReason.phoneVerification}
     insideOtp={true}
-    on:onVerifyPhone={(phoneDataResult) => {
+    on:onVerifyPhone={() => {
+      //remove the otp dialog
+      history.back();
+      //push the successfully verified dialog
       pushState("", {
         showModal: true,
       });
-      setTimeout(
-        () => verificationSuccessfully.show(phoneDataResult.detail),
-        200
-      );
-      history.back();
+      setTimeout(() => verificationSuccessfully.showModal(), 200);
     }}
     bind:dialog={verificationDialog}
   />
-  <VerifiedPhoneSuccessfullyDialog
-    bind:this={verificationSuccessfully}
-    dialog={verificationSuccessfully}
-  />
+  <VerifiedPhoneSuccessfullyDialog bind:dialog={verificationSuccessfully} />
 {/if}
 
 {#if $isConnectedStore === undefined}
@@ -191,142 +172,106 @@
 
     <!-- Profile Information -->
     <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
-      <button
-        class="btn btn-ghost join-item flex justify-between items-center"
-        on:click={openNameDialog}
-      >
-        <div class="flex items-center gap-2">
-          <Icon src={Identification} size="26px" />
-          {$_("name")}
-        </div>
-        <div class="flex items-center text-gray-500">
-          {$userStore.name}
-          <CustomArrow />
-        </div>
-      </button>
-      <div class="divider h-[1px]" />
+      <SettingsItem icon="wpf:name" onTap={openNameDialog} name={"name"}>
+        <h3 slot="trailing">{$userStore.name}</h3>
+      </SettingsItem>
 
-      <button
-        class="btn btn-ghost join-item flex justify-between items-center"
-        on:click={openPhoneDialog}
+      <div class="divider h-[1px]" />
+      <SettingsItem
+        icon="ic:baseline-phone"
+        onTap={openPhoneDialog}
+        name={"phoneNumber"}
       >
-        <div class="flex items-center gap-2">
-          <Icon src={Phone} size="26px" />
-          {$_("phoneNumber")}
-        </div>
-        <div class="flex items-center text-gray-500">
+        <div slot="trailing" class="flex flex-row">
           {#if $userStore.userPublicData.isVerifiedPhone}
             <VerifiedIcon />
           {/if}
           <div class="w-[5px]" />
-          {$userStore.phoneNumber}
-          <CustomArrow />
-        </div></button
-      >
-      <div class="divider h-[1px]" />
-      <button
-        class="btn btn-ghost join-item flex justify-between items-center"
-        on:click={openEmailDialog}
-      >
-        <div class="flex items-center gap-2">
-          <Icon src={Envelope} size="26px" />
-          {$_("email")}
+          {$userStore.userPublicData.phoneNumber}
         </div>
-        <div class="flex items-center text-gray-500">
+      </SettingsItem>
+
+      <div class="divider h-[1px]" />
+      <SettingsItem
+        icon="ic:baseline-email"
+        onTap={openEmailDialog}
+        name={"email"}
+      >
+        <div slot="trailing" class="flex items-center text-gray-500">
           {#if $userStore.userPublicData.isVerifiedEmail}
             <VerifiedIcon />
           {/if}
           <div class="w-[5px]" />
           {$userStore.userPublicData.email}
-          <CustomArrow />
         </div>
-      </button>
+      </SettingsItem>
+
       <div class="divider h-[1px]" />
-      <button
-        class="btn btn-ghost join-item flex justify-between items-center"
-        on:click={copyToUserIdClipboard}
+      <SettingsItem
+        icon="tabler:id"
+        onTap={copyToUserIdClipboard}
+        name={"userId"}
       >
-        <div class="flex flex-row gap-2">
-          <Icon src={User} size="26px" />
-          {$_("userId")}
-
-          <div
-            class="flex flex-row{copiedUserId
-              ? 'flex items-center text-gray-500 gap-2'
-              : 'flex items-center text-gray-500'}"
-          >
-            <div class="w-[200px] truncate overflow-hidden">
-              {#if copiedUserId}
-                {translate("Copied", $_)}
-              {:else}
-                {$userStore.id}
-              {/if}
-            </div>
-
+        <div
+          slot="trailing"
+          class="flex flex-row{copiedUserId
+            ? 'flex items-center text-gray-500 gap-2'
+            : 'flex items-center text-gray-500'}"
+        >
+          <div class="w-[200px] truncate overflow-hidden">
             {#if copiedUserId}
-              <Icon src={CheckCircle} size="22px" />
+              {translate("Copied", $_)}
             {:else}
-              <CustomArrow />
+              {$userStore.id}
             {/if}
           </div>
-        </div></button
-      >
+
+          {#if copiedUserId}
+            <Icon src={CheckCircle} size="22px" />
+          {/if}
+        </div>
+      </SettingsItem>
     </section>
 
     <!-- Profile Information -->
     <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
-      <button
-        class="btn btn-ghost join-item flex justify-between items-center"
-        on:click={onClickVerified}
+      <SettingsItem
+        icon="material-symbols:verified"
+        onTap={onClickVerified}
+        name={"phoneVerification"}
       >
-        <div class="flex items-center gap-2">
-          <VerifiedIcon size={23} />
-          {$_("phoneVerification")}
-        </div>
-        <div class="flex items-center text-gray-500">
+        <h3 slot="trailing">
           {translate(
             $userStore.userPublicData.isVerifiedPhone
               ? "verified"
               : "notVerified"
           )}
-          <CustomArrow />
-        </div>
-      </button>
+        </h3></SettingsItem
+      >
     </section>
     <GenderPicker onChanged={updateGender} pickedGender={$userStore.gender} />
 
     <AuthOptions />
     <!-- Actions -->
     <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
-      <button
-        class="btn btn-ghost join-item flex justify-between items-center"
-        on:click={onLogout}
+      <SettingsItem
+        icon="material-symbols:logout"
+        onTap={onLogout}
+        name={"logout"}
       >
-        <div class="flex items-center gap-2">
-          <Icon src={ArrowRightOnRectangle} size="26px" />
-          {$_("logout")}
-        </div>
-        <div class="flex items-center text-gray-500">
+        <div slot="trailing">
           {#if loadingLogout}
-            <div class="loading loading-spinner"></div>
-          {:else}
-            <CustomArrow />
+            <div class="loading loading-spinner" />
           {/if}
         </div>
-      </button>
+      </SettingsItem>
+
       <div class="divider h-[1px]" />
-      <button
-        class="btn btn-ghost join-item flex justify-between items-center"
-        on:click={onDeleteUser}
-      >
-        <div class="flex items-center gap-2">
-          <Icon src={Trash} size="26px" />
-          {$_("deleteUser")}
-        </div>
-        <div class="flex items-center text-gray-500">
-          <CustomArrow />
-        </div>
-      </button>
+      <SettingsItem
+        icon="ph:trash-bold"
+        onTap={onDeleteUser}
+        name={"deleteUser"}
+      />
     </section>
   </div>
 {/if}

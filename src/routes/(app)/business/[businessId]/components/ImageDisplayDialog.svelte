@@ -1,5 +1,6 @@
 <script lang="ts">
   import { ShowToast } from "$lib/stores/ToastManager";
+  import { length } from "$lib/utils/core_utils";
   import {
     ChevronLeft,
     ChevronRight,
@@ -9,32 +10,32 @@
   } from "svelte-hero-icons";
 
   export let dialog: HTMLDialogElement;
-  export let workersStories: Map<string, string>;
+  export let workersStories: Record<string, string>;
   export let storyHearts: Map<string, number>;
   export let storyId: string;
 
   function isLast(storyId: string): boolean {
     return (
-      Array.from(workersStories.keys()).indexOf(storyId) ==
-      workersStories.size - 1
+      Array.from(Object.keys(workersStories)).indexOf(storyId) ==
+      length(workersStories) - 1
     );
   }
 
   function isFirst(storyId: string): boolean {
-    return Array.from(workersStories.keys()).indexOf(storyId) == 0;
+    return Array.from(Object.keys(workersStories)).indexOf(storyId) == 0;
   }
 
   function getNext(storyId: string): string {
-    let index = Array.from(workersStories.keys()).indexOf(storyId);
+    let index = Array.from(Object.keys(workersStories)).indexOf(storyId);
     let nextIndex = (index += 1);
-    let res = Array.from(workersStories.keys())[nextIndex];
+    let res = Array.from(Object.keys(workersStories))[nextIndex];
     return res;
   }
 
   function getBefore(storyId: string): string {
-    let index = Array.from(workersStories.keys()).indexOf(storyId);
+    let index = Array.from(Object.keys(workersStories)).indexOf(storyId);
     let nextIndex = (index -= 1);
-    return Array.from(workersStories.keys())[nextIndex];
+    return Array.from(Object.keys(workersStories))[nextIndex];
   }
 
   function giveHeart() {
@@ -56,7 +57,7 @@
     </button>
     <img
       class="object-cover h-full w-full rounded-xl"
-      src={workersStories.get(storyId)}
+      src={workersStories[storyId]}
       alt="showcase"
     />
     {#if !isFirst(storyId)}

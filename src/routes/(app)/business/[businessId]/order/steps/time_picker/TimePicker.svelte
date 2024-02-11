@@ -13,7 +13,7 @@
   import "@syncfusion/ej2-navigations/styles/material.css";
   import "@syncfusion/ej2-popups/styles/material.css";
   import * as schedule from "@syncfusion/ej2-schedule";
-  import { Schedule } from "@syncfusion/ej2-schedule";
+
   import "@syncfusion/ej2-schedule/styles/material.css";
   import "@syncfusion/ej2-splitbuttons/styles/material.css";
   import { onMount } from "svelte";
@@ -31,7 +31,15 @@
   );
 
   onMount(() => {
-    Schedule.Inject(Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop);
+    schedule.Schedule.Inject(
+      Day,
+      Week,
+      WorkWeek,
+      Month,
+      Agenda,
+      Resize,
+      DragAndDrop
+    );
 
     BookingController.scheduleObj = new schedule.Schedule({
       currentView: "Week",

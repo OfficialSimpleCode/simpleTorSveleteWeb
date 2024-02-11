@@ -1,0 +1,24 @@
+<script lang="ts">
+  import { _ } from "svelte-i18n";
+  import GeneralIcon from "../GeneralIcon.svelte";
+  import CustomArrow from "./CustomArrow.svelte";
+
+  export let onTap: () => void;
+
+  export let icon: string;
+  export let name: string;
+</script>
+
+<button
+  class="btn btn-ghost join-item flex justify-between items-center"
+  on:click={onTap}
+>
+  <div class="flex items-center gap-2">
+    <GeneralIcon {icon} />
+    {$_(name)}
+  </div>
+  <div class="flex items-center text-gray-500">
+    <slot name="trailing" />
+    <CustomArrow />
+  </div>
+</button>

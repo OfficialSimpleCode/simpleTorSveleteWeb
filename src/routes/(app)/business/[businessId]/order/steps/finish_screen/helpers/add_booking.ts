@@ -5,7 +5,7 @@ import BookingHelper from "$lib/helpers/booking/booking_helper";
 
 export async function addBooking({ clientNote }: { clientNote: string }) {
   const worker = BookingController.worker;
-  if (worker === undefined) {
+  if (worker == null) {
     return;
   }
   const booking = BookingController.bookingFromValues;
