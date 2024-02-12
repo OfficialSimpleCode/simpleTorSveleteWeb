@@ -8,22 +8,24 @@
   const businessUpdates: Map<string, Update> = $businessStore.design.updates;
 </script>
 
-<div class="flex items-center justify-center text-center py-2 bg-base-200">
-  <Carousel autoScroll={true} interval={3500} showArrows={true}>
-    {#each businessUpdates as [id, update]}
-      <CarouselItem>
-        <div
-          class="flex h-[200px] flex-col justify-center items-center w-full relative"
-        >
-          <h1 class="absolute top-1 text-xl">{update.title}</h1>
-          <p>{update.content}</p>
-          <p class="absolute bottom-1 text-sm opacity-55">
-            {update.lastModified !== ""
-              ? `${translate("lastChange", $_)} ${update.lastModified}`
-              : ""}
-          </p>
-        </div>
-      </CarouselItem>
-    {/each}
-  </Carousel>
-</div>
+{#if businessUpdates.size > 0}
+  <div class="flex items-center justify-center text-center py-2 bg-base-200">
+    <Carousel autoScroll={true} interval={3500} showArrows={true}>
+      {#each businessUpdates as [id, update]}
+        <CarouselItem>
+          <div
+            class="flex h-[200px] flex-col justify-center items-center w-full relative"
+          >
+            <h1 class="absolute top-1 text-xl">{update.title}</h1>
+            <p>{update.content}</p>
+            <p class="absolute bottom-1 text-sm opacity-55">
+              {update.lastModified !== ""
+                ? `${translate("lastChange", $_)} ${update.lastModified}`
+                : ""}
+            </p>
+          </div>
+        </CarouselItem>
+      {/each}
+    </Carousel>
+  </div>
+{/if}
