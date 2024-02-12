@@ -15,12 +15,10 @@ init({
 
 let RTLLanguges: string[] = ["he", "ar"];
 
-export async function handleLocaleChanges(
-  localStorage: Storage,
-  document: Document
-) {
-  if (localStorage.getItem("locale") !== null) {
-    await locale.set(localStorage.getItem("locale"));
+export function handleLocaleChanges(localStorage: Storage, document: Document) {
+  //get local stored lang
+  if (localStorage.getItem("locale") != null) {
+    locale.set(localStorage.getItem("locale"));
   }
   locale.subscribe((newLanguage) => {
     localStorage.setItem("locale", newLanguage!);

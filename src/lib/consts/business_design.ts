@@ -18,7 +18,7 @@ export const arrangementFromStr: { [key: string]: Arrangement } = {
   endlessCarousel: Arrangement.EndlessCarousel,
 };
 
-export const defaultThemes: { [key: string]: BusinessTheme } = {
+export const defaultThemes: Record<string, BusinessTheme> = {
   dark: new BusinessTheme({
     fontName: "Varela Round",
     themeName: "Original",

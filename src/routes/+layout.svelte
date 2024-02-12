@@ -1,27 +1,15 @@
 <script lang="ts">
-  import Logo from "$lib/components/Logo.svelte";
   import ToastManager from "$lib/components/ToastManager.svelte";
+  import { initialTheme } from "$lib/controllers/theme_controller";
   import { handleLocaleChanges } from "$lib/language/loader";
+  import { onMount } from "svelte";
   import "../app.css";
 
-  async function loadLocale() {
-    await handleLocaleChanges(localStorage, document);
-  }
-
-  const loadingLocale = loadLocale();
+  onMount(() => {
+    initialTheme(localStorage, document);
+    handleLocaleChanges(localStorage, document);
+  });
 </script>
 
 <ToastManager />
-<div class="h-screen w-screen">
-  {#await loadingLocale}
-    <div
-      class="h-full w-full flex flex-col items-center justify-center gap-8 bg-black"
-    >
-      <Logo mode="dark" radius={80} />
-      <h1 class="text-4xl text-white">Loading Business</h1>
-      <div class="loading loading-spinner loading-lg bg-white" />
-    </div>
-  {:then}
-    <slot />
-  {/await}
-</div>
+<slot />

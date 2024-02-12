@@ -218,6 +218,11 @@ export default class BusinessInitializer {
       }
     });
 
+    //fix the business created at if it is timestamp
+    if (businessDoc["createdAt"] instanceof Timestamp) {
+      businessDoc["createdAt"] = dateIsoStr(businessDoc["createdAt"].toDate());
+    }
+
     return businessDoc;
   }
   async _loadSettingsDoc(businessId: string): Promise<boolean> {

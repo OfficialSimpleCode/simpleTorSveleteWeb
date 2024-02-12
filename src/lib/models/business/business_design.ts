@@ -4,6 +4,7 @@ import {
   arrangementToStr,
   defaultThemes,
 } from "$lib/consts/business_design";
+import { getTheme } from "$lib/utils/colors";
 import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import IconData from "../general/icon_data";
 import { BusinessTheme } from "./business_theme";
@@ -115,9 +116,9 @@ export class BusinessDesign {
     return newObj;
   }
 
-  // get pickedTheme(): BusinessTheme {
-  //   return ThemeHelper().currentThemes[this.pickedThemeKey] || defaultThemes;
-  // }
+  get pickedTheme(): BusinessTheme {
+    return getTheme(this.pickedThemeKey, this.businessThemes);
+  }
 
   get shopIconData(): IconData {
     return IconData.fromShopIconUrl(this.shopIconUrl);
