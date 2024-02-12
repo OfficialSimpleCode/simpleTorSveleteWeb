@@ -12,4 +12,6 @@
 </script>
 
 <ToastManager />
-<slot />
+<div class="w-full h-full">
+  <slot />
+</div>

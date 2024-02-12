@@ -9,6 +9,7 @@
   import { get } from "svelte/store";
 
   import { base } from "$app/paths";
+  import { Gender } from "$lib/consts/gender";
 
   function onTap() {
     if (!get(isConnectedStore)) {
@@ -26,8 +27,16 @@
   {:else if $isConnectedStore === false}
     <GeneralIcon icon="ic:baseline-login" />s
   {:else}
-    <div class="w-10 rounded-full">
-      <img alt="profile" src={imageByGender($userStore.gender)} />
+    <div
+      class="{$userStore.gender === Gender.female
+        ? 'w-9'
+        : 'w-12'} rounded-full"
+    >
+      <img
+        class={$userStore.gender === Gender.female ? "w-8 h-8" : "w-12 h-12"}
+        alt="profile"
+        src={imageByGender($userStore.gender)}
+      />
     </div>
   {/if}
 </button>

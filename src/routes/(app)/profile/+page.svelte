@@ -37,6 +37,7 @@
 
   isConnectedStore.subscribe((value) => {
     //redirect to the login page if the user is not connected
+    console.log($page.url);
     if (value === false) {
       goto(`${base}/login`);
     }

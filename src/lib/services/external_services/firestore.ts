@@ -535,27 +535,25 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     batch,
     path,
     docId,
-
     data,
   }: {
     batch: WriteBatch;
     path: string;
     docId: string;
-
-    data: any;
+    data: Record<string, any>;
   }): Promise<void> {
     try {
       const organizedData: Record<string, any> = {};
-      Object.entries(data).forEach(([fieldName, valueData]: [string, any]) => {
+      Object.entries(data).forEach(([fieldName, valueData]) => {
         const command = valueData.command;
         const value = valueData.value;
-
+        console.log([value]);
         organizedData[fieldName] =
           command === ArrayCommands.remove
             ? arrayRemove([value])
             : arrayUnion([value]);
       });
-
+      console.log(organizedData);
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);
       const docRef = doc(collectionRef, docId);
       batch.update(docRef, organizedData);

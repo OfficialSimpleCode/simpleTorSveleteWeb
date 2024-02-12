@@ -382,17 +382,14 @@ export default class UserHelper {
     newSeenUpdates: Set<string>
   ): Promise<boolean> {
     //if there is a diffrent between we need to update the db
-    const intersect = new Set(
-      [...UserInitializer.GI().user.seenUpdates[businessId]].filter((i) =>
-        newSeenUpdates.has(i)
-      )
-    );
-    if (intersect.size === newSeenUpdates.size) {
+    const intersect = Array.from(
+      UserInitializer.GI().user.seenUpdates[businessId]
+    ).filter((i) => newSeenUpdates.has(i));
+
+    if (intersect.length === newSeenUpdates.size) {
       return true;
     }
-    UserInitializer.GI().user.seenUpdates[businessId] = new Set<string>([
-      ...newSeenUpdates,
-    ]);
+    UserInitializer.GI().user.seenUpdates[businessId] = newSeenUpdates;
     return await this.userRepo.updateFieldInsideDocAsMapRepo({
       path: usersCollection,
       docId: UserInitializer.GI().user.id,
