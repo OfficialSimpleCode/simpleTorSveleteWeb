@@ -8,23 +8,26 @@
   import { _ } from "$lib/utils/translate";
   import WorkerItem from "./components/WorkerItem.svelte";
 
-  const workers: WorkerModel[] = [];
+  let workersList: WorkerModel[] = [];
 
-  // add the workers of the business
-  Object.entries($workersStore).forEach(([workerId, worker]) => {
-    if (
-      $businessStore.workersPermissions.map[workerId]?.get(
-        WorkersPermissionsKeys.bookingsPermission
-      ) ??
-      true
-    ) {
-      workers.push(worker);
-    }
-  });
+  workersStore.subscribe((workers) => {
+    workersList = [];
+    // add the workers of the business
+    Object.entries(workers).forEach(([workerId, worker]) => {
+      if (
+        $businessStore.workersPermissions.map[workerId]?.get(
+          WorkersPermissionsKeys.bookingsPermission
+        ) ??
+        true
+      ) {
+        workersList.push(worker);
+      }
+    });
 
-  // sort the worker by joining to the business
-  workers.sort((a, b) => {
-    return a.createdAt.getTime() - b.createdAt.getTime();
+    // sort the worker by joining to the business
+    workersList.sort((a, b) => {
+      return a.createdAt.getTime() - b.createdAt.getTime();
+    });
   });
 </script>
 
@@ -34,7 +37,7 @@
 
   <!-- list of workers -->
   <ul class="h-full flex flex-wrap items-center justify-center gap-7 md:mx-3">
-    {#each workers as worker}
+    {#each workersList as worker}
       <WorkerItem {worker} />
     {/each}
   </ul>

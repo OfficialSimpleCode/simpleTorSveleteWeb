@@ -9,6 +9,9 @@
   let carousel: HTMLDivElement;
 
   function atEnd(): boolean {
+    if (carousel == null) {
+      return false;
+    }
     return vertical
       ? carousel.scrollTop + carousel.clientHeight + 1 >= carousel.scrollHeight
       : carousel.scrollLeft * -1 + carousel.clientWidth + 1 >=
@@ -37,7 +40,9 @@
   function scroll(forward: boolean = true) {
     let modifier: number = forward ? 1 : -1;
     modifier = vertical ? modifier * -1 : modifier;
-
+    if (carousel == null) {
+      return;
+    }
     if (!vertical) {
       let carouselWidth = carousel.clientWidth;
       carousel.scrollBy(carouselWidth * modifier, 0);

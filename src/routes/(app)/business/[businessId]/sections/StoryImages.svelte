@@ -7,6 +7,8 @@
   let workersStories: Record<string, string> = {};
   let storyHearts: Record<string, number> = {};
   workersStore.subscribe((workers) => {
+    workersStories = {};
+    storyHearts = {};
     Object.values(workers).forEach((worker) => {
       Object.entries(worker.storyImages).forEach(([imageId, image]) => {
         workersStories[imageId] = image;

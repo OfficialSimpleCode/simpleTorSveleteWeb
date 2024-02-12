@@ -6,6 +6,6 @@ export const load = async ({ params }) => {
   const businessJson = await BusinessInitializer.GI().getBusinessDoc(
     businessId
   );
-
+  console.log("3333333333333333333333333333333333333");
   return { business: businessJson, businessId: businessId };
 };
