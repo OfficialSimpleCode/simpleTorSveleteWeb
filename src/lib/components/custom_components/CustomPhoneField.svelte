@@ -10,6 +10,7 @@
     E164Number,
   } from "svelte-tel-input/types";
 
+  export let titleTransKey: string = "businessPhone";
   // You must use E164 number format. It's guarantee the parsing and storing consistency.
   export let value: E164Number | null = "";
 
@@ -55,7 +56,7 @@
   <!-- title -->
   <label class="label" for="phone-number">
     <span class="label-text"
-      >{capitalizeFirstLetter(translate("businessPhone", $_))}</span
+      >{capitalizeFirstLetter(translate(titleTransKey, $_))}</span
     >
   </label>
 
@@ -98,6 +99,6 @@
 
   <!-- invalidity indicator -->
   <p class="flex items-center h-5 mt-2 text-red-700">
-    {valid ? "" : "invalid"}
+    {valid ? "" : translate("illegalPhone", $_)}
   </p>
 </div>
