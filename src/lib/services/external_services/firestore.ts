@@ -531,6 +531,45 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     }
   }
 
+  async updateMultipleFieldsInsideDocAsArray({
+    batch,
+    path,
+    docId,
+
+    data,
+  }: {
+    batch: WriteBatch;
+    path: string;
+    docId: string;
+
+    data: any;
+  }): Promise<void> {
+    try {
+      const organizedData: Record<string, any> = {};
+      Object.entries(data).forEach(([fieldName, valueData]: [string, any]) => {
+        const command = valueData.command;
+        const value = valueData.value;
+
+        organizedData[fieldName] =
+          command === ArrayCommands.remove
+            ? arrayRemove([value])
+            : arrayUnion([value]);
+      });
+
+      const collectionRef = collection(this._firestore, `${envKey}/${path}`);
+      const docRef = doc(collectionRef, docId);
+      batch.update(docRef, organizedData);
+    } catch (e) {
+      if (e instanceof Error) {
+        AppErrorsHelper.GI().addError({
+          error: Errors.serverError,
+          details: e.toString(),
+        });
+      }
+      throw new Error(`Server Error: ${e}`);
+    }
+  }
+
   updateFieldInsideDocAsArray({
     batch,
     path,

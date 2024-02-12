@@ -3059,5 +3059,6 @@
   "queueSystem": "Queue management system",
   "systemsDevelopment": "Systems development",
   "company": "company",
-  "notVerified": "Not verified"
+  "notVerified": "Not verified",
+  "termConfirmed": "Approved term"
 }

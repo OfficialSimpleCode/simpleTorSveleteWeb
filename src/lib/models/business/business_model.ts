@@ -16,6 +16,7 @@ import {
 import InvoiceBusinessInfo from "../payment_hyp/invoice/invoice_business_info";
 import { BusinessData } from "./business_data";
 import { BusinessDesign } from "./business_design";
+import BusinessInfo from "./business_info";
 import { ProductModel } from "./product_model";
 import { Update } from "./update_model";
 import WorkersPermissions from "./workers_permission";
@@ -25,6 +26,7 @@ export default class BusinessModel {
   currency: CurrencyModel = defaultCurrency;
   notifyOnNewCustomer: boolean = true;
   searchable: boolean = true;
+
   billingIssue: Map<string, Date> = new Map();
   isLandingPageMode: boolean = false;
   allWorkersIds: Map<string, string> = new Map();
@@ -115,6 +117,18 @@ export default class BusinessModel {
     });
     instance.setData(json, businessId, withOutTimestamp);
     return instance;
+  }
+
+  get toBusinessInfo(): BusinessInfo {
+    return new BusinessInfo({
+      businessId: this.businessId,
+      iconUrl: this.design.shopIconUrl,
+      type: this.businesseType,
+      shopPhone: this.shopPhone,
+      ownerName: this.ownersName,
+      adress: this.adress,
+      businessName: this.shopName,
+    });
   }
 
   setData(
