@@ -1,6 +1,6 @@
 <script lang="ts">
   import { formatedPhone } from "$lib/utils/string_utils";
-  import { translate } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import { authDataStore } from "../../../routes/(auth)/auth_controller";
 
   export let dialog: HTMLDialogElement;
@@ -16,7 +16,7 @@
   >
     <!-- title -->
     <h3 class="font-bold text-lg pb-4">
-      {translate("phoneIsVerfied")}
+      {translate("phoneIsVerfied", $_)}
     </h3>
 
     <!-- success anomation  -->
@@ -24,7 +24,7 @@
 
     <!-- explanation text -->
     <h3 class="text-md">
-      {translate("nowWeCanRecognizeYou").replaceAll(
+      {translate("nowWeCanRecognizeYou", $_).replaceAll(
         "PHONE",
         formatedPhone($authDataStore.phoneData.phone)
       )}
@@ -42,7 +42,7 @@
       on:click={() => dialog.close()}
       class="btn lg:btn-lg bg-primary btn-primary flex items-center justify-center w-full"
     >
-      {translate("ok")}
+      {translate("ok", $_)}
     </button>
   </div>
 

@@ -3,7 +3,7 @@
   import BusinessInitializer from "$lib/initializers/business_initializer";
   import { businessStore } from "$lib/stores/Business";
   import { isConnectedStore, userStore } from "$lib/stores/User";
-  import { translate } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import { createEventDispatcher } from "svelte";
   import { Icon, XCircle } from "svelte-hero-icons";
   import GeneralIcon from "../GeneralIcon.svelte";
@@ -66,7 +66,7 @@
 
         <!-- title -->
         <h3 class="font-bold text-lg text-center">
-          {translate("term")}
+          {translate("term", $_)}
         </h3>
 
         <p></p>
@@ -85,7 +85,7 @@
         {#if loading}
           <div class="loading loading-spinner" />
         {:else if !isConfirmed}
-          {translate("confirmTerm")}
+          {translate("confirmTerm", $_)}
         {:else if isConfirmed}
           <div class="flex flex-row justify-center items-center">
             <GeneralIcon icon="line-md:circle-to-confirm-circle-transition" />
