@@ -15,11 +15,14 @@
   import BookingController from "$lib/controllers/booking_controller";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import "iconify-icon";
+  import { onMount } from "svelte";
   import { get } from "svelte/store";
   import ShareDialog from "../components/ShareDialog.svelte";
 
   let shareDialog: HTMLDialogElement;
   let navigationDialog: HTMLDialogElement;
+
+  let iconStr: string = "mdi:ios-share";
 
   // open choose navigation option dialog
   function openNavigationDialog() {
@@ -48,6 +51,11 @@
     });
     setTimeout(() => shareDialog.showModal(), 100);
   }
+
+  // After the ui is loaded
+  onMount(() => {
+    iconStr = isAppleUser() ? "mdi:ios-share" : "mdi:share-variant";
+  });
 </script>
 
 <!-- the page dialogs -->
@@ -86,9 +94,7 @@
       </button>
       <button class="btn btn-primary" on:click={openShareDialog}>
         <!-- <Icon src={isAppleUser() ? Trash : Share} size="26px" /> -->
-        <GeneralIcon
-          icon={isAppleUser() ? "mdi:ios-share" : "mdi:share-variant"}
-        ></GeneralIcon>
+        <GeneralIcon icon={iconStr}></GeneralIcon>
       </button>
     </div>
   </div>

@@ -1,7 +1,9 @@
+import * as crypto from "crypto";
 import pkg from "crypto-js";
+
 const { AES, enc, SHA256 } = pkg;
 
-const iv16len: string = "qwertyuiiuytrewq";
+const iv16len = "qwertyuiiuytrewq"; // Replace this with your actual initialization vector (IV)
 
 export function encryptText(text: string, password: string): string {
   const key = generateKey(password);
@@ -18,10 +20,21 @@ export function decryptText(encryption: string, password: string): string {
 }
 
 export function generateKey(password: string): CryptoJS.lib.WordArray {
+  const textEncoder = new TextEncoder();
   let preKey = "htr;lmn;rkmnkryemnkrmnbavsdbshtg6437";
-  preKey = SHA256(password + preKey)
-    .toString(enc.Hex)
+  preKey = textEncoder
+    .encode(password + preKey)
+    .toString()
+    .replaceAll(" ", "")
+    .replaceAll(",", "")
+    .replaceAll("[", "")
+    .replaceAll("]", "")
     .substring(0, 32);
+  console.log(preKey);
+  // preKey = SHA256(password + preKey)
+  //   .toString(enc.Hex)
+  //   .substring(0, 32);
+  console.log(enc.Base64.parse(enc.Utf8.parse(preKey).toString()));
   return enc.Utf8.parse(preKey);
 }
 
@@ -37,7 +50,10 @@ export function hashId({ id }: { id: string }): string {
     return "";
   }
   const salt = id.substring(3, 6); // unic salt prevent pre-hash attack
-  const hashValue = SHA256(id + salt).toString(enc.Hex);
+  const hashValue = crypto
+    .createHash("sha256")
+    .update(id + salt)
+    .digest("hex");
   const hashBytes = enc.Hex.parse(hashValue.toString());
   return hashBytes.toString(enc.Hex).substring(0, 10).replace(/[/.*]/g, "");
 }

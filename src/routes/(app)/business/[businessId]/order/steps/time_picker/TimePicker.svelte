@@ -25,6 +25,7 @@
   import { onEventClick } from "./helpers/on_tap_time_obj";
   const { Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop } = schedule;
   let downloadAppDialog: HTMLDialogElement;
+
   sync.registerLicense(
     "Ngo9BigBOggjHTQxAR8/V1NAaF5cWWRCfEx0Q3xbf1x0ZFRHallSTnZYUiweQnxTdEFjWHxecHZQQWRbWEB+Wg=="
   );
@@ -70,7 +71,12 @@
           startTime: { name: "from" },
           endTime: { name: "to" },
         },
-        template: "#apptemplate",
+        template: `<div id="apptemplate" type="text/x-template">
+<div class="template-wrap bg-base-200">
+  <div class="subject bg-base-200">cds,[vds[vds]]</div>
+  <div class="time bg-red-400">cacdsacd</div>
+</div>
+</div>`,
         enableMaxHeight: true,
         allowEditing: false,
       },
