@@ -7,7 +7,7 @@
 
   import { businessStore } from "$lib/stores/Business";
   import { userStore } from "$lib/stores/User";
-  import GeneralIcon from "../GeneralIcon.svelte";
+  import CustomCircleIcon from "../custom_components/CustomCircleIcon.svelte";
   import ProfileNavigator from "./components/ProfileNavigator.svelte";
 </script>
 
@@ -25,7 +25,7 @@
     <!-- lang icon -->
     <div class="dropdown dropdown-left dropdown-bottom">
       <div role="button" tabindex="0" class="btn btn-ghost btn-circle">
-        <GeneralIcon icon="mdi:language"></GeneralIcon>
+        <CustomCircleIcon icon="mdi:language" size={22} />
       </div>
       <LanguageBoard />
     </div>
@@ -41,9 +41,11 @@
       }}
     >
       <div class="indicator">
-        <GeneralIcon icon="lets-icons:order-fill"></GeneralIcon>
+        <CustomCircleIcon icon="lets-icons:order-fill" size={22} />
         {#if Object.values($userStore.bookingsToShow).length > 0}
-          <span class="bg-primary badge badge-sm indicator-item rounded-badge">
+          <span
+            class="bg-primary badge badge-sm indicator-item rounded-badge mr-2"
+          >
             {Object.values($userStore.bookingsToShow).length}</span
           >
         {/if}

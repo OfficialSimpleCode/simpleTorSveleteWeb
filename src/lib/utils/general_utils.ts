@@ -124,12 +124,10 @@ export function pushDialog(
   herf?: string
 ) {
   console.log("ffffffff");
-  if (dialog == null) {
-    return;
-  }
+
   console.log("3333333333");
   pushState(herf ?? "", {
     showModal: true,
   });
-  setTimeout(() => dialog.showModal(), 100);
+  setTimeout(() => dialog!.showModal(), 100);
 }

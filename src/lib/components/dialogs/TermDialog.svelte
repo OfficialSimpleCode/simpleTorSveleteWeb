@@ -52,10 +52,10 @@
 
 <dialog
   bind:this={dialog}
-  on:close={() => history.back()}
-  class="modal modal-bottom sm:modal-middle"
+  on:close={() => dialog.close()}
+  class="  modal modal-bottom sm:modal-middle max-w-[400px]"
 >
-  <div class="modal-box bg-base-200 items-center">
+  <div class=" absolute flex justify-center modal-box bg-base-200 items-center">
     <div class="flex flex-col gap-3 items-center h-full">
       <!-- title and top buttons -->
       <div class="flex flex-row justify-between items-center relative">

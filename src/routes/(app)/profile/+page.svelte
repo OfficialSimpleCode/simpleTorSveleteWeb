@@ -22,6 +22,7 @@
   import { translate } from "$lib/utils/translate";
   import { emailValidation, nameValidation } from "$lib/utils/validation_utils";
   import clipboard from "clipboardy";
+  import { onMount } from "svelte";
   import AuthOptions from "./components/AuthOptions.svelte";
   import ChangeAtrributeDialog from "./components/ChangeAtrributeDialog.svelte";
   import ChangePhoneDialog from "./components/ChangePhoneDialog.svelte";
@@ -34,14 +35,16 @@
   let loadingLogout: boolean = false;
   let copiedUserId: boolean = false;
   console.log($userStore.id);
-
-  isConnectedStore.subscribe((value) => {
-    //redirect to the login page if the user is not connected
-    console.log($page.url);
-    if (value === false) {
-      goto(`${base}/login`);
-    }
+  onMount(() => {
+    isConnectedStore.subscribe((value) => {
+      //redirect to the login page if the user is not connected
+      console.log($page.url);
+      if (value === false) {
+        goto(`${base}/login`);
+      }
+    });
   });
+
   function openEmailDialog() {
     pushState(`${base}/profile/email`, {
       showModal: true,

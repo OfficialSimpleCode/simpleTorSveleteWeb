@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { pushState } from "$app/navigation";
   import { page } from "$app/stores";
 
   import { businessStore } from "$lib/stores/Business";
@@ -12,9 +11,12 @@
   import { base } from "$app/paths";
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
 
+  import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
   export let termDialog: HTMLDialogElement;
   let navigationDialog: HTMLDialogElement;
+
+  const noNeedGenderTrnaslate: string[] = ["whatsapp"];
 
   function openNavigationDialog() {
     if (!$businessStore.adress) {
@@ -24,16 +26,16 @@
       });
       return;
     }
-    pushState("", {
-      showModal: true,
-    });
-    setTimeout(() => navigationDialog.showModal(), 100);
+    pushDialog(
+      navigationDialog,
+      `${base}/business/${$businessStore.businessId}/navigate`
+    );
   }
-  function openTerrmDialog() {
-    pushState(`${base}/business/${$businessStore.businessId}/term`, {
-      showModal: true,
-    });
-    setTimeout(() => termDialog.showModal(), 100);
+  function openTermDialog() {
+    pushDialog(
+      termDialog,
+      `${base}/business/${$businessStore.businessId}/term`
+    );
   }
 
   let socialLinks: Object = {
@@ -41,7 +43,7 @@
     instagram: $businessStore.instagramAccount,
     whatsapp: `whatsapp://send?phone=${$businessStore.shopPhone}`,
     navigate: openNavigationDialog,
-    term: openTerrmDialog,
+    term: openTermDialog,
   };
 
   let socialIcons: { [key: string]: IconSource } = {
@@ -85,10 +87,10 @@
           on:click={() => activateLink(link, name)}
           class="btn btn-ghost btn-square w-6 h-6 sm:w-10 sm:h-10"
         >
-          <GeneralIcon icon={socialIcons[name]} size={26}></GeneralIcon>
+          <GeneralIcon icon={socialIcons[name]} size={26} />
         </button>
         <h5 class="xs:text-sm text-xs text-gray-500 select-none">
-          {translate(name, $_)}
+          {translate(name, $_, !noNeedGenderTrnaslate.includes(name))}
         </h5>
       </div>
     {/each}
