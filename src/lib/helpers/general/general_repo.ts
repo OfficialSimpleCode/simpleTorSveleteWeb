@@ -90,7 +90,7 @@ export default class GeneralRepo extends FirestoreDataBase {
     docId: string;
     fieldName: string;
     value: any;
-    command: ArrayCommands;
+    command?: ArrayCommands;
   }): Promise<boolean> {
     const batch = this.getBatch;
     super.updateFieldInsideDocAsArray({
@@ -104,24 +104,24 @@ export default class GeneralRepo extends FirestoreDataBase {
     return await this.commmitBatch(batch);
   }
 
-  // async updateMultipleFieldsInsideDocAsArrayRepo({
-  //   path,
-  //   docId,
-  //   data,
-  // }: {
-  //   path: string;
-  //   docId: string;
-  //   data: Map<string, any>;
-  // }): Promise<boolean> {
-  //   const batch = getBatch();
-  //   super.updateMultipleFieldsInsideDocAsArray({
-  //     batch,
-  //     path,
-  //     docId,
-  //     data,
-  //   });
-  //   return await commmitBatch( batch );
-  // }
+  async updateMultipleFieldsInsideDocAsArrayRepo({
+    path,
+    docId,
+    data,
+  }: {
+    path: string;
+    docId: string;
+    data: Record<string, any>;
+  }): Promise<boolean> {
+    const batch = this.getBatch;
+    super.updateMultipleFieldsInsideDocAsArray({
+      batch,
+      path,
+      docId,
+      data,
+    });
+    return await this.commmitBatch(batch);
+  }
 
   async updateFieldInsideDocAsMapRepo({
     path,

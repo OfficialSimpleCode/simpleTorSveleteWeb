@@ -44,8 +44,8 @@ export default class UserModel {
   businessTopics: Set<string> = new Set();
   waitingListTopics: { [key: string]: NotificationTopic } = {};
   tempFcm?: string;
-  termsApprovals: { [key: string]: Date } = {};
-  seenUpdates: { [key: string]: Set<string> } = {};
+  termsApprovals: Record<string, Date> = {};
+  seenUpdates: Record<string, Set<string>> = {};
   createdAt: Date = new Date();
   userPublicData: UserPublicData = new UserPublicData({});
   name: string = "";
@@ -479,11 +479,7 @@ export default class UserModel {
   }
 
   firstEnterance(businessId: string): boolean {
-    const visitedBusinesses = new Set([
-      ...this.lastVisitedBuisnesses,
-      ...this.lastVisitedBuisnessesRemoved,
-    ]);
-    return !visitedBusinesses.has(businessId);
+    return true;
   }
 
   toUserDocJson(): Record<string, any> {

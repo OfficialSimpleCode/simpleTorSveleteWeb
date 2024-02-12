@@ -46,6 +46,7 @@ export default class BusinessInitializer {
   }
 
   generalRepo: GeneralRepo = new GeneralRepo();
+  activeBusiness: boolean = false;
 
   loadedBusinessJson: Record<string, any> | undefined;
 
@@ -91,6 +92,8 @@ export default class BusinessInitializer {
         businessId
       );
 
+      this.activeBusiness = this.isBusinessActive();
+
       // Make the business data listener from the real-time database
       this.makeBusinessDataListener();
 
@@ -132,7 +135,6 @@ export default class BusinessInitializer {
       //   }
 
       // Check for reminders in this current business
-
       checkForReminders().then((value) => {
         UserInitializer.GI().user.userPublicData.reminders = value;
         userStore.set(UserInitializer.GI().user);
@@ -224,6 +226,23 @@ export default class BusinessInitializer {
     }
 
     return businessDoc;
+  }
+
+  isBusinessActive(): boolean {
+    const ownerPhone = this.business.businessId.split("--")[0];
+    if (GeneralData.developers[ownerPhone] != null) {
+      this.business.productId =
+        GeneralData.developers[ownerPhone]!.businessProductId;
+      this.business.workersProductsId =
+        GeneralData.developers[ownerPhone]!.workersProductId;
+      return true;
+    }
+
+    /*Give to the user month trial without put the cerdit card*/
+    if (this.business.expiredDate > new Date()) {
+      return true;
+    }
+    return this.business.productId != "";
   }
   async _loadSettingsDoc(businessId: string): Promise<boolean> {
     try {

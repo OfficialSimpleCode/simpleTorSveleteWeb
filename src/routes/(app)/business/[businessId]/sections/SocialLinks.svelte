@@ -9,9 +9,11 @@
   import NavigationDialog from "$lib/components/NavigationDialog.svelte";
 
   // Assets
+  import { base } from "$app/paths";
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
-  import { _, translate } from "$lib/utils/translate";
 
+  import { _, translate } from "$lib/utils/translate";
+  export let termDialog: HTMLDialogElement;
   let navigationDialog: HTMLDialogElement;
 
   function openNavigationDialog() {
@@ -27,13 +29,19 @@
     });
     setTimeout(() => navigationDialog.showModal(), 100);
   }
+  function openTerrmDialog() {
+    pushState(`${base}/business/${$businessStore.businessId}/term`, {
+      showModal: true,
+    });
+    setTimeout(() => termDialog.showModal(), 100);
+  }
 
   let socialLinks: Object = {
     call: `tel:${$businessStore.shopPhone}`,
     instagram: $businessStore.instagramAccount,
     whatsapp: `whatsapp://send?phone=${$businessStore.shopPhone}`,
     navigate: openNavigationDialog,
-    term: $businessStore.previewDoc,
+    term: openTerrmDialog,
   };
 
   let socialIcons: { [key: string]: IconSource } = {

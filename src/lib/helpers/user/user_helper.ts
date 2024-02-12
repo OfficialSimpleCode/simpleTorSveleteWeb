@@ -359,6 +359,23 @@ export default class UserHelper {
         return value;
       });
   }
+  async addTermApproval(businessId: string): Promise<boolean> {
+    const dateToAdd = new Date();
+    UserInitializer.GI().user.termsApprovals[businessId] = dateToAdd;
+    return await this.userRepo
+      .updateFieldInsideDocAsMapRepo({
+        fieldName: `termsApprovals.${businessId}`,
+        value: dateIsoStr(dateToAdd),
+        docId: UserInitializer.GI().user.id,
+        path: usersCollection,
+      })
+      .then((value) => {
+        if (value) {
+          userStore.set(UserInitializer.GI().user);
+        }
+        return value;
+      });
+  }
 
   async updateSeenUpdates(
     businessId: string,

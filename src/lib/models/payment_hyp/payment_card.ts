@@ -149,20 +149,20 @@ export default class PaymentCard {
     });
   }
 
-  // encryptCard(password: string): PaymentCard {
-  //   return new PaymentCard({
-  //     cardId: this.cardId,
-  //     brand: this.brand,
-  //     token: encryptText({ text: this.token, password }),
-  //     validityMonth: encryptText({ text: this.validityMonth, password }),
-  //     validityYear: encryptText({ text: this.validityYear, password }),
-  //     name: this.name,
-  //     userId: this.userId,
-  //     bankName: this.bankName,
-  //     businessId: this.businessId,
-  //     l4Digits: this.l4Digits,
-  //   });
-  // }
+  encryptCard(password: string): PaymentCard {
+    return new PaymentCard({
+      cardId: this.cardId,
+      brand: this.brand,
+      token: "", //encryptText({ text: this.token, password }),
+      validityMonth: "", //encryptText({ text: this.validityMonth, password }),
+      validityYear: "", //encryptText({ text: this.validityYear, password }),
+      name: this.name,
+      userId: this.userId,
+      bankName: this.bankName,
+      businessId: this.businessId,
+      l4Digits: this.l4Digits,
+    });
+  }
 
   isTheSameAs(card: PaymentCard): boolean {
     return (

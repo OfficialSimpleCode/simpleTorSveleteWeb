@@ -1,4 +1,4 @@
-import { ErrorsTypeLog } from "$lib/consts/application_general";
+import { ErrorsTypeLog, developers } from "$lib/consts/application_general";
 import { BookingReminderType, BookingStatuses } from "$lib/consts/booking";
 import {
   notifcationsCollection,
@@ -6,6 +6,7 @@ import {
 } from "$lib/consts/db";
 import DeveloperHelper from "$lib/helpers/developer_helper";
 import GeneralRepo from "$lib/helpers/general/general_repo";
+import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import type Booking from "$lib/models/booking/booking_model";
 import type { CurrencyModel } from "$lib/models/general/currency_model";
@@ -19,6 +20,7 @@ import NotificationPayload, {
 import type NotificationTopic from "$lib/models/notifications/notification_topic";
 import type Invoice from "$lib/models/payment_hyp/invoice/invoice";
 import PaymentRequest from "$lib/models/payment_hyp/payment_request/payment_request";
+import type UserModel from "$lib/models/user/user_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { dateToRemindBooking } from "$lib/utils/dates_utils";
 import { getFormatedTime } from "$lib/utils/string_utils";
@@ -566,6 +568,59 @@ export default class NotificationsHelper {
         .replaceAll("BUSINESSNAME", invoice.businessInfo.businessName)
         .replaceAll("WORKERNAME", workerName)
         .replaceAll("PRICE", price),
+    });
+  }
+
+  //-------------------------------------business -----------------------------------
+  async notifyFirstTimeEnterBusiness(
+    worker: WorkerModel,
+    user: UserModel,
+    businessData: BusinessPayloadData,
+    businessName: string,
+    needNotify: boolean
+  ): Promise<void> {
+    if (!UserInitializer.GI().isConnected) {
+      return; // no need to notify about guests
+    }
+    if (!needNotify) {
+      return;
+    }
+    // no need to notify on enter of manager to business
+    if (user.id.startsWith("+972-555")) {
+      return;
+    }
+    // no need to notify on enter of manager to business
+    if (developers.includes(user.id)) {
+      return;
+    }
+
+    if (!UserInitializer.GI().user.firstEnterance(businessData.businessId)) {
+      return; // user already visited
+    }
+
+    if (worker.fcmsTokens.size === 0) {
+      return; // unable to notify - there aren't any FCMS tokens
+    }
+
+    if (worker.id === user.id) {
+      return; // same user, no need to notify
+    }
+    if (!BusinessInitializer.GI().activeBusiness) {
+      return;
+    }
+
+    await this.notificationRepo.notifyMultipleUsers({
+      fcms: worker.fcmsTokens,
+      payload: new NotificationPayload({
+        action: EnterAction.openBusiness,
+        businessData: businessData,
+      }),
+      title: translate("newCustomer", undefined, false),
+      content: translate("newCustomerContent", undefined, false)
+        .replace("BUSINESS_NAME", businessName)
+        .replace("NAME", user.name)
+        .replace("DATE", getFormatedTime(new Date())),
+      isSilent: true,
     });
   }
 
