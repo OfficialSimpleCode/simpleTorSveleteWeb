@@ -2,19 +2,25 @@
   import UserHelper from "$lib/helpers/user/user_helper";
   import BusinessInitializer from "$lib/initializers/business_initializer";
   import { businessStore } from "$lib/stores/Business";
-  import { userStore } from "$lib/stores/User";
+  import { isConnectedStore, userStore } from "$lib/stores/User";
   import { translate } from "$lib/utils/translate";
+  import { createEventDispatcher } from "svelte";
   import { Icon, XCircle } from "svelte-hero-icons";
   import GeneralIcon from "../GeneralIcon.svelte";
 
   export let dialog: HTMLDialogElement;
 
+  const dispatcher = createEventDispatcher();
+
   let isConfirmed = false;
   let loading = false;
 
-  userStore.subscribe((value) => {
+  isConnectedStore.subscribe((value) => {
+    if (value !== true) {
+      return;
+    }
     const dateToApprove =
-      value.termsApprovals[BusinessInitializer.GI().business.businessId];
+      $userStore.termsApprovals[BusinessInitializer.GI().business.businessId];
     isConfirmed =
       dateToApprove != null &&
       dateToApprove >
@@ -29,12 +35,17 @@
       return;
     }
     loading = true;
+
     try {
-      await UserHelper.GI().addTermApproval(
+      isConfirmed = await UserHelper.GI().addTermApproval(
         BusinessInitializer.GI().business.businessId
       );
     } finally {
       loading = false;
+
+      if (isConfirmed) {
+        dispatcher("onConfirmTerm");
+      }
     }
   }
 </script>

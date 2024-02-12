@@ -9,6 +9,7 @@ import GeneralRepo from "$lib/helpers/general/general_repo";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import type Booking from "$lib/models/booking/booking_model";
+import type BusinessModel from "$lib/models/business/business_model";
 import type { CurrencyModel } from "$lib/models/general/currency_model";
 import { Price } from "$lib/models/general/price";
 import type MultiBooking from "$lib/models/multi_booking/multi_booking";
@@ -575,49 +576,53 @@ export default class NotificationsHelper {
   async notifyFirstTimeEnterBusiness(
     worker: WorkerModel,
     user: UserModel,
-    businessData: BusinessPayloadData,
-    businessName: string,
-    needNotify: boolean
+    business: BusinessModel
   ): Promise<void> {
+    console.log("zzzzzzzzzzzzz");
     if (!UserInitializer.GI().isConnected) {
       return; // no need to notify about guests
     }
-    if (!needNotify) {
+    console.log("zzzzzzzzzzzzz");
+    if (!business.notifyOnNewCustomer) {
       return;
     }
+    console.log("zzzzzzzzzzzzz");
     // no need to notify on enter of manager to business
-    if (user.id.startsWith("+972-555")) {
+    if (user.id.startsWith("+972-5550")) {
       return;
     }
+    console.log("zzzzzzzzzzzzz");
     // no need to notify on enter of manager to business
     if (developers.includes(user.id)) {
       return;
     }
+    console.log("zzzzzzzzzzzzz");
 
-    if (!UserInitializer.GI().user.firstEnterance(businessData.businessId)) {
+    if (!UserInitializer.GI().user.firstEnterance(business.businessId)) {
       return; // user already visited
     }
-
+    console.log("zzzzzzzzzzzzz");
     if (worker.fcmsTokens.size === 0) {
       return; // unable to notify - there aren't any FCMS tokens
     }
-
+    console.log("zzzzzzzzzzzzz");
     if (worker.id === user.id) {
       return; // same user, no need to notify
     }
+    console.log("zzzzzzzzzzzzz");
     if (!BusinessInitializer.GI().activeBusiness) {
       return;
     }
-
+    console.log("zzzzzzzzzzzzz");
     await this.notificationRepo.notifyMultipleUsers({
       fcms: worker.fcmsTokens,
       payload: new NotificationPayload({
         action: EnterAction.openBusiness,
-        businessData: businessData,
+        businessData: business.businessPayLoadData,
       }),
       title: translate("newCustomer", undefined, false),
       content: translate("newCustomerContent", undefined, false)
-        .replace("BUSINESS_NAME", businessName)
+        .replace("BUSINESS_NAME", business.shopName)
         .replace("NAME", user.name)
         .replace("DATE", getFormatedTime(new Date())),
       isSilent: true,

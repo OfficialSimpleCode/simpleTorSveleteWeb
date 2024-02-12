@@ -12,7 +12,7 @@
 </script>
 
 <div
-  class="navbar bg-base-100 z-20 gap-8 justify-between"
+  class="navbar bg-base-100 z-20 gap-8 justify-between items-center"
   style="direction: ltr;"
 >
   <div>
@@ -21,7 +21,8 @@
       class="btn btn-ghost text-xl">SimpleTor</a
     >
   </div>
-  <div>
+  <div class="flex items-center justify-center">
+    <!-- lang icon -->
     <div class="dropdown dropdown-left dropdown-bottom">
       <div role="button" tabindex="0" class="btn btn-ghost btn-circle">
         <GeneralIcon icon="mdi:language"></GeneralIcon>
@@ -29,6 +30,7 @@
       <LanguageBoard />
     </div>
 
+    <!-- appoitments icon -->
     <div
       role="button"
       tabindex="0"
@@ -48,6 +50,7 @@
       </div>
     </div>
 
+    <!-- profile navigator -->
     <ProfileNavigator />
   </div>
 </div>
