@@ -1225,11 +1225,13 @@ export default class Booking extends ScheduleItem {
       amount: "0",
       currency: this.totalPrice.currency,
     });
-    for (const transaction of Object.values(this.transactions)) {
-      if (transaction.type === PaymentTypes.payment) {
-        totalTransactionsPrice.amount += transaction.amount;
+    Object.values(this.transactions).forEach((transaction) => {
+      if (transaction.type === PaymentTypes.payment && !transaction.canceled) {
+        totalTransactionsPrice.amount +=
+          transaction.amount * (transaction.refund ? -1 : 1);
       }
-    }
+    });
+
     return totalTransactionsPrice;
   }
 

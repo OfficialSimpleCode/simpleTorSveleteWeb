@@ -58,9 +58,7 @@
 
   async function onVerifiedPhone() {
     //remove the otp dialog
-    history.back();
-
-    console.log("Eeeeeeeeeeeeeeee");
+    verificationDialog.close();
 
     //update the boooking maker store that no need to show the phone verification anymore
     bookingMakerStore.update((val) => {

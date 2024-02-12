@@ -38,7 +38,12 @@
 
 <!-- booking shhet and dialog -->
 {#if $page.state.showModal}
-  <BookingSheet bind:dialog={bookingDialog} {booking} {currentWorker} />
+  <BookingSheet
+    bind:dialog={bookingDialog}
+    {booking}
+    {currentWorker}
+    {forceOpenBookingSheet}
+  />
 {/if}
 
 <button

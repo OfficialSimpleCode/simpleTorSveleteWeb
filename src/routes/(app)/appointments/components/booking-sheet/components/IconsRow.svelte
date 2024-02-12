@@ -1,25 +1,27 @@
 <script lang="ts">
-  import { pushState } from "$app/navigation";
   import { page } from "$app/stores";
   import NavigationDialog from "$lib/components/NavigationDialog.svelte";
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import Booking from "$lib/models/booking/booking_model";
   import type WorkerModel from "$lib/models/worker/worker_model";
+  import { pushDialog } from "$lib/utils/general_utils";
   import { deleteBooking } from "../../../helpers/delete_booking";
   import { updateBooking } from "../../../helpers/update_booking";
   export let mainDialog: HTMLDialogElement;
   export let booking: Booking;
   export let currentWorker: WorkerModel | undefined;
+  export let downloadAppDialog: HTMLDialogElement | undefined;
 
   let navigationDialog: HTMLDialogElement;
   let loadingDelete: boolean = false;
 
   // open choose navigation option dialog
   function openNavigationDialog() {
-    pushState("", {
-      showModal: true,
-    });
-    setTimeout(() => navigationDialog.showModal(), 100);
+    pushDialog(navigationDialog);
+  }
+
+  function openDownloadAppDialog() {
+    pushDialog(downloadAppDialog);
   }
 
   async function onDelete() {
@@ -74,4 +76,12 @@
     translateKey="navigate"
     handleClick={openNavigationDialog}
   />
+
+  {#if booking.invoices.size > 0}
+    <CustomCircleIcon
+      icon="mdi:invoice-text"
+      translateKey="invoice"
+      handleClick={openDownloadAppDialog}
+    />
+  {/if}
 </div>

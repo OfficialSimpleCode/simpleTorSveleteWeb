@@ -3,9 +3,12 @@
 
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
+  import { containerRadius } from "$lib/consts/sizes";
+  import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
 
   export let booking: Booking;
+  export let downloadAppDialog: HTMLDialogElement | undefined;
 
   const leftToPay: number =
     booking.totalPrice.amount - booking.transactionsTotalPaymentPrice.amount;
@@ -16,13 +19,18 @@
       : booking.transactionsTotalPaymentPrice
   } / ${booking.totalPrice}`;
   const paid = leftToPay <= 0 && booking.totalPrice.amount > 0;
+
+  function onClick() {
+    pushDialog(downloadAppDialog);
+  }
 </script>
 
-<div
-  class="flex flex-row w-full justify-between items-center bg-base-300 rounded-lg py-2 px-2 gap-2"
+<button
+  class="flex flex-row w-full justify-between items-center bg-base-300 {containerRadius} py-4 px-3 gap-2"
+  on:click={onClick}
 >
   <div class="flex flex-row items-center gap-2">
-    <GeneralIcon icon="mdi:payment"></GeneralIcon>
+    <GeneralIcon icon="mdi:payment" />
     <!-- like a listTile widget -->
     <div class="flex flex-col items-start">
       <p>{translate("onlinePayments", $_)}</p>
@@ -33,7 +41,7 @@
   </div>
 
   <div class="flex flex-row justify-center items-center">
-    <p class="text-nowrap" dir="ltr">20.0 / {booking.totalPrice.toString()}</p>
-    <CustomArrow></CustomArrow>
+    <p class="text-nowrap" dir="ltr">{paidString}</p>
+    <CustomArrow />
   </div>
-</div>
+</button>

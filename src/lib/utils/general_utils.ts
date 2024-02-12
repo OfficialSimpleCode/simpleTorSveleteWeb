@@ -1,3 +1,4 @@
+import { pushState } from "$app/navigation";
 import { GeneralData } from "$lib/helpers/general_data";
 
 // export function parseAppLimit(json: Record<string, any>): void {
@@ -116,4 +117,19 @@ export function convertMapToObject(
 
 export function isNumber(value?: string | number): boolean {
   return value != null && value !== "" && !isNaN(Number(value.toString()));
+}
+
+export function pushDialog(
+  dialog: HTMLDialogElement | undefined,
+  herf?: string
+) {
+  console.log("ffffffff");
+  if (dialog == null) {
+    return;
+  }
+  console.log("3333333333");
+  pushState(herf ?? "", {
+    showModal: true,
+  });
+  setTimeout(() => dialog.showModal(), 100);
 }
