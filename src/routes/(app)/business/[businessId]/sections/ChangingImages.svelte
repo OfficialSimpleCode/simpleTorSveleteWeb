@@ -1,10 +1,16 @@
-<script>
+<script lang="ts">
   import { businessStore } from "$lib/stores/Business";
-
+  import { onMount } from "svelte";
   const changingImagesRatioX = 5;
   const changingImagesRatioY = 4;
-  const changingImagesHeight =
-    window.innerHeight * (changingImagesRatioY / changingImagesRatioX);
+  let changingImagesHeight: number = 150;
+
+  onMount(() => {
+    changingImagesHeight =
+      window != null
+        ? window.innerHeight * (changingImagesRatioY / changingImagesRatioX)
+        : 150;
+  });
 </script>
 
 <!-- widge screens  -->

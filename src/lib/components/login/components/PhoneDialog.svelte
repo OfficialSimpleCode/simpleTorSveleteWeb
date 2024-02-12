@@ -1,12 +1,12 @@
 <script lang="ts">
   import { LoginReason } from "$lib/consts/auth";
-  import { createEventDispatcher, type EventDispatcher } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import GetOtpView from "./phone_dialog/components/GetOtpView.svelte";
   import GetPhoneView from "./phone_dialog/components/GetPhoneView.svelte";
   export let loginReason: LoginReason;
   export let dialog: HTMLDialogElement;
   export let insideOtp: boolean = false;
-  export let dispatch: EventDispatcher<any> = createEventDispatcher();
+  const dispatch = createEventDispatcher();
 
   console.log("44444444444444");
 </script>

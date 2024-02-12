@@ -4,6 +4,7 @@
   import { LoginReason } from "$lib/consts/auth";
   import BookingController, {
     bookingMakerStore,
+    showPhoneVerificationAlert,
   } from "$lib/controllers/booking_controller";
   import PublicCustomer from "$lib/models/worker/public_customer";
   import { needToHoldOn } from "$lib/utils/booking_utils";
@@ -48,17 +49,31 @@
       await addBooking();
     }
   }
+
+  async function onVerifiedPhone() {
+    //remove the otp dialog
+    history.back();
+
+    console.log("Eeeeeeeeeeeeeeee");
+
+    //update the boooking maker store that no need to show the phone verification anymore
+    bookingMakerStore.update((val) => {
+      val.showVerificationAlert = showPhoneVerificationAlert(
+        BookingController.worker
+      );
+      return val;
+    });
+    console.log("3333333333333333");
+    //add the booking again
+    addBooking();
+  }
 </script>
 
 {#if $page.state.showModal}
   <PhoneDialog
     loginReason={LoginReason.phoneVerification}
     insideOtp={true}
-    on:onVerifyPhone={() => {
-      //remove the otp dialog
-      history.back();
-      addBooking();
-    }}
+    on:onVerifyPhone={onVerifiedPhone}
     bind:dialog={verificationDialog}
   />
 {/if}

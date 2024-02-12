@@ -116,4 +116,15 @@ export class BusinessTheme {
 
     return data;
   }
+
+  static fromJsonStr(jsonStr: string): BusinessTheme {
+    const json = JSON.parse(jsonStr);
+    return this.fromJson(json, json["id"]);
+  }
+
+  toJsonStr(): string {
+    const data: Record<string, any> = this.toJson();
+    data["id"] = this.id;
+    return JSON.stringify(data);
+  }
 }

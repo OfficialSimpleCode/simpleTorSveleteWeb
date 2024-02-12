@@ -34,6 +34,7 @@
     if (!$isConnectedStore) {
       VerificationHelper.GI().setupLoggin();
       goto(`${base}/login`);
+      return;
     }
     BookingController.initializeBookingMaker({});
 

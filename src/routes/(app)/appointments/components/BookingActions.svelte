@@ -15,12 +15,10 @@
   const showAttention =
     !booking.isPassed &&
     (booking.status !== BookingStatuses.approved || booking.needCancel);
-
-  const a: boolean = booking.buisnessId != $businessStore.businessId;
 </script>
 
 <!-- the business isn't loaded -->
-{#if booking.buisnessId !== $businessStore.businessId}
+{#if $businessStore == null || booking.buisnessId !== $businessStore.businessId}
   <LoadBusinessBookingButton {booking} {bgColor} />
 {:else if booking.recurrenceEvent == null || forceOpenBookingSheet}
   {#if showAttention}

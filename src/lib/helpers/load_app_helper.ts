@@ -1,6 +1,5 @@
 import { ErrorsTypeLog, logger } from "$lib/consts/application_general";
 import { LoadingStatuses } from "$lib/consts/loading_statuses";
-import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import { Developer } from "$lib/models/developers/developer";
 
@@ -11,7 +10,6 @@ import DeveloperHelper from "./developer_helper";
 import { GeneralData } from "./general_data";
 // import LinksHelper from "./links_helper";
 import { isConnectedStore } from "$lib/stores/User";
-import LinksHelper from "./links_helper";
 import ThemeHelper from "./theme_helper";
 import { VerificationHelper } from "./verification/verification_helper";
 
@@ -45,10 +43,6 @@ export class LoadAppHelper {
     });
     try {
       this.loadUserData();
-      const resp = await this.loadInitialBusiness();
-      if (resp) {
-        return;
-      }
     } catch (e) {
       if (e instanceof Error) {
         AppErrorsHelper.GI().details = "4 -->" + e.toString();
@@ -156,52 +150,6 @@ export class LoadAppHelper {
     }
     logger.info("Status is updated to --> $status");
     this.status = status;
-  }
-
-  private async loadInitialBusiness(): Promise<boolean> {
-    try {
-      let businessId = LinksHelper.GI().linkedBuisnessId;
-
-      // if (businessId === "") {
-      //   businessId =
-      //     await LinksHelper.GI().getInitialBusinessIdFromDynamicLink();
-      // }
-      if (businessId.length < 7) {
-        businessId = "";
-      }
-      if (businessId === "") {
-        logger.info(
-          "empty LinkBuisnessId, client ->${GeneralData.currentBusinesssId}"
-        );
-        businessId = GeneralData.currentBusinesssId;
-      } else {
-        //LinksHelper.GI().linkedBuisnessId = "";
-      }
-      if (businessId === "") {
-        return true;
-      }
-      if (
-        !(await this.executeFuture(() =>
-          BusinessInitializer.GI().loadBusiness(
-            businessId,
-            UserInitializer.GI().userId,
-            { fromLoading: true }
-          )
-        ))
-      ) {
-        this.cachedBusinessId = "";
-        GeneralData.currentBusinesssId = "";
-        return true;
-      }
-      return true;
-    } catch (e) {
-      if (e instanceof Error) {
-        AppErrorsHelper.GI().details =
-          "5 --> ${UserInitializer.getInstance().isConnected} " + e.toString();
-      }
-      this.updateStatus(LoadingStatuses.unknownError);
-      return false;
-    }
   }
 
   async executeFuture(func: () => Promise<boolean>): Promise<boolean> {

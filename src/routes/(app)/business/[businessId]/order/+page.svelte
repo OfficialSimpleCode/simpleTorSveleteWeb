@@ -3,7 +3,9 @@
   import PhoneDialog from "$lib/components/login/components/PhoneDialog.svelte";
   import { LoginReason } from "$lib/consts/auth";
 
-  import { bookingMakerStore } from "$lib/controllers/booking_controller";
+  import BookingController, {
+    bookingMakerStore,
+  } from "$lib/controllers/booking_controller";
   import { _, translate } from "$lib/utils/translate";
   import OrderStepper from "./components/OrderStepper.svelte";
   import FinishScreen from "./steps/finish_screen/FinishScreen.svelte";
@@ -11,6 +13,8 @@
   import TimePicker from "./steps/time_picker/TimePicker.svelte";
   import WorkerPicker from "./steps/worker_picker/WorkerPicker.svelte";
   let verificationDialog: HTMLDialogElement;
+
+  BookingController.initializeBookingMaker({});
 </script>
 
 <!-- Dialog -->

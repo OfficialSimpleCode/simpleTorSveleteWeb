@@ -20,7 +20,10 @@
 
   let currentWorker: WorkerModel | undefined;
 
-  if (booking.buisnessId === $businessStore.businessId) {
+  if (
+    $businessStore != null &&
+    booking.buisnessId === $businessStore.businessId
+  ) {
     currentWorker = $workersStore[booking.workerId]!;
   }
 

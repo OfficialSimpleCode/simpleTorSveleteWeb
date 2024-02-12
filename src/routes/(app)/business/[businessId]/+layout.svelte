@@ -1,58 +1,24 @@
 <script lang="ts">
   import { businessTypeToStr } from "$lib/consts/business_types";
   import { businessStore } from "$lib/stores/Business";
-  import {
-    getOklachValues,
-    getTheme,
-    loadColorFromTheme,
-  } from "$lib/utils/colors";
   import { _, translate } from "$lib/utils/translate";
 
-  import { computeLuminance } from "$lib/utils/general_utils";
+  import { themeStore } from "$lib/controllers/theme_controller.js";
+  import BusinessInitializer from "$lib/initializers/business_initializer.js";
   import { onMount } from "svelte";
 
+  export let data;
+  BusinessInitializer.GI().loadedBusinessJson = data.business;
+  BusinessInitializer.GI().loadBusiness(data.businessId);
+
   onMount(() => {
-    let themeKey: string = $businessStore.design.pickedThemeKey;
-    let themes = $businessStore.design.businessThemes;
-    let theme = getTheme(themeKey, themes);
-    document.documentElement.style.setProperty(
-      "--p",
-      getOklachValues(loadColorFromTheme("primary", themeKey, themes))
-    );
-    document.documentElement.style.setProperty(
-      "--b1",
-      getOklachValues(loadColorFromTheme("background", themeKey, themes))
-    );
-    document.documentElement.style.setProperty(
-      "--bc",
-      getOklachValues(theme.brightness == 0 ? "#fff" : "#000")
-    );
-    document.documentElement.style.setProperty(
-      "--pc",
-      getOklachValues(computeLuminance(theme.primary) > 0.5 ? "#000" : "#fff")
-    );
-    document.documentElement.style.setProperty(
-      "--b2",
-      getOklachValues(loadColorFromTheme("surface", themeKey, themes))
-    );
-    document.documentElement.style.setProperty(
-      "--b3",
-      getOklachValues(loadColorFromTheme("tertiary", themeKey, themes))
-    );
-
-    let html: HTMLHtmlElement = document.getElementsByTagName("html")[0];
-    html.setAttribute("data-theme", theme.brightness == 0 ? "dark" : "light");
-    html.style.setProperty("font-family", theme.fontName);
-
-    // Load theme font
-    let head: HTMLHeadElement = document.getElementsByTagName("head")[0];
-    let fontLinkElement: HTMLLinkElement = document.createElement("link");
-    fontLinkElement.setAttribute("rel", "stylesheet");
-    fontLinkElement.setAttribute(
-      "href",
-      `https://fonts.googleapis.com/css?family=${theme.fontName}`
-    );
-    head.appendChild(fontLinkElement);
+    if (
+      $themeStore == null ||
+      $businessStore.design.pickedTheme.id != $themeStore.id
+    ) {
+      console.log("errr");
+      $themeStore = $businessStore.design.pickedTheme;
+    }
   });
 </script>
 
