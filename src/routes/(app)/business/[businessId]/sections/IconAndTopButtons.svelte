@@ -78,11 +78,15 @@
     <Avatar img={$businessStore.design.shopIconUrl} />
     <h1 class="text-4xl pt-2">{$businessStore.shopName}</h1>
     <button
-      class="flex items-center gap-1 link link-neutral"
+      class="flex items-center gap-1 link opacity-50"
       on:click={openNavigationDialog}
     >
-      <h4 class="text-sm">{$businessStore.adress}</h4>
-      <GeneralIcon icon="mdi:map-marker-outline" size={16}></GeneralIcon>
+      <div class="flex flex-row {$businessStore.adress ? 'block' : 'hidden'}">
+        <h1 class="text-sm">
+          {$businessStore.adress}
+        </h1>
+        <GeneralIcon icon="mdi:map-marker-outline" size={16}></GeneralIcon>
+      </div>
     </button>
   </div>
 

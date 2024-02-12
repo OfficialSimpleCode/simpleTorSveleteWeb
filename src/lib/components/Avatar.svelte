@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { businessStore } from "$lib/stores/Business";
+  import { getDefaultLogo } from "$lib/utils/images_utils";
   export let img: string;
   export let small: Boolean = false;
   export let ring: Boolean = true;
@@ -13,7 +15,7 @@
     <img
       src={img
         ? img
-        : "https://images.pexels.com/photos/19936782/pexels-photo-19936782/free-photo-of-woman-in-white-dress-walking-on-wet-sea-coast-at-sunset.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"}
+        : getDefaultLogo($businessStore.design.pickedTheme.background)}
       alt="profile"
     />
   </div>

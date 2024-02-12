@@ -15,6 +15,13 @@
   let navigationDialog: HTMLDialogElement;
 
   function openNavigationDialog() {
+    if (!$businessStore.adress) {
+      ShowToast({
+        text: `Address link was not configured`,
+        status: "fail",
+      });
+      return;
+    }
     pushState("", {
       showModal: true,
     });
@@ -43,7 +50,7 @@
       return;
     }
 
-    if (!link || link.length == 0) {
+    if (!link || link.length === 0) {
       ShowToast({
         text: `${name} link was not configured`,
         status: "fail",
