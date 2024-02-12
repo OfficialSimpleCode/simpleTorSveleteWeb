@@ -42,7 +42,7 @@
 
 <!-- Auth Options -->
 <section
-  class="relative rounded-lg bg-base-100 p-5 flex items-center justify-center gap-1 w-[90%]"
+  class="relative rounded-lg bg-base-200 p-5 flex items-center justify-center gap-1 w-[90%]"
 >
   {#each verificationProviders as [authProvider, date]}
     <button class="bg-base-300 btn btn-ghost" on:click={onClick}>

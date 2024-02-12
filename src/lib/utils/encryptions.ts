@@ -42,7 +42,7 @@ export function hashText(text: string, salt: string = "simpleCode"): string {
   if (text === "") {
     return "";
   }
-  return SHA256(text + salt).toString(enc.Hex);
+  return SHA256(text + salt).toString(enc.Base64url);
 }
 
 export function hashId({ id }: { id: string }): string {
@@ -80,17 +80,6 @@ export function shortHashText({
     return "";
   }
   return SHA256(text + salt).toString(enc.Hex);
-}
-
-export function generateNonce(length = 32): string {
-  const charset =
-    "0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._";
-  let nonce = "";
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * charset.length);
-    nonce += charset[randomIndex];
-  }
-  return nonce;
 }
 
 export function sha256ofString(input: string): string {

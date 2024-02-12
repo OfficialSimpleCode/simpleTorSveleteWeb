@@ -16,7 +16,7 @@
 
 <div class="form-control">
   <section
-    class="relative rounded-lg bg-base-100 xs:p-3 p-2 flex items-center justify-center gap-10 w-full"
+    class="relative rounded-lg bg-base-200 xs:p-3 p-2 flex items-center justify-center gap-10 w-full"
   >
     <div class="absolute top-1 w-full p-1">
       <InfoCircle

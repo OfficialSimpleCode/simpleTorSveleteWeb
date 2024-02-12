@@ -2,13 +2,11 @@
   import { goto, pushState } from "$app/navigation";
   import { base } from "$app/paths";
   import { page } from "$app/stores";
-
   import Avatar from "$lib/components/Avatar.svelte";
+  import NavigationDialog from "$lib/components/NavigationDialog.svelte";
   import { businessStore } from "$lib/stores/Business";
   import { isConnectedStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
-
-  import NavigationDialog from "$lib/components/NavigationDialog.svelte";
 
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import { isAppleUser } from "$lib/consts/platform";
