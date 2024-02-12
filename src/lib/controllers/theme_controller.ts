@@ -1,3 +1,4 @@
+import { defaultThemes } from "$lib/consts/business_design";
 import { BusinessTheme } from "$lib/models/business/business_theme";
 import { getOklachValues, loadColorFromTheme } from "$lib/utils/colors";
 import { computeLuminance } from "$lib/utils/general_utils";
@@ -9,13 +10,19 @@ export async function initialTheme(localStorage: Storage, document: Document) {
   const localTheme = localStorage.getItem("businessTheme");
   //get the local theme
   console.log("localTheme", localTheme);
-  if (get(themeStore) == null && localTheme != null) {
-    themeStore.set(BusinessTheme.fromJsonStr(localTheme));
+  if (get(themeStore) == null) {
+    if (localTheme != null) {
+      themeStore.set(BusinessTheme.fromJsonStr(localTheme));
+    } else {
+      themeStore.set(defaultThemes.darkIos);
+    }
   }
 
   themeStore.subscribe((theme) => {
-    localStorage.setItem("businessTheme", theme.toJsonStr());
-    deployTheme(theme, document);
+    if (theme != null) {
+      localStorage.setItem("businessTheme", theme.toJsonStr());
+      deployTheme(theme, document);
+    }
   });
 }
 
