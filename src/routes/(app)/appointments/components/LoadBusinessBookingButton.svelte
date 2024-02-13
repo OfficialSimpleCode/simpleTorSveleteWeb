@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
+  import { base } from "$app/paths";
   import Booking from "$lib/models/booking/booking_model";
   import { _, translate } from "$lib/utils/translate";
   import ActionsContainer from "./ActionsContainer.svelte";
@@ -6,7 +8,7 @@
   export let bgColor: string = "bg-base-300";
   export let booking: Booking;
   function loadBusiness(): void {
-    booking.buisnessId;
+    goto(`${base}/business/${booking.buisnessId}`);
   }
 </script>
 

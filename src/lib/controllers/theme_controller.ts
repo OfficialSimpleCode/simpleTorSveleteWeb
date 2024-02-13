@@ -27,6 +27,7 @@ export async function initialTheme(localStorage: Storage, document: Document) {
 }
 
 export function deployTheme(theme: BusinessTheme, document: Document) {
+  console.log("Rrrrrrrrrrrr");
   // let themeKey: string = $businessStore.design.pickedThemeKey;
   // let themes = $businessStore.design.businessThemes;
   // let theme = getTheme(themeKey, themes);
