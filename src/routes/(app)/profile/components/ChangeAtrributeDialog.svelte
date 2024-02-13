@@ -48,14 +48,15 @@
 >
   <div class="modal-box bg-base-200 pb-10">
     <div class="flex justify-between items-center mb-[1rem]">
-      <h3 class="font-bold text-md">{title}</h3>
-      <button class="btn btn-ghost" on:click={() => dialog.close()}>
+      <button class="" on:click={() => dialog.close()}>
         <Icon src={XCircle} size="24px" />
       </button>
+      <h3 class="font-bold text-md">{title}</h3>
+      <div class="w-[24px]" />
     </div>
 
-    <div class="flex flex-col">
-      <div class="form-control mt-6">
+    <div class="flex flex-col gap-5">
+      <div class="flex flex-col">
         <CustomTextFormField
           type={InputOptions.text}
           value={initialValue}

@@ -24,6 +24,7 @@ import type Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
 import type PaymentCard from "$lib/models/payment_hyp/payment_card";
 import { isConnectedStore, userStore } from "$lib/stores/User";
+import { workersStore } from "$lib/stores/Workers";
 import { addDuration, subDuration } from "$lib/utils/duration_utils";
 import { hashText } from "$lib/utils/encryptions";
 import {
@@ -495,6 +496,32 @@ export default class UserHelper {
     userIdThatLiked: string,
     command: ArrayCommands
   ): Promise<boolean> {
+    const currentLikes =
+      BusinessInitializer.GI().workers[workerId]?.storylikesAmount[imageId] ??
+      0;
+    if (command === ArrayCommands.add) {
+      UserInitializer.GI().user.storyLikes.push(imageId);
+
+      if (BusinessInitializer.GI().workers[workerId]) {
+        BusinessInitializer.GI().workers[workerId]!.storylikesAmount[imageId] =
+          currentLikes + 1;
+      }
+    } else {
+      if (BusinessInitializer.GI().workers[workerId]) {
+        BusinessInitializer.GI().workers[workerId]!.storylikesAmount[imageId] =
+          Math.max(
+            BusinessInitializer.GI().workers[workerId]!.storylikesAmount[
+              imageId
+            ]! - 1,
+            0
+          );
+      }
+      UserInitializer.GI().user.storyLikes =
+        UserInitializer.GI().user.storyLikes.filter((like) => like != imageId);
+    }
+    userStore.set(UserInitializer.GI().user);
+    workersStore.set(BusinessInitializer.GI().workers);
+
     const value = await this.userRepo.updateFieldInsideDocAsArrayRepo({
       path: usersCollection,
       docId: userIdThatLiked,
@@ -504,10 +531,6 @@ export default class UserHelper {
     });
 
     if (value) {
-      const currentLikes =
-        BusinessInitializer.GI().workers[workerId]?.storylikesAmount[imageId] ??
-        0;
-
       if (command === ArrayCommands.add) {
         await this.userRepo.incrementNumberChild({
           childPath: DbPathesHelper.GI().getLisksChildPath(workerId),
@@ -515,14 +538,6 @@ export default class UserHelper {
           delta: 1,
           command: NumericCommands.increment,
         });
-
-        UserInitializer.GI().user.storyLikes.push(imageId);
-
-        if (BusinessInitializer.GI().workers[workerId]) {
-          BusinessInitializer.GI().workers[workerId]!.storylikesAmount[
-            imageId
-          ] = currentLikes + 1;
-        }
       } else {
         if (currentLikes >= 0) {
           await this.userRepo.incrementNumberChild({
@@ -531,23 +546,7 @@ export default class UserHelper {
             delta: 1,
             command: NumericCommands.decrement,
           });
-
-          if (BusinessInitializer.GI().workers[workerId]) {
-            BusinessInitializer.GI().workers[workerId]!.storylikesAmount[
-              imageId
-            ] = Math.max(
-              BusinessInitializer.GI().workers[workerId]!.storylikesAmount[
-                imageId
-              ]! - 1,
-              0
-            );
-          }
         }
-
-        UserInitializer.GI().user.storyLikes =
-          UserInitializer.GI().user.storyLikes.filter(
-            (like) => like != imageId
-          );
       }
     }
 

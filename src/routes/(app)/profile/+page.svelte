@@ -20,6 +20,7 @@
   import { containerRadius } from "$lib/consts/sizes";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import UserInitializer from "$lib/initializers/user_initializer";
+  import { formatedPhone } from "$lib/utils/string_utils";
   import { translate } from "$lib/utils/translate";
   import { emailValidation, nameValidation } from "$lib/utils/validation_utils";
   import clipboard from "clipboardy";
@@ -199,7 +200,7 @@
           {/if}
           <div class="w-[5px]" />
           <p class="overflow-hidden truncate max-w-[100px] xs:max-w-[190px]">
-            {$userStore.userPublicData.phoneNumber}
+            {formatedPhone($userStore.userPublicData.phoneNumber)}
           </p>
         </div>
       </SettingsItem>

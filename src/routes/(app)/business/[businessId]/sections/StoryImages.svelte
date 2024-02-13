@@ -1,25 +1,19 @@
 <script lang="ts">
   import { pushState } from "$app/navigation";
   import { page } from "$app/stores";
+  import BusinessInitializer from "$lib/initializers/business_initializer";
   import { businessStore } from "$lib/stores/Business";
   import { workersStore } from "$lib/stores/Workers.js";
   import { _, translate } from "$lib/utils/translate";
   import ImageDisplayDialog from "../components/ImageDisplayDialog.svelte";
 
   let workersStories: Record<string, StoryImageData> = {};
-  let storyHearts: Record<string, number> = {};
 
   workersStore.subscribe((workers) => {
     workersStories = {};
-    storyHearts = {};
     Object.values(workers).forEach((worker) => {
       Object.entries(worker.storyImages).forEach(([imageId, image]) => {
         workersStories[imageId] = { imageUrl: image, workerId: worker.id };
-      });
-    });
-    Object.values(workers).forEach((worker) => {
-      Object.entries(worker.storylikesAmount).forEach(([imageId, amount]) => {
-        storyHearts[imageId] = amount;
       });
     });
   });
@@ -28,6 +22,7 @@
   let selectedStoryId: string = Object.keys(workersStories)[0] || "";
 
   function openImageDisplayDialog(imageId: string) {
+    BusinessInitializer.GI().loadLikes(workersStories);
     selectedStoryId = imageId;
     pushState("", {
       showModal: true,
@@ -42,7 +37,6 @@
     bind:dialog={imageDisplayDialog}
     bind:storyId={selectedStoryId}
     {workersStories}
-    {storyHearts}
   />
 {/if}
 

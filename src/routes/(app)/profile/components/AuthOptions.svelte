@@ -15,7 +15,7 @@
   let explainDialog: HTMLDialogElement;
 
   let pickedProvider: AuthProvider;
-  let pickedDate: Date;
+  let pickedDate: Date = new Date(0);
 
   async function onAdd() {
     VerificationHelper.GI().setupLoggin();

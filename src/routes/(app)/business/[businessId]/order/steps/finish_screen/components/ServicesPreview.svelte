@@ -2,10 +2,14 @@
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
   import { bookingMakerStore } from "$lib/controllers/booking_controller";
+  import { Duration } from "$lib/models/core/duration";
   import {
     defaultCurrency,
     type CurrencyModel,
   } from "$lib/models/general/currency_model";
+  import { Price } from "$lib/models/general/price";
+  import { length } from "$lib/utils/core_utils";
+  import { printDuration } from "$lib/utils/string_utils";
   import { _, translate } from "$lib/utils/translate";
 
   let hasPayment: boolean = false;
@@ -16,7 +20,6 @@
   let notShownPrice: number = 0;
 
   let notShownTime: number = 0;
-  let priceText: string = "";
 
   Object.entries($bookingMakerStore.services).forEach(
     ([treatmentId, treatment]) => {
@@ -41,12 +44,21 @@
         });
     }
   );
-
+  let priceText: string = "";
   if (notShownPrice > 0) {
-    if (notShownPrice >= Object.keys($bookingMakerStore.services).length) {
+    if (notShownPrice >= length($bookingMakerStore.services)) {
       priceText = translate("notKnown");
     } else if (notShownPrice > 0) {
       priceText = translate("moreThen", $_, false);
+    }
+  }
+
+  let timeText: string = "";
+  if (notShownTime > 0) {
+    if (notShownTime >= length($bookingMakerStore.services)) {
+      timeText = translate("notKnown");
+    } else if (notShownTime > 0) {
+      timeText = translate("moreThen", undefined, false);
     }
   }
 </script>
@@ -71,18 +83,55 @@
             ? Object.values($bookingMakerStore.services)[0].name
             : `${treatmentAmount} ${translate("treatments")}`}
         </h3>
+        <div class="flex flex-row gap-[6px] opacity-70">
+          <!-- price indicator -->
+          <div>
+            {#if priceText != ""}
+              <h3>{priceText}</h3>
+            {/if}
+            {#if priceText != translate("notKnown")}
+              {new Price({
+                amount: totalPrices.toString(),
+                currency: treatmentCurrency,
+              }).toString()}
+            {/if}
+          </div>
+          |
+          <div>
+            {#if timeText != ""}
+              <h3>{timeText}</h3>
+            {/if}
+            {#if timeText != translate("notKnown")}
+              <div class="flex flex-row gap-2">
+                <h3>
+                  {printDuration(new Duration({ minutes: totalMinutes }))}
+                </h3>
+                <h3>
+                  {translate("hours")}
+                </h3>
+              </div>
+            {/if}
+          </div>
+          {#if length($bookingMakerStore.services) === 1 && Object.values($bookingMakerStore.services)[0].isMulti && Object.values($bookingMakerStore.services)[0].showParticipants}
+            |
+          {/if}
 
-        <!-- price and time -->
-        <h3 class="flex flex-row items-center opacity-80 text-md xs:text-lg">
-          {totalPrices}
-          <div class="divider divider-horizontal mx-0 sm:mx-2" />
-          <h3>
-            {totalMinutes}
-          </h3>
-        </h3>
+          {#if length($bookingMakerStore.services) === 1 && Object.values($bookingMakerStore.services)[0].isMulti && Object.values($bookingMakerStore.services)[0].showParticipants}
+            {#if Object.values($bookingMakerStore.services)[0].participants === 1}
+              <h3>{translate("oneParticipant")}</h3>
+            {:else}
+              <h3>
+                {Object.values(
+                  $bookingMakerStore.services
+                )[0].participants.toString()}
+                {translate("participants")}
+              </h3>
+            {/if}
+          {/if}
+        </div>
       </div>
       <!-- end of list tile -->
     </div>
-    <CustomArrow></CustomArrow>
+    <CustomArrow />
   </div>
 </button>

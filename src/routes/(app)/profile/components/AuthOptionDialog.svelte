@@ -18,8 +18,15 @@
   export let authProvider: AuthProvider;
   export let date: Date;
   let makeSureDeleteialog: HTMLDialogElement;
-
+  const oldUser = VerificationHelper.GI().userData?.displayName?.includes("&&");
+  const lastProvider = VerificationHelper.GI().existsLoginProviders.size == 1;
   function onDelete() {
+    if (lastProvider) {
+      return;
+    }
+    if (oldUser) {
+      return;
+    }
     explainDialog.close();
     pushDialog(makeSureDeleteialog);
   }
@@ -42,12 +49,13 @@
   class="modal modal-middle"
   on:close={() => history.back()}
 >
-  <div class="modal-box bg-base-200 pb-10 flex flex-col justify-center gap-3">
+  <div class="modal-box bg-base-200 pb-10 flex flex-col justify-center gap-6">
     <div class="flex justify-between items-center mb-[1rem]">
-      <h3 class="font-bold text-me">{translate("authProvider")}</h3>
-      <button class="btn btn-ghost" on:click={() => explainDialog.close()}>
+      <button class="" on:click={() => explainDialog.close()}>
         <Icon src={XCircle} size="24px" />
       </button>
+      <h3 class="font-bold text-me">{translate("authProvider")}</h3>
+      <div class="w-[24px]" />
     </div>
     <div class="flex flex-col gap-3 items-center h-full">
       <img
@@ -69,13 +77,30 @@
           )}
       </h3>
     </div>
+    <div class="flex flex-col gap-2">
+      <button
+        class="{lastProvider || oldUser
+          ? 'bg-base-300'
+          : 'bg-red-600'} btn min-w-10"
+        on:click={onDelete}
+      >
+        <div class="flex flex-row gap-1 min-w-10">
+          <GeneralIcon icon="mdi:trash" size={20} />
+          {translate("delete")}
+        </div>
+      </button>
+      {#if lastProvider}
+        <h3 class="text-center text-sm opacity-70">
+          {translate("cantDeleteLastProviderDeleteUser")}
+        </h3>
+      {/if}
 
-    <button class="bg-red-600 btn min-w-10" on:click={onDelete}>
-      <div class="flex flex-row gap-1 min-w-10">
-        <GeneralIcon icon="mdi:trash" size={20} />
-        {translate("delete")}
-      </div>
-    </button>
+      {#if oldUser}
+        <h3 class="text-center text-sm opacity-70">
+          {translate("oldUserExplain")}
+        </h3>
+      {/if}
+    </div>
   </div>
 
   <form method="dialog" class="modal-backdrop">

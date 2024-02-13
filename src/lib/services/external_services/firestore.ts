@@ -604,12 +604,14 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     try {
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);
       const docRef = doc(collectionRef, docId);
-      batch.update(docRef, {
-        fieldName:
-          command === ArrayCommands.remove
-            ? arrayRemove(value)
-            : arrayUnion(value),
-      });
+      const data: Record<string, any> = {};
+      data[fieldName] =
+        command === ArrayCommands.remove
+          ? arrayRemove(value)
+          : arrayUnion(value);
+
+      console.log(data);
+      batch.update(docRef, data);
     } catch (e) {
       if (e instanceof Error) {
         AppErrorsHelper.GI().addError({

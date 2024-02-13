@@ -328,6 +328,34 @@ export default class BusinessInitializer {
       return true;
     }
   }
+  async loadLikes(likesToLoad: Record<string, StoryImageData>): Promise<void> {
+    /* likesToLoad = {imageId : workerId} */
+    const futures: Promise<void>[] = [];
+    for (const [imageId, imageData] of Object.entries(likesToLoad)) {
+      if (this.workers[imageData.workerId]!.storylikesAmount[imageId] != null) {
+        continue;
+      }
+      futures.push(
+        this.generalRepo
+          .getChild({
+            childPath: DbPathesHelper.GI().getLikesChildPath(
+              imageData.workerId,
+              this.business.businessId,
+              imageId
+            ),
+          })
+          .then(async (likesSnapshot) => {
+            const likes = likesSnapshot.val();
+            this.workers[imageData.workerId]!.storylikesAmount[imageId] =
+              (likes as number) ?? 0;
+            workersStore.set(this.workers);
+          })
+      );
+    }
+    // load all the futures
+    await Promise.all(futures);
+  }
+
   async makeBusinessDataListener() {
     const businessDataPath = DbPathesHelper.GI().getBusinessDataPath(
       GeneralData.currentBusinesssId
@@ -430,10 +458,6 @@ export default class BusinessInitializer {
       delete this.workers[workerId];
       return;
     }
-
-    logger.info(
-      `Get new worker for the current worker updateWorkerObj--> ${workerId}`
-    );
   }
 
   cancelAllWorkersRegularListenings(override: boolean = false) {
