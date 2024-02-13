@@ -1,4 +1,6 @@
 <script lang="ts">
+  import "iconify-icon";
+
   export let icon: string;
   export let size: number = 26;
   export let color: string = "";
