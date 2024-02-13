@@ -3,5 +3,6 @@
 </script>
 
 <div class="flex items-center icon">
-  <GeneralIcon icon="mdi:keyboard-arrow-right" size={26}></GeneralIcon>
+  <GeneralIcon icon="mdi:keyboard-arrow-right ltr:hidden" size={26}></GeneralIcon>
+  <GeneralIcon icon="mdi:keyboard-arrow-left rtl:hidden" size={26}></GeneralIcon>
 </div>
