@@ -5,5 +5,5 @@ export function applyCategoryColor(args: EventRenderedArgs): void {
     return;
   }
 
-  args.element.style.backgroundColor = "blue";
+  args.element.style.backgroundColor = "bg-base-100";
 }

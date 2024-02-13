@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { ShowToast } from "$lib/stores/ToastManager";
+  import { ArrayCommands } from "$lib/consts/db";
+  import UserHelper from "$lib/helpers/user/user_helper";
+  import { userStore } from "$lib/stores/User";
   import { length } from "$lib/utils/core_utils";
   import {
     ChevronLeft,
@@ -10,7 +12,7 @@
   } from "svelte-hero-icons";
 
   export let dialog: HTMLDialogElement;
-  export let workersStories: Record<string, string>;
+  export let workersStories: Record<string, StoryImageData>;
   export let storyHearts: Record<string, number>;
   export let storyId: string;
 
@@ -38,14 +40,19 @@
     return Array.from(Object.keys(workersStories))[nextIndex];
   }
 
-  function giveHeart() {
-    ShowToast({ text: "Heart Added", status: "success" });
+  function giveHeart(storyId: string) {
+    UserHelper.GI().addOrRemoveLikeForStoryImage(
+      storyId,
+      workersStories[storyId].workerId,
+      $userStore.id,
+      ArrayCommands.add
+    );
   }
 </script>
 
 <dialog
   bind:this={dialog}
-  class="modal modal-bottom sm:modal-middle"
+  class="modal modal-middle"
   on:close={() => history.back()}
 >
   <div class="modal-box bg-base-200 p-0 h-[700px] sm:w-[520px] overflow-hidden">
@@ -57,7 +64,7 @@
     </button>
     <img
       class="object-cover h-full w-full rounded-xl"
-      src={workersStories[storyId]}
+      src={workersStories[storyId].imageUrl}
       alt="showcase"
     />
     {#if !isFirst(storyId)}
@@ -84,7 +91,7 @@
     {/if}
     <button
       class="absolute bottom-4 right-4 h-8 w-16 rounded-3xl bg-base-200 flex justify-center items-center"
-      on:click={giveHeart}
+      on:click={() => giveHeart(storyId)}
     >
       {storyHearts[storyId] ?? 0}
       <Icon src={Heart} size="26px" />

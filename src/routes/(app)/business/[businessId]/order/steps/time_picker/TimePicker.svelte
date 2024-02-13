@@ -22,6 +22,7 @@
   import { page } from "$app/stores";
   import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
   import { loadBookingMakerTimeData } from "$lib/utils/booking_maker";
+  import { dateToDateStr } from "$lib/utils/times_utils";
   import { onEventClick } from "./helpers/on_tap_time_obj";
   const { Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop } = schedule;
   let downloadAppDialog: HTMLDialogElement;
@@ -41,20 +42,25 @@
       DragAndDrop
     );
 
+    (window as TemplateFunction).getTimeString = (date: Date) => {
+      return dateToDateStr(date);
+    };
+    interface TemplateFunction extends Window {
+      getTimeString?: Function;
+    }
+
     BookingController.scheduleObj = new schedule.Schedule({
       currentView: "Week",
       dateFormat: "dd-MMM-yyyy",
       width: "100%",
       height: "100%",
       views: ["Week"],
-      cssClass: "schedule-cell-dimension bg-primary",
       allowDragAndDrop: false,
       showTimeIndicator: true,
       workHours: { highlight: false },
       showQuickInfo: false,
       eventClick: (args) => onEventClick(args, downloadAppDialog),
       minDate: setToMidNight(new Date()),
-      // timeScale: {},
       maxDate: addDuration(
         new Date(),
         new Duration({ days: BookingController.worker.daysToAllowBookings })
@@ -71,12 +77,8 @@
           startTime: { name: "from" },
           endTime: { name: "to" },
         },
-        template: `<div id="apptemplate" type="text/x-template">
-<div class="template-wrap bg-base-200">
-  <div class="subject bg-base-200">cds,[vds[vds]]</div>
-  <div class="time bg-red-400">cacdsacd</div>
-</div>
-</div>`,
+        resourceColorField: "#fff",
+        template: "#apptemplate",
         enableMaxHeight: true,
         allowEditing: false,
       },
@@ -136,10 +138,3 @@
 {/if}
 
 <div id="schedule"></div>
-
-<!-- <div id="apptemplate" type="text/x-template">
-  <div class="template-wrap" style="background">
-    <div class="subject" style="background:">nkrnkjfek</div>
-    <div class="time" style="background"></div>
-  </div>
-</div> -->

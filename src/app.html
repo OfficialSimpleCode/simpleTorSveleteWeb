@@ -2,12 +2,64 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <link rel="icon" href="%sveltekit.assets%/favicon.png" />
+
+    <!-- <link rel="icon" href="%sveltekit.assets%/favicon.png" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     %sveltekit.head%
-    <!-- <link rel="icon" href="%sveltekit.assets%/favicon.png" /> -->
+
+    <style>
+      .e-schedule .e-vertical-view .e-content-wrap .e-appointment {
+        border-radius: 8px;
+      }
+
+      .e-schedule
+        .e-vertical-view
+        .e-content-wrap
+        .e-appointment
+        .e-appointment-details {
+        padding: 0;
+        height: 100%;
+      }
+
+      .e-schedule .template-wrap {
+        height: 100%;
+        white-space: normal;
+      }
+
+      .e-schedule .template-wrap .subject {
+        font-weight: 600;
+        font-size: 15px;
+        padding: 4px 4px 4px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      .e-schedule .template-wrap .time {
+        height: 50px;
+        font-size: 12px;
+        padding: 4px 6px 4px;
+        overflow: hidden;
+      }
+      .e-past-app {
+        background-color: chocolate !important;
+      }
+      .custom-class.e-schedule .e-vertical-view .e-appointment {
+        background: green;
+      }
+    </style>
   </head>
 
   <body data-sveltekit-preload-data="hover">
+    <!--  -->
+    <script id="apptemplate" type="text/x-template">
+      <div class="template-wrap rounded-lg" style="background:red">
+          <div class="subject " style="background:${PrimaryColor}">joj</div>
+          <div class="time" style="background:${PrimaryColor}">Time: ${getTimeString(data.from)}</div>
+      </div>
+    </script>
+
     <div style="display: contents">%sveltekit.body%</div>
   </body>
 </html>

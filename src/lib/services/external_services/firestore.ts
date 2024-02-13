@@ -568,8 +568,8 @@ export default class FirestoreDataBase extends RealTimeDatabase {
         console.log([value]);
         organizedData[fieldName] =
           command === ArrayCommands.remove
-            ? arrayRemove([value])
-            : arrayUnion([value]);
+            ? arrayRemove(value)
+            : arrayUnion(value);
       });
       console.log(organizedData);
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);
@@ -605,10 +605,10 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);
       const docRef = doc(collectionRef, docId);
       batch.update(docRef, {
-        [fieldName]:
+        fieldName:
           command === ArrayCommands.remove
-            ? arrayRemove([value])
-            : arrayUnion([value]),
+            ? arrayRemove(value)
+            : arrayUnion(value),
       });
     } catch (e) {
       if (e instanceof Error) {
