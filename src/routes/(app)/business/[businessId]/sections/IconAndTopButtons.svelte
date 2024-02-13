@@ -11,7 +11,6 @@
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import { isAppleUser } from "$lib/consts/platform";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
-  import "iconify-icon";
   import { onMount } from "svelte";
   import ShareDialog from "../components/ShareDialog.svelte";
 
