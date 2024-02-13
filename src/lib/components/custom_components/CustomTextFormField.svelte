@@ -48,7 +48,7 @@
     <div>
       {#if isRequired}
         <input
-          class="input input-bordered {bgColor} w-full {validationResp !== ''
+          class="input input-bordered {bgColor} w-full {validationResp
             ? 'border-red-700'
             : ''}"
           type="text"
@@ -60,7 +60,7 @@
         />
       {:else}
         <input
-          class="input input-bordered {bgColor} w-full {validationResp !== ''
+          class="input input-bordered {bgColor} w-full {validationResp
             ? 'border-red-700'
             : ''}"
           type="text"
