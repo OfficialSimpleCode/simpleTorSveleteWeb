@@ -52,12 +52,12 @@
   <!-- small screens -->
   <div class="relative xs:hidden">
     <img
-      class="md:h-1/2 min-h-[270px] h-[{changingImagesHeight}px] w-full object-cover transition-opacity"
+      class="md:h-1/2 min-h-[40vh] h-[40vh] w-full object-cover transition-opacity"
       src={useDefault
         ? defaultImage
         : $businessStore.design.changingImages[currentIndex]}
       alt={"business image"}
-      style="animation: 1s ease-out"
+      style="animation: 1s ease-out;"
       in:fade={{ duration: 1000 }}
     />
     <div
