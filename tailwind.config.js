@@ -27,8 +27,6 @@ export default {
           "error": "#ff9ca3",
         },
       },
-      "light",
-      "dark"
     ],
   },
 };
