@@ -244,7 +244,7 @@
     </section>
 
     <!-- Profile Information -->
-    <section class=" w-[90%] {containerRadius} bg-base-200">
+    <section class="w-[90%] {containerRadius} bg-base-200">
       <SettingsItem
         icon="material-symbols:verified"
         onTap={onClickVerified}
