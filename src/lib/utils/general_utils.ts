@@ -129,5 +129,5 @@ export function pushDialog(
   pushState(herf ?? "", {
     showModal: true,
   });
-  setTimeout(() => dialog!.showModal(), 200);
+  setTimeout(() => dialog!.showModal(), 500);
 }
