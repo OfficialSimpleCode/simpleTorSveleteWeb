@@ -35,7 +35,7 @@
 
 {#if $page.state.showModal}
   <VerifiedCardPassword
-    on:onFinishVerifiedCardPassword={}
+    on:onFinishVerifiedCardPassword={() =>{}}
     bind:dialog={verifiedCardPasswordDialog}
   />
 {/if}
