@@ -10,7 +10,7 @@
 </script>
 
 <button
-  class="btn btn-ghost join-item flex justify-between items-center"
+  class="btn btn-ghost join-item flex justify-between items-center w-full"
   on:click={onTap}
 >
   <div class="flex items-center gap-2">

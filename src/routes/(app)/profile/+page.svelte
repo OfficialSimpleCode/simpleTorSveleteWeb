@@ -17,6 +17,7 @@
   import SettingsItem from "$lib/components/custom_components/SettingsItem.svelte";
   import VerifiedIcon from "$lib/components/custom_components/VerifiedIcon.svelte";
   import VerifiedPhoneSuccessfullyDialog from "$lib/components/dialogs/VerifiedPhoneSuccessfullyDialog.svelte";
+  import { containerRadius } from "$lib/consts/sizes";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import UserInitializer from "$lib/initializers/user_initializer";
   import { translate } from "$lib/utils/translate";
@@ -159,7 +160,6 @@
 {:else if $isConnectedStore === false}
   <div />
 {:else}
-  <h3 class="font-bold text-lg">{$_("profile")}</h3>
   <div
     class="flex flex-col justify-start items-center gap-6 max-w-[800px] mx-auto pb-5"
   >
@@ -177,9 +177,14 @@
     </section>
 
     <!-- Profile Information -->
-    <section class="join join-vertical w-[90%] rounded-lg bg-base-200">
+    <section class="join join-vertical w-[90%] {containerRadius} bg-base-200">
       <SettingsItem icon="wpf:name" onTap={openNameDialog} name={"name"}>
-        <h3 slot="trailing">{$userStore.name}</h3>
+        <h3
+          slot="trailing"
+          class="overflow-hidden truncate max-w-[130px] xs:max-w-[190px]"
+        >
+          {$userStore.name}
+        </h3>
       </SettingsItem>
 
       <div class="h-[0.2px] w-full bg-gray-500 opacity-20" />
@@ -193,7 +198,9 @@
             <VerifiedIcon />
           {/if}
           <div class="w-[5px]" />
-          {$userStore.userPublicData.phoneNumber}
+          <p class="overflow-hidden truncate max-w-[100px] xs:max-w-[190px]">
+            {$userStore.userPublicData.phoneNumber}
+          </p>
         </div>
       </SettingsItem>
 
@@ -208,7 +215,9 @@
             <VerifiedIcon />
           {/if}
           <div class="w-[5px]" />
-          {$userStore.userPublicData.email}
+          <p class="overflow-hidden truncate max-w-[130px] xs:max-w-[190px]">
+            {$userStore.userPublicData.email}
+          </p>
         </div>
       </SettingsItem>
 
@@ -219,13 +228,13 @@
         name={"userId"}
       >
         <div slot="trailing" class="flex flex-row items-center">
-          <div class="overflow-hidden truncate max-w-[130px]">
+          <p class="overflow-hidden truncate max-w-[130px] xs:max-w-[190px]">
             {#if copiedUserId}
               {translate("Copied", $_)}
             {:else}
               {$userStore.id}
             {/if}
-          </div>
+          </p>
 
           {#if copiedUserId}
             <Icon src={CheckCircle} size="22px" />
@@ -235,7 +244,7 @@
     </section>
 
     <!-- Profile Information -->
-    <section class="join join-vertical w-[90%] rounded-lg bg-base-200">
+    <section class="w-[90%] {containerRadius} bg-base-200">
       <SettingsItem
         icon="material-symbols:verified"
         onTap={onClickVerified}
@@ -254,7 +263,7 @@
 
     <AuthOptions />
     <!-- Actions -->
-    <section class="join join-vertical w-[90%] rounded-lg bg-base-200">
+    <section class="join join-vertical w-[90%] {containerRadius} bg-base-200">
       <SettingsItem
         icon="material-symbols:logout"
         onTap={onLogout}

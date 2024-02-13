@@ -9,7 +9,7 @@
 <div class="flex flex-col items-center justify-centers icon">
   <button
     on:click={() => handleClick(gender)}
-    class=" rounded-lg btn-outline px-1 bg-base-300 border xs:h-[80px] xs:w-[80px] h-[60px] :w-[60px] hover:bg-primary {pickedGender ===
+    class=" rounded-lg btn btn-ghost join-item px-1 bg-base-300 border xs:h-[80px] xs:w-[80px] h-[60px] w-[60px] {pickedGender ===
     gender
       ? 'border-primary'
       : 'border-gray-500'} "
@@ -19,8 +19,8 @@
       src={genderToImage[gender]}
       alt={genderToImage[gender]}
     />
-    <p class="xs:text-md text-sm">
-      {translate(genderToStr[gender], $_)}
-    </p>
   </button>
+  <p class="xs:text-md text-sm capitalize">
+    {translate(genderToStr[gender], $_)}
+  </p>
 </div>
