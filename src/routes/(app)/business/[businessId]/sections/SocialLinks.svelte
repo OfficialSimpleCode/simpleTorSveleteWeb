@@ -5,7 +5,7 @@
   import { ShowToast } from "$lib/stores/ToastManager";
   import type { IconSource } from "svelte-hero-icons";
 
-  import NavigationDialog from "$lib/components/NavigationDialog.svelte";
+  import NavigationDialog from "$lib/components/dialogs/NavigationDialog.svelte";
 
   // Assets
   import { base } from "$app/paths";
@@ -34,7 +34,9 @@
   function openTermDialog() {
     pushDialog(
       termDialog,
-      `${base}/business/${$businessStore.businessId}/term`
+      `${base}/business/${
+        $businessStore != null ? $businessStore.urlEndPoint : ""
+      }/term`
     );
   }
 

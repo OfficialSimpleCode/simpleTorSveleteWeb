@@ -1,5 +1,6 @@
 import { strToReplaceAsterisk, strToReplaceSlash } from "$lib/consts/db";
 import { durationToString } from "$lib/utils/string_utils";
+import deepEqual from "deep-equal";
 import {
   paymentTypesFromStr,
   paymentTypesToStr,
@@ -9,7 +10,6 @@ import { Duration } from "../core/duration";
 import { defaultCurrency } from "./currency_model";
 import { Price } from "./price";
 import TreatmentTime from "./treatment_time";
-
 export default class Treatment {
   totalMinutes: number = 0;
   index: string = "";
@@ -90,9 +90,7 @@ export default class Treatment {
   }
 
   isEqual(treatment: Treatment): boolean {
-    return true;
-    //TODO
-    //return deepEqual(treatment.toJson(), this.toJson());
+    return deepEqual(treatment.toJson(), this.toJson());
   }
 
   get totalTotalMinutes(): number {

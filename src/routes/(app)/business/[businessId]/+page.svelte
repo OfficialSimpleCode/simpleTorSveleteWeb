@@ -43,9 +43,14 @@
     ) {
       //initial the var for no pop the sheet again
       UserInitializer.GI().isUserFirstEntrance = false;
-      pushState(`${base}/business/${$businessStore.businessId}/term`, {
-        showModal: true,
-      });
+      pushState(
+        `${base}/business/${
+          $businessStore != null ? $businessStore.urlEndPoint : ""
+        }/term`,
+        {
+          showModal: true,
+        }
+      );
       setTimeout(() => termDialog.showModal(), 100);
     }
 

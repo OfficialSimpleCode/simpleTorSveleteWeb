@@ -7,15 +7,32 @@
   import CustomPhoneField from "../custom_components/CustomPhoneField.svelte";
   export let dialog: HTMLDialogElement;
   export let contentTransKey: string;
-  export let onSave: CallableFunction;
+  export let onSave: () => Promise<boolean>;
   export let onCancel: CallableFunction = () => {};
   export let cancelTranslateKey: string = "cancel";
   export let saveTranslateKey: string = "delete";
   export let titleTransKey: string = "areYouSure";
 
   let matchPhone: boolean = false;
+  let loading: boolean = false;
   function handlePhoneChange(event: CustomEvent<PhonePickerEvent>) {
     matchPhone = $userStore.phoneNumber === event.detail.value;
+  }
+
+  async function onDelete() {
+    if (!matchPhone || loading) {
+      return;
+    }
+    loading = true;
+    let resp = false;
+    try {
+      resp = await onSave();
+    } finally {
+      loading = false;
+      if (resp) {
+        dialog.close();
+      }
+    }
   }
 </script>
 
@@ -40,7 +57,7 @@
       </div>
     </div>
 
-    <!-- text, animation, and download button -->
+    <!-- image, formfield -->
     <div class="flex flex-col gap-3 items-center h-full">
       <img class="w-[60px] h-[60px]" src={deleteIcon} alt="delete icon" />
       <h3 class="text-sm text-center mx-6">
@@ -66,15 +83,13 @@
       </button>
       <button
         class="btn btn-primary flex-[1] {matchPhone ? '' : 'opacity-50'}"
-        on:click={() => {
-          if (!matchPhone) {
-            return;
-          }
-          onSave();
-          dialog.close();
-        }}
+        on:click={onDelete}
       >
-        {translate(saveTranslateKey, $_)}
+        {#if loading}
+          <div class="loading loading-spinner" />
+        {:else}
+          {translate(saveTranslateKey, $_)}
+        {/if}
       </button>
     </div>
   </div>

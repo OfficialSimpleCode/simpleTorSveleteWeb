@@ -134,7 +134,6 @@ export class ManagerRepo extends GeneralRepo implements ManagerApi {
               if (event.isBreak) {
                 const breakModel = BreakModel.fromEvent(event);
                 breakModel.workerId = workerId;
-
                 deleteResp.breaks.push(breakModel);
               }
             });

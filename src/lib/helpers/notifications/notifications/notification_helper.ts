@@ -21,9 +21,10 @@ import NotificationPayload, {
 import type NotificationTopic from "$lib/models/notifications/notification_topic";
 import type Invoice from "$lib/models/payment_hyp/invoice/invoice";
 import PaymentRequest from "$lib/models/payment_hyp/payment_request/payment_request";
+import type BreakModel from "$lib/models/schedule/break_model";
 import type UserModel from "$lib/models/user/user_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
-import { dateToRemindBooking } from "$lib/utils/dates_utils";
+import { dateToNotifyBreak, dateToRemindBooking } from "$lib/utils/dates_utils";
 import { getFormatedTime } from "$lib/utils/string_utils";
 import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
@@ -723,9 +724,9 @@ export default class NotificationsHelper {
     oldBooking: Booking;
     newBooking: Booking;
   }): Promise<boolean> {
-    const deleteResp = await this.deleteAllScheduleBookingsNotifications({
-      bookings: [oldBooking],
-    });
+    const deleteResp = await this.deleteAllScheduleBookingsNotifications([
+      oldBooking,
+    ]);
 
     if (!deleteResp) {
       return false;
@@ -734,11 +735,9 @@ export default class NotificationsHelper {
     return await this.makeScheduleBookingNotification({ booking: newBooking });
   }
 
-  async deleteAllScheduleBookingsNotifications({
-    bookings,
-  }: {
-    bookings: Booking[];
-  }): Promise<boolean> {
+  async deleteAllScheduleBookingsNotifications(
+    bookings: Booking[]
+  ): Promise<boolean> {
     // Collect all the notifications to delete
     const datesToDelete: Record<string, Record<string, any>> = {};
 
@@ -903,6 +902,31 @@ export default class NotificationsHelper {
     });
     const resp = await Promise.all(futures);
     return !resp.includes(false);
+  }
+
+  ///-------------------------------------------------schedule breaks--------------------------------
+  async deleteScheduleBreakNotification({
+    breakModel,
+    workerId,
+  }: {
+    breakModel: BreakModel;
+    workerId: string;
+  }): Promise<boolean> {
+    if (!breakModel.notify) {
+      return false;
+    }
+    const dateToNotify = dateToNotifyBreak(breakModel);
+    if (dateToNotify < new Date()) {
+      return false;
+    }
+
+    const id = breakModel.buisnessId + "--AAAA--" + workerId;
+    return await this.generalRepo.updateFieldInsideDocAsMapRepo({
+      insideEnviroments: false,
+      path: `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${dateToNotify.getMonth()}/${dateToNotify.getDate()}/${dateToNotify.getHours()}`,
+      docId: dateToNotify.getMinutes().toString(),
+      fieldName: id,
+    });
   }
 
   ///--------------------------------------------------------utils-----------------------------------

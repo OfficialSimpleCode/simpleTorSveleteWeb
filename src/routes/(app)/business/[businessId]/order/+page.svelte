@@ -13,8 +13,7 @@
   import TimePicker from "./steps/time_picker/TimePicker.svelte";
   import WorkerPicker from "./steps/worker_picker/WorkerPicker.svelte";
   let verificationDialog: HTMLDialogElement;
-
-  BookingController.initializeBookingMaker({});
+  BookingController.initializeBookingMaker();
 </script>
 
 <!-- Dialog -->

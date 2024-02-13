@@ -4,7 +4,7 @@
   import { Icon, XCircle } from "svelte-hero-icons";
   import LottieAnimation from "../LottieAnimation.svelte";
   import DownloadAppButton from "../custom_components/DownloadAppButton.svelte";
-
+  export let explainTranslateKey: string | undefined = undefined;
   export let dialog: HTMLDialogElement;
 </script>
 
@@ -32,7 +32,7 @@
     <!-- text, animation, and download button -->
     <div class="flex flex-col gap-3 items-center h-full">
       <h3 class="text-sm text-center mx-6">
-        {translate("downloadTheAppExplain", $_)}
+        {translate(explainTranslateKey ?? "downloadTheAppExplain")}
       </h3>
       <LottieAnimation animationFile={sendMessageAnimation} loop={true} />
       <DownloadAppButton />

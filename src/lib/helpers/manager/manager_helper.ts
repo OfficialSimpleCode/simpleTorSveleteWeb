@@ -6,6 +6,7 @@ import type WorkerModel from "$lib/models/worker/worker_model";
 import { workersStore } from "$lib/stores/Workers";
 import { Timestamp } from "firebase/firestore";
 import { GeneralData } from "../general_data";
+import NotificationHandler from "../notifications/notification_handler";
 import { ManagerRepo } from "./manager_repo";
 
 export default class ManagerHelper {
@@ -103,16 +104,15 @@ export default class ManagerHelper {
             );
           }
 
-          //TODO
-          //   // Delete all the schedule notification of the bookings
-          //   await Promise.all([
-          //     NotificationHandler().cancelAllBookingsScheduleNoification(
-          //       deleteResp.bookings
-          //     ),
-          //     NotificationHandler().cancelAllBreaksScheduleNotifications(
-          //       deleteResp.breaks
-          //     ),
-          //   ]);
+          // Delete all the schedule notification of the bookings
+          await Promise.all([
+            NotificationHandler.GI().cancelAllBookingsScheduleNoification(
+              deleteResp.bookings
+            ),
+            NotificationHandler.GI().cancelAllBreaksScheduleNotifications(
+              deleteResp.breaks
+            ),
+          ]);
 
           UserInitializer.GI().user.userPublicData.permission.delete(
             businessId

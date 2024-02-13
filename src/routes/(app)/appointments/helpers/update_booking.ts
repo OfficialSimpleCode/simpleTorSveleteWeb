@@ -5,8 +5,10 @@ import { GeneralData } from "$lib/helpers/general_data";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import type Booking from "$lib/models/booking/booking_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
+import { businessStore } from "$lib/stores/Business";
 import { ShowToast } from "$lib/stores/ToastManager";
 import { translate } from "$lib/utils/translate";
+import { get } from "svelte/store";
 import { deleteNotAvaliableWorkerBooking } from "./delete_not_avaliable_booking";
 
 export async function updateBooking({
@@ -57,9 +59,13 @@ export async function updateBooking({
   if (booking.currentDisplayDate <= new Date()) {
     return;
   }
-
-  BookingController.initializeBookingMaker({ bookingForUpdate: booking });
+  BookingController.bookingToUpdate = booking;
   BusinessInitializer.GI().startWorkerListening(worker);
   BusinessInitializer.GI().startTimesListening(worker, false);
-  goto(`${base}/business/order`);
+
+  goto(
+    `${base}/business/${
+      get(businessStore) != null ? get(businessStore).urlEndPoint : ""
+    }/order`
+  );
 }

@@ -1,4 +1,5 @@
 import type Booking from "../booking/booking_model";
+import type BreakModel from "../schedule/break_model";
 
 export default class DeleteWorkerResp {
   bookings: Record<string, Booking> = {};

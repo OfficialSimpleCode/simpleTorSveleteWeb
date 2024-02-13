@@ -31,13 +31,15 @@ import { locale } from "svelte-i18n";
 import { get } from "svelte/store";
 import { verificationErrors } from "../errors/interpeters/verification_errors_interpeter";
 import { Errors } from "../errors/messages";
+import { VerificationService } from "./verification_service";
 
-export class FirebaseAuthService {
+export class FirebaseAuthService extends VerificationService {
   _auth: Auth;
 
   constructor() {
-    const firebaseApp =
-      getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+    super();
+
+    getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
     this._auth = getAuth();
     this._auth.languageCode = get(locale) ?? "en";
   }

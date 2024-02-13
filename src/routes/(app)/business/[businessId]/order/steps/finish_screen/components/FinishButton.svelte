@@ -13,10 +13,12 @@
   import { get } from "svelte/store";
   import { handleVerification } from "../../../../../../profile/helpers/handle_verification";
 
+  import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
   import { handleApproveTerm } from "../helpers/handle_approving_term";
   import { onFinishNavigator } from "../helpers/on_finish_navigator";
   export let verificationDialog: HTMLDialogElement;
   let termDialog: HTMLDialogElement;
+  let downloadAppDialog: HTMLDialogElement;
   let isLoading: boolean = false;
 
   const publicCustomer: PublicCustomer = new PublicCustomer(); //getPublicCustomer();
@@ -39,6 +41,7 @@
     try {
       await onFinishNavigator({
         clientNote: "",
+        downloadAppDialog,
       });
     } finally {
       isLoading = false;
@@ -87,6 +90,11 @@
       handleClick();
     }}
     bind:dialog={termDialog}
+  />
+
+  <DownloadAppDialog
+    bind:dialog={downloadAppDialog}
+    explainTranslateKey={"paymentOnBookingAreNotAvailableOnWeb"}
   />
 {/if}
 <!-- xs:px-10 px-3 -->

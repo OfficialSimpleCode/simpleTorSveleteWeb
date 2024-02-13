@@ -1,10 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable require-jsdoc */
-/* eslint-disable guard-for-in */
-/* eslint-disable no-unused-vars */
-/* eslint-disable valid-jsdoc */
-/* eslint-disable max-len */
-
 import { logger } from "$lib/consts/application_general";
 import { ArrayCommands, NumericCommands, envKey } from "$lib/consts/db";
 import { firebaseConfig } from "$lib/consts/firebase_config";
@@ -13,6 +6,8 @@ import { getApp, getApps, initializeApp } from "firebase/app";
 import {
   DocumentSnapshot,
   Firestore,
+  Query,
+  QueryDocumentSnapshot,
   Timestamp,
   Transaction,
   WriteBatch,
@@ -25,8 +20,11 @@ import {
   getDocs,
   getFirestore,
   increment,
+  limit,
   onSnapshot,
+  query,
   runTransaction,
+  where,
   writeBatch,
   type DocumentData,
   type Unsubscribe,
@@ -73,6 +71,26 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       }
       throw e;
     }
+  }
+
+  async getDocWithQuerySRV({
+    path,
+
+    insideEnviroments = true,
+    queryList,
+    limit,
+  }: {
+    path: string;
+
+    insideEnviroments?: boolean;
+    queryList: any[][];
+    limit?: number;
+  }): Promise<QueryDocumentSnapshot<unknown, DocumentData>[]> {
+    const query = this.getQuery(path, queryList, insideEnviroments, limit);
+
+    const docs = await getDocs(query);
+
+    return docs.docs;
   }
 
   async getAllDocsInsideCollection(
@@ -679,6 +697,26 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     });
 
     return organizedData;
+  }
+
+  getQuery(
+    path: string,
+    items: any[][],
+
+    insideEnviroments: boolean,
+    limitItmes?: number
+  ): Query<unknown, DocumentData> {
+    var queryObj: Query<unknown, DocumentData> = collection(
+      this._firestore,
+      insideEnviroments ? `${envKey}/${path}` : path
+    );
+    items.forEach((item) => {
+      queryObj = query(queryObj, where(item[0], item[1], item[2]));
+    });
+    if (limitItmes != undefined) {
+      queryObj = query(queryObj, limit(limitItmes));
+    }
+    return queryObj;
   }
 
   get currentTimestamp(): Timestamp {

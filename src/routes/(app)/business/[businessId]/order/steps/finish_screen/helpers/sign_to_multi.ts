@@ -11,6 +11,7 @@ import type PaymentResp from "$lib/models/resps/payment_resp";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { ShowToast } from "$lib/stores/ToastManager";
 import { hasPlaceInMultiBooking } from "$lib/utils/available_times_utils/has_place_in_multi";
+import { pushDialog } from "$lib/utils/general_utils";
 import { translate } from "$lib/utils/translate";
 import pkg from "uuid";
 const { v4 } = pkg;
@@ -19,10 +20,12 @@ export async function signToMulti({
   clientNote,
   freeFromPayment,
   payAll,
+  downloadAppDialog,
 }: {
   clientNote: string;
   freeFromPayment: boolean;
   payAll: boolean;
+  downloadAppDialog: HTMLDialogElement;
 }) {
   const worker = BookingController.worker;
   if (worker == null) {
@@ -64,6 +67,8 @@ export async function signToMulti({
     });
   } else {
     //TODO handle payment before pay
+    pushDialog(downloadAppDialog);
+    return;
   }
 
   if (result) {

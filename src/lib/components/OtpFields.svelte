@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { OtpFieldEvent } from "$lib/consts/text_fields";
   import { createEventDispatcher } from "svelte";
+  export let otp: string = "";
 
   const dispatch = createEventDispatcher();
   let values: string[] = [];
@@ -29,7 +30,7 @@
     dispatch("valueChange", eventResp);
 
     if (eventResp.value.length === 6) {
-      dispatch("compleated", eventResp);
+      dispatch("onCompleted", eventResp);
     }
     // notify on done event
   }

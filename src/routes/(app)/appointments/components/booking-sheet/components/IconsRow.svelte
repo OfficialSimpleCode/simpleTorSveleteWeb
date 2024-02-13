@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import NavigationDialog from "$lib/components/NavigationDialog.svelte";
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
+  import NavigationDialog from "$lib/components/dialogs/NavigationDialog.svelte";
   import Booking from "$lib/models/booking/booking_model";
   import type WorkerModel from "$lib/models/worker/worker_model";
   import { pushDialog } from "$lib/utils/general_utils";

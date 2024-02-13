@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { goto, pushState } from "$app/navigation";
+  import { goto } from "$app/navigation";
   import { base } from "$app/paths";
   import { page } from "$app/stores";
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
@@ -10,24 +10,22 @@
   } from "$lib/consts/auth";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { userStore } from "$lib/stores/User";
+  import { pushDialog } from "$lib/utils/general_utils";
   import AuthOptionDialog from "./AuthOptionDialog.svelte";
   let explainDialog: HTMLDialogElement;
 
-  const verificationProviders: Map<AuthProvider, Date> =
-    $userStore.authProviders;
+  let pickedProvider: AuthProvider;
+  let pickedDate: Date;
 
-  console.log(verificationProviders);
   async function onAdd() {
     VerificationHelper.GI().setupLoggin();
     goto(`${base}/link-source`);
   }
 
-  function onClick() {
-    //TODO
-    pushState("", {
-      showModal: true,
-    });
-    setTimeout(() => explainDialog.showModal(), 200);
+  function onClick(authProvider: AuthProvider, date: Date) {
+    pickedProvider = authProvider;
+    pickedDate = date;
+    pushDialog(explainDialog);
   }
 </script>
 
@@ -35,8 +33,8 @@
 {#if $page.state.showModal}
   <AuthOptionDialog
     bind:explainDialog
-    date={new Date()}
-    authProvider={AuthProvider.Apple}
+    date={pickedDate}
+    authProvider={pickedProvider}
   />
 {/if}
 
@@ -44,8 +42,11 @@
 <section
   class="relative rounded-lg bg-base-200 p-5 flex items-center justify-center gap-1 w-[90%]"
 >
-  {#each verificationProviders as [authProvider, date]}
-    <button class="bg-base-300 btn btn-ghost" on:click={onClick}>
+  {#each $userStore.authProviders as [authProvider, date]}
+    <button
+      class="bg-base-300 btn btn-ghost"
+      on:click={() => onClick(authProvider, date)}
+    >
       <img
         src={authProviderToImage[authProvider]}
         alt={authProviderToStr[authProvider]}

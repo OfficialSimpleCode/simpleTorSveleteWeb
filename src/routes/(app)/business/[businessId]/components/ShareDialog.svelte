@@ -12,7 +12,7 @@
   } from "svelte-hero-icons";
 
   import Avatar from "$lib/components/Avatar.svelte";
-  import NavigationDialog from "$lib/components/NavigationDialog.svelte";
+  import NavigationDialog from "$lib/components/dialogs/NavigationDialog.svelte";
   import {
     BUSINESS_LINK_END_POINT,
     SERVER_BASE_URL,
@@ -36,8 +36,6 @@
   function copyToClipboard() {
     clipboard.write(businessLink);
     copied = true;
-
-    // TODO: copy to clipboard
     setTimeout(() => (copied = false), 1500);
   }
 

@@ -29,6 +29,7 @@ interface BookingMaker {
   workerId?: string;
   showVerificationAlert: boolean;
   services: Record<string, Treatment>;
+  oldBooking: Booking | undefined;
   date?: Date;
   isUpdate: boolean;
   pickMultipleServices: boolean;
@@ -44,40 +45,38 @@ export const bookingMakerStore = writable<BookingMaker>();
 
 export default class BookingController {
   static timePickerObjects: Record<string, Record<string, any>> = {};
-  static oldBooking: Booking | undefined;
+  static bookingToUpdate: Booking | undefined;
   static visibleDates: Date[] = [];
   static scheduleObj: schedule.Schedule | undefined;
   static firstDateToShow: Date | undefined;
   static phoneVerificationResult: PhoneDataResult | undefined;
   static pickedTimeObj: TimePickerObj | undefined;
-  static initializeBookingMaker({
-    bookingForUpdate,
-  }: {
-    bookingForUpdate?: Booking;
-  }) {
+  static initializeBookingMaker() {
     const initialBookingMaker: BookingMaker = {
-      workerId: bookingForUpdate?.workerId,
+      workerId: BookingController.bookingToUpdate?.workerId,
       showVerificationAlert: false,
       services: {},
+      oldBooking: BookingController.bookingToUpdate,
       note: "",
-      date: bookingForUpdate?.bookingDate,
-      isUpdate: bookingForUpdate != null,
+      date: BookingController.bookingToUpdate?.bookingDate,
+      isUpdate: BookingController.bookingToUpdate != null,
       currentPaymentType: PaymentTypes.payment,
-      currentCurrencyCode: bookingForUpdate?.currency.code,
-      pickMultipleServices: (bookingForUpdate?.treatmentLength ?? 0) > 1,
+      currentCurrencyCode: BookingController.bookingToUpdate?.currency.code,
+      pickMultipleServices:
+        (BookingController.bookingToUpdate?.treatmentLength ?? 0) > 1,
       hasMultiTreatment: false,
       isBookingWithPaymentUpdate: false,
       currentStep: 0,
       isMultiEvent: false,
     };
 
-    Object.entries(bookingForUpdate?.treatments ?? {}).forEach(
+    Object.entries(BookingController.bookingToUpdate?.treatments ?? {}).forEach(
       ([index, treatment]) => {
         initialBookingMaker.services[treatment.id] = treatment;
       }
     );
-    console.log(initialBookingMaker);
-    BookingController.oldBooking = bookingForUpdate;
+    //initial back to undified the booking
+    BookingController.bookingToUpdate = undefined;
     bookingMakerStore.set(initialBookingMaker);
   }
 

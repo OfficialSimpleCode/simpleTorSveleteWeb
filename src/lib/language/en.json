@@ -2285,7 +2285,7 @@
   "theUsersIsNotExist": "NOTEXIST from USERS the cell phone numbers you ordered to do not exist in our system, customers must verify their cell phone number in order to see the order that was ordered",
   "otpFormat": "Your code for the Simple Tor application is OTP",
   "tooManyAttempts": "The user is blocked due to too many login attempts. Please try again later",
-  "notReceivingAnyMessage": "Did you not receive a message?",
+  "notRecivingAnyMessage": "Didn't receive a message? Send me again",
   "tryOurSecondWay": "try a second authentication way",
   "yourPhoneVerifiviedWithOneTime": "Your phone number is verified by WAY",
   "pressToRemove": "Press to remove verification",
@@ -3060,5 +3060,6 @@
   "systemsDevelopment": "Systems development",
   "company": "company",
   "notVerified": "Not verified",
-  "termConfirmed": "Approved term"
+  "termConfirmed": "Approved term",
+  "paymentOnBookingAreNotAvailableOnWeb": "This order requires payment in advance - payments through the website will be released soon"
 }

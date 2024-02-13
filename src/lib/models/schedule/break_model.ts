@@ -1,18 +1,13 @@
-import { dateToNotifyBreak, utcDeltaMinutes } from "$lib/utils/dates_utils";
 import {
   dateStrToDate,
   dateToDateStr,
   dateToTimeStr,
-  dateToUtc,
   timeStrToDate,
 } from "$lib/utils/times_utils";
-import { translate } from "$lib/utils/translate";
 import BusinessModel from "../business/business_model";
 import { Duration } from "../core/duration";
 import IconData from "../general/icon_data";
-import FutureNotification from "../notifications/future_notification";
 import Event from "../schedule/calendar_event";
-import type WorkerModel from "../worker/worker_model";
 import ScheduleItem from "./schedule_item";
 export default class BreakModel extends ScheduleItem {
   title: string = "";
@@ -137,39 +132,6 @@ export default class BreakModel extends ScheduleItem {
 
   get currentDisplayDate(): Date {
     return this.recurrenceChildDate ?? this.bookingDate;
-  }
-
-  reminder(worker: WorkerModel): FutureNotification | null {
-    if (!this.notify) {
-      return null;
-    }
-
-    const dateToNotify = dateToNotifyBreak(this);
-
-    if (dateToNotify < dateToUtc(new Date())) {
-      return null;
-    }
-
-    if (worker.fcmsTokens.size === 0) {
-      return null;
-    }
-
-    const id = `${this.buisnessId}--AAAA--${worker.id}`;
-
-    return new FutureNotification({
-      businessName: this.businessName,
-      address: "",
-      isRecurrence: this.recurrenceEvent !== null,
-      id: id,
-      shopIcon: this.shopIcon,
-      phoneToContact: "",
-      dateToNotify: dateToNotify,
-      isMulti: false,
-      minutesToAdd: utcDeltaMinutes() + this.minutesNotification,
-      businessId: "",
-      type: this.title !== "" ? this.title : translate("break"),
-      fcms: { ...worker.fcmsTokens },
-    });
   }
 
   get timeIdAsKey(): string {

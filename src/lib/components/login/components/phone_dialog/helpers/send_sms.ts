@@ -2,7 +2,10 @@ import { VerificationHelper } from "$lib/helpers/verification/verification_helpe
 import { ShowToast } from "$lib/stores/ToastManager";
 import { translate } from "$lib/utils/translate";
 import { onCodeSent } from "./on_code_sent";
-import { onVerificationFailed } from "./on_verification_failed";
+import {
+  onExternalProviderVerificationFailed,
+  onVerificationFailed,
+} from "./on_verification_failed";
 
 export function sendSms({ phone }: { phone: string }): void {
   if (phone === "") {
@@ -26,10 +29,10 @@ export function sendSms({ phone }: { phone: string }): void {
       onVerificationFailed
     );
   } else {
-    // VerificationHelper().sendSmsWithExternalProvider({
-    //   completePhone: phone,
-    //   onCodeSent: (verificationId) => onCodeSent(verificationId),
-    //   onFailed: onExternalProviderVerificationFailed,
-    // });
+    VerificationHelper.GI().sendSmsWithExternalProvider(
+      phone,
+      onCodeSent,
+      onExternalProviderVerificationFailed
+    );
   }
 }

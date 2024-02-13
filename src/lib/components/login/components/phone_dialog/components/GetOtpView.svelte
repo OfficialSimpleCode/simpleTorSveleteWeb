@@ -4,25 +4,20 @@
   import { AuthProvider, LoginReason } from "$lib/consts/auth";
 
   import OtpFields from "$lib/components/OtpFields.svelte";
-  import { type OtpFieldEvent } from "$lib/consts/text_fields";
+  import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { translate } from "$lib/utils/translate";
   import type { EventDispatcher } from "svelte";
   import { Icon, XCircle } from "svelte-hero-icons";
   import { handleLogin } from "../../../helpers/handle_login";
+  import { sendSms } from "../helpers/send_sms";
   export let dialog: HTMLDialogElement;
   export let loginReason: LoginReason;
   export let dispatch: EventDispatcher<any>;
   let otp: string = "";
-  let valid: boolean = false;
   let loading: boolean = false;
 
-  function onChange(event: CustomEvent<OtpFieldEvent>) {
-    otp = event.detail.value;
-    valid = otp.length === 6;
-  }
-
   async function onContinue() {
-    if (!valid || loading) {
+    if (loading) {
       return;
     }
     loading = true;
@@ -36,6 +31,13 @@
     } finally {
       loading = false;
     }
+  }
+
+  function tryOtherProvider() {
+    VerificationHelper.GI().phoneVerificationWithFirebase =
+      !VerificationHelper.GI().phoneVerificationWithFirebase;
+    otp = "";
+    sendSms({ phone: VerificationHelper.GI().submitedPhone });
   }
 </script>
 
@@ -63,24 +65,9 @@
 <h3 class="text-me">{translate("beforeStartWeNeewToConfirmPhone")}</h3>
 <h3 class="text-xs">{translate("pressOpt")}</h3>
 
-<OtpFields on:valueChange={onChange} />
-<!-- <CustomTextFormField
-  type={InputOptions.password}
-  value=""
-  pattern=""
-  isRequired={true}
-  on:valueChange={onChange}
-/> -->
-
-<div class="form-control mt-9 mr-20 ml-20">
-  <button
-    type="submit"
-    class="btn btn-primary {valid ? '' : 'opacity-50'}"
-    on:click={onContinue}
-    >{#if loading}
-      <div class="loading loading-spinner"></div>
-    {:else}
-      {translate("login")}
-    {/if}
-  </button>
-</div>
+<OtpFields bind:otp on:onCompleted={onContinue} />
+{#if VerificationHelper.GI().phoneVerificationWithFirebase}
+  <h3 class="text-me bg-primary" on:click={tryOtherProvider}>
+    {translate("notRecivingAnyMessage")}
+  </h3>
+{/if}
