@@ -9,13 +9,13 @@
   import { _, translate } from "$lib/utils/translate";
 
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
-  import ConfirmActionDialog from "$lib/components/dialogs/ConfirmActionDialog.svelte";
   import { isAppleUser } from "$lib/consts/platform";
   import BookingController from "$lib/controllers/booking_controller";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import "iconify-icon";
   import { onMount } from "svelte";
   import { get } from "svelte/store";
+  import ShareDialog from "../components/ShareDialog.svelte";
 
   let shareDialog: HTMLDialogElement;
   let navigationDialog: HTMLDialogElement;
@@ -58,7 +58,11 @@
 
 <!-- the page dialogs -->
 {#if $page.state.showModal}
-  <ConfirmActionDialog bind:dialog={shareDialog} />
+  <ShareDialog
+    bind:dialog={shareDialog}
+    name={$businessStore.shopName}
+    address={$businessStore.adress}
+  />
 
   <NavigationDialog bind:dialog={navigationDialog} />
 {/if}

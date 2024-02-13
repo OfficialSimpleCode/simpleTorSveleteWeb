@@ -3,8 +3,8 @@
   import InfoTooltipButton from "$lib/components/InfoTooltipButton.svelte";
   import { AuthProvider, LoginReason } from "$lib/consts/auth";
 
-  import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
-  import { InputOptions, type TextFieldEvent } from "$lib/consts/text_fields";
+  import OtpFields from "$lib/components/OtpFields.svelte";
+  import { type OtpFieldEvent } from "$lib/consts/text_fields";
   import { translate } from "$lib/utils/translate";
   import type { EventDispatcher } from "svelte";
   import { Icon, XCircle } from "svelte-hero-icons";
@@ -16,7 +16,7 @@
   let valid: boolean = false;
   let loading: boolean = false;
 
-  function onChange(event: CustomEvent<TextFieldEvent>) {
+  function onChange(event: CustomEvent<OtpFieldEvent>) {
     otp = event.detail.value;
     valid = otp.length === 6;
   }
@@ -62,13 +62,15 @@
 <GeneralIcon icon="mdi:lock" />
 <h3 class="text-me">{translate("beforeStartWeNeewToConfirmPhone")}</h3>
 <h3 class="text-xs">{translate("pressOpt")}</h3>
-<CustomTextFormField
+
+<OtpFields on:valueChange={onChange} />
+<!-- <CustomTextFormField
   type={InputOptions.password}
   value=""
   pattern=""
   isRequired={true}
   on:valueChange={onChange}
-/>
+/> -->
 
 <div class="form-control mt-9 mr-20 ml-20">
   <button
