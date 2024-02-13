@@ -1,9 +1,10 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
-  import type { ProductModel } from "$lib/models/business/ProductModel";
+  import { ProductModel } from "$lib/models/business/product_model";
+  import { businessStore } from "$lib/stores/Business";
 
-  import { translate, _ } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
 
   export let product: ProductModel;
   export let index: number;
@@ -36,7 +37,12 @@
       <div class="card-actions justify-end">
         <button
           class="btn btn-primary"
-          on:click={() => goto(`${base}/business/product/${productId}`)}
+          on:click={() =>
+            goto(
+              `${base}/business/${
+                $businessStore != null ? $businessStore.urlEndPoint : ""
+              }/product/${productId}`
+            )}
         >
           {translate("details", $_)}
         </button>

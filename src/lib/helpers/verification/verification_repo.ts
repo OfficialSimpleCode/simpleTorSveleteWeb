@@ -1,4 +1,5 @@
 import type { LoginType } from "$lib/consts/auth";
+import type { Errors } from "$lib/services/errors/messages";
 import { FirebaseAuthService } from "$lib/services/external_services/firebase_auth_service";
 import type { CompleteFn, ParsedToken, Unsubscribe, User } from "firebase/auth";
 import type { VerificationApi } from "./verification_api";
@@ -27,6 +28,59 @@ export class VerificationRepo
 
   onAuthUserStateChanged(completed: CompleteFn): Unsubscribe {
     return this.onAuthUserStateChangedSRV(completed);
+  }
+
+  async sendSmsWithExternalProvider({
+    completePhone,
+    onCodeSent,
+    onFailed,
+  }: {
+    completePhone: string;
+    onCodeSent: (verificationId: string) => void;
+    onFailed: (
+      phone: string,
+      e: Errors,
+      codeSentTime: Date | undefined,
+      beforeSendTime: Date
+    ) => void;
+  }): Promise<void> {
+    await this.sendSmsWithExternalProviderSRV({
+      userId: this.userId,
+      phoneNumber: completePhone,
+      onCodeSent,
+      onFailed,
+    });
+  }
+
+  async verifyOTPWithExternalProvider({
+    verificationId,
+    otp,
+    userName,
+    phoneNumber,
+  }: {
+    verificationId: string;
+    otp: string;
+    userName: string;
+    phoneNumber: string;
+  }): Promise<boolean> {
+    return await this.verifyOTPWithExternalProviderSRV({
+      userName,
+      phoneNumber,
+      userId: this.userId,
+      verificationId,
+      otp,
+    });
+  }
+
+  async cancelVerificationWithExternalProvider({
+    phoneNumber,
+  }: {
+    phoneNumber: string;
+  }): Promise<boolean> {
+    return await this.cancelVerificationWithExternalProviderSRV({
+      phoneNumber,
+      userId: this.userId,
+    });
   }
 
   async sendSmsForFirebaseVerification({

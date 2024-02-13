@@ -2,19 +2,25 @@
   import UserHelper from "$lib/helpers/user/user_helper";
   import BusinessInitializer from "$lib/initializers/business_initializer";
   import { businessStore } from "$lib/stores/Business";
-  import { userStore } from "$lib/stores/User";
-  import { translate } from "$lib/utils/translate";
+  import { isConnectedStore, userStore } from "$lib/stores/User";
+  import { _, translate } from "$lib/utils/translate";
+  import { createEventDispatcher } from "svelte";
   import { Icon, XCircle } from "svelte-hero-icons";
   import GeneralIcon from "../GeneralIcon.svelte";
 
   export let dialog: HTMLDialogElement;
 
+  const dispatcher = createEventDispatcher();
+
   let isConfirmed = false;
   let loading = false;
 
-  userStore.subscribe((value) => {
+  isConnectedStore.subscribe((value) => {
+    if (value !== true) {
+      return;
+    }
     const dateToApprove =
-      value.termsApprovals[BusinessInitializer.GI().business.businessId];
+      $userStore.termsApprovals[BusinessInitializer.GI().business.businessId];
     isConfirmed =
       dateToApprove != null &&
       dateToApprove >
@@ -29,22 +35,27 @@
       return;
     }
     loading = true;
+
     try {
-      await UserHelper.GI().addTermApproval(
+      isConfirmed = await UserHelper.GI().addTermApproval(
         BusinessInitializer.GI().business.businessId
       );
     } finally {
       loading = false;
+
+      if (isConfirmed) {
+        dispatcher("onConfirmTerm");
+      }
     }
   }
 </script>
 
 <dialog
   bind:this={dialog}
-  on:close={() => history.back()}
-  class="modal modal-bottom sm:modal-middle"
+  on:close={() => dialog.close()}
+  class="  modal modal-bottom sm:modal-middle max-w-[400px]"
 >
-  <div class="modal-box bg-base-200 items-center">
+  <div class=" absolute flex justify-center modal-box bg-base-200 items-center">
     <div class="flex flex-col gap-3 items-center h-full">
       <!-- title and top buttons -->
       <div class="flex flex-row justify-between items-center relative">
@@ -55,7 +66,7 @@
 
         <!-- title -->
         <h3 class="font-bold text-lg text-center">
-          {translate("term")}
+          {translate("term", $_)}
         </h3>
 
         <p></p>
@@ -74,7 +85,7 @@
         {#if loading}
           <div class="loading loading-spinner" />
         {:else if !isConfirmed}
-          {translate("confirmTerm")}
+          {translate("confirmTerm", $_)}
         {:else if isConfirmed}
           <div class="flex flex-row justify-center items-center">
             <GeneralIcon icon="line-md:circle-to-confirm-circle-transition" />

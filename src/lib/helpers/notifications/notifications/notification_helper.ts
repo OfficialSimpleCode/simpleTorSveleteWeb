@@ -9,6 +9,7 @@ import GeneralRepo from "$lib/helpers/general/general_repo";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import type Booking from "$lib/models/booking/booking_model";
+import type BusinessModel from "$lib/models/business/business_model";
 import type { CurrencyModel } from "$lib/models/general/currency_model";
 import { Price } from "$lib/models/general/price";
 import type MultiBooking from "$lib/models/multi_booking/multi_booking";
@@ -20,9 +21,10 @@ import NotificationPayload, {
 import type NotificationTopic from "$lib/models/notifications/notification_topic";
 import type Invoice from "$lib/models/payment_hyp/invoice/invoice";
 import PaymentRequest from "$lib/models/payment_hyp/payment_request/payment_request";
+import type BreakModel from "$lib/models/schedule/break_model";
 import type UserModel from "$lib/models/user/user_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
-import { dateToRemindBooking } from "$lib/utils/dates_utils";
+import { dateToNotifyBreak, dateToRemindBooking } from "$lib/utils/dates_utils";
 import { getFormatedTime } from "$lib/utils/string_utils";
 import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
@@ -575,49 +577,53 @@ export default class NotificationsHelper {
   async notifyFirstTimeEnterBusiness(
     worker: WorkerModel,
     user: UserModel,
-    businessData: BusinessPayloadData,
-    businessName: string,
-    needNotify: boolean
+    business: BusinessModel
   ): Promise<void> {
+    console.log("zzzzzzzzzzzzz");
     if (!UserInitializer.GI().isConnected) {
       return; // no need to notify about guests
     }
-    if (!needNotify) {
+    console.log("zzzzzzzzzzzzz");
+    if (!business.notifyOnNewCustomer) {
       return;
     }
+    console.log("zzzzzzzzzzzzz");
     // no need to notify on enter of manager to business
-    if (user.id.startsWith("+972-555")) {
+    if (user.id.startsWith("+972-5550")) {
       return;
     }
+    console.log("zzzzzzzzzzzzz");
     // no need to notify on enter of manager to business
     if (developers.includes(user.id)) {
       return;
     }
+    console.log("zzzzzzzzzzzzz");
 
-    if (!UserInitializer.GI().user.firstEnterance(businessData.businessId)) {
+    if (!UserInitializer.GI().user.firstEnterance(business.businessId)) {
       return; // user already visited
     }
-
+    console.log("zzzzzzzzzzzzz");
     if (worker.fcmsTokens.size === 0) {
       return; // unable to notify - there aren't any FCMS tokens
     }
-
+    console.log("zzzzzzzzzzzzz");
     if (worker.id === user.id) {
       return; // same user, no need to notify
     }
+    console.log("zzzzzzzzzzzzz");
     if (!BusinessInitializer.GI().activeBusiness) {
       return;
     }
-
+    console.log("zzzzzzzzzzzzz");
     await this.notificationRepo.notifyMultipleUsers({
       fcms: worker.fcmsTokens,
       payload: new NotificationPayload({
         action: EnterAction.openBusiness,
-        businessData: businessData,
+        businessData: business.businessPayLoadData,
       }),
       title: translate("newCustomer", undefined, false),
       content: translate("newCustomerContent", undefined, false)
-        .replace("BUSINESS_NAME", businessName)
+        .replace("BUSINESS_NAME", business.shopName)
         .replace("NAME", user.name)
         .replace("DATE", getFormatedTime(new Date())),
       isSilent: true,
@@ -718,9 +724,9 @@ export default class NotificationsHelper {
     oldBooking: Booking;
     newBooking: Booking;
   }): Promise<boolean> {
-    const deleteResp = await this.deleteAllScheduleBookingsNotifications({
-      bookings: [oldBooking],
-    });
+    const deleteResp = await this.deleteAllScheduleBookingsNotifications([
+      oldBooking,
+    ]);
 
     if (!deleteResp) {
       return false;
@@ -729,11 +735,9 @@ export default class NotificationsHelper {
     return await this.makeScheduleBookingNotification({ booking: newBooking });
   }
 
-  async deleteAllScheduleBookingsNotifications({
-    bookings,
-  }: {
-    bookings: Booking[];
-  }): Promise<boolean> {
+  async deleteAllScheduleBookingsNotifications(
+    bookings: Booking[]
+  ): Promise<boolean> {
     // Collect all the notifications to delete
     const datesToDelete: Record<string, Record<string, any>> = {};
 
@@ -898,6 +902,31 @@ export default class NotificationsHelper {
     });
     const resp = await Promise.all(futures);
     return !resp.includes(false);
+  }
+
+  ///-------------------------------------------------schedule breaks--------------------------------
+  async deleteScheduleBreakNotification({
+    breakModel,
+    workerId,
+  }: {
+    breakModel: BreakModel;
+    workerId: string;
+  }): Promise<boolean> {
+    if (!breakModel.notify) {
+      return false;
+    }
+    const dateToNotify = dateToNotifyBreak(breakModel);
+    if (dateToNotify < new Date()) {
+      return false;
+    }
+
+    const id = breakModel.buisnessId + "--AAAA--" + workerId;
+    return await this.generalRepo.updateFieldInsideDocAsMapRepo({
+      insideEnviroments: false,
+      path: `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${dateToNotify.getMonth()}/${dateToNotify.getDate()}/${dateToNotify.getHours()}`,
+      docId: dateToNotify.getMinutes().toString(),
+      fieldName: id,
+    });
   }
 
   ///--------------------------------------------------------utils-----------------------------------

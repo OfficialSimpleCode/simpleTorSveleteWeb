@@ -26,7 +26,7 @@ export default class BusinessModel {
   currency: CurrencyModel = defaultCurrency;
   notifyOnNewCustomer: boolean = true;
   searchable: boolean = true;
-
+  urlEndPoint: string | undefined;
   billingIssue: Map<string, Date> = new Map();
   isLandingPageMode: boolean = false;
   allWorkersIds: Map<string, string> = new Map();
@@ -182,7 +182,7 @@ export default class BusinessModel {
         json["workersPermissions"]
       );
     }
-
+    this.urlEndPoint = json["urlEndPoint"];
     this.previewDoc = json["previewDoc"] ?? "";
     this.workersProductsId = json["workersProductsId"] ?? "";
     this.pendingWorkersProductsId = json["pendingWorkersProductsId"] ?? "";
@@ -314,7 +314,9 @@ export default class BusinessModel {
     data.adress = this.adress;
     data.shopPhone = this.shopPhone;
     data.workersPermissions = this.workersPermissions.toJson();
-
+    if (this.urlEndPoint != null) {
+      data.urlEndPoint = this.urlEndPoint;
+    }
     data.workersIds = this.workersIds;
     data.createdAt = dateIsoStr(this.createdAt);
     data.lastTimeConnected = dateIsoStr(this.lastTimeConnected);

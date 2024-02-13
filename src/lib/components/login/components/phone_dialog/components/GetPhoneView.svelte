@@ -19,6 +19,7 @@
       console.log("e");
       return;
     }
+
     sendSms({ phone: phoneNumber });
     dispatch("navigateOtp");
   }

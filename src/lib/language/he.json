@@ -2305,7 +2305,7 @@
   "theUsersIsNotExist": "NOTEXIST מתוך USERS ממספרי הפלאפון שהזמנת אליהם לא קיימים אצלנו במערכת, על הלקוחות לאמת את המספר פלאפון שלהם על מנת לראות את ההזמנה שהוזמנה",
   "otpFormat": "קוד האימות שלך לאפליקצית Simple Tor הינו OTP",
   "tooManyAttempts": "המשתמש חסום עקב הרבה נסיונות התחברות נסה שוב מאוחר יותר",
-  "notRecivingAnyMessage": "לא קיבלת הודעה? ",
+  "notRecivingAnyMessage": "לא קיבלת הודעה? שלח לי שוב",
   "tryOurSecondWay": "נסה דרך אימות שניה",
   "yourPhoneVerifiviedWithOneTime": "מספר הפלאפון שלך מאומת על ידי WAY",
   "pressToRemove": "לחץ להסרת האימות",
@@ -3042,5 +3042,6 @@
   "systemsDevelopment": "פיתוח מערכות",
   "company": "חברה",
   "notVerified": "לא מאומת",
-  "termConfirmed": "תקנון מאושר"
+  "termConfirmed": "תקנון מאושר",
+  "paymentOnBookingAreNotAvailibleOnWeb": "הזמנה זו מצריכה תשלום מראש - תשלומים דרך האתר יצאו בקרוב"
 }

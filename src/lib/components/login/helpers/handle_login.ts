@@ -9,6 +9,7 @@ import UserHelper from "$lib/helpers/user/user_helper";
 import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
 import UserInitializer from "$lib/initializers/user_initializer";
 import PhoneDataResult from "$lib/models/resps/phone_data_result";
+import { businessStore } from "$lib/stores/Business";
 import { isConnectedStore } from "$lib/stores/User";
 import type { EventDispatcher } from "svelte";
 import { get } from "svelte/store";
@@ -38,7 +39,11 @@ export async function handleLogin({
   if (loginReason === LoginReason.deleteUser) {
     const resp = await deleteUser();
     if (resp) {
-      goto(`${base}/business`);
+      goto(
+        `${base}/business/${
+          get(businessStore) != null ? get(businessStore).urlEndPoint : ""
+        }`
+      );
     }
     return;
   }
@@ -50,7 +55,11 @@ export async function handleLogin({
   if (loginReason === LoginReason.linkProvider) {
     const resp = await addProvider(provider);
     if (resp != null) {
-      goto(`${base}/business`);
+      goto(
+        `${base}/business/${
+          get(businessStore) != null ? get(businessStore).urlEndPoint : ""
+        }`
+      );
     }
   }
   if (loginReason === LoginReason.phoneVerification) {

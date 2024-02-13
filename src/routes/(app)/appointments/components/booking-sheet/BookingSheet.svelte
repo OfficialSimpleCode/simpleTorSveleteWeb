@@ -1,5 +1,8 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import DateString from "$lib/components/DateString.svelte";
+  import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
+  import { containerRadius } from "$lib/consts/sizes";
   import Booking from "$lib/models/booking/booking_model";
   import type WorkerModel from "$lib/models/worker/worker_model";
   import { length } from "$lib/utils/core_utils";
@@ -14,8 +17,14 @@
   export let dialog: HTMLDialogElement;
   export let booking: Booking;
   export let currentWorker: WorkerModel | undefined;
+  export let forceOpenBookingSheet: boolean;
+  let downloadAppDialog: HTMLDialogElement;
 </script>
 
+<!-- booking shhet and dialog -->
+{#if $page.state.showModal}
+  <DownloadAppDialog bind:dialog={downloadAppDialog} />
+{/if}
 <dialog
   bind:this={dialog}
   class="modal modal-bottom sm:modal-middle"
@@ -27,13 +36,18 @@
       <TopSheetIndicators {booking}></TopSheetIndicators>
 
       <!-- top icons -->
-      <IconsRow {booking} {currentWorker} mainDialog={dialog} />
+      <IconsRow
+        {booking}
+        {currentWorker}
+        mainDialog={dialog}
+        {downloadAppDialog}
+      />
 
       <!-- general data container -->
-      <TopDetails {booking} {currentWorker} />
+      <TopDetails {booking} {currentWorker} {forceOpenBookingSheet} />
 
       <!-- payments container -->
-      <PaymentsContainer {booking} />
+      <PaymentsContainer {booking} {downloadAppDialog} />
 
       <!-- table about the time, date and other informations -->
       <div class="w-full">
@@ -42,7 +56,7 @@
 
         <!-- summary of times, price and duration -->
         <div
-          class="flex flex-col bg-base-300 rounded-lg py-4 px-5 gap-6 items-center"
+          class="flex flex-col bg-base-300 {containerRadius} py-4 px-5 gap-6 items-center"
         >
           <div class="text-lg">
             <DateString date={booking.currentDisplayDate} />

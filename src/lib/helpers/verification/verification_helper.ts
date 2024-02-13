@@ -4,7 +4,10 @@ import {
   authProviderToProviderId,
 } from "$lib/consts/auth";
 
+import UserInitializer from "$lib/initializers/user_initializer";
+import type { Errors } from "$lib/services/errors/messages";
 import type { ParsedToken, PhoneAuthCredential, User } from "firebase/auth";
+import UserHelper from "../user/user_helper";
 import { VerificationRepo } from "./verification_repo";
 
 export class VerificationHelper {
@@ -27,12 +30,6 @@ export class VerificationHelper {
   public canUseAuthVars = false;
 
   public verificationRepo: VerificationRepo = new VerificationRepo();
-
-  public updateFinishLogIn(val: boolean): void {
-    // Update the finishLogIn logic
-    // ...
-    // Example: UiManager.insertUpdate(Providers.settings);
-  }
 
   public async logoutIfSignUpNotCompleted(): Promise<void> {
     // Logout if sign up is not completed
@@ -85,23 +82,6 @@ export class VerificationHelper {
     });
   }
 
-  // public async sendSmsWithExternalProvider(
-  //   completePhone: string,
-  //   onCodeSent: (verificationId: string) => void,
-  //   onFailed: (
-  //     verificationId: string,
-  //     error: Errors,
-  //     startDate: Date | undefined,
-  //     endDate: Date
-  //   ) => void
-  // ): Promise<void> {
-  //   await this.verificationRepo.sendSmsWithExternalProvider({
-  //     completePhone,
-  //     onCodeSent,
-  //     onFailed,
-  //   });
-  // }
-
   public get userId(): string {
     return this.verificationRepo.userId;
   }
@@ -126,27 +106,10 @@ export class VerificationHelper {
     const providerId = authProviderToProviderId[authProvider] || "";
     const value = await this.verificationRepo.unlinkProvider({ providerId });
     if (value) {
-      // Update user email if needed
-      // ...
+      await UserHelper.GI().removeAuthProvider(authProvider);
     }
     return value;
   }
-
-  //   public async cancelVerificationWithExternalProvider(): Promise<boolean> {
-  //     const value =
-  //       await this.verificationRepo.cancelVerificationWithExternalProvider({
-  //         userId: UserInitializer.GI().user.id,
-  //         phoneNumber: UserInitializer.GI().user.phoneNumber,
-  //       });
-  //     if (value) {
-  //       await userHelper.loadLibrary().then(async (value) => {
-  //         await userHelper
-  //           .UserHelper()
-  //           .updatePhone(UserInitializer.GI().user.phoneNumber, false);
-  //       });
-  //     }
-  //     return value;
-  //   }
 
   public async logout(): Promise<boolean> {
     return await this.verificationRepo.logout();
@@ -173,13 +136,12 @@ export class VerificationHelper {
         return await this._signInWithFacebook(loginType);
 
       case AuthProvider.Phone:
-        return await this._loginWithOtp({
-          loginType,
-          otp,
-        });
-      // this.phoneVerificationWithFirebase
-      //   ?
-      //   : await this._verifyOTPWithExternalProvider({ otp });
+        return this.phoneVerificationWithFirebase
+          ? await this._loginWithOtp({
+              loginType,
+              otp,
+            })
+          : await this._verifyOTPWithExternalProvider({ otp });
     }
   }
 
@@ -202,26 +164,52 @@ export class VerificationHelper {
     loginType: LoginType;
     otp: string;
   }): Promise<boolean> {
-    console.log("this.verificationID", this.verificationID);
     return await this.verificationRepo.signInWithOtp({
       loginType,
       verificationId: this.verificationID,
       otp,
     });
   }
+  public async cancelVerificationWithExternalProvider(): Promise<boolean> {
+    const value =
+      await this.verificationRepo.cancelVerificationWithExternalProvider({
+        phoneNumber: UserInitializer.GI().user.phoneNumber,
+      });
+    if (value) {
+      UserHelper.GI().updatePhone(UserInitializer.GI().user.phoneNumber, false);
+    }
+    return value;
+  }
 
-  //   private async _verifyOTPWithExternalProvider({
-  //     otp,
-  //   }: {
-  //     otp: string;
-  //   }): Promise<boolean> {
-  //     return await this.verificationRepo.verifyOTPWithExternalProvider({
-  //       verificationId: this.verificationID,
-  //       otp,
-  //       userName: UserInitializer.GI().user.name,
-  //       phoneNumber: this.submitedPhone,
-  //     });
-  //   }
+  public async sendSmsWithExternalProvider(
+    completePhone: string,
+    onCodeSent: (verificationId: string) => void,
+    onFailed: (
+      verificationId: string,
+      error: Errors,
+      startDate: Date | undefined,
+      endDate: Date
+    ) => void
+  ): Promise<void> {
+    await this.verificationRepo.sendSmsWithExternalProvider({
+      completePhone,
+      onCodeSent,
+      onFailed,
+    });
+  }
+
+  private async _verifyOTPWithExternalProvider({
+    otp,
+  }: {
+    otp: string;
+  }): Promise<boolean> {
+    return await this.verificationRepo.verifyOTPWithExternalProvider({
+      verificationId: this.verificationID,
+      otp,
+      userName: UserInitializer.GI().user.name,
+      phoneNumber: this.submitedPhone,
+    });
+  }
 
   public async deleteUser(): Promise<boolean> {
     return await this.verificationRepo.deleteUser();

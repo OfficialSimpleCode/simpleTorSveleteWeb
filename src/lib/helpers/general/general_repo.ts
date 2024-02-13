@@ -25,6 +25,7 @@ import FirestoreDataBase from "$lib/services/external_services/firestore";
 import { dateToMonthStr } from "$lib/utils/times_utils";
 import {
   FieldValue,
+  QueryDocumentSnapshot,
   Transaction,
   type DocumentData,
   type DocumentSnapshot,
@@ -51,6 +52,25 @@ export default class GeneralRepo extends FirestoreDataBase {
       path: path,
       docId: docId,
       insideEnviroments: insideEnviroments,
+    });
+  }
+
+  async getDocWithQueryRepo({
+    path,
+    queryList,
+    insideEnviroments = true,
+    limit,
+  }: {
+    path: string;
+    queryList: any[][];
+    insideEnviroments?: boolean;
+    limit?: number;
+  }): Promise<QueryDocumentSnapshot<unknown, DocumentData>[]> {
+    return await super.getDocWithQuerySRV({
+      path: path,
+      queryList: queryList,
+      insideEnviroments: insideEnviroments,
+      limit: limit,
     });
   }
 

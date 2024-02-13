@@ -1,10 +1,10 @@
 <script lang="ts">
   import { sendMessageAnimation } from "$lib/consts/resources";
-  import { translate } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import { Icon, XCircle } from "svelte-hero-icons";
   import LottieAnimation from "../LottieAnimation.svelte";
   import DownloadAppButton from "../custom_components/DownloadAppButton.svelte";
-
+  export let explainTranslateKey: string | undefined = undefined;
   export let dialog: HTMLDialogElement;
 </script>
 
@@ -18,7 +18,7 @@
     <div class="flex justify-center items-center mb-[2rem] relative">
       <!-- title -->
       <h3 class="font-bold text-lg text-center">
-        {translate("downloadTheApp")}
+        {translate("downloadTheApp", $_)}
       </h3>
 
       <!-- close button -->
@@ -32,7 +32,7 @@
     <!-- text, animation, and download button -->
     <div class="flex flex-col gap-3 items-center h-full">
       <h3 class="text-sm text-center mx-6">
-        {translate("downloadTheAppExplain")}
+        {translate(explainTranslateKey ?? "downloadTheAppExplain")}
       </h3>
       <LottieAnimation animationFile={sendMessageAnimation} loop={true} />
       <DownloadAppButton />

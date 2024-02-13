@@ -1,5 +1,4 @@
 <script lang="ts">
-  import InfoTooltipButton from "$lib/components/InfoTooltipButton.svelte";
   import CustomPhoneField from "$lib/components/custom_components/CustomPhoneField.svelte";
   import { type TextFieldEvent } from "$lib/consts/text_fields";
   import { translate } from "$lib/utils/translate";
@@ -46,7 +45,6 @@
 >
   <div class="modal-box bg-base-200 pb-10">
     <div class="flex justify-between items-center mb-[1rem]">
-      <InfoTooltipButton message="Placeholder TODO" />
       <h3 class="font-bold text-md">{title}</h3>
       <button class="btn btn-ghost" on:click={() => dialog.close()}>
         <Icon src={XCircle} size="24px" />

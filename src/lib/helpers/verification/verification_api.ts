@@ -1,4 +1,5 @@
 import type { LoginType } from "$lib/consts/auth";
+import type { Errors } from "$lib/services/errors/messages";
 import type { ParsedToken, User } from "firebase/auth";
 
 export interface VerificationApi {
@@ -8,51 +9,32 @@ export interface VerificationApi {
 
   signInWithFacebook(loginType: LoginType): Promise<boolean>;
 
-  //   signInWithOtp(params: {
-  //     loginType: LoginType;
-  //     verificationId: string;
-  //     otp: string;
-  //     autocredential?: PhoneAuthCredential | null;
-  //   }): Promise<boolean>;
+  verifyOTPWithExternalProvider(params: {
+    verificationId: string;
+    otp: string;
+    userName: string;
+    phoneNumber: string;
+  }): Promise<boolean>;
 
-  //   verifyOTPWithExternalProvider(params: {
-  //     verificationId: string;
-  //     otp: string;
-  //     userName: string;
-  //     phoneNumber: string;
-  //   }): Promise<boolean>;
+  sendSmsWithExternalProvider(params: {
+    completePhone: string;
+    onCodeSent: (verificationId: string) => void;
+    onFailed: (
+      phone: string,
+      e: Errors,
+      codeSentTime: Date | undefined,
+      beforeSendTime: Date
+    ) => void;
+  }): Promise<void>;
 
-  //   sendSmsForFirebaseVerification(params: {
-  //     completePhone: string;
-  //     onCodeSent: (verificationId: string) => void;
-  //     onFailed: (
-  //       phone: string,
-  //       exception: FirebaseAuthException,
-  //       codeSentTime: Date | null,
-  //       beforeSendTime: Date
-  //     ) => void;
-  //     verificationCompleted: (credential: PhoneAuthCredential) => void;
-  //   }): Promise<void>;
-
-  //   sendSmsWithExternalProvider(params: {
-  //     completePhone: string;
-  //     onCodeSent: (verificationId: string) => void;
-  //     onFailed: (
-  //       phone: string,
-  //       e: Errors,
-  //       codeSentTime: Date | null,
-  //       beforeSendTime: Date
-  //     ) => void;
-  //   }): Promise<void>;
+  cancelVerificationWithExternalProvider(params: {
+    userId: string;
+    phoneNumber: string;
+  }): Promise<boolean>;
 
   logout(): Promise<boolean>;
 
   unlinkProvider(params: { providerId: string }): Promise<boolean>;
-
-  //   cancelVerificationWithExternalProvider(params: {
-  //     userId: string;
-  //     phoneNumber: string;
-  //   }): Promise<boolean>;
 
   deleteUser(): Promise<boolean>;
 

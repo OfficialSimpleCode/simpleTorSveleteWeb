@@ -12,11 +12,12 @@ import { EnterAction } from "$lib/models/notifications/notification_payload";
 import type UserNotification from "$lib/models/notifications/user_notification";
 import PaymentRequest from "$lib/models/payment_hyp/payment_request/payment_request";
 import type PaymentRequestUser from "$lib/models/payment_hyp/payment_request/payment_request_user";
+import BreakModel from "$lib/models/schedule/break_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { isNotEmpty } from "$lib/utils/core_utils";
 import { subDuration } from "$lib/utils/duration_utils";
 import { sendMessagePaymentRequest } from "$lib/utils/notifications_utils";
-import { dateToDateStr } from "$lib/utils/times_utils";
+import { dateToDateStr, setToMidNight } from "$lib/utils/times_utils";
 import MessagesHelper from "./messages/messages_helper";
 import NotificationsHelper from "./notifications/notification_helper";
 
@@ -99,9 +100,9 @@ export default class NotificationHandler {
         }
         if (booking.notificationType === NotificationType.push) {
           // Delete the scheduled notification
-          NotificationsHelper.GI().deleteAllScheduleBookingsNotifications({
-            bookings: [booking],
-          });
+          NotificationsHelper.GI().deleteAllScheduleBookingsNotifications([
+            booking,
+          ]);
         }
       }
     }
@@ -271,9 +272,9 @@ export default class NotificationHandler {
             [oldBookingTemp.bookingId]: oldBookingTemp,
           });
         } else if (oldBooking.notificationType === NotificationType.push) {
-          NotificationsHelper.GI().deleteAllScheduleBookingsNotifications({
-            bookings: [oldBooking],
-          });
+          NotificationsHelper.GI().deleteAllScheduleBookingsNotifications([
+            oldBooking,
+          ]);
         }
       }
       if (newBooking.status === BookingStatuses.approved) {
@@ -663,5 +664,234 @@ export default class NotificationHandler {
         }
       );
     }
+  }
+
+  async cancelAllBookingsScheduleNoification(
+    bookingsToDelete: Record<string, Booking>
+  ): Promise<boolean> {
+    const bookingsToCancelShcdule: Record<string, Booking> = {};
+    const recurrenceBookingToCancelScheduleMessage: Record<string, Booking> =
+      {};
+
+    Object.entries(bookingsToDelete).forEach(([bookingId, booking]) => {
+      if (!booking.recurrenceEvent) {
+        bookingsToCancelShcdule[bookingId] = booking;
+      } else {
+        recurrenceBookingToCancelScheduleMessage[bookingId] = booking;
+      }
+    });
+
+    const futures: Promise<boolean>[] = [
+      MessagesHelper.GI().cancelScheduleMessageToMultipleBookings(
+        bookingsToCancelShcdule
+      ),
+      NotificationsHelper.GI().deleteAllScheduleBookingsNotifications(
+        Object.values(bookingsToDelete)
+      ),
+    ];
+
+    Object.entries(recurrenceBookingToCancelScheduleMessage).forEach(
+      ([_, booking]) => {
+        if (!booking.recurrenceNotificationsLastDate) {
+          return;
+        }
+        futures.push(
+          this.deleteRecurrenceBookingNotificationsInRange({
+            start: new Date(),
+            end: booking.recurrenceNotificationsLastDate,
+            recurrenceBooking: booking,
+          })
+        );
+      }
+    );
+
+    const resp = await Promise.all(futures);
+    return !resp.includes(false);
+  }
+
+  async cancelAllBreaksScheduleNotifications(
+    breaksToDelete: BreakModel[]
+  ): Promise<boolean> {
+    const breaksToCancelSchedule: BreakModel[] = [];
+    const recurrenceBreaksToCancelScheduleMessage: BreakModel[] = [];
+
+    breaksToDelete.forEach((breakModel) => {
+      if (!breakModel.notify) {
+        return;
+      }
+
+      if (!breakModel.recurrenceEvent) {
+        // Make sure the breaks are in the future
+        const notificationDate = new Date(breakModel.bookingDate);
+        notificationDate.setMinutes(
+          notificationDate.getMinutes() - breakModel.minutesNotification
+        );
+
+        if (notificationDate < new Date()) {
+          return;
+        }
+
+        breaksToCancelSchedule.push(breakModel);
+      } else {
+        if (!breakModel.recurrenceNotificationsLastDate) {
+          return;
+        }
+        recurrenceBreaksToCancelScheduleMessage.push(breakModel);
+      }
+    });
+
+    const futures: Promise<boolean>[] = [];
+    breaksToCancelSchedule.forEach((breakModel) => {
+      futures.push(
+        NotificationsHelper.GI().deleteScheduleBreakNotification({
+          breakModel,
+          workerId: breakModel.workerId,
+        })
+      );
+    });
+
+    recurrenceBreaksToCancelScheduleMessage.forEach((breakModel) => {
+      futures.push(
+        this.deleteRecurrenceBreakNotificationsInRange({
+          start: new Date(),
+          end: breakModel.recurrenceNotificationsLastDate!,
+          workerId: breakModel.workerId,
+          recurrenceBreakModel: breakModel,
+        })
+      );
+    });
+
+    const resp = await Promise.all(futures);
+    return !resp.includes(false);
+  }
+
+  ///Get strat , end and delete all the recurrnece
+  /// notifications/messages in that range
+  async deleteRecurrenceBreakNotificationsInRange({
+    start,
+    end,
+    recurrenceBreakModel,
+    workerId,
+  }: {
+    start: Date;
+    end: Date;
+    recurrenceBreakModel: BreakModel;
+    workerId: string;
+  }): Promise<boolean> {
+    if (!recurrenceBreakModel.recurrenceEvent) {
+      return true;
+    }
+
+    if (start > end) {
+      return true;
+    }
+
+    // Get the starting date
+    let datePointer = setToMidNight(start);
+    // Collect all the dates we need to delete
+    const dateToDelete: Set<Date> = new Set();
+    while (datePointer <= end) {
+      // Find the dates that the recurrence break occurred in.
+      // Find also the exceptions - need to delete them too
+      if (
+        recurrenceBreakModel.recurrenceEvent &&
+        recurrenceBreakModel.recurrenceEvent.isAccureInDate({
+          date: datePointer,
+          considerException: false,
+        })
+      ) {
+        dateToDelete.add(new Date(datePointer));
+      }
+      datePointer.setDate(datePointer.getDate() + 1);
+    }
+
+    const futures: Promise<boolean>[] = [];
+    dateToDelete.forEach((date) => {
+      // Make new break from the recurrence break with the date to notify
+      // as the date of the booking but keep the hour and minutes the same
+      const newBreak = BreakModel.fromBreakModel(recurrenceBreakModel);
+
+      newBreak.day = dateToDateStr(date);
+      newBreak.bookingDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        recurrenceBreakModel.bookingDate.getHours(),
+        recurrenceBreakModel.bookingDate.getMinutes()
+      );
+
+      futures.push(
+        NotificationsHelper.GI().deleteScheduleBreakNotification({
+          breakModel: newBreak,
+          workerId: workerId,
+        })
+      );
+    });
+
+    await Promise.all(futures);
+    return true;
+  }
+
+  ///Get strat , end and delete all the recurrnece
+  /// notifications/messages in that range
+  async deleteRecurrenceBookingNotificationsInRange(params: {
+    start: Date;
+    end: Date;
+    recurrenceBooking: Booking;
+  }): Promise<boolean> {
+    const { start, end, recurrenceBooking } = params;
+
+    if (!recurrenceBooking.recurrenceEvent) {
+      return false;
+    }
+
+    let datePointer = setToMidNight(start);
+    const dateToDelete = new Set<Date>();
+
+    const event = Object.values(recurrenceBooking.bookingsEventsAsEvents)[0];
+
+    while (datePointer <= end) {
+      if (
+        !event.isBreak &&
+        event.eventIndex === 0 &&
+        event.recurrenceEvent &&
+        event.recurrenceEvent.isAccureInDate(datePointer, false)
+      ) {
+        dateToDelete.add(new Date(datePointer));
+      }
+      datePointer.setDate(datePointer.getDate() + 1);
+    }
+    //all the booking that need to send schedule message to
+    const bookingForCancelMessage: Record<string, Booking> = {};
+    const bookingForCancelPushNotification: Booking[] = [];
+
+    dateToDelete.forEach((date) => {
+      //make new booking from the recurrence booking with the date to notify
+      //as the date of the booking but keep the hour and minutes the same
+      const newBooking: Booking = Booking.fromBooking(recurrenceBooking);
+
+      newBooking.bookingDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        recurrenceBooking.bookingDate.getHours(),
+        recurrenceBooking.bookingDate.getMinutes()
+      );
+
+      if (recurrenceBooking.notificationType === NotificationType.message) {
+        //recurrence bookings cant has the same booking id for them all
+        //add the date in the end to make the id uniqe
+        newBooking.bookingId = `${newBooking.bookingId}--${dateToDateStr(
+          newBooking.bookingDate
+        )}`;
+        bookingForCancelMessage[newBooking.bookingId] = newBooking;
+      } else if (recurrenceBooking.notificationType === NotificationType.push) {
+        bookingForCancelPushNotification.push(newBooking);
+      }
+    });
+
+    // Now you can handle the logic to delete notifications and messages based on the collected data
+
+    return true; // Return true if the operation is successful
   }
 }

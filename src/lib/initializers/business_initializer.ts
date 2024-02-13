@@ -177,7 +177,29 @@ export default class BusinessInitializer {
   }
 
   ///NOTICE: this func run on the server
-  async getBusinessDoc(
+  async getBusinessDocByQuery(
+    businessUrl: string
+  ): Promise<Record<string, any> | undefined> {
+    const docs = await this.generalRepo.getDocWithQueryRepo({
+      path: buisnessCollection,
+      queryList: [["urlEndPoint", "==", businessUrl]],
+      limit: 1,
+    });
+
+    if (docs.length === 0) {
+      return undefined;
+    }
+    if (docs[0].data() == null) {
+      return undefined;
+    }
+    return {
+      businessId: docs[0].id,
+      business: this.fixBusinessDoc(docs[0].data()!),
+    };
+  }
+
+  ///NOTICE: this func run on the server
+  async getBusinessDocById(
     businessId: string
   ): Promise<Record<string, any> | undefined> {
     const doc = await this.generalRepo.getDocRepo({
@@ -185,7 +207,10 @@ export default class BusinessInitializer {
       docId: businessId,
     });
 
-    return this.fixBusinessDoc(doc.data());
+    return {
+      businessId: doc.id,
+      business: this.fixBusinessDoc(doc.data()!),
+    };
   }
 
   //we need to return the business doc from the server and cant return object that cant be stringify
@@ -250,7 +275,7 @@ export default class BusinessInitializer {
       if (this.loadedBusinessJson == null) {
         return false;
       }
-      console.log("eeeeeeee");
+
       this.business = BusinessModel.fromJson(
         this.loadedBusinessJson,
         businessId
@@ -328,21 +353,6 @@ export default class BusinessInitializer {
   }
 
   emptyBusinessData(): void {
-    //TODO Remove the business themes from the theme helper themes
-    // Object.keys(this.business.design.businessThemes).forEach((themeKey) => {
-    //   ThemeHelper().currentThemes.delete(themeKey);
-    // });
-
-    // this.changingImages = [];
-    // this.storyCacheImages = {};
-    // this.businessLimits = {};
-    // this.productsCacheImages = [];
-    //TODOD remove reminder
-
-    // this.storyImagesLength = 0;
-    // this.eligibleWorkerAmount = 0;
-    // this.limitionPassed = [];
-
     this.businessSubtype = SubType.trial;
     this.business = BusinessModel.empty();
     this.business.businessData = new BusinessData();

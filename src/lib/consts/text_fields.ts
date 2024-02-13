@@ -13,3 +13,7 @@ export interface TextFieldEvent {
   value: string;
   isValid: boolean;
 }
+
+export interface OtpFieldEvent {
+  value: string;
+}

@@ -43,24 +43,6 @@ export default class PublicCustomer {
     });
   }
 
-  //TODO
-  //   isTheSameAs(
-  //     publicCustomer: PublicCustomer,
-  //     { withId = true }: { withId?: boolean } = {}
-  //   ): boolean {
-  //     const jsonA = publicCustomer.toJson();
-  //     if (withId) {
-  //       jsonA["id"] = publicCustomer.hashNumber;
-  //     }
-
-  //     const jsonB = this.toJson();
-  //     if (withId) {
-  //       jsonB["id"] = this.hashNumber;
-  //     }
-
-  //     return DeepCollectionEquality.equals(jsonB, jsonA);
-  //   }
-
   toJson(): Record<string, any> {
     const data: Record<string, any> = {};
     data["freeFromPayments"] = this.freeFromPayments;

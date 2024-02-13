@@ -98,7 +98,7 @@ export default class UserInitializer {
       }
 
       this.user = UserModel.fromUserDocJson(this.userDoc?.data()!);
-
+      console.log("rrrrrrrrrrrrrrrrrrrrrrrr4444444444444444444");
       /*No need to take the user public data the startListening 
         func will take it*/
       this.startPublicDataListening();
@@ -123,42 +123,47 @@ export default class UserInitializer {
   }
 
   async actionsOnBusiness() {
+    console.log("rrrrrrrrrrrrrrrr3333333333333r");
     const businessId = BusinessInitializer.GI().business.businessId;
-    if (businessId != "") {
+    if (businessId === "") {
       return;
     }
+
+    console.log("rrrwwwwwwwwww");
     // notify to the manager on new customer
     let managerId: string = businessId.split("--")[0];
     if (managerId.length < 16) {
-      managerId = "+${managerId}";
+      managerId = `+${managerId}`;
     }
-
+    console.log(managerId);
     //send to the manager that the user enter first time
     //the loading of the workers is not waited so need to check every 100 ms if the
     //manager worker obj is loaded
     let index: number = 0;
-    while (index < 10 && BusinessInitializer.GI().workers[managerId] != null) {
+    let sendMessage: boolean = false;
+    while (index < 5 && !sendMessage) {
       index++;
       if (BusinessInitializer.GI().workers[managerId] != null) {
+        sendMessage = true;
         NotificationsHelper.GI()
           .notifyFirstTimeEnterBusiness(
             BusinessInitializer.GI().workers[managerId]!,
             this.user,
-            BusinessInitializer.GI().business.businessPayLoadData,
-            BusinessInitializer.GI().business.shopName,
-            BusinessInitializer.GI().business.notifyOnNewCustomer
+            BusinessInitializer.GI().business
           )
           .then((_) => {
+            console.log("eeeeeeeeeeeeeeeeeee");
+
             //add it after notify the manager bacause in the func above we
             //check if it is the first enterance of the user
             // add to the last visited buisnesses
-            if (this.user.id != "") {
-              if (this.user.lastVisitedBuisnesses.includes(businessId)) {
-                // show the last business first - no need to await
-                this.replaceVisitedBusiness(businessId, businessId);
-              } else {
-                this.addVisitedBusiness(businessId);
-              }
+
+            if (this.user.lastVisitedBuisnesses.includes(businessId)) {
+              console.log("rrrrrrrrrrrrrrrrr");
+              // show the last business first - no need to await
+              this.replaceVisitedBusiness(businessId, businessId);
+            } else {
+              this.addVisitedBusiness(businessId);
             }
           });
       } else {
@@ -195,7 +200,7 @@ export default class UserInitializer {
     );
     this.user.lastVisitedBuisnesses.push(newBusinessId);
 
-    await this.userRepo.updateFieldInsideDocAsArrayRepo({
+    await this.userRepo.updateFieldInsideDocAsMapRepo({
       path: usersCollection,
       docId: this.user.id,
       fieldName: "lastVisitedBuisnesses",
@@ -230,17 +235,13 @@ export default class UserInitializer {
         this.user.lastVisitedBuisnessesRemoved.push(businessId);
       }
     } else {
-      const success = await this.userRepo.updateFieldInsideDocAsArrayRepo({
+      this.user.lastVisitedBuisnesses.push(businessId);
+      await this.userRepo.updateFieldInsideDocAsMapRepo({
         path: usersCollection,
         docId: this.user.id,
-        fieldName: "lastVisitedBusinesses",
-        value: businessId,
-        command: ArrayCommands.add,
+        fieldName: "lastVisitedBuisnesses",
+        value: this.user.lastVisitedBuisnesses,
       });
-
-      if (success) {
-        this.user.lastVisitedBuisnesses.push(businessId);
-      }
     }
   }
 

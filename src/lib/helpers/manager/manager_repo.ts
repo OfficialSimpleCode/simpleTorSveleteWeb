@@ -134,7 +134,6 @@ export class ManagerRepo extends GeneralRepo implements ManagerApi {
               if (event.isBreak) {
                 const breakModel = BreakModel.fromEvent(event);
                 breakModel.workerId = workerId;
-
                 deleteResp.breaks.push(breakModel);
               }
             });
@@ -265,7 +264,7 @@ export class ManagerRepo extends GeneralRepo implements ManagerApi {
           );
           const imagesIds = new Set<string>();
 
-          Array.from(workerObj.storyImages.values()).forEach((fullPath) => {
+          Object.values(workerObj.storyImages).forEach((fullPath) => {
             imagesIds.add(
               DbPathesHelper.GI().getImageStorageName(
                 "story_images",

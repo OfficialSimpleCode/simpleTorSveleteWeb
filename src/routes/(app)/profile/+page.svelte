@@ -22,6 +22,7 @@
   import { translate } from "$lib/utils/translate";
   import { emailValidation, nameValidation } from "$lib/utils/validation_utils";
   import clipboard from "clipboardy";
+  import { onMount } from "svelte";
   import AuthOptions from "./components/AuthOptions.svelte";
   import ChangeAtrributeDialog from "./components/ChangeAtrributeDialog.svelte";
   import ChangePhoneDialog from "./components/ChangePhoneDialog.svelte";
@@ -34,13 +35,16 @@
   let loadingLogout: boolean = false;
   let copiedUserId: boolean = false;
   console.log($userStore.id);
-
-  isConnectedStore.subscribe((value) => {
-    //redirect to the login page if the user is not connected
-    if (value === false) {
-      goto(`${base}/login`);
-    }
+  onMount(() => {
+    isConnectedStore.subscribe((value) => {
+      //redirect to the login page if the user is not connected
+      console.log($page.url);
+      if (value === false) {
+        goto(`${base}/login`);
+      }
+    });
   });
+
   function openEmailDialog() {
     pushState(`${base}/profile/email`, {
       showModal: true,
@@ -156,7 +160,9 @@
   <div />
 {:else}
   <h3 class="font-bold text-lg">{$_("profile")}</h3>
-  <div class="flex flex-col justify-start items-center gap-6">
+  <div
+    class="flex flex-col justify-start items-center gap-6 max-w-[800px] mx-auto pb-5"
+  >
     <!-- Avatar -->
     <section class="flex flex-col items-center">
       <Avatar
@@ -171,12 +177,12 @@
     </section>
 
     <!-- Profile Information -->
-    <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
+    <section class="join join-vertical w-[90%] rounded-lg bg-base-200">
       <SettingsItem icon="wpf:name" onTap={openNameDialog} name={"name"}>
         <h3 slot="trailing">{$userStore.name}</h3>
       </SettingsItem>
 
-      <div class="divider h-[1px]" />
+      <div class="h-[0.2px] w-full bg-gray-500 opacity-20" />
       <SettingsItem
         icon="ic:baseline-phone"
         onTap={openPhoneDialog}
@@ -191,7 +197,7 @@
         </div>
       </SettingsItem>
 
-      <div class="divider h-[1px]" />
+      <div class="h-[0.2px] w-full bg-gray-500 opacity-20" />
       <SettingsItem
         icon="ic:baseline-email"
         onTap={openEmailDialog}
@@ -206,19 +212,14 @@
         </div>
       </SettingsItem>
 
-      <div class="divider h-[1px]" />
+      <div class="h-[0.2px] w-full bg-gray-500 opacity-20" />
       <SettingsItem
         icon="tabler:id"
         onTap={copyToUserIdClipboard}
         name={"userId"}
       >
-        <div
-          slot="trailing"
-          class="flex flex-row{copiedUserId
-            ? 'flex items-center text-gray-500 gap-2'
-            : 'flex items-center text-gray-500'}"
-        >
-          <div class="w-[200px] truncate overflow-hidden">
+        <div slot="trailing" class="flex flex-row items-center">
+          <div class="overflow-hidden truncate max-w-[130px]">
             {#if copiedUserId}
               {translate("Copied", $_)}
             {:else}
@@ -234,7 +235,7 @@
     </section>
 
     <!-- Profile Information -->
-    <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
+    <section class="join join-vertical w-[90%] rounded-lg bg-base-200">
       <SettingsItem
         icon="material-symbols:verified"
         onTap={onClickVerified}
@@ -253,7 +254,7 @@
 
     <AuthOptions />
     <!-- Actions -->
-    <section class="join join-vertical w-[90%] rounded-lg bg-base-100">
+    <section class="join join-vertical w-[90%] rounded-lg bg-base-200">
       <SettingsItem
         icon="material-symbols:logout"
         onTap={onLogout}
@@ -266,7 +267,7 @@
         </div>
       </SettingsItem>
 
-      <div class="divider h-[1px]" />
+      <div class="h-[0.2px] w-full bg-gray-500 opacity-20" />
       <SettingsItem
         icon="ph:trash-bold"
         onTap={onDeleteUser}

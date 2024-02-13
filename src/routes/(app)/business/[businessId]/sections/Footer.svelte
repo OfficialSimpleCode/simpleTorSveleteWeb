@@ -1,14 +1,23 @@
-<script>
+<script lang="ts">
+  import { page } from "$app/stores";
   import Logo from "$lib/components/Logo.svelte";
   import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
+  import ContactUsDialog from "$lib/components/dialogs/ContactUsDialog.svelte";
   import { businessStore } from "$lib/stores/Business";
+  import { pushDialog } from "$lib/utils/general_utils";
   import { downloadSimpleTor } from "$lib/utils/links_utils";
   import { _, translate } from "$lib/utils/translate";
   import FooterSocialIcons from "../components/FooterSocialIcons.svelte";
+  let contactUsDialog: HTMLDialogElement;
 
-  const dynamicLink = $businessStore.dynamicLink;
+  function openContactUs() {
+    pushDialog(contactUsDialog);
+  }
 </script>
 
+{#if $page.state.showModal}
+  <ContactUsDialog bind:dialog={contactUsDialog} />
+{/if}
 <!-- top footer -->
 <footer class="footer p-10 bg-base-200 text-base-content">
   <!-- services -->
@@ -17,11 +26,14 @@
       {translate("treatments", $_).toLocaleUpperCase()}
     </header>
     <button
-      on:click={() => downloadSimpleTor(dynamicLink)}
+      on:click={() => downloadSimpleTor($businessStore.dynamicLink)}
       class="link link-hover">{translate("queueSystem", $_)}</button
     >
     <button class="link link-hover"
       >{translate("systemsDevelopment", $_)}</button
+    >
+    <button class="link link-hover" on:click={openContactUs}
+      >{translate("ContactUs", $_)}</button
     >
   </nav>
 
@@ -69,5 +81,5 @@
   <DownloadAppButton />
 
   <!-- social links -->
-  <FooterSocialIcons></FooterSocialIcons>
+  <FooterSocialIcons />
 </footer>

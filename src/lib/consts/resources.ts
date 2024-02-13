@@ -7,3 +7,6 @@ export const sendMessageAnimation: string =
 
 export const successAnimation: string =
   "https://lottie.host/7df3e62d-39cc-4f37-9745-0fc77fa17769/eUOwK3Bp8v.json";
+
+export const contactUsAnimation: string =
+  "https://lottie.host/18858504-d30c-4fbf-8dda-2808eb8e3b97/I2QRzX0rDA.json";

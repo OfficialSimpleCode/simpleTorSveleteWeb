@@ -1435,6 +1435,64 @@ export default class MultiBookingRepo
     });
   }
 
+  async updateFieldsInMultiBookingUser({
+    multiBooking,
+    multiBookingUser,
+    data,
+    workerAction,
+  }: {
+    multiBooking: MultiBooking;
+    multiBookingUser: MultiBookingUser;
+    data: Record<string, any>;
+    workerAction: boolean;
+  }): Promise<boolean> {
+    const transacionCommands: (transaction: any) => Promise<any> = async (
+      transaction
+    ) => {
+      const updatedBooking = await this.getUpdatedMultiBookingDate({
+        transaction,
+        multiBookingToUpdate: multiBooking,
+        multiBookingUser,
+        workerAction,
+      });
+      if (updatedBooking == null) {
+        return false;
+      } else {
+        multiBooking.bookingDate = updatedBooking.bookingDate;
+        multiBookingUser.isUserExist = updatedBooking.isUserExist;
+      }
+
+      const formatedData: Record<string, any> = {};
+      for (const [key, value] of Object.entries(data)) {
+        formatedData[
+          `${multiBooking.bookingId}.users.${multiBookingUser.userBookingId}.${key}`
+        ] = value;
+      }
+      // Put the booking object in the worker collection
+      this.transactionUpdateMultipleFieldsAsMap({
+        transaction,
+        path: `${buisnessCollection}/${multiBooking.buisnessId}/${workersCollection}/${multiBooking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`,
+        docId: dateToDateStr(multiBooking.bookingDate),
+        data: formatedData,
+      });
+
+      const userFormatedData: Record<string, any> = {};
+      for (const [key, value] of Object.entries(data)) {
+        userFormatedData[`${multiBookingUser.userBookingId}.${key}`] = value;
+      }
+      this.updateUserBooking({
+        transaction,
+        multiBookingUser,
+        data: userFormatedData,
+        bookingDate: multiBooking.bookingDate,
+      });
+
+      return true;
+    };
+
+    return await this.runTransaction(transacionCommands);
+  }
+
   async updateUserBooking({
     multiBookingUser,
     data,

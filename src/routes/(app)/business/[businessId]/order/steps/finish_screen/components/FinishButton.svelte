@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import TermDialog from "$lib/components/dialogs/TermDialog.svelte";
   import PhoneDialog from "$lib/components/login/components/PhoneDialog.svelte";
   import { LoginReason } from "$lib/consts/auth";
   import BookingController, {
@@ -11,12 +12,16 @@
   import { _, translate } from "$lib/utils/translate";
   import { get } from "svelte/store";
   import { handleVerification } from "../../../../../../profile/helpers/handle_verification";
-  import { getPublicCustomer } from "../helpers/get_public_user";
+
+  import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
+  import { handleApproveTerm } from "../helpers/handle_approving_term";
   import { onFinishNavigator } from "../helpers/on_finish_navigator";
   export let verificationDialog: HTMLDialogElement;
+  let termDialog: HTMLDialogElement;
+  let downloadAppDialog: HTMLDialogElement;
   let isLoading: boolean = false;
 
-  const publicCustomer: PublicCustomer = getPublicCustomer();
+  const publicCustomer: PublicCustomer = new PublicCustomer(); //getPublicCustomer();
 
   const worker = BookingController.worker;
 
@@ -36,12 +41,16 @@
     try {
       await onFinishNavigator({
         clientNote: "",
+        downloadAppDialog,
       });
     } finally {
       isLoading = false;
     }
   }
   async function handleClick() {
+    if (!handleApproveTerm(termDialog)) {
+      return;
+    }
     if (get(bookingMakerStore).showVerificationAlert) {
       console.log("444444444");
       await handleVerification(verificationDialog);
@@ -52,9 +61,7 @@
 
   async function onVerifiedPhone() {
     //remove the otp dialog
-    history.back();
-
-    console.log("Eeeeeeeeeeeeeeee");
+    verificationDialog.close();
 
     //update the boooking maker store that no need to show the phone verification anymore
     bookingMakerStore.update((val) => {
@@ -75,6 +82,19 @@
     insideOtp={true}
     on:onVerifyPhone={onVerifiedPhone}
     bind:dialog={verificationDialog}
+  />
+
+  <TermDialog
+    on:onConfirmTerm={() => {
+      termDialog.close();
+      handleClick();
+    }}
+    bind:dialog={termDialog}
+  />
+
+  <DownloadAppDialog
+    bind:dialog={downloadAppDialog}
+    explainTranslateKey={"paymentOnBookingAreNotAvailableOnWeb"}
   />
 {/if}
 <!-- xs:px-10 px-3 -->

@@ -316,9 +316,11 @@ export default class UserModel {
 
     user.revenueCatId = json["revenueCatId"] || "";
     user.lastCleanDate = json["lastCleanDate"];
-    json["lastVisitedBuisnesses"].forEach((Id: string) =>
-      user.lastVisitedBuisnesses.push(Id)
-    );
+    if (json["lastVisitedBuisnesses"] != null) {
+      json["lastVisitedBuisnesses"].forEach((Id: string) =>
+        user.lastVisitedBuisnesses.push(Id)
+      );
+    }
 
     if (json["lastVisitedBuisnessesRemoved"]) {
       json["lastVisitedBuisnessesRemoved"].forEach((Id: string) =>
@@ -479,9 +481,13 @@ export default class UserModel {
   }
 
   firstEnterance(businessId: string): boolean {
-    return true;
-  }
+    const visitedBusinesses: string[] = [...this.lastVisitedBuisnesses];
+    this.lastVisitedBuisnessesRemoved.forEach((value) => {
+      visitedBusinesses.push(value);
+    });
 
+    return !visitedBusinesses.includes(businessId);
+  }
   toUserDocJson(): Record<string, any> {
     const data: Record<string, any> = {};
     data["name"] = this.name;

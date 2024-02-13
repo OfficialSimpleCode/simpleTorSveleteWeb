@@ -39,6 +39,8 @@ import { BookingRepo } from "../booking/booking_repo";
 import DbPathesHelper from "../db_paths_helper";
 import { GeneralData } from "../general_data";
 import ManagerHelper from "../manager/manager_helper";
+import MultiBookingRepo from "../multi_booking/multi_booking_repo";
+import NotificationHandler from "../notifications/notification_handler";
 import { VerificationHelper } from "../verification/verification_helper";
 import { VerificationRepo } from "../verification/verification_repo";
 import UserRepo from "./user_repo";
@@ -180,10 +182,9 @@ export default class UserHelper {
 
     await this.markUserDeletedOnAllWorkerBookings();
 
-    ///TODO notifiication
-    // await NotificationHandler.GI().cancelAllBookingsScheduleNoification(
-    //   UserInitializer().user.bookings.all
-    // );
+    await NotificationHandler.GI().cancelAllBookingsScheduleNoification(
+      UserInitializer.GI().user.bookings.all
+    );
 
     await this.userRepo.deleteUser({ user });
 
@@ -382,17 +383,14 @@ export default class UserHelper {
     newSeenUpdates: Set<string>
   ): Promise<boolean> {
     //if there is a diffrent between we need to update the db
-    const intersect = new Set(
-      [...UserInitializer.GI().user.seenUpdates[businessId]].filter((i) =>
-        newSeenUpdates.has(i)
-      )
-    );
-    if (intersect.size === newSeenUpdates.size) {
+    const intersect = Array.from(
+      UserInitializer.GI().user.seenUpdates[businessId]
+    ).filter((i) => newSeenUpdates.has(i));
+
+    if (intersect.length === newSeenUpdates.size) {
       return true;
     }
-    UserInitializer.GI().user.seenUpdates[businessId] = new Set<string>([
-      ...newSeenUpdates,
-    ]);
+    UserInitializer.GI().user.seenUpdates[businessId] = newSeenUpdates;
     return await this.userRepo.updateFieldInsideDocAsMapRepo({
       path: usersCollection,
       docId: UserInitializer.GI().user.id,
@@ -578,7 +576,7 @@ export default class UserHelper {
 
     const data: Record<string, string> = {};
     UserInitializer.GI().user.authProviders.forEach((date, proivder) => {
-      if (authProviderToStr[proivder] !== null) {
+      if (authProviderToStr[proivder] != null) {
         data[authProviderToStr[proivder]!] = dateIsoStr(date);
       }
     });
@@ -608,6 +606,33 @@ export default class UserHelper {
     }
 
     return new PhoneDataResult({ phone: phone ?? "" });
+  }
+
+  async removeAuthProvider(provider: AuthProvider): Promise<boolean> {
+    if (!UserInitializer.GI().user.authProviders.has(provider)) {
+      return true;
+    }
+
+    return await this.userRepo
+      .updateFieldInsideDocAsMapRepo({
+        docId: UserInitializer.GI().user.id,
+        path: usersCollection,
+        fieldName: `authProviders.${authProviderToStr[provider]}`,
+      })
+      .then(async (value) => {
+        if (value) {
+          if (provider === AuthProvider.Phone) {
+            await this.updatePhone(
+              UserInitializer.GI().user.phoneNumber,
+              false
+            );
+          }
+          // Not successful, delete the added provider
+          UserInitializer.GI().user.authProviders.delete(provider);
+          userStore.set(UserInitializer.GI().user);
+        }
+        return value;
+      });
   }
 
   async updatePhone(
@@ -728,12 +753,15 @@ export default class UserHelper {
     //TODO
   }
 
+  ///update the user phone in all the related bookings
+  ///no need to update the isVerified the phone isVerified
+  ///state must be the same in phone changes
   async handleExistBookingsPhoneChange(newPhone: string): Promise<void> {
     const bookingsToUpdate: Record<string, Booking> = {};
 
     await UserInitializer.GI().getAllBookingsDocs();
     const bookingRepo = new BookingRepo();
-    //const multiBookingRepo = new MultiBookingRepo();
+    const multiBookingRepo = new MultiBookingRepo();
 
     const bookingsToPassOn = UserInitializer.GI().user.bookings.all;
 
@@ -746,24 +774,23 @@ export default class UserHelper {
     });
 
     const futures: Promise<boolean>[] = [];
-    //TODO multi booking
     Object.entries(bookingsToUpdate).forEach(([bookingId, booking]) => {
       if (booking.isMultiRef) {
-        // const multiBooking = booking.toMultiBooking();
-        // futures.push(
-        //   multiBookingRepo.updateFieldsInMultiBookingUser({
-        //     multiBooking,
-        //     multiBookingUser:
-        //       multiBooking.users[Object.keys(multiBooking.users)[0]],
-        //     data: { customerPhone: newPhone },
-        //     workerAction: false,
-        //   })
-        // );
+        const multiBooking = booking.toMultiBooking;
+        futures.push(
+          multiBookingRepo.updateFieldsInMultiBookingUser({
+            multiBooking,
+            multiBookingUser:
+              multiBooking.users[Object.keys(multiBooking.users)[0]],
+            data: { ["customerPhone"]: newPhone },
+            workerAction: false,
+          })
+        );
       } else {
         futures.push(
           bookingRepo.updateFieldsInBooking({
             booking: booking,
-            data: { customerPhone: newPhone },
+            data: { ["customerPhone"]: newPhone },
           })
         );
       }

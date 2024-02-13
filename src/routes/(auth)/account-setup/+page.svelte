@@ -11,6 +11,7 @@
     type TextFieldEvent,
   } from "$lib/consts/text_fields";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
+  import { businessStore } from "$lib/stores/Business";
   import { _, translate } from "$lib/utils/translate";
   import { emailValidation, nameValidation } from "$lib/utils/validation_utils";
   import { signInAction } from "./helpers/sign_in";
@@ -47,7 +48,11 @@
         email
       );
       if (resp != null) {
-        goto(`${base}/business`);
+        goto(
+          `${base}/business/${
+            $businessStore != null ? $businessStore.urlEndPoint : ""
+          }`
+        );
       }
     } finally {
       // For setup server errors
