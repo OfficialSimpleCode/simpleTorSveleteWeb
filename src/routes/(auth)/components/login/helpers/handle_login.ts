@@ -5,6 +5,7 @@ import {
   LoginReason,
   loginReasonToLoginType,
 } from "$lib/consts/auth";
+
 import UserHelper from "$lib/helpers/user/user_helper";
 import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
 import UserInitializer from "$lib/initializers/user_initializer";
@@ -13,7 +14,7 @@ import { businessStore } from "$lib/stores/Business";
 import { isConnectedStore } from "$lib/stores/User";
 import type { EventDispatcher } from "svelte";
 import { get } from "svelte/store";
-import { authDataStore } from "../../../../routes/(auth)/auth_controller";
+import { authDataStore } from "../../../auth_controller";
 
 export async function handleLogin({
   provider,
@@ -99,7 +100,7 @@ export async function handleLogin({
 
   await setUpUser();
 
-  if (!get(isConnectedStore)) {
+  if (get(isConnectedStore) !== true) {
     goto(`${base}/account-setup`);
     return;
   }

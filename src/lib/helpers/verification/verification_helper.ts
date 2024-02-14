@@ -7,6 +7,7 @@ import {
 import UserInitializer from "$lib/initializers/user_initializer";
 import type { Errors } from "$lib/services/errors/messages";
 import type { ParsedToken, PhoneAuthCredential, User } from "firebase/auth";
+
 import UserHelper from "../user/user_helper";
 import { VerificationRepo } from "./verification_repo";
 

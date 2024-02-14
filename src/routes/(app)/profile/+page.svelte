@@ -2,29 +2,31 @@
   import { goto, pushState } from "$app/navigation";
   import { base } from "$app/paths";
   import Avatar from "$lib/components/Avatar.svelte";
-  import PhoneDialog from "$lib/components/login/components/PhoneDialog.svelte";
+
   import GenderPicker from "$lib/components/pickers/gender_picker/GenderPicker.svelte";
   import { LoginReason } from "$lib/consts/auth";
   import type { Gender } from "$lib/consts/gender";
-  import UserHelper from "$lib/helpers/user/user_helper";
-  import { isConnectedStore, userStore } from "$lib/stores/User";
-  import { imageByGender } from "$lib/utils/images_utils";
-  import { dateToDateStr } from "$lib/utils/times_utils";
-  import { CheckCircle, Icon } from "svelte-hero-icons";
-  import { _ } from "svelte-i18n";
 
   import { page } from "$app/stores";
   import SettingsItem from "$lib/components/custom_components/SettingsItem.svelte";
   import VerifiedIcon from "$lib/components/custom_components/VerifiedIcon.svelte";
   import VerifiedPhoneSuccessfullyDialog from "$lib/components/dialogs/VerifiedPhoneSuccessfullyDialog.svelte";
+  import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
   import { containerRadius } from "$lib/consts/sizes";
+  import UserHelper from "$lib/helpers/user/user_helper";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import UserInitializer from "$lib/initializers/user_initializer";
+  import { businessStore } from "$lib/stores/Business";
+  import { isConnectedStore, userStore } from "$lib/stores/User";
+  import { imageByGender } from "$lib/utils/images_utils";
   import { formatedPhone } from "$lib/utils/string_utils";
+  import { dateToDateStr } from "$lib/utils/times_utils";
   import { translate } from "$lib/utils/translate";
   import { emailValidation, nameValidation } from "$lib/utils/validation_utils";
   import clipboard from "clipboardy";
   import { onMount } from "svelte";
+  import { CheckCircle, Icon } from "svelte-hero-icons";
+  import { _ } from "svelte-i18n";
   import AuthOptions from "./components/AuthOptions.svelte";
   import ChangeAtrributeDialog from "./components/ChangeAtrributeDialog.svelte";
   import ChangePhoneDialog from "./components/ChangePhoneDialog.svelte";
@@ -75,10 +77,27 @@
   }
 
   async function onLogout() {
+    if (loadingLogout) {
+      return;
+    }
     loadingLogout = true;
     try {
-      await UserHelper.GI().logout();
-      history.back();
+      const resp = await UserHelper.GI().logout();
+      console.log(resp);
+      if (resp) {
+        if ($businessStore != null) {
+          console.log("3333333333333333");
+          goto(
+            `${base}/business/${
+              $businessStore.urlEndPoint ?? $businessStore.businessId
+            }`
+          );
+        } else {
+          console.log(base);
+          console.log("222222222222");
+          goto(base);
+        }
+      }
     } finally {
       loadingLogout = false;
     }
@@ -157,7 +176,9 @@
 {/if}
 
 {#if $isConnectedStore === undefined}
-  <div class="loading loading-spinner"></div>
+  <div class="flex flex-col items-center justify-center h-full mb-[50px] w-50">
+    <div class="loading loading-spinner"></div>
+  </div>
 {:else if $isConnectedStore === false}
   <div />
 {:else}

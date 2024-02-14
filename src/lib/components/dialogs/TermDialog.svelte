@@ -5,8 +5,8 @@
   import { isConnectedStore, userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
   import { createEventDispatcher } from "svelte";
-  import { Icon, XCircle } from "svelte-hero-icons";
   import GeneralIcon from "../GeneralIcon.svelte";
+  import DialogTitel from "../custom_components/DialogTitel.svelte";
 
   export let dialog: HTMLDialogElement;
 
@@ -58,29 +58,9 @@
   }}
   class="modal modal-bottom sm:modal-middle"
 >
-  <div class="absolute flex justify-center modal-box bg-base-200 items-center">
+  <div class="modal-box bg-base-200 pb-10 flex flex-col justify-center gap-6">
+    <DialogTitel titleTransKey={"term"} {dialog} />
     <div class="flex flex-col gap-3 items-center h-full">
-      <!-- title and top buttons -->
-      <div class="flex justify-between items-center mb-[1rem]">
-        <!-- close button -->
-        <button
-          class=""
-          on:click={() => {
-            dialog.close();
-            history.back();
-          }}
-        >
-          <Icon src={XCircle} size="24px" />
-        </button>
-
-        <!-- title -->
-        <h3 class="font-bold text-lg text-center">
-          {translate("term", $_)}
-        </h3>
-
-        <p></p>
-      </div>
-
       <!-- term text -->
       <h3 class="text-sm text-center mx-6 mb-8">
         {$businessStore.design.term}

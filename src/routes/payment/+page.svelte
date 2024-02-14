@@ -1,15 +1,12 @@
 <script lang="ts">
   import { goto, pushState } from "$app/navigation";
   import { base } from "$app/paths";
-  import { page } from "$app/stores";
   import type PaymentCard from "$lib/models/payment_hyp/payment_card";
   import { isConnectedStore } from "$lib/stores/User";
-  import CardPicker from "./components/CardPicker.svelte";
-  import VerifiedCardPassword from "./components/VerifiedCardPassword.svelte";
 
   let verifiedCardPasswordDialog: HTMLDialogElement;
 
-  let pickedCard :PaymentCard;
+  let pickedCard: PaymentCard;
 
   isConnectedStore.subscribe((value) => {
     //redirect to the login page if the user is not connected
@@ -27,13 +24,12 @@
     setTimeout(() => verifiedCardPasswordDialog.showModal(), 200);
   }
 
-  function onFinishCardVerification(){
+  function onFinishCardVerification() {
     verifiedCardPasswordDialog.close();
-
   }
 </script>
 
-{#if $page.state.showModal}
+<!-- {#if $page.state.showModal}
   <VerifiedCardPassword
     on:onFinishVerifiedCardPassword={() =>{}}
     bind:dialog={verifiedCardPasswordDialog}
@@ -43,4 +39,4 @@
   <div class="loading loading-spinner" />
 {:else if $isConnectedStore === true}
   <CardPicker on:onTap={onPickedCard} />
-{/if}
+{/if} -->

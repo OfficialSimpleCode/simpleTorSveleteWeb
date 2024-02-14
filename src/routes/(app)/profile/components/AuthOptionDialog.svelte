@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
+  import DialogTitel from "$lib/components/custom_components/DialogTitel.svelte";
   import ConfirmActionDialog from "$lib/components/dialogs/ConfirmActionDialog.svelte";
   import {
     AuthProvider,
@@ -11,8 +12,6 @@
   import { pushDialog } from "$lib/utils/general_utils";
   import { dateToDateStr } from "$lib/utils/times_utils";
   import { translate } from "$lib/utils/translate";
-
-  import { Icon, XCircle } from "svelte-hero-icons";
 
   export let explainDialog: HTMLDialogElement;
   export let authProvider: AuthProvider;
@@ -47,16 +46,13 @@
 <dialog
   bind:this={explainDialog}
   class="modal modal-middle"
-  on:close={() => history.back()}
+  on:close={() => {
+    explainDialog.close();
+    history.back();
+  }}
 >
   <div class="modal-box bg-base-200 pb-10 flex flex-col justify-center gap-6">
-    <div class="flex justify-between items-center mb-[1rem]">
-      <button class="" on:click={() => explainDialog.close()}>
-        <Icon src={XCircle} size="24px" />
-      </button>
-      <h3 class="font-bold text-me">{translate("authProvider")}</h3>
-      <div class="w-[24px]" />
-    </div>
+    <DialogTitel titleTransKey={"authProvider"} dialog={explainDialog} />
     <div class="flex flex-col gap-3 items-center h-full">
       <img
         src={authProviderToImage[authProvider]}
@@ -79,12 +75,12 @@
     </div>
     <div class="flex flex-col gap-2">
       <button
-        class="{lastProvider || oldUser
-          ? 'bg-base-300'
-          : 'bg-red-600'} btn min-w-10"
+        class=" bg-red-600 btn min-w-10 {lastProvider || oldUser
+          ? 'opacity-50'
+          : ''}"
         on:click={onDelete}
       >
-        <div class="flex flex-row gap-1 min-w-10">
+        <div class="flex flex-row gap-1 min-w-10 justify-center items-center">
           <GeneralIcon icon="mdi:trash" size={20} />
           {translate("delete")}
         </div>

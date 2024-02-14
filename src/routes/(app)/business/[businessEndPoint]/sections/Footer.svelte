@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import { page } from "$app/stores";
   import Logo from "$lib/components/Logo.svelte";
   import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
@@ -57,7 +58,7 @@
     <a href="https.google.com" target="_blank" class="link link-hover"
       >{translate("term", $_)}</a
     >
-    <a href="https.google.com" target="_blank" class="link link-hover"
+    <a href="{base}/privacy" class="link link-hover"
       >{translate("policy", $_)}</a
     >
   </nav>

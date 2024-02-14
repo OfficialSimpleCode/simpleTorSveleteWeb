@@ -9,7 +9,6 @@
   import { base } from "$app/paths";
   import { page } from "$app/stores";
   import UpdatePopUpDialog from "$lib/components/dialogs/UpdatePopUpDialog.svelte";
-  import { GeneralData } from "$lib/helpers/general_data";
   import UserHelper from "$lib/helpers/user/user_helper";
   import UserInitializer from "$lib/initializers/user_initializer";
   import type { Update } from "$lib/models/business/update_model";
@@ -57,7 +56,7 @@
     updateToPop = popUpUpdate();
     if (updateToPop != null) {
       const newSeenUpdates = new Set(
-        $userStore.seenUpdates[GeneralData.currentBusinesssId] ?? new Set()
+        $userStore.seenUpdates[$businessStore.businessId] ?? new Set()
       );
       newSeenUpdates.add(updateToPop.id);
       UserHelper.GI().updateSeenUpdates(

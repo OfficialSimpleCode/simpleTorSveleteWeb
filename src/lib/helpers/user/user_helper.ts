@@ -23,6 +23,7 @@ import UserInitializer from "$lib/initializers/user_initializer";
 import type Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
 import type PaymentCard from "$lib/models/payment_hyp/payment_card";
+import type WorkerModel from "$lib/models/worker/worker_model";
 import { isConnectedStore, userStore } from "$lib/stores/User";
 import { workersStore } from "$lib/stores/Workers";
 import { addDuration, subDuration } from "$lib/utils/duration_utils";
@@ -44,6 +45,7 @@ import MultiBookingRepo from "../multi_booking/multi_booking_repo";
 import NotificationHandler from "../notifications/notification_handler";
 import { VerificationHelper } from "../verification/verification_helper";
 import { VerificationRepo } from "../verification/verification_repo";
+import WorkerHelper from "../worker/worker_helper";
 import UserRepo from "./user_repo";
 
 const { v4 } = pkg;
@@ -471,24 +473,29 @@ export default class UserHelper {
       });
   }
 
-  // async saveMyselfAsCustomerAtBusiness(workers: { [workerId: string]: WorkerModel }): Promise<boolean> {
-  //   const futures: Promise<boolean>[] = [];
-  //   const customer = UserInitializer.GI().user.userPublicData.customerData;
-  //   customer.addedManually = false;
+  async saveMyselfAsCustomerAtBusiness(
+    workers: Record<string, WorkerModel>
+  ): Promise<boolean> {
+    const futures: Promise<boolean>[] = [];
+    const customer = UserInitializer.GI().user.userPublicData.customerData;
+    customer.addedManually = false;
 
-  //   for (const [workerId, worker] of Object.entries(workers)) {
-  //     futures.push(
-  //       workerHelper.loadLibrary().then(async () =>
-  //         await workerHelper.WorkerHelper().addCustomers({
-  //           [customer.customerUuid]: customer
-  //         }, worker, GeneralData.currentBusinesssId)
-  //       )
-  //     );
-  //   }
+    for (const [_, worker] of Object.entries(workers)) {
+      futures.push(
+        WorkerHelper.GI().addCustomers({
+          customers: {
+            [customer.customerUuid]: customer,
+          },
 
-  //   const results = await Promise.all(futures);
-  //   return !results.includes(false);
-  // }
+          worker: worker,
+          businessId: GeneralData.currentBusinesssId,
+        })
+      );
+    }
+
+    const results = await Promise.all(futures);
+    return !results.includes(false);
+  }
 
   async addOrRemoveLikeForStoryImage(
     imageId: string,

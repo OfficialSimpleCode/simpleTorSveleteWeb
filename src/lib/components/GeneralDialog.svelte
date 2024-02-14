@@ -1,18 +1,19 @@
 <script lang="ts">
   import { _, translate } from "$lib/utils/translate";
   import LottieAnimation from "./LottieAnimation.svelte";
-
-  // https://lottie.host/4e25a10f-2ecd-4721-a293-c8350f0a1b8c/IkKz9cEb2c.json
   export let dialog: HTMLDialogElement;
   export let animation: string = "";
   export let image: string = "";
   export let imageAlt: string = "";
-  export let title: string;
-  export let content: string;
+  export let titleTransKey: string;
+  export let contentTransKet: string;
   export let onSave: CallableFunction;
   export let onCancel: CallableFunction = () => {};
   export let cancelTranslateKey: string = "cancel";
   export let saveTranslateKey: string = "save";
+
+  let loadingCancel: boolean = false;
+  let loadingSave: boolean = false;
 </script>
 
 <dialog
@@ -24,7 +25,7 @@
 >
   <div class="modal-box bg-base-200 w-full flex flex-col">
     <!-- title -->
-    <h1 class="text-lg text-center mb-4">{title}</h1>
+    <h1 class="text-lg text-center mb-4">{translate(titleTransKey)}</h1>
 
     <!-- animation if provided -->
     {#if animation}
@@ -38,28 +39,39 @@
     <!-- content -->
 
     <p class="text-center">
-      {content}
+      {translate(contentTransKet)}
     </p>
 
     <!-- button actions buttons -->
     <div class="modal-action w-full flex px-2 gap-2 pt-2">
       <button
         class="btn btn-outline flex-[1]"
-        on:click={() => {
-          onCancel();
+        on:click={async () => {
+          await onCancel();
           dialog.close();
+          history.back();
         }}
       >
+        {#if loadingCancel}
+          <div class="loading loading-spinner" />
+        {:else}
+          {translate(saveTranslateKey, $_)}
+        {/if}
         {translate(cancelTranslateKey, $_)}
       </button>
       <button
         class="btn btn-primary flex-[1]"
-        on:click={() => {
-          onSave();
+        on:click={async () => {
+          await onSave();
           dialog.close();
+          history.back();
         }}
       >
-        {translate(saveTranslateKey, $_)}
+        {#if loadingSave}
+          <div class="loading loading-spinner" />
+        {:else}
+          {translate(saveTranslateKey, $_)}
+        {/if}
       </button>
     </div>
   </div>

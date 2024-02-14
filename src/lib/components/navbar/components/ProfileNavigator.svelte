@@ -22,7 +22,6 @@
 <button class="btn btn-ghost btn-circle avatar" on:click={onTap}>
   {#if $isConnectedStore == null}
     <CustomCircleIcon icon="" loading={true} size={22} />
-    <div class="loading loading-spinner" />
   {:else if $isConnectedStore === false}
     <CustomCircleIcon icon="ic:baseline-login" size={22} />
   {:else}

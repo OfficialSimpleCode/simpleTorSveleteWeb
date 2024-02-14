@@ -3043,5 +3043,6 @@
   "company": "חברה",
   "notVerified": "לא מאומת",
   "termConfirmed": "תקנון מאושר",
-  "paymentOnBookingAreNotAvailibleOnWeb": "הזמנה זו מצריכה תשלום מראש - תשלומים דרך האתר יצאו בקרוב"
+  "paymentOnBookingAreNotAvailibleOnWeb": "הזמנה זו מצריכה תשלום מראש - תשלומים דרך האתר יצאו בקרוב",
+  "theBusinessWillOpenDierctlyInApp": "משתמש שיסרוק את הברקוד יועבר מיד לעסק באפלקיציה אם אין למשתמש את האפליקציה הוא יועבר לאתר העסק"
 }

@@ -54,7 +54,9 @@
 <dialog
   bind:this={dialog}
   class="modal modal-bottom sm:modal-middle"
-  on:close={() => history.back()}
+  on:close={() => {
+    history.back();
+  }}
 >
   <div class="modal-box bg-base-200">
     <div class="flex justify-between items-center mb-[4rem]">
@@ -103,7 +105,7 @@
     </div>
 
     <p class="text-gray-500 mt-4 text-sm text-center">
-      {translate("featureExplianShareBusiness")}
+      {translate("theBusinessWillOpenDierctlyInApp")}
     </p>
 
     <button

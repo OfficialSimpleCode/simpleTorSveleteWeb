@@ -79,52 +79,40 @@ export enum SubType {
   golden,
 }
 
-export const appLimits: Map<
+export let appLimits: Record<
   SubType,
-  Map<BuisnessLimitations, number>
-> = new Map([
-  [
-    SubType.basic,
-    new Map([
-      [BuisnessLimitations.changingPhotos, 1],
-      [BuisnessLimitations.products, 1],
-      [BuisnessLimitations.storyPhotos, 1],
-    ]),
-  ],
+  { [key in BuisnessLimitations]?: number }
+> = {
+  [SubType.basic]: {
+    [BuisnessLimitations.changingPhotos]: 1,
+    [BuisnessLimitations.products]: 1,
+    [BuisnessLimitations.storyPhotos]: 1,
+  },
 
-  [
-    SubType.landingPage,
-    new Map([
-      [BuisnessLimitations.changingPhotos, 3],
-      [BuisnessLimitations.products, 3],
-      [BuisnessLimitations.storyPhotos, 4],
-    ]),
-  ],
-  [
-    SubType.advanced,
-    new Map([
-      [BuisnessLimitations.changingPhotos, 3],
-      [BuisnessLimitations.products, 4],
-      [BuisnessLimitations.storyPhotos, 5],
-    ]),
-  ],
-  [
-    SubType.trial,
-    new Map([
-      [BuisnessLimitations.changingPhotos, 2],
-      [BuisnessLimitations.products, 1],
-      [BuisnessLimitations.storyPhotos, 2],
-    ]),
-  ],
-  [
-    SubType.golden,
-    new Map([
-      [BuisnessLimitations.changingPhotos, 3],
-      [BuisnessLimitations.products, 4],
-      [BuisnessLimitations.storyPhotos, 5],
-    ]),
-  ],
-]);
+  [SubType.landingPage]: {
+    [BuisnessLimitations.changingPhotos]: 3,
+    [BuisnessLimitations.products]: 3,
+    [BuisnessLimitations.storyPhotos]: 4,
+  },
+
+  [SubType.advanced]: {
+    [BuisnessLimitations.changingPhotos]: 3,
+    [BuisnessLimitations.products]: 4,
+    [BuisnessLimitations.storyPhotos]: 5,
+  },
+
+  [SubType.trial]: {
+    [BuisnessLimitations.changingPhotos]: 2,
+    [BuisnessLimitations.products]: 1,
+    [BuisnessLimitations.storyPhotos]: 2,
+  },
+
+  [SubType.golden]: {
+    [BuisnessLimitations.changingPhotos]: 3,
+    [BuisnessLimitations.products]: 4,
+    [BuisnessLimitations.storyPhotos]: 5,
+  },
+};
 
 export const subTypeToStr: Record<SubType, string> = {
   [SubType.basic]: "Basic",

@@ -8,7 +8,7 @@
   import { translate } from "$lib/utils/translate";
   import type { EventDispatcher } from "svelte";
   import { Icon, XCircle } from "svelte-hero-icons";
-  import { handleLogin } from "../../../helpers/handle_login";
+  import { handleLogin } from "../../../../../routes/(auth)/components/login/helpers/handle_login";
   import { sendSms } from "../helpers/send_sms";
   export let dialog: HTMLDialogElement;
   export let loginReason: LoginReason;

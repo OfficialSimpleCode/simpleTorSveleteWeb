@@ -1,5 +1,6 @@
 import { pushState } from "$app/navigation";
-import { sendSms } from "$lib/components/login/components/phone_dialog/helpers/send_sms";
+import { sendSms } from "$lib/components/dialogs/phone_dialog/helpers/send_sms";
+
 import { userStore } from "$lib/stores/User";
 import { get } from "svelte/store";
 

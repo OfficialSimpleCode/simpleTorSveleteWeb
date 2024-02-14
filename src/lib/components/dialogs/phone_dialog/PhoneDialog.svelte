@@ -1,8 +1,8 @@
 <script lang="ts">
   import { LoginReason } from "$lib/consts/auth";
   import { createEventDispatcher } from "svelte";
-  import GetOtpView from "./phone_dialog/components/GetOtpView.svelte";
-  import GetPhoneView from "./phone_dialog/components/GetPhoneView.svelte";
+  import GetOtpView from "./components/GetOtpView.svelte";
+  import GetPhoneView from "./components/GetPhoneView.svelte";
   export let loginReason: LoginReason;
   export let dialog: HTMLDialogElement;
   export let insideOtp: boolean = false;

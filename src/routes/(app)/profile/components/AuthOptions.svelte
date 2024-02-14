@@ -25,7 +25,10 @@
   function onClick(authProvider: AuthProvider, date: Date) {
     pickedProvider = authProvider;
     pickedDate = date;
-    pushDialog(explainDialog);
+    pushDialog(
+      explainDialog,
+      `${base}/profile/auth-${authProviderToStr[authProvider]}`
+    );
   }
 </script>
 

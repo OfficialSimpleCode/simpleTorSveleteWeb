@@ -8,7 +8,7 @@ import {
   recurrenceEventsDoc,
   workersCollection,
 } from "$lib/consts/db";
-import { SubType } from "$lib/consts/purchases";
+import { BuisnessLimitations, SubType, appLimits } from "$lib/consts/purchases";
 import BookingController from "$lib/controllers/booking_controller";
 import AppErrorsHelper from "$lib/helpers/app_errors";
 import DbPathesHelper from "$lib/helpers/db_paths_helper";
@@ -60,6 +60,12 @@ export default class BusinessInitializer {
   businessIcon: string = "";
 
   businessSubtype: SubType = SubType.trial;
+
+  get maxClientPerWorker(): number | undefined {
+    return appLimits[BusinessInitializer.GI().businessSubtype]![
+      BuisnessLimitations.clientPerWorker
+    ];
+  }
 
   initBusiness(businessId: string): boolean {
     try {

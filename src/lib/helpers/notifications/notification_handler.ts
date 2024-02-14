@@ -848,14 +848,19 @@ export default class NotificationHandler {
     let datePointer = setToMidNight(start);
     const dateToDelete = new Set<Date>();
 
-    const event = Object.values(recurrenceBooking.bookingsEventsAsEvents)[0];
+    const event = Array.from(
+      recurrenceBooking.bookingsEventsAsEvents.values()
+    )[0];
 
     while (datePointer <= end) {
       if (
         !event.isBreak &&
         event.eventIndex === 0 &&
         event.recurrenceEvent &&
-        event.recurrenceEvent.isAccureInDate(datePointer, false)
+        event.recurrenceEvent.isAccureInDate({
+          date: datePointer,
+          considerException: false,
+        })
       ) {
         dateToDelete.add(new Date(datePointer));
       }

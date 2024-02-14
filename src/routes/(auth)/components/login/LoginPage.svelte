@@ -1,6 +1,8 @@
 <script lang="ts">
   import { pushState } from "$app/navigation";
   import { page } from "$app/stores";
+  import LogoAndName from "$lib/components/custom_components/LogoAndName.svelte";
+  import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
   import {
     AuthProvider,
     LoginReason,
@@ -12,8 +14,7 @@
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { ShowToast } from "$lib/stores/ToastManager";
   import { _, translate } from "$lib/utils/translate";
-  import LogoAndName from "../custom_components/LogoAndName.svelte";
-  import PhoneDialog from "./components/PhoneDialog.svelte";
+
   import { handleLogin } from "./helpers/handle_login";
   export let loginReason: LoginReason = LoginReason.login;
 
