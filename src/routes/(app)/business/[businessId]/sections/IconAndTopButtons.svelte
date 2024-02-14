@@ -10,7 +10,9 @@
 
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import { isAppleUser } from "$lib/consts/platform";
+  import { containerRadius } from "$lib/consts/sizes";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
+  import BusinessInitializer from "$lib/initializers/business_initializer";
   import { onMount } from "svelte";
   import ShareDialog from "../components/ShareDialog.svelte";
 
@@ -87,16 +89,26 @@
     </button>
   </div>
 
-  <!-- Order now and Share buttons -->
+  <!-- Order now and Share buttons or not available indicator -->
   <div class="flex h-24 items-center">
-    <div class="flex gap-5 items-center">
-      <button class="btn btn-primary" on:click={orderNow}>
-        {translate("setBooking", $_)}
-      </button>
-      <button class="btn btn-primary" on:click={openShareDialog}>
-        <!-- <Icon src={isAppleUser() ? Trash : Share} size="26px" /> -->
-        <GeneralIcon icon={iconStr}></GeneralIcon>
-      </button>
-    </div>
+    {#if BusinessInitializer.GI().isBusinessActive()}
+      <!-- Order now and Share buttons -->
+      <div class="flex gap-5 items-center">
+        <button class="btn btn-primary" on:click={orderNow}>
+          {translate("setBooking", $_)}
+        </button>
+        <button class="btn btn-primary" on:click={openShareDialog}>
+          <!-- <Icon src={isAppleUser() ? Trash : Share} size="26px" /> -->
+          <GeneralIcon icon={iconStr}></GeneralIcon>
+        </button>
+      </div>
+    {:else}
+      <!-- Not abailable indicator -->
+      <div
+        class="bg-base-300 xs:px-10 px-5 py-2 {containerRadius} text-xl border-primary border"
+      >
+        {translate("businessExpired", $_)}
+      </div>
+    {/if}
   </div>
 </section>
