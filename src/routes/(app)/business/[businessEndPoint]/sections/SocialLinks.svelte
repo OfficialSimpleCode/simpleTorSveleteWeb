@@ -21,19 +21,24 @@
   function openNavigationDialog() {
     if (!$businessStore.adress) {
       ShowToast({
-        text: translate("noAdress"),
+        text: translate("noAdress", $_),
         status: "fail",
       });
       return;
     }
     pushDialog(
       navigationDialog,
-      `${base}/business/${
-        $businessStore != null ? $businessStore.urlEndPoint : ""
-      }/navigate`
+      `${base}/business/${$businessStore.businessId}/navigate`
     );
   }
   function openTermDialog() {
+    if (!$businessStore.design.term) {
+      ShowToast({
+        text: translate("noTerms", $_),
+        status: "fail",
+      });
+      return;
+    }
     pushDialog(
       termDialog,
       `${base}/business/${
@@ -58,6 +63,13 @@
     instagram: "mdi:instagram",
   };
 
+  let socialErros: { [key: string]: string } = {
+    instagram: "noInstagram",
+    call: "noShopPhoneNumber",
+    whatsapp: "noShopPhoneNumber",
+    term: "noTerms",
+  };
+
   function activateLink(link: string | CallableFunction, name: string) {
     if (typeof link === "function") {
       link();
@@ -66,7 +78,7 @@
 
     if (!link || link.length === 0) {
       ShowToast({
-        text: `${name} link was not configured`,
+        text: translate(socialErros[name], $_),
         status: "fail",
       });
       return;
