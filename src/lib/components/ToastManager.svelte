@@ -6,11 +6,17 @@
   currentToast.subscribe((t) => (toast = t as Toast));
 </script>
 
-<div id="toast" class="fixed bottom-8 w-full z-50 flex items-center justify-center">
+<div
+  id="toast"
+  class="fixed bottom-8 w-full z-50 flex items-center justify-center"
+>
   <div class="min-w-[250px]">
     {#if toast !== null}
       {#if toast.status == "info"}
-        <div role="alert" class="alert alert-info">
+        <div
+          role="alert"
+          class="alert border-[.5px] bg-blue-500 bg-opacity-50 backdrop-blur-lg justify-center items-center grid-flow-col"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -27,7 +33,10 @@
         </div>
       {/if}
       {#if toast.status == "success"}
-        <div role="alert" class="alert alert-success">
+        <div
+          role="alert"
+          class="alert border-[.5px] bg-green-500 bg-opacity-50 backdrop-blur-lg justify-center items-center grid-flow-col"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="stroke-current shrink-0 h-6 w-6"
@@ -44,7 +53,10 @@
         </div>
       {/if}
       {#if toast.status == "fail"}
-        <div role="alert" class="alert alert-error">
+        <div
+          role="alert"
+          class="alert p-6 border-[.5px] bg-red-500 bg-opacity-50 backdrop-blur-lg justify-center items-center grid-flow-col"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="stroke-current shrink-0 h-6 w-6"
@@ -61,7 +73,10 @@
         </div>
       {/if}
       {#if toast.status == "warning"}
-        <div role="alert" class="alert alert-warning">
+        <div
+          role="alert"
+          class="alert border-[.5px] bg-yellow-500 bg-opacity-50 backdrop-blur-lg justify-center items-center grid-flow-col"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="stroke-current shrink-0 h-6 w-6"
