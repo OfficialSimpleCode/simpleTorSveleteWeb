@@ -55,7 +55,7 @@
       {#if toast.status == "fail"}
         <div
           role="alert"
-          class="alert p-6 border-[.5px] bg-red-500 bg-opacity-50 backdrop-blur-lg justify-center items-center grid-flow-col"
+          class="alert border-[.5px] bg-red-500 bg-opacity-50 backdrop-blur-lg justify-center items-center grid-flow-col"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
