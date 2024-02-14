@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import PhoneDialog from "$lib/components/login/components/PhoneDialog.svelte";
+  import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
+
   import { LoginReason } from "$lib/consts/auth";
 
   import BookingController, {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import TermDialog from "$lib/components/dialogs/TermDialog.svelte";
-  import PhoneDialog from "$lib/components/login/components/PhoneDialog.svelte";
+
   import { LoginReason } from "$lib/consts/auth";
   import BookingController, {
     bookingMakerStore,
@@ -14,6 +14,7 @@
   import { handleVerification } from "../../../../../../profile/helpers/handle_verification";
 
   import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
+  import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
   import { handleApproveTerm } from "../helpers/handle_approving_term";
   import { onFinishNavigator } from "../helpers/on_finish_navigator";
   export let verificationDialog: HTMLDialogElement;

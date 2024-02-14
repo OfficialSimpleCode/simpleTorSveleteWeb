@@ -2,6 +2,7 @@ import { logger } from "$lib/consts/application_general";
 import { BookingReminderType, BookingStatuses } from "$lib/consts/booking";
 import { NumericCommands } from "$lib/consts/db";
 import { EventFilterType } from "$lib/consts/worker_schedule";
+import { ErrorsController } from "$lib/controllers/errors_controller";
 import MyBookingsUIController from "$lib/controllers/my_bookings_controller";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
@@ -96,6 +97,8 @@ export default class BookingHelper {
             booking,
             worker,
           });
+        } else {
+          ErrorsController.displayError();
         }
         return value;
       });
@@ -133,7 +136,10 @@ export default class BookingHelper {
           //   removeFromDeviceCalendar: true,
           //   newCustomerData: null,
           // });
+        } else {
+          ErrorsController.displayError();
         }
+
         return value;
       });
   }
@@ -197,6 +203,8 @@ export default class BookingHelper {
       });
 
       return resp;
+    } else {
+      ErrorsController.displayError();
     }
 
     return undefined;
@@ -254,10 +262,6 @@ export default class BookingHelper {
       keepRecurrence: keepRecurrence,
     });
 
-    console.log("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-    console.log(newBooking);
-    console.log(oldBooking);
-
     const sameDestination =
       oldBooking.customerId === newBooking.customerId &&
       newBooking.workerId === oldBooking.workerId;
@@ -282,9 +286,9 @@ export default class BookingHelper {
         exclude: excludeDate,
       });
 
-    // if (!workerAction) {
-    //   MyBookingsUIController.markedBookings = new Set([newBooking.bookingId]);
-    // }
+    if (!workerAction) {
+      MyBookingsUIController.markedBookings = new Set([newBooking.bookingId]);
+    }
 
     const value = await this.bookingRepo
       .updateBooking({
@@ -330,6 +334,8 @@ export default class BookingHelper {
             isOldBoookingPassed,
             oldBookingDateForReccurence,
           });
+        } else {
+          ErrorsController.displayError();
         }
 
         return value;
@@ -394,6 +400,8 @@ export default class BookingHelper {
         minutesBeforeAlert: minutesBeforeAlert,
         hasConfirmArrivalReminder: hasConfirmArrivalReminder,
       });
+    } else {
+      ErrorsController.displayError();
     }
     return resp;
   }
@@ -488,6 +496,8 @@ export default class BookingHelper {
           invoice,
         });
       }
+    } else {
+      ErrorsController.displayError();
     }
     return resp;
   }
@@ -558,6 +568,8 @@ export default class BookingHelper {
           worker
         );
       }
+    } else {
+      ErrorsController.displayError();
     }
 
     return resp;

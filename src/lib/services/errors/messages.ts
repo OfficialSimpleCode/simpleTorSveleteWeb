@@ -100,7 +100,7 @@ export enum Errors {
   invalidPhoneNumber,
 }
 
-const errorMessageToStr: { [key in Errors]: string } = {
+export const errorMessageToStr: { [key in Errors]: string } = {
   [Errors.serverError]: "errorWithServer",
   [Errors.updateDisplayName]: "cantSaveName",
   [Errors.sendSms]: "errorWhileSending",

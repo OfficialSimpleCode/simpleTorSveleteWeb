@@ -850,6 +850,7 @@
   "userWantsToDelete": "Request for deletion",
   "userRestore": "Client new order",
   "userResotreContent": "CLIENT renewed his order on DATE",
+  "userResotreContentMultiBooking": "CLIENT renewed his registration for the event TREATMENTNAME on DATE",
   "userWantDeleteContent": "CLIENT wants to delete his order on DATE",
   "signUpHeadline": "Create a user",
   "signUpSubtitle": "it's fast and easy",

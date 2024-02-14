@@ -413,18 +413,6 @@ export default class NotificationHandler {
     }
   }
 
-  async afterNeedCancelToMultiBookingSigning({
-    userBooking,
-    worker,
-  }: {
-    userBooking: Booking;
-    worker: WorkerModel;
-  }): Promise<void> {
-    await NotificationsHelper.GI().notifyWorkerThatUserWantToCancelMultiBookingSigning(
-      { userBooking, worker }
-    );
-  }
-
   async afterSignUsersToMultiBooking({
     multiBooking,
     addedUsersBookingsIds,

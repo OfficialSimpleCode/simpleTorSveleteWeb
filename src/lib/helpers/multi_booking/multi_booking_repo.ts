@@ -1366,7 +1366,10 @@ export default class MultiBookingRepo
     return await this.runTransaction(transacionCommands);
   }
 
-  async updateMultiBookingNeedCancel(booking: Booking): Promise<boolean> {
+  async updateMultiBookingNeedCancel(
+    booking: Booking,
+    needCancel: boolean
+  ): Promise<boolean> {
     const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
     const signingDay = dateToDayStr(booking.bookingDate);
     const signingMonth = dateToMonthStr(booking.bookingDate);
@@ -1400,7 +1403,7 @@ export default class MultiBookingRepo
         path: `${path}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`,
         docId: signingDate,
         fieldName: `${signingTime}.users.${booking.bookingId}.needCancel`,
-        value: true,
+        value: needCancel,
       });
 
       // Decrement the counter in the events doc
@@ -1415,7 +1418,7 @@ export default class MultiBookingRepo
       this.updateUserAsRegularBooking({
         transaction: transaction,
         booking: booking,
-        data: { [`${booking.bookingId}.needCancel`]: true },
+        data: { [`${booking.bookingId}.needCancel`]: needCancel },
       });
 
       return true;
@@ -1428,7 +1431,7 @@ export default class MultiBookingRepo
           workerId: booking.workerId,
           businessId: booking.buisnessId,
           increment: true,
-          types: new Map([[EventFilterType.needCancel, 1]]),
+          types: new Map([[EventFilterType.needCancel, needCancel ? 1 : -1]]),
         });
       }
       return value;

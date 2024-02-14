@@ -345,6 +345,34 @@ export default class NotificationsHelper {
     });
   }
 
+  async notifyWorkerThatUseRestoredHisMultiBookingSigning({
+    userBooking,
+    worker,
+  }: {
+    userBooking: Booking;
+    worker: WorkerModel;
+  }): Promise<void> {
+    if (!worker.notifications.notifyWhenGettingBooking) {
+      return;
+    }
+    if (UserInitializer.GI().user.id === worker.id) {
+      return;
+    }
+    await this.notificationRepo.notifyMultipleUsers({
+      fcms: worker.fcmsTokens,
+      payload: new NotificationPayload({
+        action: EnterAction.openWorkerBooking,
+        bookingData: userBooking.toBookingNotificationPayload,
+      }),
+      title: translate("userRestore", undefined, false),
+      content: translate("userResotreContentMultiBooking", undefined, false)
+        .replace("CUSTOMERNAME", userBooking.customerName)
+        .replace("TREATMENTNAME", userBooking.treatmentsToStringNotDetailed)
+        .replace("EVENTNAME", userBooking.treatmentsToStringNotDetailed)
+        .replace("DATE", getFormatedTime(userBooking.bookingDate)),
+    });
+  }
+
   async notifyWorkerThatClientSignToMultiBooking({
     multiBooking,
     worker,

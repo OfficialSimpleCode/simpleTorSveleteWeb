@@ -12,6 +12,7 @@
   import { isAppleUser } from "$lib/consts/platform";
   import { containerRadius } from "$lib/consts/sizes";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
+  import BusinessInitializer from "$lib/initializers/business_initializer";
   import { onMount } from "svelte";
   import ShareDialog from "../components/ShareDialog.svelte";
 
@@ -90,7 +91,7 @@
 
   <!-- Order now and Share buttons or not available indicator -->
   <div class="flex h-24 items-center">
-    {#if true}
+    {#if BusinessInitializer.GI().activeBusiness}
       <!-- Order now and Share buttons -->
       <div class="flex gap-5 items-center">
         <button class="btn btn-primary" on:click={orderNow}>

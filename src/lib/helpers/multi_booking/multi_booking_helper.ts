@@ -1,5 +1,6 @@
 import { BookingStatuses } from "$lib/consts/booking";
 import BookingController from "$lib/controllers/booking_controller";
+import { ErrorsController } from "$lib/controllers/errors_controller";
 import MyBookingsUIController from "$lib/controllers/my_bookings_controller";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
@@ -15,6 +16,7 @@ import TicketInfo from "$lib/models/payment_hyp/payment_request/ticket_info";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { needToHoldOn } from "$lib/utils/booking_utils";
 import NotificationHandler from "../notifications/notification_handler";
+import NotificationsHelper from "../notifications/notifications/notification_helper";
 import PaymentRequestHelper from "../payment_request/payment_request_helper";
 import MultiBookingRepo from "./multi_booking_repo";
 
@@ -116,6 +118,8 @@ export default class MultiBookingHelper {
         workerAction,
       });
       return newMultiBooking;
+    } else {
+      ErrorsController.displayError();
     }
     return undefined;
   }
@@ -261,6 +265,8 @@ export default class MultiBookingHelper {
       }
 
       return multiBooking;
+    } else {
+      ErrorsController.displayError();
     }
     return undefined;
   }
@@ -314,6 +320,8 @@ export default class MultiBookingHelper {
             worker: worker,
             workerAction: false,
           });
+        } else {
+          ErrorsController.displayError();
         }
 
         return value;
@@ -323,19 +331,30 @@ export default class MultiBookingHelper {
   async updateNeedCancel({
     booking,
     worker,
+    needCancel,
   }: {
+    needCancel: boolean;
     booking: Booking;
     worker: WorkerModel;
   }): Promise<boolean> {
     return await this.multiBookingRepo
-      .updateMultiBookingNeedCancel(booking)
+      .updateMultiBookingNeedCancel(booking, needCancel)
       .then(async (value) => {
         if (value) {
-          // No need to save locally, can't update need cancel on the past
-          NotificationHandler.GI().afterNeedCancelToMultiBookingSigning({
-            userBooking: booking,
-            worker,
-          });
+          if (needCancel) {
+            NotificationsHelper.GI().notifyWorkerThatUserWantToCancelMultiBookingSigning(
+              { userBooking: booking, worker }
+            );
+          } else {
+            NotificationsHelper.GI().notifyWorkerThatUseRestoredHisMultiBookingSigning(
+              {
+                userBooking: booking,
+                worker,
+              }
+            );
+          }
+        } else {
+          ErrorsController.displayError();
         }
         return value;
       });

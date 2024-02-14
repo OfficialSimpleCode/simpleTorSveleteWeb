@@ -869,6 +869,7 @@
   "userRestore": "לקוח חידש הזמנה",
   "userWantDeleteContent": "CLIENT רוצה לבטל את הזמנתו בתאריך DATE",
   "userResotreContent": "CLIENT חידש את הזמנתו בתאריך DATE",
+  "userResotreContentMultiBooking": "CLIENT חידש את הרשמתו לאירוע TREATMENTNAME בתאריך DATE",
   "cantEditCloseToTime": "אין אפשרות לעדכן - קרוב מדי למועד ההזמנה",
   "themeExplain": "הצבעים והגופן של העסק שלך - כך הלקוחות שלך יראו את העסק",
   "inTreatment": "כרגע",

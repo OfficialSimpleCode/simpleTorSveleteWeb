@@ -260,20 +260,21 @@ export default class BusinessInitializer {
   }
 
   private isBusinessActive(): boolean {
-    const ownerPhone = this.business.businessId.split("--")[0];
-    if (GeneralData.developers[ownerPhone] != null) {
-      this.business.productId =
-        GeneralData.developers[ownerPhone]!.businessProductId;
-      this.business.workersProductsId =
-        GeneralData.developers[ownerPhone]!.workersProductId;
-      return true;
-    }
+    return true;
+    // const ownerPhone = this.business.businessId.split("--")[0];
+    // if (GeneralData.developers[ownerPhone] != null) {
+    //   this.business.productId =
+    //     GeneralData.developers[ownerPhone]!.businessProductId;
+    //   this.business.workersProductsId =
+    //     GeneralData.developers[ownerPhone]!.workersProductId;
+    //   return true;
+    // }
 
-    /*Give to the user month trial without put the cerdit card*/
-    if (this.business.expiredDate > new Date()) {
-      return true;
-    }
-    return this.business.productId != "";
+    // /*Give to the user month trial without put the cerdit card*/
+    // if (this.business.expiredDate > new Date()) {
+    //   return true;
+    // }
+    // return this.business.productId != "";
   }
   async _loadSettingsDoc(businessId: string): Promise<boolean> {
     try {

@@ -36,12 +36,18 @@ export async function deleteBooking({
 
   //user need the worker permmision to delete update the booking status
   if (booking.addToClientAt) {
-    const loadingResp = await BookingHelper.GI().updateNeedCancel({
-      worker: worker,
-      booking: booking,
-      needCancel: true,
-      bookingDateForReccurence: booking.recurrenceChildDate,
-    });
+    const loadingResp = booking.isMultiRef
+      ? await MultiBookingHelper.GI().updateNeedCancel({
+          worker: worker,
+          booking: booking,
+          needCancel: true,
+        })
+      : await BookingHelper.GI().updateNeedCancel({
+          worker: worker,
+          booking: booking,
+          needCancel: true,
+          bookingDateForReccurence: booking.recurrenceChildDate,
+        });
 
     if (loadingResp == true) {
       if (booking.recurrenceEvent != null) {
