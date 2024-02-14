@@ -56,9 +56,9 @@
     dialog.close();
     history.back();
   }}
-  class="  modal modal-bottom sm:modal-middle max-w-[400px]"
+  class="modal modal-bottom sm:modal-middle"
 >
-  <div class=" absolute flex justify-center modal-box bg-base-200 items-center">
+  <div class="absolute flex justify-center modal-box bg-base-200 items-center">
     <div class="flex flex-col gap-3 items-center h-full">
       <!-- title and top buttons -->
       <div class="flex justify-between items-center mb-[1rem]">
@@ -105,6 +105,7 @@
       </button>
     </div>
   </div>
+
   <!-- backdrop close dialog -->
   <form method="dialog" class="modal-backdrop">
     <button></button>
