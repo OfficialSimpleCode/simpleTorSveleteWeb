@@ -253,7 +253,7 @@ export default class BusinessInitializer {
     return businessDoc;
   }
 
-  isBusinessActive(): boolean {
+  private isBusinessActive(): boolean {
     const ownerPhone = this.business.businessId.split("--")[0];
     if (GeneralData.developers[ownerPhone] != null) {
       this.business.productId =
