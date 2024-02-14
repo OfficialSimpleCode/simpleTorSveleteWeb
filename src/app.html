@@ -53,9 +53,8 @@
   <body data-sveltekit-preload-data="hover">
     <!--  -->
     <script id="apptemplate" type="text/x-template">
-      <div class="template-wrap rounded-lg" style="background:red">
-          <div class="subject " style="background:${PrimaryColor}">joj</div>
-          <div class="time" style="background:${PrimaryColor}">Time: ${getTimeString(data.from)}</div>
+      <div class="template-wrap rounded-lg" style="background:${PrimaryColor}">
+          <div class="subject text-center" style="background:${PrimaryColor}">  ${timePickerText(data)}</div>
       </div>
     </script>
 

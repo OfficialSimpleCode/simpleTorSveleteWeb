@@ -17,12 +17,12 @@
   import "@syncfusion/ej2-schedule/styles/material.css";
   import "@syncfusion/ej2-splitbuttons/styles/material.css";
   import { onMount } from "svelte";
-  import { applyCategoryColor } from "./helpers/event_renderer";
 
   import { page } from "$app/stores";
   import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
+  import TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
   import { loadBookingMakerTimeData } from "$lib/utils/booking_maker";
-  import { dateToDateStr } from "$lib/utils/times_utils";
+  import { dateToTimeStr } from "$lib/utils/times_utils";
   import { onEventClick } from "./helpers/on_tap_time_obj";
   const { Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop } = schedule;
   let downloadAppDialog: HTMLDialogElement;
@@ -42,11 +42,23 @@
       DragAndDrop
     );
 
-    (window as TemplateFunction).getTimeString = (date: Date) => {
-      return dateToDateStr(date);
+    (window as TemplateFunction).timePickerText = (data: any) => {
+      const timePickerObj = TimePickerObj.fromScheduleEvent(data);
+      if (timePickerObj.isWaitingList) {
+        return "waitingList";
+      }
+      if (timePickerObj.isVacation) {
+        return "vacation";
+      }
+      if (timePickerObj.isHoliday) {
+        return "holiday";
+      }
+      if (timePickerObj.displayDate != null) {
+        return dateToTimeStr(timePickerObj.displayDate);
+      }
     };
     interface TemplateFunction extends Window {
-      getTimeString?: Function;
+      timePickerText?: Function;
     }
 
     BookingController.scheduleObj = new schedule.Schedule({
@@ -55,8 +67,9 @@
       width: "100%",
       height: "100%",
       views: ["Week"],
+
       allowDragAndDrop: false,
-      showTimeIndicator: true,
+      showTimeIndicator: false,
       workHours: { highlight: false },
       showQuickInfo: false,
       eventClick: (args) => onEventClick(args, downloadAppDialog),
@@ -65,25 +78,23 @@
         new Date(),
         new Duration({ days: BookingController.worker.daysToAllowBookings })
       ),
-      headerRows: [{ option: "Month" }, { option: "Date" }],
-      timeScale: {
-        enable: true,
-        interval: 60,
-        slotCount: 3,
-      },
+      //headerRows: [],
+
+      showHeaderBar: false,
+      allowMultiCellSelection: false,
+
+      timeScale: {},
       eventSettings: {
         fields: {
           id: "id",
           startTime: { name: "from" },
           endTime: { name: "to" },
         },
-        resourceColorField: "#fff",
+
         template: "#apptemplate",
         enableMaxHeight: true,
         allowEditing: false,
       },
-      eventRendered: (args: schedule.EventRenderedArgs) =>
-        applyCategoryColor(args),
     });
 
     BookingController.scheduleObj.appendTo("#schedule");

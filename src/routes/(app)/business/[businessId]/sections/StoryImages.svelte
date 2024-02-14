@@ -5,7 +5,6 @@
   import { businessStore } from "$lib/stores/Business";
   import { workersStore } from "$lib/stores/Workers.js";
   import { _, translate } from "$lib/utils/translate";
-  import ImageDisplayDialog from "../components/ImageDisplayDialog.svelte";
 
   let workersStories: Record<string, StoryImageData> = {};
 
@@ -33,11 +32,11 @@
 
 <!-- Dialogs -->
 {#if $page.state.showModal}
-  <ImageDisplayDialog
+  <!-- <ImageDisplayDialog
     bind:dialog={imageDisplayDialog}
     bind:storyId={selectedStoryId}
     {workersStories}
-  />
+  /> -->
 {/if}
 
 {#if Object.keys(workersStories).length > 0}

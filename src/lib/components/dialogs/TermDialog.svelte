@@ -52,15 +52,24 @@
 
 <dialog
   bind:this={dialog}
-  on:close={() => dialog.close()}
+  on:close={() => {
+    dialog.close();
+    history.back();
+  }}
   class="  modal modal-bottom sm:modal-middle max-w-[400px]"
 >
   <div class=" absolute flex justify-center modal-box bg-base-200 items-center">
     <div class="flex flex-col gap-3 items-center h-full">
       <!-- title and top buttons -->
-      <div class="flex flex-row justify-between items-center relative">
+      <div class="flex justify-between items-center mb-[1rem]">
         <!-- close button -->
-        <button class="btn btn-ghost" on:click={() => dialog.close()}>
+        <button
+          class=""
+          on:click={() => {
+            dialog.close();
+            history.back();
+          }}
+        >
           <Icon src={XCircle} size="24px" />
         </button>
 

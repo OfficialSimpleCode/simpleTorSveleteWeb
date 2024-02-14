@@ -1,6 +1,6 @@
 <script lang="ts">
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
-  import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
+  import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import { ArrayCommands } from "$lib/consts/db";
   import UserHelper from "$lib/helpers/user/user_helper";
   import { userStore } from "$lib/stores/User";
@@ -12,7 +12,8 @@
   export let workersStories: Record<string, StoryImageData>;
   export let storyId: string;
   let workerId = workersStories[storyId].workerId;
-
+  console.log("Ddddddddddddddddddddddddddddd");
+  console.log(isLast(storyId));
   function isLast(storyId: string): boolean {
     return (
       Array.from(Object.keys(workersStories)).indexOf(storyId) ==
@@ -55,7 +56,9 @@
   class="modal modal-middle"
   on:close={() => history.back()}
 >
-  <div class="modal-box bg-base-200 p-0 h-[65%] sm:w-[520px] overflow-hidden">
+  <div
+    class="modal-box bg-base-200 p-0 h-[70%] xs:h-[90%] max-h-[700px] sm:w-[520px] overflow-hidden"
+  >
     <button
       class="sm:hidden text-white absolute right-4 top-4"
       on:click={() => dialog.close()}
@@ -67,25 +70,35 @@
       src={workersStories[storyId].imageUrl}
       alt="showcase"
     />
-    {#if !isFirst(storyId)}
+    {#if (document.dir === "rtl" && !isFirst(storyId)) || (document.dir === "ltr" && !isLast(storyId))}
       <button
-        id="left"
-        class="absolute top-[50%] left-3 text-white"
-        on:click={() => getBefore(storyId)}
+        id={document.dir === "ltr" ? "right" : "left"}
+        class="absolute top-[50%] right-3 text-white"
+        on:click={() =>
+          document.dir === "rtl" ? getBefore(storyId) : getNext(storyId)}
       >
         <div class="h-4"></div>
-        <CustomArrow />
+        <CustomCircleIcon
+          icon="mdi:keyboard-arrow-right"
+          circlePadding={"1px"}
+        />
         <div class="h-4"></div>
       </button>
     {/if}
-    {#if !isLast(storyId)}
+    {#if (document.dir === "rtl" && !isLast(storyId)) || (document.dir === "ltr" && !isFirst(storyId))}
       <button
-        id="right"
-        class="absolute top-[50%] right-3 text-white"
-        on:click={() => getNext(storyId)}
+        id={document.dir === "rtl" ? "left" : "right"}
+        class="absolute top-[50%] left-3 text-white"
+        on:click={() =>
+          document.dir === "rtl" ? getNext(storyId) : getBefore(storyId)}
       >
         <div class="h-4"></div>
-        <CustomArrow left={true} />
+
+        <CustomCircleIcon
+          icon="mdi:keyboard-arrow-left"
+          circlePadding={"1px"}
+        />
+
         <div class="h-4"></div>
       </button>
     {/if}

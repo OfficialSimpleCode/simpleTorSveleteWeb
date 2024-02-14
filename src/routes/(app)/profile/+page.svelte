@@ -228,7 +228,7 @@
         onTap={copyToUserIdClipboard}
         name={"userId"}
       >
-        <div slot="trailing" class="flex flex-row items-center">
+        <div slot="trailing" class="flex flex-row items-center gap-2">
           <p class="overflow-hidden truncate max-w-[130px] xs:max-w-[190px]">
             {#if copiedUserId}
               {translate("Copied", $_)}

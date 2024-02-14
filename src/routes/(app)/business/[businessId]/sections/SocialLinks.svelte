@@ -21,14 +21,16 @@
   function openNavigationDialog() {
     if (!$businessStore.adress) {
       ShowToast({
-        text: `Address link was not configured`,
+        text: translate("noAdress"),
         status: "fail",
       });
       return;
     }
     pushDialog(
       navigationDialog,
-      `${base}/business/${$businessStore.businessId}/navigate`
+      `${base}/business/${
+        $businessStore != null ? $businessStore.urlEndPoint : ""
+      }/navigate`
     );
   }
   function openTermDialog() {

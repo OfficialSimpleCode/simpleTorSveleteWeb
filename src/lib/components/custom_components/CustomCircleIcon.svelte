@@ -7,6 +7,7 @@
   export let handleClick: () => void = () => {};
   export let size: number = 26;
   export let bgColor: string = "bg-base-300";
+
   export let circlePadding: string = "p-2";
   export let loading: boolean = false;
   export let active: boolean = true;

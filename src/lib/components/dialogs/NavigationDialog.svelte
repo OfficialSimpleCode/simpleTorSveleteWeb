@@ -18,8 +18,9 @@
 
 <dialog
   bind:this={dialog}
-  class="modal modal-bottom"
+  class="modal modal-bottom sm:modal-middle"
   on:close={() => {
+    dialog.close();
     history.back();
   }}
 >
