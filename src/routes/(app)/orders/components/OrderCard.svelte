@@ -3,9 +3,6 @@
   import { page } from "$app/stores";
   import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
   import type Booking from "$lib/models/booking/booking_model";
-  import type WorkerModel from "$lib/models/worker/worker_model";
-  import { businessStore } from "$lib/stores/Business";
-  import { workersStore } from "$lib/stores/Workers";
   import { _, translate } from "$lib/utils/translate";
   import BookingActions from "./BookingActions.svelte";
   import BookingDetails from "./BookingDetails.svelte";
@@ -18,42 +15,27 @@
 
   let bookingDialog: HTMLDialogElement;
 
-  let currentWorker: WorkerModel | undefined;
-
-  if (
-    $businessStore != null &&
-    booking.buisnessId === $businessStore.businessId
-  ) {
-    currentWorker = $workersStore[booking.workerId]!;
-  }
-
   function openBookingSheet() {
     pushState("", {
       showModal: true,
     });
     setTimeout(() => bookingDialog.showModal(), 100);
   }
-  const isNow: boolean = booking.isRightNow;
 </script>
 
 <!-- booking shhet and dialog -->
 {#if $page.state.showModal}
-  <BookingSheet
-    bind:dialog={bookingDialog}
-    {booking}
-    {currentWorker}
-    {forceOpenBookingSheet}
-  />
+  <BookingSheet bind:dialog={bookingDialog} {booking} {forceOpenBookingSheet} />
 {/if}
 
 <button
   on:click={openBookingSheet}
-  class="card bg-base-200 w-full hover:bg-base-300 hover:bg-opacity-20 px-3 py-3 relative {isNow
+  class="card bg-base-200 w-full hover:bg-base-300 hover:bg-opacity-20 px-3 py-3 relative {booking.isRightNow
     ? 'border border-base-300'
     : ''}
     {booking.recurrenceEvent ?? booking.recurrenceEventRefInfo ? 'pt-2' : ''}"
 >
-  <TopIndicators {isNow} {booking}></TopIndicators>
+  <TopIndicators isNow={booking.isRightNow} {booking}></TopIndicators>
 
   <!-- icons, name, arrow (above the divider)  -->
   <div class="flex flex-row w-full justify-between items-center">
@@ -82,6 +64,6 @@
   <div class="flex flex-row justify-between w-full items-center">
     <BookingDetails {booking} />
     <div class="w-2"></div>
-    <BookingActions {booking} {currentWorker} {forceOpenBookingSheet} />
+    <BookingActions {booking} {forceOpenBookingSheet} />
   </div>
 </button>

@@ -2,7 +2,7 @@
   import { BookingStatuses } from "$lib/consts/booking";
   import Booking from "$lib/models/booking/booking_model";
   import { Duration } from "$lib/models/core/duration";
-  import type WorkerModel from "$lib/models/worker/worker_model";
+  import { workersStore } from "$lib/stores/Workers";
   import { addDuration } from "$lib/utils/duration_utils";
   import { _, translate } from "$lib/utils/translate";
   import { confirmArrival } from "../helpers/confirm_arrival";
@@ -10,14 +10,14 @@
 
   export let booking: Booking;
   export let bgColor: string = "bg-base-300";
-  export let currentWorker: WorkerModel | undefined;
-  let loading = false;
 
+  let loading = false;
+  const worker = $workersStore[booking.workerId];
   const cantConfirm =
-    currentWorker != null &&
+    worker != null &&
     addDuration(
       new Date(),
-      new Duration({ minutes: currentWorker.minutesBeforeBookingToConfirm })
+      new Duration({ minutes: worker.minutesBeforeBookingToConfirm })
     ) < (booking.recurrenceChildDate ?? booking.bookingDate);
 
   async function onclick() {
@@ -26,7 +26,7 @@
     }
     loading = true;
     try {
-      await confirmArrival(booking, currentWorker, cantConfirm);
+      await confirmArrival(booking, cantConfirm);
     } finally {
       loading = false;
     }

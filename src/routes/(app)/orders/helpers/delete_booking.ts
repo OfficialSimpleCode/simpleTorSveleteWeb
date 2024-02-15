@@ -1,32 +1,22 @@
-import { BookingStatuses } from "$lib/consts/booking";
+import { DeleteOption } from "$lib/consts/booking";
 import BookingHelper from "$lib/helpers/booking/booking_helper";
 import MultiBookingHelper from "$lib/helpers/multi_booking/multi_booking_helper";
 import type Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
-import type WorkerModel from "$lib/models/worker/worker_model";
 import { ShowToast } from "$lib/stores/ToastManager";
+import { workersStore } from "$lib/stores/Workers";
 import { addDuration } from "$lib/utils/duration_utils";
 import { translate } from "$lib/utils/translate";
+import { get } from "svelte/store";
 
 export async function deleteBooking({
   booking,
-  worker,
+  deleteOption,
 }: {
   booking: Booking;
-  worker: WorkerModel | undefined;
+  deleteOption: DeleteOption;
 }): Promise<boolean> {
-  if (
-    booking.needCancel &&
-    booking.status == BookingStatuses.approved &&
-    !booking.isPassed
-  ) {
-    ShowToast({
-      status: "info",
-      text: translate("waitingForApproval"),
-    });
-    return false;
-  }
-
+  const worker = get(workersStore)[booking.workerId];
   //TODO delete dialog
   if (worker == null) {
     return await BookingHelper.GI().deleteBookingOnlyFromUserDoc({
@@ -35,7 +25,8 @@ export async function deleteBooking({
   }
 
   //user need the worker permmision to delete update the booking status
-  if (booking.addToClientAt) {
+  //update the need cancel to the opposite of the current
+  if (deleteOption === DeleteOption.needConfirmation) {
     const loadingResp = booking.isMultiRef
       ? await MultiBookingHelper.GI().updateNeedCancel({
           worker: worker,

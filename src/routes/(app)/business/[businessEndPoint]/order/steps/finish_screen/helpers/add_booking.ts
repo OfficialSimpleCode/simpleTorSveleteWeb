@@ -1,16 +1,16 @@
-import { goto } from "$app/navigation";
-import { base } from "$app/paths";
-import BookingController from "$lib/controllers/booking_controller";
+import BookingController, {
+  bookingMakerStore,
+} from "$lib/controllers/booking_controller";
+import { openOrdersPage } from "$lib/controllers/page_controller";
 import BookingHelper from "$lib/helpers/booking/booking_helper";
 import { pushDialog } from "$lib/utils/general_utils";
+import { get } from "svelte/store";
 
 export async function addBooking({
-  clientNote,
   freeFromPayment,
   payAll,
   downloadAppDialog,
 }: {
-  clientNote: string;
   freeFromPayment: boolean;
   payAll: boolean;
   downloadAppDialog: HTMLDialogElement;
@@ -29,7 +29,7 @@ export async function addBooking({
     result = await BookingHelper.GI().addBooking({
       booking: booking,
       worker: worker,
-      clientNote: clientNote,
+      clientNote: get(bookingMakerStore).note,
     });
   } else {
     //TODO handle payment before pay
@@ -39,6 +39,6 @@ export async function addBooking({
 
   if (result != null) {
     //jump to my bookings page after succedded with the order
-    goto(`${base}/appointments`);
+    openOrdersPage();
   }
 }

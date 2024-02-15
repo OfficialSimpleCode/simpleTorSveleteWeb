@@ -1,13 +1,14 @@
 <script lang="ts">
   import { _, translate } from "$lib/utils/translate";
-  import LottieAnimation from "./LottieAnimation.svelte";
+  import LottieAnimation from "../LottieAnimation.svelte";
+  import DialogTitel from "../custom_components/DialogTitel.svelte";
   export let dialog: HTMLDialogElement;
   export let animation: string = "";
   export let image: string = "";
   export let imageAlt: string = "";
   export let titleTransKey: string;
-  export let contentTransKet: string;
-  export let onSave: CallableFunction;
+  export let content: string;
+  export let onSave: () => Promise<any>;
   export let onCancel: CallableFunction = () => {};
   export let cancelTranslateKey: string = "cancel";
   export let saveTranslateKey: string = "save";
@@ -18,14 +19,14 @@
 
 <dialog
   bind:this={dialog}
-  class="modal modal-bottom sm:modal-middle"
+  class="modal modal-middle bg-center"
   on:close={() => {
     history.back();
   }}
 >
-  <div class="modal-box bg-base-200 w-full flex flex-col">
+  <div class="modal-box bg-base-200 pb-10">
     <!-- title -->
-    <h1 class="text-lg text-center mb-4">{translate(titleTransKey)}</h1>
+    <DialogTitel {titleTransKey} {dialog} />
 
     <!-- animation if provided -->
     {#if animation}
@@ -39,8 +40,10 @@
     <!-- content -->
 
     <p class="text-center">
-      {translate(contentTransKet)}
+      {content}
     </p>
+
+    <slot name="extra" />
 
     <!-- button actions buttons -->
     <div class="modal-action w-full flex px-2 gap-2 pt-2">
@@ -55,16 +58,24 @@
         {#if loadingCancel}
           <div class="loading loading-spinner" />
         {:else}
-          {translate(saveTranslateKey, $_)}
+          {translate(cancelTranslateKey, $_)}
         {/if}
-        {translate(cancelTranslateKey, $_)}
       </button>
       <button
-        class="btn btn-primary flex-[1]"
+        class="btn btn-primary flex-[1] {loadingSave ? 'opacity-70' : ''}"
         on:click={async () => {
-          await onSave();
-          dialog.close();
-          history.back();
+          try {
+            if (loadingSave) {
+              return;
+            }
+            loadingSave = true;
+            const resp = await onSave();
+            if (resp !== false) {
+              history.back();
+            }
+          } finally {
+            loadingSave = false;
+          }
         }}
       >
         {#if loadingSave}
@@ -75,7 +86,6 @@
       </button>
     </div>
   </div>
-
   <!-- close the dialog -->
   <form method="dialog" class="modal-backdrop">
     <button>{translate(cancelTranslateKey, $_)}</button>

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import { base } from "$app/paths";
 
   import LanguageBoard from "./components/LanguageBoard.svelte";
   // Assets
 
+  import { openOrdersPage } from "$lib/controllers/page_controller";
   import { businessStore } from "$lib/stores/Business";
   import { userStore } from "$lib/stores/User";
   import CustomCircleIcon from "../custom_components/CustomCircleIcon.svelte";
@@ -23,35 +23,28 @@
       class="btn btn-ghost text-xl">SimpleTor</a
     >
   </div>
-  <div class="flex items-center justify-center">
+  <div class="flex items-center gap-2">
     <!-- lang icon -->
-    <div class="dropdown dropdown-left dropdown-bottom">
-      <div role="button" tabindex="0" class="btn btn-ghost btn-circle">
-        <CustomCircleIcon icon="mdi:language" size={22} />
-      </div>
+    <div class="dropdown dropdown-left dropdown-bottom items-center">
+      <CustomCircleIcon icon="mdi:language" size={22} />
       <LanguageBoard />
     </div>
 
-    <!-- appoitments icon -->
-    <div
-      role="button"
-      tabindex="0"
-      class="btn btn-ghost btn-circle"
-      on:click={() => goto(`${base}/appointments`)}
-      on:keypress={() => {
-        goto(`${base}/appointments`);
-      }}
-    >
-      <div class="indicator">
-        <CustomCircleIcon icon="lets-icons:order-fill" size={22} />
-        {#if Object.values($userStore.bookingsToShow).length > 0}
-          <span
-            class="bg-primary badge badge-sm indicator-item rounded-badge mr-2"
-          >
-            {Object.values($userStore.bookingsToShow).length}</span
-          >
-        {/if}
-      </div>
+    <!-- orders icon -->
+
+    <div class="indicator">
+      <CustomCircleIcon
+        icon="lets-icons:order-fill"
+        size={22}
+        handleClick={openOrdersPage}
+      />
+      {#if Object.values($userStore.bookingsToShow).length > 0}
+        <span
+          class="bg-primary badge badge-sm indicator-item rounded-badge mr-2"
+        >
+          {Object.values($userStore.bookingsToShow).length}</span
+        >
+      {/if}
     </div>
 
     <!-- profile navigator -->

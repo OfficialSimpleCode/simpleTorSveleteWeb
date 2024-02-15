@@ -101,7 +101,7 @@ export async function handleLogin({
   await setUpUser();
 
   if (get(isConnectedStore) !== true) {
-    goto(`${base}/account-setup`);
+    goto(`${base}/login/account-setup`);
     return;
   }
 

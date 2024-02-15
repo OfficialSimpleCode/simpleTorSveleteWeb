@@ -3,7 +3,7 @@
   import { businessStore } from "$lib/stores/Business";
   import { downloadSimpleTor } from "$lib/utils/links_utils";
   import { _, translate } from "$lib/utils/translate";
-  import GeneralDialog from "./GeneralDialog.svelte";
+  import GeneralDialog from "./dialogs/GeneralDialog.svelte";
 
   export let dialog: HTMLDialogElement;
 
@@ -13,9 +13,9 @@
 <!-- diaply general dialog with the data -->
 <GeneralDialog
   bind:dialog
-  title={translate("downloadTheApp", $_)}
-  content={translate("downloadTheAppExplain", $_)}
-  onSave={() => downloadSimpleTor(dynamicLink)}
+  titleTransKey={"downloadTheApp"}
+  content={translate("downloadTheAppExplain")}
+  onSave={async () => downloadSimpleTor(dynamicLink)}
   onCancel={() => {}}
   saveTranslateKey="pressToDownload"
   cancelTranslateKey="cancel"

@@ -101,7 +101,7 @@
   <GeneralDialog
     bind:dialog={saveMeUsUserDialog}
     titleTransKey={"newClient"}
-    contentTransKet={"doYouWantToBeClient"}
+    content={translate("doYouWantToBeClient")}
     cancelTranslateKey={"no"}
     saveTranslateKey={"yes"}
     onCancel={onFinish}

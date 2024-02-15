@@ -4,7 +4,6 @@
   import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
   import { containerRadius } from "$lib/consts/sizes";
   import Booking from "$lib/models/booking/booking_model";
-  import type WorkerModel from "$lib/models/worker/worker_model";
   import { length } from "$lib/utils/core_utils";
   import BookingTreatmentsList from "./components/BookingTreatmentsList.svelte";
   import CreatedAtIndicator from "./components/CreatedAtIndicator.svelte";
@@ -16,7 +15,7 @@
   import TopSheetIndicators from "./components/TopSheetIndicators.svelte";
   export let dialog: HTMLDialogElement;
   export let booking: Booking;
-  export let currentWorker: WorkerModel | undefined;
+
   export let forceOpenBookingSheet: boolean;
   let downloadAppDialog: HTMLDialogElement;
 </script>
@@ -36,15 +35,10 @@
       <TopSheetIndicators {booking}></TopSheetIndicators>
 
       <!-- top icons -->
-      <IconsRow
-        {booking}
-        {currentWorker}
-        mainDialog={dialog}
-        {downloadAppDialog}
-      />
+      <IconsRow {booking} mainDialog={dialog} {downloadAppDialog} />
 
       <!-- general data container -->
-      <TopDetails {booking} {currentWorker} {forceOpenBookingSheet} />
+      <TopDetails {booking} {forceOpenBookingSheet} />
 
       <!-- payments container -->
       <PaymentsContainer {booking} {downloadAppDialog} />

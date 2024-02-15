@@ -1,10 +1,10 @@
 <script lang="ts">
   import CustomPhoneField from "$lib/components/custom_components/CustomPhoneField.svelte";
+  import DialogTitel from "$lib/components/custom_components/DialogTitel.svelte";
   import { type TextFieldEvent } from "$lib/consts/text_fields";
   import { translate } from "$lib/utils/translate";
-  import { Icon, XCircle } from "svelte-hero-icons";
   export let dialog: HTMLDialogElement;
-  export let title: string;
+  export let titleTransKey: string;
   export let explain: string | undefined = undefined;
   export let initialValue: string = "";
 
@@ -43,13 +43,7 @@
   on:close={() => history.back()}
 >
   <div class="modal-box bg-base-200 pb-10">
-    <div class="flex justify-between items-center mb-[1rem]">
-      <button class="" on:click={() => dialog.close()}>
-        <Icon src={XCircle} size="24px" />
-      </button>
-      <h3 class="font-bold text-md">{title}</h3>
-      <div class="w-[24px]" />
-    </div>
+    <DialogTitel {titleTransKey} {dialog} />
 
     <div class="flex flex-col gap-5">
       <div class="flex flex-col">

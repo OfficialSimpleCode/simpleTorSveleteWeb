@@ -8,7 +8,7 @@
   export let bgColor: string = "bg-base-300";
   export let booking: Booking;
   function loadBusiness(): void {
-    goto(`${base}/business/${booking.buisnessId}`);
+    goto(`${base}/business/${booking.buisnessId}/orders`);
   }
 </script>
 

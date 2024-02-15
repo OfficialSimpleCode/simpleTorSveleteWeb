@@ -310,16 +310,6 @@ export default class BusinessInitializer {
         workersJsonsList.forEach((workerJson: Record<string, any>) => {
           const workerObj = WorkerModel.fromWorkerDocJson(workerJson);
 
-          // cacheStoryImages(workerObj.storyImages, workerObj.id);
-          // storyImagesLength += workerObj.storyImages.length;
-
-          if (
-            UserInitializer.GI().getPermission > 1 ||
-            workerObj.id === UserInitializer.GI().user.id
-          ) {
-            //makeWorkerDocListener(workerObj);
-          }
-
           this.workers[workerObj.id] = workerObj;
           workersStore.set(this.workers);
         });

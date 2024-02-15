@@ -1,17 +1,18 @@
 import BookingHelper from "$lib/helpers/booking/booking_helper";
 import type Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
-import type WorkerModel from "$lib/models/worker/worker_model";
 import { ShowToast } from "$lib/stores/ToastManager";
+import { workersStore } from "$lib/stores/Workers";
 import { durationToString } from "$lib/utils/string_utils";
 import { translate } from "$lib/utils/translate";
+import { get } from "svelte/store";
 
 export async function confirmArrival(
   booking: Booking,
-  currentWorker: WorkerModel | undefined,
   cantConfirm: boolean
 ): Promise<void> {
-  if (booking.confirmedArrival || booking.isPassed || currentWorker == null) {
+  const worker = get(workersStore)[booking.workerId];
+  if (booking.confirmedArrival || booking.isPassed || worker == null) {
     return;
   }
 
@@ -22,7 +23,7 @@ export async function confirmArrival(
         "DURATION",
         durationToString(
           new Duration({
-            minutes: currentWorker!.minutesBeforeBookingToConfirm,
+            minutes: worker!.minutesBeforeBookingToConfirm,
           })
         )
       ),
@@ -35,6 +36,6 @@ export async function confirmArrival(
   await BookingHelper.GI().confirmBookingArrival({
     booking: booking,
     bookingDateForReccurence: booking.recurrenceChildDate,
-    worker: currentWorker!,
+    worker: worker!,
   });
 }

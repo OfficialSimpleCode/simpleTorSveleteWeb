@@ -131,6 +131,11 @@ export default class BusinessModel {
     });
   }
 
+  //the business website end point
+  get url(): string {
+    return this.urlEndPoint ?? this.businessId;
+  }
+
   setData(
     json: Record<string, any>,
     newBusinessId: string,
