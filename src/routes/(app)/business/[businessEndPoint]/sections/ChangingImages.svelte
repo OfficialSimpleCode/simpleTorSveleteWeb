@@ -6,12 +6,13 @@
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
 
-  let changingImagesHeight: number = 150;
+  let changingImagesHeight: number = 500;
   let currentIndex: number = 0;
-
+  let screenWidth = 500;
   const changingImagesRatioX = 5;
   const changingImagesRatioY = 4;
-
+  const a = "h-[500px]";
+  let b = "h-[1000px]";
   let useDefault: boolean = false;
   let defaultImage: string = "";
   useDefault = $businessStore.design.changingImages.length === 0;
@@ -21,11 +22,27 @@
       : defaultBannerImageDark;
   // After the ui is loaded
   onMount(() => {
+    // changingImagesHeight = Math.floor(
+    //   screenWidth * (changingImagesRatioY / changingImagesRatioX)
+    // );
+    console.log("Inner width", screenWidth);
+
+    //changingImagesHeight = 200;
+    console.log("aaaaaaa shilo ", changingImagesHeight);
+    const elem = document.querySelector("#shilo");
+    console.log("element is ", elem);
+    const a1 = `h-[${changingImagesHeight}px]`;
+    console.log("a1 is  ", a1);
+    elem?.classList.add("border-[20px]");
+    elem?.classList.add("border-primary");
+    elem?.classList.add(a1);
     // calculating the size for the ratio
-    changingImagesHeight =
-      window != null
-        ? window.innerHeight * (changingImagesRatioY / changingImagesRatioX)
-        : 150;
+    // changingImagesHeight =
+    //   window != null
+    //     ? window.innerWidth * (changingImagesRatioY / changingImagesRatioX)
+    //     : 500;
+    b = `h-[${changingImagesHeight}px]`;
+    console.log("The b is -> ", b);
 
     // starting the changin images animation
     if ($businessStore.design.changingImages.length > 1) {
@@ -35,12 +52,17 @@
       }, $businessStore.design.changingImagesSwapSeconds * 1000);
     }
   });
+
+  function getHeigth() {
+    return `h-[${changingImagesHeight}px]`;
+  }
 </script>
 
+<!-- <svelte:window bind:innerWidth={screenWidth} /> -->
 {#key currentIndex}
   <!-- wide screens -->
   <img
-    class="md:h-1/2 w-full object-cover h-[{changingImagesHeight}px] min-h-[270px] hidden xs:block transition-opacity"
+    class="md:h-1/2 w-full object-cover min-h-[270px] hidden xs:block transition-opacity"
     src={useDefault
       ? defaultImage
       : $businessStore.design.changingImages[currentIndex]}
@@ -50,9 +72,9 @@
   />
 
   <!-- small screens -->
-  <div class="relative xs:hidden">
+  <div class="relative xs:hidden block">
     <img
-      class="md:h-1/2 min-h-[40vh] h-[40vh] w-full object-cover transition-opacity"
+      class="w-[500px] h-[400px] object-cover transition-opacity"
       src={useDefault
         ? defaultImage
         : $businessStore.design.changingImages[currentIndex]}
@@ -60,6 +82,7 @@
       style="animation: 1s ease-out;"
       in:fade={{ duration: 1000 }}
     />
+
     <div
       class="h-[50px] bg-gradient-to-b from-transparent via-base-100 to-base-100 absolute bottom-[-2px] w-full"
     ></div>

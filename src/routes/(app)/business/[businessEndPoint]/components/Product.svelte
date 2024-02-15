@@ -14,16 +14,16 @@
 </script>
 
 <!-- background settings -->
-<div
-  class="flex {felx} flex-col sm:w-full justify-start items-center px-2 w-min"
->
+<div class="flex {felx} flex-col sm:w-full justify-start items-center px-2">
   <!-- product card -->
-  <div
-    class="card card-compact bg-base-100 shadow-xl md:w-[280px] xs:w-[180px] w-[200px]"
-  >
+  <div class="card card-compact bg-base-100 shadow-xl">
     <!-- card image -->
     <figure>
-      <img src={product.imageUrl} alt={product.name} />
+      <img
+        class="max-h-[250px] w-[250px] object-cover"
+        src={product.imageUrl}
+        alt={product.name}
+      />
     </figure>
 
     <!-- card below data -->

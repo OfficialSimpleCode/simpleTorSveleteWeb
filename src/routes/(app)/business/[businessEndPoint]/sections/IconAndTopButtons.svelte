@@ -70,18 +70,20 @@
 
 <section
   id="profile-row"
-  class="flex justify-between items-start gap-3 mx-4 sm:mx-16 relative xs:top-[-3rem] top-[-73px] text-center"
+  class="flex justify-between items-start gap-3 mx-8 sm:mx-16 relative xs:top-[-3rem] top-[-73px] text-center"
 >
   <!-- icon business name and address -->
   <div class="flex flex-col justify-center items-center">
     <Avatar img={$businessStore.design.shopIconUrl} />
-    <h1 class="text-4xl pt-2">{$businessStore.shopName}</h1>
+    <h1 class="md:text-4xl xs:text-3xl text-2xl pt-2">
+      {$businessStore.shopName}
+    </h1>
     <button
       class="flex items-center gap-1 link opacity-50"
       on:click={openNavigationDialog}
     >
       <div class="flex flex-row {$businessStore.adress ? 'block' : 'hidden'}">
-        <h1 class="text-sm">
+        <h1 class="text-xs xs:text-sm">
           {$businessStore.adress}
         </h1>
         <GeneralIcon icon="mdi:map-marker-outline" size={16}></GeneralIcon>
@@ -90,11 +92,12 @@
   </div>
 
   <!-- Order now and Share buttons or not available indicator -->
-  <div class="flex h-24 items-center">
+
+  <div class="flex h-24 items-center px-4 md:px-10 lg:px-8 xl:px-16">
     {#if BusinessInitializer.GI().activeBusiness === true}
       <!-- Order now and Share buttons -->
       <div class="flex gap-5 items-center">
-        <button class="btn btn-primary" on:click={orderNow}>
+        <button class="btn btn-primary xs:px-10 px-6" on:click={orderNow}>
           {translate("setBooking", $_)}
         </button>
         <button class="btn btn-primary" on:click={openShareDialog}>

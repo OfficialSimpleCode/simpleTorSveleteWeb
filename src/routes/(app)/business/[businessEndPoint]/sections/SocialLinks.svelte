@@ -48,11 +48,11 @@
   }
 
   let socialLinks: Object = {
-    call: `tel:${$businessStore.shopPhone}`,
-    instagram: $businessStore.instagramAccount,
-    whatsapp: `whatsapp://send?phone=${$businessStore.shopPhone}`,
     navigate: openNavigationDialog,
+    instagram: $businessStore.instagramAccount,
+    call: `tel:${$businessStore.shopPhone}`,
     term: openTermDialog,
+    whatsapp: `whatsapp://send?phone=${$businessStore.shopPhone}`,
   };
 
   let socialIcons: { [key: string]: IconSource } = {
@@ -98,7 +98,7 @@
     class="flex items-center gap-6 sm:gap-8 bg-base-200 py-2 px-5 rounded-xl mx-6 sm:mx-16"
   >
     {#each Object.entries(socialLinks) as [name, link]}
-      <div class="flex flex-col items-center">
+      <li class="flex flex-col items-center w-[40px] xs:w-[55px]">
         <button
           on:click={() => activateLink(link, name)}
           class="btn btn-ghost btn-square w-6 h-6 sm:w-10 sm:h-10"
@@ -108,7 +108,7 @@
         <h5 class="xs:text-sm text-xs text-gray-500 select-none">
           {translate(name, $_, !noNeedGenderTrnaslate.includes(name))}
         </h5>
-      </div>
+      </li>
     {/each}
   </ul>
 </section>
