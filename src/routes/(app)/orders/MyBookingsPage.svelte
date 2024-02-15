@@ -3,6 +3,7 @@
   import { base } from "$app/paths";
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import { SubType } from "$lib/consts/purchases";
+  import { maxButtonSize } from "$lib/consts/sizes";
   import BusinessInitializer from "$lib/initializers/business_initializer";
   import { businessStore } from "$lib/stores/Business";
   import { userStore } from "$lib/stores/User";
@@ -47,7 +48,7 @@
       {#if showMakeBookingButton}
         <div class="pb-4 w-[90%] flex flex-row items-center justify-center">
           <button
-            class="btn w-full bg-primary hover:outline hover:bg-primary max-w-[600px]"
+            class="btn w-full btn-primary hover:bg-primary max-w-[{maxButtonSize}] hover:outline"
             on:click={() => {
               goto(`${base}/business/${$businessStore.url}/order`);
             }}

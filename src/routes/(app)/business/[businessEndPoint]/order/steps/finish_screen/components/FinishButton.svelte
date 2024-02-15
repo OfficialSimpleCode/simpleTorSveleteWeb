@@ -15,6 +15,7 @@
 
   import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
   import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
+  import { maxButtonSize } from "$lib/consts/sizes";
   import { handleApproveTerm } from "../helpers/handle_approving_term";
   import { onFinishNavigator } from "../helpers/on_finish_navigator";
   export let verificationDialog: HTMLDialogElement;
@@ -30,13 +31,12 @@
     get(bookingMakerStore).date ?? new Date(0),
     worker
   );
-  console.log(get(bookingMakerStore).showVerificationAlert);
+
   async function addBooking() {
-    console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
     if (isLoading) {
       return;
     }
-    console.log("1111111111111111111111");
+
     isLoading = true;
 
     try {
@@ -52,7 +52,6 @@
       return;
     }
     if (get(bookingMakerStore).showVerificationAlert) {
-      console.log("444444444");
       await handleVerification(verificationDialog);
     } else {
       await addBooking();
@@ -70,7 +69,7 @@
       );
       return val;
     });
-    console.log("3333333333333333");
+
     //add the booking again
     addBooking();
   }
@@ -100,7 +99,9 @@
 <!-- xs:px-10 px-3 -->
 <div class="w-full">
   <button
-    class="btn sm:text-xl btn-primary w-full {isLoading ? 'opacity-55' : ''}"
+    class="btn sm:text-xl btn-primary w-full {isLoading
+      ? 'opacity-55'
+      : ''} max-w-[{maxButtonSize}] hover:outline"
     on:click={handleClick}
   >
     {#if isLoading}
