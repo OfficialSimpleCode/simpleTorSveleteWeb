@@ -91,7 +91,7 @@
 
   <!-- Order now and Share buttons or not available indicator -->
   <div class="flex h-24 items-center">
-    {#if BusinessInitializer.GI().activeBusiness}
+    {#if BusinessInitializer.GI().activeBusiness === true}
       <!-- Order now and Share buttons -->
       <div class="flex gap-5 items-center">
         <button class="btn btn-primary" on:click={orderNow}>
@@ -99,16 +99,18 @@
         </button>
         <button class="btn btn-primary" on:click={openShareDialog}>
           <!-- <Icon src={isAppleUser() ? Trash : Share} size="26px" /> -->
-          <GeneralIcon icon={iconStr}></GeneralIcon>
+          <GeneralIcon icon={iconStr} />
         </button>
       </div>
-    {:else}
+    {:else if BusinessInitializer.GI().activeBusiness === false}
       <!-- Not abailable indicator -->
       <div
         class="bg-base-300 xs:px-10 px-5 py-2 {containerRadius} text-xl border-primary border"
       >
         {translate("businessExpired", $_)}
       </div>
+    {:else}
+      <div class="loading loading-spinner" />
     {/if}
   </div>
 </section>

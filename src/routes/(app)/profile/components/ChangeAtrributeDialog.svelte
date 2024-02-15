@@ -18,14 +18,11 @@
   let loading: boolean = false;
 
   function onChange(event: CustomEvent<TextFieldEvent>) {
-    console.log(event.detail);
     text = event.detail.value;
     isValid = event.detail.isValid;
   }
 
   async function onUpdateHandler() {
-    console.log("Eeeeeeeeee", isValid);
-
     if (!isValid || loading) {
       return;
     }

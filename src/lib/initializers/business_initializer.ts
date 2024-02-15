@@ -46,7 +46,7 @@ export default class BusinessInitializer {
   }
 
   generalRepo: GeneralRepo = new GeneralRepo();
-  activeBusiness: boolean = false;
+  activeBusiness: boolean | undefined = undefined;
 
   loadedBusinessJson: Record<string, any> | undefined;
 
@@ -259,22 +259,30 @@ export default class BusinessInitializer {
     return businessDoc;
   }
 
-  private isBusinessActive(): boolean {
+  private isBusinessActive(): boolean | undefined {
     return true;
     // const ownerPhone = this.business.businessId.split("--")[0];
-    // if (GeneralData.developers[ownerPhone] != null) {
-    //   this.business.productId =
-    //     GeneralData.developers[ownerPhone]!.businessProductId;
-    //   this.business.workersProductsId =
-    //     GeneralData.developers[ownerPhone]!.workersProductId;
-    //   return true;
-    // }
-
     // /*Give to the user month trial without put the cerdit card*/
     // if (this.business.expiredDate > new Date()) {
     //   return true;
     // }
-    // return this.business.productId != "";
+    // if (this.business.productId != "") {
+    //   return true;
+    // }
+
+    // if (RemoteConfigHelper.GI().developers != null) {
+    //   if (RemoteConfigHelper.GI().developers![ownerPhone] != null) {
+    //     this.business.productId =
+    //       RemoteConfigHelper.GI().developers![ownerPhone]!.businessProductId;
+    //     this.business.workersProductsId =
+    //       RemoteConfigHelper.GI().developers![ownerPhone]!.workersProductId;
+    //     return true;
+    //   }
+    // } else {
+    //   return undefined;
+    // }
+
+    // return false;
   }
   async _loadSettingsDoc(businessId: string): Promise<boolean> {
     try {

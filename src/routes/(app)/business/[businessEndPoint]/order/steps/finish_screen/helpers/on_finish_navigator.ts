@@ -10,7 +10,6 @@ export async function onFinishNavigator({
 }: {
   downloadAppDialog: HTMLDialogElement;
 }) {
-  console.log("3333333333");
   if (get(bookingMakerStore).isMultiEvent) {
     await signToMulti({
       freeFromPayment: false,

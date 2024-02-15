@@ -607,42 +607,39 @@ export default class NotificationsHelper {
     user: UserModel,
     business: BusinessModel
   ): Promise<void> {
-    console.log("zzzzzzzzzzzzz");
     if (!UserInitializer.GI().isConnected) {
       return; // no need to notify about guests
     }
-    console.log("zzzzzzzzzzzzz");
+
     if (!business.notifyOnNewCustomer) {
       return;
     }
-    console.log("zzzzzzzzzzzzz");
+
     // no need to notify on enter of manager to business
     if (user.id.startsWith("+972-5550")) {
       return;
     }
-    console.log("zzzzzzzzzzzzz");
+
     // no need to notify on enter of manager to business
     if (developers.includes(user.id)) {
       return;
     }
-    console.log("zzzzzzzzzzzzz");
 
     if (!UserInitializer.GI().user.firstEnterance(business.businessId)) {
       return; // user already visited
     }
-    console.log("zzzzzzzzzzzzz");
     if (worker.fcmsTokens.size === 0) {
       return; // unable to notify - there aren't any FCMS tokens
     }
-    console.log("zzzzzzzzzzzzz");
+
     if (worker.id === user.id) {
       return; // same user, no need to notify
     }
-    console.log("zzzzzzzzzzzzz");
+
     if (!BusinessInitializer.GI().activeBusiness) {
       return;
     }
-    console.log("zzzzzzzzzzzzz");
+
     await this.notificationRepo.notifyMultipleUsers({
       fcms: worker.fcmsTokens,
       payload: new NotificationPayload({

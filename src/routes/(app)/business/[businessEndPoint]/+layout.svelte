@@ -10,7 +10,7 @@
   export let data;
   BusinessInitializer.GI().loadedBusinessJson = data.business;
   BusinessInitializer.GI().loadBusiness(data.businessId);
-  console.log("ddddddddddd", $businessStore.urlEndPoint);
+
   onMount(() => {
     if (
       $themeStore == null ||

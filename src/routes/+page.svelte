@@ -1,5 +1,6 @@
 <script lang="ts">
   import SearchBusiness from "$lib/components/SearchBusiness.svelte";
+  import { logger } from "$lib/consts/application_general";
   import { storyImagesRatioX, storyImagesRatioY } from "$lib/consts/sizes";
   import { onMount } from "svelte";
   let screenHeight: number;
@@ -14,9 +15,9 @@
         storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
       );
 
-      console.log("screenHeight", screenHeight);
-      console.log("storyImagesHeigth", storyImagesHeigth);
-      console.log(`h-[${storyImagesHeigth}px]`, `w-[${storyImagesWidth}px]`);
+      logger.debug("screenHeight", screenHeight);
+      logger.debug("storyImagesHeigth", storyImagesHeigth);
+      logger.debug(`h-[${storyImagesHeigth}px]`, `w-[${storyImagesWidth}px]`);
     });
   });
 

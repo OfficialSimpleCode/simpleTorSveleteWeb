@@ -49,11 +49,6 @@ export default class UserInitializer {
     return 0;
   }
 
-  isDeveloper(): boolean {
-    if (!this.isConnected) return false;
-    return GeneralData.developers.hasOwnProperty(this.user.id.replace("+", ""));
-  }
-
   get isConnected(): boolean {
     return this.verificationRepo.isLoggedIn;
   }
@@ -98,7 +93,7 @@ export default class UserInitializer {
       }
 
       this.user = UserModel.fromUserDocJson(this.userDoc?.data()!);
-      console.log("rrrrrrrrrrrrrrrrrrrrrrrr4444444444444444444");
+
       /*No need to take the user public data the startListening 
         func will take it*/
       this.startPublicDataListening();

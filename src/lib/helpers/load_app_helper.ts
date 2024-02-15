@@ -1,7 +1,6 @@
 import { ErrorsTypeLog, logger } from "$lib/consts/application_general";
 import { LoadingStatuses } from "$lib/consts/loading_statuses";
 import UserInitializer from "$lib/initializers/user_initializer";
-import { Developer } from "$lib/models/developers/developer";
 
 import { isNetworkConnected } from "$lib/utils/general_utils";
 import { Timestamp } from "firebase/firestore";
@@ -52,44 +51,8 @@ export class LoadAppHelper {
       return;
     }
 
-    // try {
-    //   console.log("3333333333ssssss");
-    //   if (this.firstTime) {
-    //     console.log("3333333333ssssss");
-    //     //const resp = this.checkForErrors(await this.preLoadingFutures());
-    //     console.log("3333333333ssssss");
-    //     if (resp !== null) {
-    //       resp();
-    //       return;
-    //     }
-    //     console.log("3333333333ssssss");
-    //   }
-    // } catch (e) {
-    //   logger.error(
-    //     "Error while get the pre loading --> ${this.preLoading}\n $e"
-    //   );
-    // }
-
-    GeneralData.developers = this.parseDevelopers();
-    //parseAppLimit(FirebseRometeConfig.GI().getLimits());
-
-    // if (GeneralData.currentBusinesssId !== "") {
-    //   BusinessInitializer.GI().initialBusinessDataOnUser(
-    //     GeneralData.currentBusinesssId
-    //   );
-    // }
-
     GeneralData.hasPaddingFromTop = GeneralData.paddingFromTop > 0;
     this.updateStatus(LoadingStatuses.success);
-  }
-
-  parseDevelopers(): Record<string, Developer> {
-    const developers: Record<string, Developer> = {};
-    // const map = FirebseRometeConfig.GI().getDevelopers();
-    // Object.entries<Record<string, any>>(map).forEach(([developerId, data]) => {
-    //   developers[developerId] = Developer.fromJson(data, developerId);
-    // });
-    return developers;
   }
 
   checkForErrors(resp: any[]): (() => void) | null {
@@ -106,12 +69,6 @@ export class LoadAppHelper {
       };
     }
 
-    // if (FirebseRometeConfig.GI().isAppInMaintenance()) {
-    //   return () => {
-    //     this.updateStatus(LoadingStatuses.maintenanceMode);
-    //     return;
-    //   };
-    // }
     return null;
   }
 
@@ -158,14 +115,14 @@ export class LoadAppHelper {
     return resp;
   }
 
-  // async preLoadingFutures(): Promise<any[]> {
-  //   // while (true) {
-  //   //   if (this.preLoading.length !== 0) {
-  //   //     return this.preLoading;
-  //   //   }
-  //   //   await new Promise((resolve) => setTimeout(resolve, 50));
-  //   // }
-  // }
+  async preLoadingFutures(): Promise<any[]> {
+    while (true) {
+      if (this.preLoading.length !== 0) {
+        return this.preLoading;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+  }
 
   async cachedBusinessIdFuture(): Promise<string> {
     while (true) {
@@ -176,39 +133,10 @@ export class LoadAppHelper {
     }
   }
 
-  private async preLoadingFuncs(): Promise<void> {
-    try {
-      // const futuresList = await Promise.all([
-      //   FirebseRometeConfig.GI()
-      //     .initService()
-      //     .catch(async (error) => {
-      //       await new Promise((resolve) => setTimeout(resolve, 1010));
-      //       return await FirebseRometeConfig.GI()
-      //         .initService()
-      //         .catch((error) => {
-      //           if (error instanceof Error) {
-      //             this.reportIssue(new Error(), "RemoteContfig", {
-      //               strIssue: `error:${error.toString()}\nstackTrace:${
-      //                 error.stack
-      //               }`,
-      //             });
-      //             AppErrorsHelper.GI().details = `config --> ${error.toString()}`;
-      //           }
-      //           return false;
-      //         });
-      //     }),
-      // ]);
-      // this.preLoading = futuresList;
-    } catch (error) {
-      logger.error("Error while load the pre loading functions --> $error");
-    }
-  }
-
   public initReloadApp(): void {
     this.status = LoadingStatuses.loading;
     this.preLoading = [];
     this.cachedBusinessId = null;
-    this.preLoadingFuncs();
   }
 
   private async reportIssue(

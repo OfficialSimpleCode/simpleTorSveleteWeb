@@ -13,6 +13,7 @@ import {
   durationStrikings,
   subDuration,
 } from "../duration_utils";
+import { setIntersecation } from "../general_utils";
 
 import {
   dateIsoStr,
@@ -217,13 +218,6 @@ export function getJump(
       ? worker.longestBookingTime
       : worker.shortBookingTime;
 
-  console.log(
-    "worker.longestBookingTime",
-    worker.longestBookingTime,
-    "worker.shortBookingTime",
-    worker.shortBookingTime
-  );
-
   /* If the default jump is passing over the next forbidden - 
     coming back to end forbidden to save holes in schedule */
   const afterAdding = addDuration(
@@ -311,7 +305,7 @@ export function getFakeBookingFromTime(
   const booking = new Booking({});
   booking.bookingDate = new Date(day);
   booking.workerId = workerId;
-  booking.treatments = new Map([["", treatment]]);
+  booking.treatments = { "": treatment };
   return booking;
 }
 
@@ -684,7 +678,7 @@ export function getFakeBookingToCheck(
   });
   const booking = new Booking({});
   booking.bookingDate = date;
-  booking.treatments = new Map([["", newTreatment]]);
+  booking.treatments = { "": newTreatment };
   return booking;
 }
 
@@ -715,7 +709,7 @@ export function overlapingDates(
     if (
       firstIsWeek &&
       secondIsWeek &&
-      first.weekDays.intersection(second.weekDays).isEmpty
+      setIntersecation(first.weekDays, second.weekDays).size === 0
     ) {
       return new Set(); // No overlapping dates
     }

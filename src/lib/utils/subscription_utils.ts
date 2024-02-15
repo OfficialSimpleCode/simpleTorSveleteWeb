@@ -1,15 +1,11 @@
 import { SubType } from "$lib/consts/purchases";
-import { GeneralData } from "$lib/helpers/general_data";
+import RemoteConfigHelper from "$lib/helpers/remote_config_helper";
 
 export function subTypeFromProductId(
   productId: string,
   businessId: string
 ): SubType {
   const ownerId = businessId.split("--")[0];
-
-  if (GeneralData.developers.hasOwnProperty(ownerId)) {
-    productId = GeneralData.developers[ownerId].businessProductId;
-  }
 
   if (productId.includes("basic")) {
     return SubType.basic;
@@ -20,6 +16,13 @@ export function subTypeFromProductId(
     return SubType.advanced;
   } else if (productId.includes("golden")) {
     return SubType.golden;
+  }
+
+  if (RemoteConfigHelper.GI().developers != null) {
+    if (RemoteConfigHelper.GI().developers!.hasOwnProperty(ownerId)) {
+      productId =
+        RemoteConfigHelper.GI().developers![ownerId].businessProductId;
+    }
   }
 
   return SubType.trial;

@@ -9,8 +9,7 @@ export function popUpUpdate(): Update | undefined {
       updateToPop = update;
     }
   });
-  console.log(UserInitializer.GI().user.seenUpdates);
-  console.log(BusinessInitializer.GI().business.businessId);
+
   if (
     UserInitializer.GI().isConnected &&
     updateToPop &&

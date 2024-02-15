@@ -5,7 +5,6 @@
   import GenderPicker from "$lib/components/pickers/gender_picker/GenderPicker.svelte";
   import type { Gender } from "$lib/consts/gender";
 
-  import { page } from "$app/stores";
   import UserHelper from "$lib/helpers/user/user_helper";
   import { isConnectedStore, userStore } from "$lib/stores/User";
   import { onMount } from "svelte";
@@ -15,11 +14,10 @@
   import ProfileAttribute from "./sections/ProfileAttribute.svelte";
   import ProfileVerification from "./sections/ProfileVerification.svelte";
 
-  console.log($userStore.id);
   onMount(() => {
     isConnectedStore.subscribe((value) => {
       //redirect to the login page if the user is not connected
-      console.log($page.url);
+
       if (value === false) {
         goto(`${base}/login`);
       }

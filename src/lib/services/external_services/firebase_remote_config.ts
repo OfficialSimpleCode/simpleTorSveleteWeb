@@ -18,19 +18,19 @@ import {
 
 export default class FirebseRometeConfig {
   private static _singleton: FirebseRometeConfig = new FirebseRometeConfig();
-  private remoteConfig: RemoteConfig;
 
   private constructor() {
     const firebaseApp =
       getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-    this.remoteConfig = getRemoteConfig();
   }
 
-  // public static GI(): FirebseRometeConfig {
-  //   return FirebseRometeConfig._singleton;
-  // }
+  public static GI(): FirebseRometeConfig {
+    return FirebseRometeConfig._singleton;
+  }
+  remoteConfig: RemoteConfig | undefined;
 
   public async initService(): Promise<void> {
+    this.remoteConfig = getRemoteConfig();
     this.remoteConfig.settings.fetchTimeoutMillis = 15000;
     this.remoteConfig.settings.minimumFetchIntervalMillis = 900000;
 
@@ -40,7 +40,7 @@ export default class FirebseRometeConfig {
   public getVersionInfo(): Record<string, unknown> {
     try {
       const val: string = getValue(
-        this.remoteConfig,
+        this.remoteConfig!,
         versionInfoKey
       ).asString();
       return JSON.parse(val);
@@ -51,7 +51,10 @@ export default class FirebseRometeConfig {
 
   public getDevelopers(): Record<string, any> {
     try {
-      const val: string = getValue(this.remoteConfig, developersKey).asString();
+      const val: string = getValue(
+        this.remoteConfig!,
+        developersKey
+      ).asString();
       return JSON.parse(val);
     } catch (e) {
       return {};
@@ -61,7 +64,7 @@ export default class FirebseRometeConfig {
   public getSystemMessage(): Record<string, unknown> {
     try {
       const val: string = getValue(
-        this.remoteConfig,
+        this.remoteConfig!,
         systemMessageKey
       ).asString();
       return JSON.parse(val);
@@ -73,7 +76,7 @@ export default class FirebseRometeConfig {
   public getFavoriteBusinesses(): string[] {
     try {
       const val: string = getValue(
-        this.remoteConfig,
+        this.remoteConfig!,
         favoriteBusinessesKey
       ).asString();
       const businesses: string[] = [];
@@ -89,7 +92,7 @@ export default class FirebseRometeConfig {
 
   public isAppInMaintenance(): boolean {
     try {
-      return getValue(this.remoteConfig, maintenanceKey).asBoolean();
+      return getValue(this.remoteConfig!, maintenanceKey).asBoolean();
     } catch (e) {
       return false; // prevent users use the app while maintenance and error
     }
@@ -97,7 +100,7 @@ export default class FirebseRometeConfig {
 
   public getLimits(): Record<string, unknown> {
     try {
-      const val: string = getValue(this.remoteConfig, limitsKey).asString();
+      const val: string = getValue(this.remoteConfig!, limitsKey).asString();
       return JSON.parse(val);
     } catch (e) {
       return {}; // prevent users use the app while maintenance and error
@@ -106,7 +109,7 @@ export default class FirebseRometeConfig {
 
   public getPurchasesInfo(): Record<string, unknown> {
     try {
-      const val: string = getValue(this.remoteConfig, purchasesKey).asString();
+      const val: string = getValue(this.remoteConfig!, purchasesKey).asString();
       return JSON.parse(val);
     } catch (e) {
       return {}; // prevent users use the app while maintenance and error

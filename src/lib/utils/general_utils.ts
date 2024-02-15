@@ -131,3 +131,13 @@ export function pushDialog(
   });
   setTimeout(() => dialog!.showModal(), 500);
 }
+
+export function setIntersecation(set1: Set<any>, set2: Set<any>) {
+  const ans = new Set();
+  for (let i of set2) {
+    if (set1.has(i)) {
+      ans.add(i);
+    }
+  }
+  return ans;
+}
