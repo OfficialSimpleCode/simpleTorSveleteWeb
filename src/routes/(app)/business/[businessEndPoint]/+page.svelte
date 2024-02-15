@@ -79,7 +79,6 @@
 <main class="w-full h-full">
   <!-- background image -->
   <ChangingImages />
-
   <!-- define the whole page below the top images -->
   <div class="bg-base-100 min-h-1/2 w-full z-10">
     <!-- this is effects the entire layout (top margin is -3 to be above the images)-->

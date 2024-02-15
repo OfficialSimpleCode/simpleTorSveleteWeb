@@ -36,7 +36,9 @@
   <h1 class="text-2xl">{$_("pickWorker")}</h1>
 
   <!-- list of workers -->
-  <ul class="h-full flex flex-wrap items-center justify-center gap-7 md:mx-3">
+  <ul
+    class="h-full flex flex-wrap items-center justify-center gap-7 w-[90%] md:mx-3"
+  >
     {#each workersList as worker}
       <WorkerItem {worker} />
     {/each}
