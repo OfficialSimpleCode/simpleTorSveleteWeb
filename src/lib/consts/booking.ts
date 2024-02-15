@@ -123,3 +123,11 @@ export const exampleBooking = {
 };
 
 export const payemntProcessDuration = new Duration({ minutes: 5 });
+
+export enum DeleteOption {
+  deleteAllEvents,
+  deleteCurrentAndFuture,
+  deleteSpesific,
+  needConfirmation,
+  deleteOnlyThisTreatment,
+}

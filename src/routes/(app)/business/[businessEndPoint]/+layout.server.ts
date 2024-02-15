@@ -1,4 +1,5 @@
 import BusinessInitializer from "$lib/initializers/business_initializer.js";
+import { redirect } from "@sveltejs/kit";
 
 export const load = async ({ url, params }) => {
   console.log(url);
@@ -13,6 +14,12 @@ export const load = async ({ url, params }) => {
     businessDoc = await BusinessInitializer.GI().getBusinessDocById(
       businessUrl
     );
+    if (businessDoc != null && businessDoc.business["urlEndPoint"] != null) {
+      throw redirect(
+        303,
+        url.href.replaceAll(businessUrl, businessDoc.business["urlEndPoint"])
+      );
+    }
   }
 
   return businessDoc;

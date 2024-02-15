@@ -2,18 +2,18 @@
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import { ArrayCommands } from "$lib/consts/db";
-  import UserHelper from "$lib/helpers/user/UserHelper";
+  import UserHelper from "$lib/helpers/user/user_helper";
+  import { userStore } from "$lib/stores/User";
+
   import { workersStore } from "$lib/stores/Workers.js";
   import { length } from "$lib/utils/core_utils";
   import { Icon, XCircle } from "svelte-hero-icons";
-  import ;
 
   export let dialog: HTMLDialogElement;
   export let workersStories: Record<string, StoryImageData>;
   export let storyId: string;
   let workerId = workersStories[storyId].workerId;
-  console.log("Ddddddddddddddddddddddddddddd");
-  console.log(isLast(storyId));
+
   function isLast(storyId: string): boolean {
     return (
       Array.from(Object.keys(workersStories)).indexOf(storyId) ==

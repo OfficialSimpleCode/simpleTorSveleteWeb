@@ -1,7 +1,6 @@
 <script lang="ts">
   import { BookingStatuses } from "$lib/consts/booking";
   import type Booking from "$lib/models/booking/booking_model";
-  import type WorkerModel from "$lib/models/worker/worker_model";
   import { businessStore } from "$lib/stores/Business";
   import AttentionIndicatorUserBooking from "./AttentionIndicatorUserBooking.svelte";
   import LoadBusinessBookingButton from "./LoadBusinessBookingButton.svelte";
@@ -9,7 +8,7 @@
 
   export let booking: Booking;
   export let bgColor: string = "bg-base-300";
-  export let currentWorker: WorkerModel | undefined;
+
   export let forceOpenBookingSheet: boolean;
 
   const showAttention =
@@ -24,7 +23,7 @@
   {#if showAttention}
     <AttentionIndicatorUserBooking {booking} {bgColor} />
   {:else}
-    <ReminderApproveArrivalButton {booking} {bgColor} {currentWorker} />
+    <ReminderApproveArrivalButton {booking} {bgColor} />
   {/if}
 {:else}
   <!-- nothing to display -->

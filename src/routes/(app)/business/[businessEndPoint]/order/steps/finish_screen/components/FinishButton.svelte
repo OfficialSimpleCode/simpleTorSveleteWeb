@@ -41,7 +41,6 @@
 
     try {
       await onFinishNavigator({
-        clientNote: "",
         downloadAppDialog,
       });
     } finally {

@@ -7,16 +7,14 @@
   export let dialog: HTMLDialogElement;
   export let insideOtp: boolean = false;
   const dispatch = createEventDispatcher();
-
-  console.log("44444444444444");
 </script>
 
 <dialog
   bind:this={dialog}
-  class="modal modal-middle w-[500px]"
+  class="modal modal-middle"
   on:close={() => {
     insideOtp = false;
-
+    dialog.close();
     history.back();
   }}
 >

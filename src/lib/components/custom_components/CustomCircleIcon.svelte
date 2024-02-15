@@ -16,7 +16,7 @@
 
 <button on:click={handleClick} class={!active ? "opacity opacity-70" : ""}>
   <div
-    class="flex flex-col justify-center gap-1 items-center rounded-full {bgColor} {circlePadding}"
+    class="flex flex-col justify-center gap-1 items-center rounded-full hover:bg-primary {bgColor} {circlePadding}"
   >
     {#if !loading}
       <GeneralIcon {icon} {size} color={iconColor} />

@@ -19,12 +19,14 @@
   }
 </script>
 
-<button class="btn btn-ghost btn-circle avatar" on:click={onTap}>
-  {#if $isConnectedStore == null}
-    <CustomCircleIcon icon="" loading={true} size={22} />
-  {:else if $isConnectedStore === false}
-    <CustomCircleIcon icon="ic:baseline-login" size={22} />
-  {:else}
-    <CustomCircleIcon icon="iconamoon:profile-fill" size={22} />
-  {/if}
-</button>
+{#if $isConnectedStore == null}
+  <CustomCircleIcon icon="" loading={true} size={22} />
+{:else if $isConnectedStore === false}
+  <CustomCircleIcon icon="ic:baseline-login" size={22} handleClick={onTap} />
+{:else}
+  <CustomCircleIcon
+    icon="iconamoon:profile-fill"
+    size={22}
+    handleClick={onTap}
+  />
+{/if}

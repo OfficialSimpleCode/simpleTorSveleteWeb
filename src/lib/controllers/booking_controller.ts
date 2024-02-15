@@ -114,6 +114,9 @@ export default class BookingController {
 
   static updateWorkerData(workerObj: WorkerModel) {
     const bookingMaker = get(bookingMakerStore);
+    if (bookingMaker == null) {
+      return;
+    }
 
     logger.debug("Getting new data for the worker");
 

@@ -1,14 +1,13 @@
 <script lang="ts">
   import { containerRadius } from "$lib/consts/sizes";
   import Booking from "$lib/models/booking/booking_model";
-  import type WorkerModel from "$lib/models/worker/worker_model";
   import { _, translate } from "$lib/utils/translate";
 
   import BookingActions from "../../BookingActions.svelte";
   import CircleIcons from "../../CircleIcons.svelte";
 
   export let booking: Booking;
-  export let currentWorker: WorkerModel | undefined;
+
   export let forceOpenBookingSheet: boolean;
 </script>
 
@@ -31,10 +30,5 @@
   </div>
 
   <!-- svelte-ignore missing-declaration -->
-  <BookingActions
-    {booking}
-    bgColor="bg-base-200"
-    {currentWorker}
-    {forceOpenBookingSheet}
-  />
+  <BookingActions {booking} bgColor="bg-base-200" {forceOpenBookingSheet} />
 </div>

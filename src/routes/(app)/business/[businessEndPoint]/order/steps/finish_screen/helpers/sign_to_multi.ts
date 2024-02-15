@@ -1,6 +1,8 @@
 import { goto } from "$app/navigation";
 import { base } from "$app/paths";
-import BookingController from "$lib/controllers/booking_controller";
+import BookingController, {
+  bookingMakerStore,
+} from "$lib/controllers/booking_controller";
 import MultiBookingHelper from "$lib/helpers/multi_booking/multi_booking_helper";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
@@ -13,16 +15,15 @@ import { ShowToast } from "$lib/stores/ToastManager";
 import { hasPlaceInMultiBooking } from "$lib/utils/available_times_utils/has_place_in_multi";
 import { pushDialog } from "$lib/utils/general_utils";
 import { translate } from "$lib/utils/translate";
+import { get } from "svelte/store";
 import pkg from "uuid";
 const { v4 } = pkg;
 
 export async function signToMulti({
-  clientNote,
   freeFromPayment,
   payAll,
   downloadAppDialog,
 }: {
-  clientNote: string;
   freeFromPayment: boolean;
   payAll: boolean;
   downloadAppDialog: HTMLDialogElement;
@@ -62,7 +63,7 @@ export async function signToMulti({
     result = await handleSinging({
       multiBooking,
       worker,
-      clientNote,
+
       userMultiBooking,
     });
   } else {
@@ -80,14 +81,14 @@ export async function signToMulti({
 async function handleSinging({
   multiBooking,
   worker,
-  clientNote,
+
   userMultiBooking,
   fromPaymentHandler = false,
   paymentResp,
 }: {
   multiBooking: MultiBooking;
   worker: WorkerModel;
-  clientNote: string;
+
   userMultiBooking: MultiBookingUser;
   fromPaymentHandler?: boolean;
   paymentResp?: PaymentResp | undefined;
@@ -158,7 +159,7 @@ async function handleSinging({
       },
       worker,
       workerAction: false,
-      clientNote: clientNote,
+      clientNote: get(bookingMakerStore).note,
     });
   } else {
     const updatedMultiBooking = MultiBooking.fromMultiBooking(multiBooking);
@@ -179,7 +180,7 @@ async function handleSinging({
       payemntRequestId: BookingController.pickedTimeObj?.signedPaymentRequestId,
       worker,
       workerAction: false,
-      clientNote: clientNote,
+      clientNote: get(bookingMakerStore).note,
     });
   }
   return resp != null;

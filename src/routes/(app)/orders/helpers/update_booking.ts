@@ -4,20 +4,15 @@ import BookingController from "$lib/controllers/booking_controller";
 import { GeneralData } from "$lib/helpers/general_data";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import type Booking from "$lib/models/booking/booking_model";
-import type WorkerModel from "$lib/models/worker/worker_model";
 import { businessStore } from "$lib/stores/Business";
 import { ShowToast } from "$lib/stores/ToastManager";
+import { workersStore } from "$lib/stores/Workers";
 import { translate } from "$lib/utils/translate";
 import { get } from "svelte/store";
 import { deleteNotAvaliableWorkerBooking } from "./delete_not_avaliable_booking";
 
-export async function updateBooking({
-  booking,
-  worker,
-}: {
-  booking: Booking;
-  worker: WorkerModel | undefined;
-}) {
+export async function updateBooking({ booking }: { booking: Booking }) {
+  const worker = get(workersStore)[booking.workerId];
   if (booking.isPassed) {
     ShowToast({
       status: "fail",
