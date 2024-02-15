@@ -2,9 +2,9 @@
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
   import { page } from "$app/stores";
-  import GeneralDialog from "$lib/components/GeneralDialog.svelte";
   import CustomPhoneField from "$lib/components/custom_components/CustomPhoneField.svelte";
   import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
+  import GeneralDialog from "$lib/components/dialogs/GeneralDialog.svelte";
   import GenderPicker from "$lib/components/pickers/gender_picker/GenderPicker.svelte";
   import { Gender } from "$lib/consts/gender";
   import {
