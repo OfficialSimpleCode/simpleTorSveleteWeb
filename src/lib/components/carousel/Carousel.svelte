@@ -61,8 +61,12 @@
   }
 </script>
 
-<div class="w-full flex flex-row justify-between items-center">
-  <button class="px-1 py-1{showArrows ? 'block' : 'hidden'}" on:click={Next}>
+<div
+  class="w-full flex flex-row {showArrows
+    ? 'justify-between'
+    : 'justify-center'} items-center"
+>
+  <button class="px-1 py-1 {showArrows ? 'block' : 'hidden'}" on:click={Next}>
     <Icon src={ChevronRight} size="24px" />
   </button>
   <div

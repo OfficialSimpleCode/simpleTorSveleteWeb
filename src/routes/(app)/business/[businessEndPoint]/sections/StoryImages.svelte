@@ -40,7 +40,11 @@
 {/if}
 
 {#if Object.keys(workersStories).length > 0}
-  <div class="mt-10 bg-base-200 w-full pb-14 px-2 pt-10 xs:px-16">
+  <div
+    class="mt-10 {$businessStore.design.products.size > 0
+      ? 'bg-base-200'
+      : 'bg-base-300'} w-full pb-14 px-2 pt-10 xs:px-16"
+  >
     <h1 class="text-center font-bold text-2xl pb-6">
       {$businessStore.design.storyTitle
         ? $businessStore.design.storyTitle
