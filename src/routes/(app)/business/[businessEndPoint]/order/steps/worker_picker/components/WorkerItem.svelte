@@ -17,7 +17,7 @@
 </script>
 
 <button
-  class="bg-primary rounded-xl w-full max-w-[90%] sm:min-w-[500px] md:w-[40%] h-20 sm:h-32 flex items-center px-6 gap-5 box-border py-2"
+  class="bg-primary rounded-xl w-full sm:min-w-[500px] md:w-[40%] h-20 sm:h-32 flex items-center px-2 gap-2 box-border py-2"
   class:opacity-50={$bookingMakerStore.workerId !== worker.id}
   class:border={$bookingMakerStore.workerId === worker.id}
   on:click={() => onTapWorker(worker)}
@@ -33,26 +33,31 @@
   </div>
 
   <!-- worker details -->
-  <div>
+  <div class="w-[80%]">
     <!-- name  -->
-    <h1 class="text-2xl sm:text-4xl text-start">
+    <h1
+      class="text-2xl sm:text-4xl text-start overflow-hidden w-[95%] whitespace-nowrap text-ellipsis"
+    >
       {worker.name}
     </h1>
 
-    <!-- worker abour or default -->
-    {#if worker.about === ""}
-      <p
-        class="opacity-90 text-start xs:text-lg text-sm overflow-hidden whitespace-nowrap text-ellipsis"
-      >
-        {translate(isManager(worker.id) ? "manager" : "worker", $_)}
-        {translate("since", $_)}: {dateToDateStr(worker.createdAt)}
-      </p>
-    {:else}
-      <p
-        class="opacity-90 text-start xs:text-lg text-sm overflow-hidden whitespace-nowrap text-ellipsis"
-      >
-        {worker.about}
-      </p>
-    {/if}
+    <div class="flex felx-row justify-between items-center gap-1">
+      <!-- worker abour or default -->
+      {#if worker.about === ""}
+        <p
+          class="opacity-90 text-start xs:text-lg text-sm overflow-hidden whitespace-nowrap text-ellipsis"
+        >
+          {translate(isManager(worker.id) ? "manager" : "worker", $_)}
+          {translate("since", $_)}: {dateToDateStr(worker.createdAt)}
+        </p>
+      {:else}
+        <p
+          class="opacity-90 text-start xs:text-lg text-sm overflow-hidden w-[80%] whitespace-nowrap text-ellipsis"
+        >
+          {worker.about}
+        </p>
+      {/if}
+      <p class="mx-1 xs:text-lg text-sm">{translate("MoreText", $_)}</p>
+    </div>
   </div>
 </button>
