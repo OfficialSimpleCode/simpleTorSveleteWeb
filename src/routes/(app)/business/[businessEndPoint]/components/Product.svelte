@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import { base } from "$app/paths";
   import { ProductModel } from "$lib/models/business/product_model";
   import { businessStore } from "$lib/stores/Business";
@@ -35,17 +34,12 @@
 
       <!-- details button -->
       <div class="card-actions justify-end">
-        <button
+        <a
+          href={`${base}/business/${$businessStore.url}/product/${productId}`}
           class="btn btn-primary"
-          on:click={() =>
-            goto(
-              `${base}/business/${
-                $businessStore != null ? $businessStore.urlEndPoint : ""
-              }/product/${productId}`
-            )}
         >
           {translate("details", $_)}
-        </button>
+        </a>
       </div>
     </div>
   </div>

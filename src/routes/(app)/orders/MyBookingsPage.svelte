@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import { base } from "$app/paths";
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import { SubType } from "$lib/consts/purchases";
   import { maxButtonSize } from "$lib/consts/sizes";
   import BusinessInitializer from "$lib/initializers/business_initializer";
-  import { businessStore } from "$lib/stores/Business";
+  import { activeBusiness, businessStore } from "$lib/stores/Business";
   import { userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
   import BookingList from "./pages/BookingList.svelte";
@@ -13,9 +12,10 @@
   import EmptyBookingPage from "./pages/EmptyBookingPage.svelte";
 
   const showMakeBookingButton =
+    $businessStore != null &&
     BusinessInitializer.GI().businessSubtype !== SubType.landingPage &&
-    !BusinessInitializer.GI().business.isLandingPageMode &&
-    BusinessInitializer.GI().activeBusiness;
+    !$businessStore.isLandingPageMode &&
+    $activeBusiness !== false;
 </script>
 
 <main class=" h-full">
@@ -47,17 +47,19 @@
     <div class="flex flex-col gap-2 w-full items-center">
       {#if showMakeBookingButton}
         <div class="pb-4 w-[90%] flex flex-row items-center justify-center">
-          <button
-            class="btn w-full btn-primary hover:bg-primary max-w-[{maxButtonSize}] hover:outline"
-            on:click={() => {
-              goto(`${base}/business/${$businessStore.url}/order`);
-            }}
+          <a
+            class="btn w-full btn-primary max-w-[{maxButtonSize}] hover:outline"
+            href={`${base}/business/${$businessStore.url}/order`}
           >
-            <div class="flex flex-row gap-1 items-center">
-              <GeneralIcon icon="material-symbols:add-circle" size={22} />
-              {translate("newBooking", $_)}
-            </div>
-          </button>
+            {#if $activeBusiness === true}
+              <div class="flex flex-row gap-1 items-center">
+                <GeneralIcon icon="material-symbols:add-circle" size={22} />
+                {translate("newBooking", $_)}
+              </div>
+            {:else}
+              <dov class="loading loading-spinner" />
+            {/if}
+          </a>
         </div>
       {/if}
       <!-- back button -->

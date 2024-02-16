@@ -49,6 +49,7 @@
     pushDialog(termDialog, `${base}/business/${$businessStore.url}/term`);
   }
 
+  //define the icon link and hrefs
   let socialLinks: SocialLink[] = [
     {
       name: "navigate",
@@ -123,6 +124,7 @@
   >
     {#each socialLinks as socialLink}
       <li class="flex flex-col items-center w-[40px] xs:w-[55px]">
+        <!-- show a tag if the icon is with href -->
         {#if socialLink.href}
           <a
             href={socialLink.href}
