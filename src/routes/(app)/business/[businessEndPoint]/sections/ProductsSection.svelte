@@ -18,13 +18,12 @@
       });
     });
   });
+  const onBackground = Object.entries(workersStories).length > 0;
 </script>
 
 {#if products.size > 0}
   <div
-    class="flex flex-col items-center justify-center w-full pb-14 pt-10 {Object.entries(
-      workersStories
-    ).length > 0
+    class="flex flex-col items-center justify-center w-full pb-14 pt-10 {onBackground
       ? 'bg-base-100'
       : 'bg-base-300'}  px-2 sm:px-16 gap-4"
   >
@@ -38,7 +37,7 @@
     <div class="flex flex-wrap justify-center items-center gap-8">
       <!-- products list -->
       {#each products as [productId, product], index (productId)}
-        <Product {product} {index} {productId}></Product>
+        <Product {product} {index} {productId} {onBackground}></Product>
       {/each}
     </div>
   </div>
