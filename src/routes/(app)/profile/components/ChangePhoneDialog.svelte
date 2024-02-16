@@ -49,7 +49,7 @@
       <div class="flex flex-col">
         <CustomPhoneField value={initialValue} on:phoneChange={onChange} />
 
-        <h3 class="font-bold text-xs opacity-70">{explain}</h3>
+        <h3 class="font-bold text-xs opacity-70 px-2">{explain}</h3>
       </div>
 
       <button

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { sendMessageAnimation } from "$lib/consts/resources";
-  import { _, translate } from "$lib/utils/translate";
-  import { Icon, XCircle } from "svelte-hero-icons";
+  import { translate } from "$lib/utils/translate";
   import LottieAnimation from "../LottieAnimation.svelte";
+  import DialogTitel from "../custom_components/DialogTitel.svelte";
   import DownloadAppButton from "../custom_components/DownloadAppButton.svelte";
   export let explainTranslateKey: string | undefined = undefined;
   export let dialog: HTMLDialogElement;
@@ -15,19 +15,7 @@
 >
   <div class="modal-box bg-base-200 items-center">
     <!-- title and top buttons -->
-    <div class="flex justify-center items-center mb-[2rem] relative">
-      <!-- title -->
-      <h3 class="font-bold text-lg text-center">
-        {translate("downloadTheApp", $_)}
-      </h3>
-
-      <!-- close button -->
-      <div class="absolute w-full">
-        <button class="btn btn-ghost" on:click={() => dialog.close()}>
-          <Icon src={XCircle} size="24px" />
-        </button>
-      </div>
-    </div>
+    <DialogTitel titleTransKey="downloadTheApp" {dialog} />
 
     <!-- text, animation, and download button -->
     <div class="flex flex-col gap-3 items-center h-full">

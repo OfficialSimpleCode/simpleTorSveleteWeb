@@ -2,8 +2,11 @@
   import "iconify-icon";
 
   export let icon: string;
+
   export let size: number = 26;
-  export let color: string = "";
+  export let hover: boolean = false;
 </script>
 
-<iconify-icon class={color} {icon} width={size} height={size}></iconify-icon>
+<div class={hover ? "hover:opacity-70" : ""}>
+  <iconify-icon inline {icon} width={size} height={size} />
+</div>

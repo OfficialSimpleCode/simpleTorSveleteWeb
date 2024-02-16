@@ -428,7 +428,7 @@
   "everythingSetYouCanBegin": "Everything is ready you can start using your business",
   "purchaseNotCompleted": "Choose a purchase plan",
   "getNotifyWhenBooking": "Schedule events",
-  "newBooking": "new booking!",
+  "newBooking": "New booking",
   "clientOrderMessage": "made an order for you",
   "productsImages": "your products",
   "display": "Display",
@@ -2288,7 +2288,7 @@
   "tooManyAttempts": "The user is blocked due to too many login attempts. Please try again later",
   "notRecivingAnyMessage": "Didn't receive a message? Send me again",
   "tryOurSecondWay": "try a second authentication way",
-  "yourPhoneVerifiviedWithOneTime": "Your phone number is verified by WAY",
+  "yourPhoneVerifiviedWithOneTime": "Your phone number is verified - every order, receipt and payment request registered to your phone number will be automatically enter to the current account",
   "pressToRemove": "Press to remove verification",
   "oneTimeVerification": "one time verification",
   "loginWithPhone": "Login with a cell phone number",
@@ -3063,5 +3063,8 @@
   "notVerified": "Not verified",
   "termConfirmed": "Approved term",
   "paymentOnBookingAreNotAvailableOnWeb": "This order requires payment in advance - payments through the website will be released soon",
-  "theBusinessWillOpenDierctlyInApp": "A user who scans the barcode will be immediately transferred to the business in the application. If the user does not have the application, he will be transferred to the business website."
+  "theBusinessWillOpenDierctlyInApp": "A user who scans the barcode will be immediately transferred to the business in the application. If the user does not have the application, he will be transferred to the business website.",
+  "verificationCanceling": "Verification cancellation",
+  "cancelVerificationExplain": "Are you sure you want to cancel the phone number verification?",
+  "enterPhone": "Type a cell phone number"
 }

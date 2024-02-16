@@ -101,7 +101,7 @@
   <button
     class="btn sm:text-xl btn-primary w-full {isLoading
       ? 'opacity-55'
-      : ''} max-w-[{maxButtonSize}] hover:outline"
+      : ''} {maxButtonSize} hover:outline"
     on:click={handleClick}
   >
     {#if isLoading}

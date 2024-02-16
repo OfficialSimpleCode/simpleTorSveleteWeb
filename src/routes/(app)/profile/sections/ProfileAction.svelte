@@ -1,8 +1,8 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
+  import SettingContainer from "$lib/components/SettingContainer.svelte";
   import SettingsItem from "$lib/components/custom_components/SettingsItem.svelte";
-  import { containerRadius } from "$lib/consts/sizes";
   import UserHelper from "$lib/helpers/user/user_helper";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { businessStore } from "$lib/stores/Business";
@@ -40,15 +40,25 @@
   }
 </script>
 
-<section class="join join-vertical w-[90%] {containerRadius} bg-base-200">
-  <SettingsItem icon="material-symbols:logout" onTap={onLogout} name={"logout"}>
-    <div slot="trailing">
-      {#if loadingLogout}
-        <div class="loading loading-spinner" />
-      {/if}
-    </div>
-  </SettingsItem>
+<SettingContainer>
+  <div slot="children" class="flex flex-col join join-vertical">
+    <SettingsItem
+      icon="material-symbols:logout"
+      onTap={onLogout}
+      name={"logout"}
+    >
+      <div slot="trailing">
+        {#if loadingLogout}
+          <div class="loading loading-spinner" />
+        {/if}
+      </div>
+    </SettingsItem>
 
-  <div class="h-[0.2px] w-full bg-gray-500 opacity-20" />
-  <SettingsItem icon="ph:trash-bold" onTap={onDeleteUser} name={"deleteUser"} />
-</section>
+    <div class="h-[0.2px] w-full bg-gray-500 opacity-20" />
+    <SettingsItem
+      icon="ph:trash-bold"
+      onTap={onDeleteUser}
+      name={"deleteUser"}
+    />
+  </div>
+</SettingContainer>

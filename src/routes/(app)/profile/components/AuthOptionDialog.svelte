@@ -47,7 +47,6 @@
   bind:this={explainDialog}
   class="modal modal-middle"
   on:close={() => {
-    explainDialog.close();
     history.back();
   }}
 >

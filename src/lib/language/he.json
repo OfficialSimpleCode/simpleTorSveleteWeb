@@ -2308,7 +2308,7 @@
   "tooManyAttempts": "המשתמש חסום עקב הרבה נסיונות התחברות נסה שוב מאוחר יותר",
   "notRecivingAnyMessage": "לא קיבלת הודעה? שלח לי שוב",
   "tryOurSecondWay": "נסה דרך אימות שניה",
-  "yourPhoneVerifiviedWithOneTime": "מספר הפלאפון שלך מאומת על ידי WAY",
+  "yourPhoneVerifiviedWithOneTime": "מספר הפלאפון שלך מאומת - כל הזמנה ,קבלה ובקשת תשלום שתירשם למספר הפלאפון שלך תיכנס אוטומטית לחשבון הנוכחי",
   "pressToRemove": "לחץ להסרת האימות",
   "oneTimeVerification": "אימות חד פעמי",
   "loginWithPhone": "התחברות עם מספר פלאפון",
@@ -3045,5 +3045,8 @@
   "notVerified": "לא מאומת",
   "termConfirmed": "תקנון מאושר",
   "paymentOnBookingAreNotAvailibleOnWeb": "הזמנה זו מצריכה תשלום מראש - תשלומים דרך האתר יצאו בקרוב",
-  "theBusinessWillOpenDierctlyInApp": "משתמש שיסרוק את הברקוד יועבר מיד לעסק באפלקיציה אם אין למשתמש את האפליקציה הוא יועבר לאתר העסק"
+  "theBusinessWillOpenDierctlyInApp": "משתמש שיסרוק את הברקוד יועבר מיד לעסק באפלקיציה אם אין למשתמש את האפליקציה הוא יועבר לאתר העסק",
+  "verificationCanceling": "ביטול אימות",
+  "cancelVerificationExplain": "האם אתה בטוח שאתה רוצה לבטל את אימות מספר הפלאפון?",
+  "enterPhone": "הקלד מספר פלאפון"
 }

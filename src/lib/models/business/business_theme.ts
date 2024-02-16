@@ -1,4 +1,4 @@
-import { isLight } from "$lib/utils/general_utils";
+import { computeLuminance, isLight } from "$lib/utils/general_utils";
 
 export enum Brightness {
   light,
@@ -87,6 +87,10 @@ export class BusinessTheme {
 
   get brightness(): Brightness {
     return isLight(this.background) ? Brightness.dark : Brightness.light;
+  }
+
+  get onPrimary(): string {
+    return computeLuminance(this.primary) ? "bg-white" : "bg-black";
   }
 
   toJson(): Record<string, any> {

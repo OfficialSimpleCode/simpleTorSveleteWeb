@@ -35,6 +35,7 @@ export function deployTheme(theme: BusinessTheme, document: Document) {
     "--p",
     getOklachValues(loadColorFromTheme("primary", theme))
   );
+
   document.documentElement.style.setProperty(
     "--b1",
     getOklachValues(loadColorFromTheme("background", theme))

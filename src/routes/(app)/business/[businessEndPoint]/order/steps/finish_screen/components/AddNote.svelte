@@ -9,7 +9,7 @@
   <CustomTextFormField
     validationFunc={noteValidation}
     bgColor="bg-base-300"
-    placeholder="{$_('note')} ({$_('optional')})"
+    hint="{$_('note')} ({$_('optional')})"
     bind:value={$bookingMakerStore.note}
   ></CustomTextFormField>
 </div>

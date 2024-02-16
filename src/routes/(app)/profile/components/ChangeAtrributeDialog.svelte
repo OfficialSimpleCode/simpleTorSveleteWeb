@@ -42,7 +42,6 @@
   bind:this={dialog}
   class="modal modal-middle bg-center"
   on:close={() => {
-    dialog.close();
     history.back();
   }}
 >
@@ -59,7 +58,7 @@
           isRequired={true}
           on:valueChange={onChange}
         />
-        <h3 class="font-bold text-xs opacity-70">{explain}</h3>
+        <h3 class="font-bold text-xs opacity-70 px-2">{explain}</h3>
       </div>
 
       <button

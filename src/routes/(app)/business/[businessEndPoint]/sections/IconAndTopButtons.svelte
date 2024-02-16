@@ -78,10 +78,14 @@
       {$businessStore.shopName}
     </h1>
     <button
-      class="flex items-center gap-1 link opacity-50"
+      class="flex items-center gap-1 link opacity-70 link-hover"
       on:click={openNavigationDialog}
     >
-      <div class="flex flex-row {$businessStore.adress ? 'block' : 'hidden'}">
+      <div
+        class="flex flex-row {$businessStore.adress !== ''
+          ? 'block'
+          : 'hidden'} items-center"
+      >
         <h1 class="text-xs xs:text-sm">
           {$businessStore.adress}
         </h1>

@@ -127,7 +127,7 @@
         <CustomTextFormField
           type={InputOptions.text}
           lableTranslateKey="Full Name"
-          placeholder="full name"
+          hint="full name"
           value={fullName}
           pattern=""
           validationFunc={nameValidation}
@@ -138,7 +138,7 @@
         <CustomTextFormField
           type={InputOptions.email}
           lableTranslateKey="Email (optional)"
-          placeholder="example@gmail.com"
+          hint="example@gmail.com"
           value={email}
           pattern=""
           validationFunc={emailValidation}

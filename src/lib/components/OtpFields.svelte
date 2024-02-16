@@ -65,7 +65,7 @@
       {#key inputIndex}
         <input
           autocomplete="one-time-code"
-          placeholder={`${inputIndex}`}
+          hint={`${inputIndex}`}
           class="xs:w-[50px] xs:h-[50px] w-[40px] h-[40px] mx-1 text-center rounded-xl"
           type="number"
           on:input={(event) => digitValidate(event, inputIndex)}

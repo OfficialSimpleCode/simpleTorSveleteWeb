@@ -9,7 +9,6 @@
   <button
     class=""
     on:click={() => {
-      dialog.close();
       history.back();
     }}
   >

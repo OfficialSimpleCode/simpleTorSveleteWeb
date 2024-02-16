@@ -14,6 +14,12 @@
   // You must use E164 number format. It's guarantee the parsing and storing consistency.
   export let value: E164Number | null = "";
 
+  export let hint: string = "";
+
+  export let withErrorSpacing: boolean = false;
+
+  export let isActive: boolean = true;
+
   // Any Country Code Alpha-2 (ISO 3166)
   let selectedCountry: CountryCode | null = "IL";
 
@@ -66,6 +72,7 @@
     <select
       class="country-select rounded-md input input-bordered"
       name="Country"
+      disabled={!isActive}
       bind:value={selectedCountry}
     >
       <!-- title of the options -->
@@ -90,6 +97,8 @@
       bind:value
       bind:valid
       bind:detailedValue
+      placeholder={hint}
+      disabled={!isActive}
       on:input={updatePhoneNumber}
       class="basic-tel-input {!valid
         ? 'border-red-700'
@@ -98,7 +107,9 @@
   </div>
 
   <!-- invalidity indicator -->
-  <p class="flex items-center h-5 mt-2 text-red-700">
+  <p
+    class="flex items-center {withErrorSpacing ? 'h-5' : ''} mt-2 text-red-700"
+  >
     {valid ? "" : translate("illegalPhone", $_)}
   </p>
 </div>

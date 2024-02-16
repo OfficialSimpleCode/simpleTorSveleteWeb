@@ -3,6 +3,7 @@
   import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import { SubType } from "$lib/consts/purchases";
   import { maxButtonSize } from "$lib/consts/sizes";
+  import { themeStore } from "$lib/controllers/theme_controller";
   import BusinessInitializer from "$lib/initializers/business_initializer";
   import { activeBusiness, businessStore } from "$lib/stores/Business";
   import { userStore } from "$lib/stores/User";
@@ -21,7 +22,6 @@
 <main class=" h-full">
   <div class="md:pt-20 pt-2 flex flex-col gap-8 items-center h-full">
     <!-- title -->
-    <h1 class="text-3xl mx-10">{translate("myBookings", $_)}</h1>
 
     {#if Object.values($userStore.bookingsToShow).length !== 0}
       <!-- table object in widge screens -->
@@ -29,7 +29,7 @@
         <BookingsTable
           bookings={$userStore.bookingsToShow}
           forceOpenBookingSheet={true}
-        ></BookingsTable>
+        />
       </div>
 
       <!-- list of booking in small screens -->
@@ -39,7 +39,7 @@
         <BookingList
           bookings={$userStore.bookingsToShow}
           forceOpenBookingSheet={true}
-        ></BookingList>
+        />
       </div>
     {:else}
       <EmptyBookingPage />
@@ -48,7 +48,7 @@
       {#if showMakeBookingButton}
         <div class="pb-4 w-[90%] flex flex-row items-center justify-center">
           <a
-            class="btn w-full btn-primary max-w-[{maxButtonSize}] hover:outline"
+            class="btn w-full btn-primary {maxButtonSize}"
             href={`${base}/business/${$businessStore.url}/order`}
           >
             {#if $activeBusiness === true}
@@ -57,7 +57,10 @@
                 {translate("newBooking", $_)}
               </div>
             {:else}
-              <dov class="loading loading-spinner" />
+              <div
+                class="loading loading-spinner {$themeStore?.onPrimary ??
+                  'bg-white'}"
+              />
             {/if}
           </a>
         </div>
@@ -65,7 +68,7 @@
       <!-- back button -->
       <div class="pb-4 w-[90%]">
         <button
-          class="btn btn-outline sm:hidden w-full"
+          class="btn btn-outline sm:hidden w-full {maxButtonSize}"
           on:click={() => history.back()}
           >{translate("back", $_)}
         </button>

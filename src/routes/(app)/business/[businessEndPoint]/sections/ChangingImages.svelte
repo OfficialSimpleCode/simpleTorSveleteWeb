@@ -25,10 +25,9 @@
     // changingImagesHeight = Math.floor(
     //   screenWidth * (changingImagesRatioY / changingImagesRatioX)
     // );
-    console.log("Inner width", screenWidth);
 
     //changingImagesHeight = 200;
-    console.log("aaaaaaa shilo ", changingImagesHeight);
+
     const elem = document.querySelector("#shilo");
     console.log("element is ", elem);
     const a1 = `h-[${changingImagesHeight}px]`;

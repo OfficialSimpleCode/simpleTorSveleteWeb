@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { successAnimation } from "$lib/consts/resources";
   import { formatedPhone } from "$lib/utils/string_utils";
   import { _, translate } from "$lib/utils/translate";
   import { authDataStore } from "../../../routes/(auth)/auth_controller";
+  import LottieAnimation from "../LottieAnimation.svelte";
 
   export let dialog: HTMLDialogElement;
 </script>
@@ -18,9 +20,10 @@
     <h3 class="font-bold text-lg pb-4">
       {translate("phoneIsVerfied", $_)}
     </h3>
-
     <!-- success anomation  -->
-    <!-- <LottieAnimation animationFile={sendMessageAnimation} /> -->
+    <div class="flex items-center w-24">
+      <LottieAnimation animationFile={successAnimation} />
+    </div>
 
     <!-- explanation text -->
     <h3 class="text-md">
@@ -40,7 +43,7 @@
     <!-- "OK" button to close this modal -->
     <button
       on:click={() => dialog.close()}
-      class="btn lg:btn-lg bg-primary btn-primary flex items-center justify-center w-full"
+      class="btn btn-sm btn-primary w-full max-w-[170px] bt-3"
     >
       {translate("ok", $_)}
     </button>

@@ -171,9 +171,8 @@ export class FirebaseAuthService extends VerificationService {
     otp: string;
   }): Promise<boolean> {
     const credential = PhoneAuthProvider.credential(verificationId, otp);
-    console.log("dddddddddddddddddPhone");
+
     await this._auth.currentUser?.reload();
-    console.log(this.existsProvidersSRV);
 
     try {
       switch (loginType) {
@@ -252,6 +251,7 @@ export class FirebaseAuthService extends VerificationService {
   }): Promise<void> {
     const beforeSendTime = new Date();
     let codeSentTime: Date | undefined;
+
     const html = document.getElementById("recaptcha-container")!;
     var element = document.createElement("input");
     //Assign different attributes to the element.

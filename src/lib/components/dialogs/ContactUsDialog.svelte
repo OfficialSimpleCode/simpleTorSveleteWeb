@@ -29,30 +29,27 @@
         <!-- close button -->
         <CustomCircleIcon
           icon="mdi:whatsapp"
-          size={27}
-          handleClick={() => openLink(`whatsapp://send?phone=${cuntactPhone}`)}
+          size={30}
+          href={`whatsapp://send?phone=${cuntactPhone}`}
         />
-        <CustomCircleIcon
-          icon="mdi:instagram"
-          size={27}
-          handleClick={() => openLink(appInstagram)}
-        />
-        <CustomCircleIcon
-          icon="ph:globe"
-          size={27}
-          handleClick={() => openLink(simpleTorHomePage)}
-        />
+        <CustomCircleIcon icon="mdi:instagram" size={30} href={appInstagram} />
+        <CustomCircleIcon icon="ph:globe" size={30} href={simpleTorHomePage} />
 
         <CustomCircleIcon
           icon="iconoir:message"
-          size={27}
-          handleClick={() => openLink(simpleCodeWebUrl)}
+          size={30}
+          href={simpleCodeWebUrl}
         />
       </div>
 
-      <div class="divide-x-2"></div>
+      <div class="divider h-[0.5px]" />
 
-      <LottieAnimation animationFile={contactUsAnimation} loop={true} />
+      <LottieAnimation
+        animationFile={contactUsAnimation}
+        loop={true}
+        height={260}
+        width={260}
+      />
 
       <!-- conatct us description -->
       <h3 class="text-sm text-center mx-6 mb-8">

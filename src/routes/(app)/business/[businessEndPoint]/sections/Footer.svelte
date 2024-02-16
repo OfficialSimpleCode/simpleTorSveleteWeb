@@ -6,7 +6,7 @@
   import ContactUsDialog from "$lib/components/dialogs/ContactUsDialog.svelte";
   import { businessStore } from "$lib/stores/Business";
   import { pushDialog } from "$lib/utils/general_utils";
-  import { downloadSimpleTor } from "$lib/utils/links_utils";
+  import { getDownloadingAppLink } from "$lib/utils/links_utils";
   import { _, translate } from "$lib/utils/translate";
   import FooterSocialIcons from "../components/FooterSocialIcons.svelte";
   let contactUsDialog: HTMLDialogElement;
@@ -26,9 +26,10 @@
     <header class="footer-title">
       {translate("treatments", $_).toLocaleUpperCase()}
     </header>
-    <button
-      on:click={() => downloadSimpleTor($businessStore.dynamicLink)}
-      class="link link-hover">{translate("queueSystem", $_)}</button
+    <a
+      target="_blank"
+      href={getDownloadingAppLink($businessStore?.dynamicLink ?? "")}
+      class="link link-hover">{translate("queueSystem", $_)}</a
     >
     <button class="link link-hover"
       >{translate("systemsDevelopment", $_)}</button
