@@ -4,7 +4,7 @@
   import { page } from "$app/stores";
   import Avatar from "$lib/components/Avatar.svelte";
   import NavigationDialog from "$lib/components/dialogs/NavigationDialog.svelte";
-  import { businessStore } from "$lib/stores/Business";
+  import { activeBusiness, businessStore } from "$lib/stores/Business";
   import { isConnectedStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
 
@@ -12,7 +12,6 @@
   import { isAppleUser } from "$lib/consts/platform";
   import { containerRadius } from "$lib/consts/sizes";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
-  import BusinessInitializer from "$lib/initializers/business_initializer";
   import { onMount } from "svelte";
   import ShareDialog from "../components/ShareDialog.svelte";
 
@@ -94,26 +93,33 @@
   <!-- Order now and Share buttons or not available indicator -->
 
   <div class="flex h-24 items-center px-4 md:px-10 lg:px-8 xl:px-16">
-    {#if BusinessInitializer.GI().activeBusiness === true}
+    {#if $activeBusiness === true}
       <!-- Order now and Share buttons -->
       <div class="flex gap-5 items-center">
-        <button class="btn btn-primary xs:px-10 px-6" on:click={orderNow}>
+        <a
+          class="btn btn-primary xs:px-10 px-6"
+          href="{base}/business/{$businessStore.url}/order"
+        >
           {translate("setBooking", $_)}
-        </button>
+        </a>
         <button class="btn btn-primary" on:click={openShareDialog}>
           <!-- <Icon src={isAppleUser() ? Trash : Share} size="26px" /> -->
           <GeneralIcon icon={iconStr} />
         </button>
       </div>
-    {:else if BusinessInitializer.GI().activeBusiness === false}
+    {:else if $activeBusiness === false}
       <!-- Not abailable indicator -->
       <div
-        class="bg-base-300 xs:px-10 px-5 py-2 {containerRadius} text-xl border-primary border"
+        class="bg-base-300 xs:px-10 px-5 py-3 {containerRadius} text-xl border-primary border flex items-center"
       >
         {translate("businessExpired", $_)}
       </div>
     {:else}
-      <div class="loading loading-spinner" />
+      <div
+        class="bg-base-300 xs:px-16 px-5 py-3 {containerRadius}  border-primary border flex items-center"
+      >
+        <div class="loading loading-spinner w-7 h-7" />
+      </div>
     {/if}
   </div>
 </section>

@@ -1,10 +1,9 @@
 <script>
+  import Avatar from "$lib/components/Avatar.svelte";
   import { userStore } from "$lib/stores/User";
   import { imageByGender } from "$lib/utils/images_utils";
   import { dateToDateStr } from "$lib/utils/times_utils";
   import { translate } from "$lib/utils/translate";
-
-  import { Avatar } from "flowbite-svelte";
 </script>
 
 <section class="flex flex-col items-center">

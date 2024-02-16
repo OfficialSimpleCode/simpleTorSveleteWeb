@@ -4,9 +4,9 @@
   import LanguageBoard from "./components/LanguageBoard.svelte";
   // Assets
 
-  import { openOrdersPage } from "$lib/controllers/page_controller";
   import { businessStore } from "$lib/stores/Business";
   import { userStore } from "$lib/stores/User";
+  import { get } from "svelte/store";
   import CustomCircleIcon from "../custom_components/CustomCircleIcon.svelte";
   import ProfileNavigator from "./components/ProfileNavigator.svelte";
 </script>
@@ -17,9 +17,9 @@
 >
   <div>
     <a
-      href="{base}/business/{$businessStore
-        ? $businessStore.urlEndPoint ?? ''
-        : ''}"
+      href={$businessStore != null
+        ? `${base}/business/${get(businessStore).url}`
+        : `${base}/business`}
       class="btn btn-ghost text-xl">SimpleTor</a
     >
   </div>
@@ -36,7 +36,9 @@
       <CustomCircleIcon
         icon="lets-icons:order-fill"
         size={22}
-        handleClick={openOrdersPage}
+        href={$businessStore != null
+          ? `${base}/business/${get(businessStore).url}/orders`
+          : `${base}/orders`}
       />
       {#if Object.values($userStore.bookingsToShow).length > 0}
         <span

@@ -3,7 +3,6 @@
 
   import { businessStore } from "$lib/stores/Business";
   import { ShowToast } from "$lib/stores/ToastManager";
-  import type { IconSource } from "svelte-hero-icons";
 
   import NavigationDialog from "$lib/components/dialogs/NavigationDialog.svelte";
 
@@ -15,6 +14,14 @@
   import { _, translate } from "$lib/utils/translate";
   export let termDialog: HTMLDialogElement;
   let navigationDialog: HTMLDialogElement;
+
+  type SocialLink = {
+    name: string;
+    func?: () => void;
+    href?: string;
+    icon: string;
+    errorMsg: string;
+  };
 
   const noNeedGenderTrnaslate: string[] = ["whatsapp"];
 
@@ -39,52 +46,69 @@
       });
       return;
     }
-    pushDialog(
-      termDialog,
-      `${base}/business/${
-        $businessStore != null ? $businessStore.urlEndPoint : ""
-      }/term`
-    );
+    pushDialog(termDialog, `${base}/business/${$businessStore.url}/term`);
   }
 
-  let socialLinks: Object = {
-    navigate: openNavigationDialog,
-    instagram: $businessStore.instagramAccount,
-    call: `tel:${$businessStore.shopPhone}`,
-    term: openTermDialog,
-    whatsapp: `whatsapp://send?phone=${$businessStore.shopPhone}`,
-  };
+  let socialLinks: SocialLink[] = [
+    {
+      name: "navigate",
+      func: openNavigationDialog,
+      icon: "mdi:map-marker-outline",
+      errorMsg: "noAdress",
+    },
+    {
+      name: "instagram",
+      href:
+        $businessStore.instagramAccount !== ""
+          ? `https://www.instagram.com/${$businessStore.instagramAccount}`
+          : undefined,
+      func:
+        $businessStore.instagramAccount === ""
+          ? () => error("noInstagram")
+          : undefined,
+      icon: "mdi:instagram",
+      errorMsg: "noInstagram",
+    },
+    {
+      name: "call",
+      href:
+        $businessStore.shopPhone !== ""
+          ? `tel:${$businessStore.shopPhone}`
+          : undefined,
+      icon: "mdi:phone",
+      func:
+        $businessStore.shopPhone === ""
+          ? () => error("noShopPhoneNumber")
+          : undefined,
+      errorMsg: "noShopPhoneNumber",
+    },
+    {
+      name: "term",
+      func: openTermDialog,
+      icon: "mdi:file-document",
+      errorMsg: "noTerms",
+    },
+    {
+      name: "whatsapp",
+      href:
+        $businessStore.shopPhone !== ""
+          ? `whatsapp://send?phone=${$businessStore.shopPhone}`
+          : undefined,
+      icon: "mdi:whatsapp",
+      func:
+        $businessStore.shopPhone === ""
+          ? () => error("noShopPhoneNumber")
+          : undefined,
+      errorMsg: "noShopPhoneNumber",
+    },
+  ];
 
-  let socialIcons: { [key: string]: IconSource } = {
-    call: "mdi:phone",
-    navigate: "mdi:map-marker-outline",
-    term: "mdi:file-document",
-    whatsapp: "mdi:whatsapp",
-    instagram: "mdi:instagram",
-  };
-
-  let socialErros: { [key: string]: string } = {
-    instagram: "noInstagram",
-    call: "noShopPhoneNumber",
-    whatsapp: "noShopPhoneNumber",
-    term: "noTerms",
-  };
-
-  function activateLink(link: string | CallableFunction, name: string) {
-    if (typeof link === "function") {
-      link();
-      return;
-    }
-
-    if (!link || link.length === 0) {
-      ShowToast({
-        text: translate(socialErros[name], $_),
-        status: "fail",
-      });
-      return;
-    }
-
-    window.open(link, "_blank");
+  function error(errorMsg: string) {
+    ShowToast({
+      text: translate(errorMsg, $_),
+      status: "fail",
+    });
+    return;
   }
 </script>
 
@@ -97,16 +121,30 @@
   <ul
     class="flex items-center gap-6 sm:gap-8 bg-base-200 py-2 px-5 rounded-xl mx-6 sm:mx-16"
   >
-    {#each Object.entries(socialLinks) as [name, link]}
+    {#each socialLinks as socialLink}
       <li class="flex flex-col items-center w-[40px] xs:w-[55px]">
-        <button
-          on:click={() => activateLink(link, name)}
-          class="btn btn-ghost btn-square w-6 h-6 sm:w-10 sm:h-10"
-        >
-          <GeneralIcon icon={socialIcons[name]} size={26} />
-        </button>
+        {#if socialLink.href}
+          <a
+            href={socialLink.href}
+            target="_blank"
+            class="btn btn-ghost btn-square w-6 h-6 sm:w-10 sm:h-10"
+          >
+            <GeneralIcon icon={socialLink.icon} size={26} />
+          </a>
+        {:else}
+          <button
+            on:click={socialLink.func}
+            class="btn btn-ghost btn-square w-6 h-6 sm:w-10 sm:h-10"
+          >
+            <GeneralIcon icon={socialLink.icon} size={26} />
+          </button>
+        {/if}
         <h5 class="xs:text-sm text-xs text-gray-500 select-none">
-          {translate(name, $_, !noNeedGenderTrnaslate.includes(name))}
+          {translate(
+            socialLink.name,
+            $_,
+            !noNeedGenderTrnaslate.includes(socialLink.name)
+          )}
         </h5>
       </li>
     {/each}

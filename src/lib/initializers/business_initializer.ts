@@ -14,12 +14,12 @@ import AppErrorsHelper from "$lib/helpers/app_errors";
 import DbPathesHelper from "$lib/helpers/db_paths_helper";
 import GeneralRepo from "$lib/helpers/general/general_repo";
 import { GeneralData } from "$lib/helpers/general_data";
-import ThemeHelper from "$lib/helpers/theme_helper";
+import RemoteConfigHelper from "$lib/helpers/remote_config_helper";
 import { BusinessData } from "$lib/models/business/business_data";
 import { BusinessDesign } from "$lib/models/business/business_design";
 import BusinessModel from "$lib/models/business/business_model";
 import WorkerModel from "$lib/models/worker/worker_model";
-import { businessStore } from "$lib/stores/Business";
+import { activeBusiness, businessStore } from "$lib/stores/Business";
 import { userStore } from "$lib/stores/User";
 import { workersStore } from "$lib/stores/Workers";
 import { checkForReminders } from "$lib/utils/booking_utils";
@@ -46,7 +46,6 @@ export default class BusinessInitializer {
   }
 
   generalRepo: GeneralRepo = new GeneralRepo();
-  activeBusiness: boolean | undefined = undefined;
 
   loadedBusinessJson: Record<string, any> | undefined;
 
@@ -69,20 +68,10 @@ export default class BusinessInitializer {
 
   initBusiness(businessId: string): boolean {
     try {
-      //businessSubtype = SubType.trial;
+      this.businessSubtype = SubType.trial;
       this.workers = {};
-      //   changingImages = [];
-      //   storyCacheImages = {};
-      //   productsCacheImages = [];
-      //   limitionPassed = [];
-      //   eligibleWorkerAmount = 0;
-      //   storyImagesLength = 0;
-      //   this.business.businessId = businessId;
+
       GeneralData.currentBusinesssId = businessId;
-      // Use the current business in the user provider for comfort
-      //   UserInitializer.GI().currentBusiness = businessId;
-      //makeLongTimeNoSeeAlert();
-      // --------------------------------------
 
       //parse the loaded business
       const businessResp = this._loadSettingsDoc(businessId);
@@ -98,16 +87,10 @@ export default class BusinessInitializer {
         businessId
       );
 
-      this.activeBusiness = this.isBusinessActive();
+      activeBusiness.set(this.isBusinessActive());
 
       // Make the business data listener from the real-time database
       this.makeBusinessDataListener();
-
-      //   // Can't initialize user data; the user may not be loaded if it's from loading
-      //   if (!fromLoading && UserInitializer.GI().isConnected) {
-      //     logger.d("Load the user data only when the user is already loaded");
-      //     initialBusinessDataOnUser(businessId);
-      //   }
 
       return true;
     } catch (e) {
@@ -118,56 +101,15 @@ export default class BusinessInitializer {
   }
 
   loadBusiness(businessId: string): boolean {
-    // Clean business data
-
-    // BusinessUIController.getInstance().changingPhotoIndex = 0;
-    // SearchUIController.getInstance().searchController.text = "";
-    // SearchUIController.getInstance().searchTapped.value = false;
-    // BusinessInitializer.getInstance().emptyBusinessData();
-    // UserInitializer.getInstance().currentBusiness = "";
-
     try {
       // Initialize settings
       const resp = this.initBusiness(businessId);
-
-      //   if (!resp) {
-      //     BusinessInitializer.GI().emptyBusinessData();
-      //     SearchUIController.getInstance().initialTheSearchCache(businessId);
-      //     UserInitializer.GI().deleteVisitedBusiness(businessId, {
-      //       context,
-      //       deletePermanently: true,
-      //     });
-      //     return false;
-      //   }
 
       // Check for reminders in this current business
       checkForReminders().then((value) => {
         UserInitializer.GI().user.userPublicData.reminders = value;
         userStore.set(UserInitializer.GI().user);
       });
-
-      // We don't want to initialize the business when the theme is changed
-      if (!ThemeHelper.GI().themeCauseMainBuilt) {
-        // BusinessUIController.getInstance().businessInit = false;
-      }
-
-      // Save the last business - no need to await
-      // BusinessInitializer.GI().updateLastBusiness(businessId);
-      //logger.d(`The new business theme --> ${BusinessInitializer.GI().business.design.pickedThemeKey}`);
-
-      //   for (const [themeKey, theme] of Object.entries(
-      //     BusinessInitializer.GI().business.design.businessThemes
-      //   )) {
-      //     ThemeHelper.getInstance().currentThemes[themeKey] =
-      //       BusinessTheme.fromBusinessTheme(theme);
-      //   }
-
-      //   /* No need to handle the overlay; it will change
-      //     when the business is fully loaded */
-      //   ThemeHelper.getInstance().changeTheme(
-      //     BusinessInitializer.getInstance().business.design.pickedThemeKey,
-      //     { needOverlayHandling: !fromSearch }
-      //   );
 
       return true;
     } catch (e) {
@@ -259,30 +201,29 @@ export default class BusinessInitializer {
     return businessDoc;
   }
 
-  private isBusinessActive(): boolean | undefined {
-    return true;
-    // const ownerPhone = this.business.businessId.split("--")[0];
-    // /*Give to the user month trial without put the cerdit card*/
-    // if (this.business.expiredDate > new Date()) {
-    //   return true;
-    // }
-    // if (this.business.productId != "") {
-    //   return true;
-    // }
+  isBusinessActive(): boolean | undefined {
+    const ownerPhone = this.business.businessId.split("--")[0];
+    /*Give to the user month trial without put the cerdit card*/
+    if (this.business.expiredDate > new Date()) {
+      return true;
+    }
+    if (this.business.productId != "") {
+      return true;
+    }
 
-    // if (RemoteConfigHelper.GI().developers != null) {
-    //   if (RemoteConfigHelper.GI().developers![ownerPhone] != null) {
-    //     this.business.productId =
-    //       RemoteConfigHelper.GI().developers![ownerPhone]!.businessProductId;
-    //     this.business.workersProductsId =
-    //       RemoteConfigHelper.GI().developers![ownerPhone]!.workersProductId;
-    //     return true;
-    //   }
-    // } else {
-    //   return undefined;
-    // }
+    if (RemoteConfigHelper.GI().developers != null) {
+      if (RemoteConfigHelper.GI().developers![ownerPhone] != null) {
+        this.business.productId =
+          RemoteConfigHelper.GI().developers![ownerPhone]!.businessProductId;
+        this.business.workersProductsId =
+          RemoteConfigHelper.GI().developers![ownerPhone]!.workersProductId;
+        return true;
+      }
+    } else {
+      return undefined;
+    }
 
-    // return false;
+    return false;
   }
   async _loadSettingsDoc(businessId: string): Promise<boolean> {
     try {
@@ -502,29 +443,11 @@ export default class BusinessInitializer {
   }
 
   startTimesListening(worker: WorkerModel, isMulti: boolean) {
-    // AppErrors.addError({ code: settingsCodeToInt[SettingsErrorCodes.startTimesListening] });
-    // const updateTitle = translate("realTimeUpdateRecivedTitle", { needGender: false }) + '!';
-    // const updateContet = translate("realTimeUpdateRecived", { needGender: false });
-
-    // let workerPublicDocUpdates = 0;
-    // let workerReccurenceDocUpdates = 0;
-    // let workerMultiEventsTimesDocUpdates = 0;
-
     if (worker.workerPublicData.listener == null) {
       worker.workerPublicData.listener = this.generalRepo.docListenerRepo({
         path: `${buisnessCollection}/${this.business.businessId}/${workersCollection}/${worker.id}/${dataCollection}`,
         docId: dataDoc,
         onChanged: (workerBookingsListenerJson) => {
-          // workerPublicDocUpdates++;
-
-          // if (workerPublicDocUpdates > 2) {
-          //   new TopOverlyNotification({
-          //     title: updateTitle,
-          //     content: updateContet,
-          //   }).show();
-          // }
-
-          // this.firstTimeListenToWorkerPublic = false;
           this.updateWorkerPublicData(workerBookingsListenerJson, worker.id);
         },
       });
@@ -539,16 +462,6 @@ export default class BusinessInitializer {
         path: `${buisnessCollection}/${this.business.businessId}/${workersCollection}/${worker.id}/${dataCollection}`,
         docId: recurrenceEventsDoc,
         onChanged: (recurrenceEventsJson) => {
-          // workerReccurenceDocUpdates++;
-
-          // if (workerReccurenceDocUpdates > 2) {
-          //   new TopOverlyNotification({
-          //     title: updateTitle,
-          //     content: updateContet,
-          //   }).show();
-          // }
-
-          //this.firstTimeListenToRecurrenceEvents = false;
           this.updateReccurenceEvents(recurrenceEventsJson, worker.id);
         },
       });
@@ -560,16 +473,6 @@ export default class BusinessInitializer {
         docId: multiEventsTimesDoc,
 
         onChanged: (multiEventsTimesJson) => {
-          // workerMultiEventsTimesDocUpdates++;
-
-          // if (workerMultiEventsTimesDocUpdates > 2) {
-          //   new TopOverlyNotification({
-          //     title: updateTitle,
-          //     content: updateContet,
-          //   }).show();
-          // }
-
-          //this.firstTimeListenToMultiEventsTimes = false;
           this.updateMultiEventsTimes(multiEventsTimesJson, worker.id);
         },
       });

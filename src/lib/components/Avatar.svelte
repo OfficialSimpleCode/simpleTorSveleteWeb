@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { businessStore } from "$lib/stores/Business";
+  import { themeStore } from "$lib/controllers/theme_controller";
   import { getDefaultLogo } from "$lib/utils/images_utils";
   export let img: string;
   export let small: Boolean = false;
@@ -13,9 +13,7 @@
     class:w-20={small}
   >
     <img
-      src={img
-        ? img
-        : getDefaultLogo($businessStore.design.pickedTheme.background)}
+      src={img ? img : getDefaultLogo($themeStore?.background)}
       alt="profile"
     />
   </div>

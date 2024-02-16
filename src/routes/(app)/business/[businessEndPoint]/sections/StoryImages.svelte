@@ -8,7 +8,7 @@
   import ImageDisplayDialog from "../components/ImageDisplayDialog.svelte";
 
   let workersStories: Record<string, StoryImageData> = {};
-
+  let selectedStoryId: string = "";
   workersStore.subscribe((workers) => {
     workersStories = {};
     Object.values(workers).forEach((worker) => {
@@ -16,10 +16,10 @@
         workersStories[imageId] = { imageUrl: image, workerId: worker.id };
       });
     });
+    selectedStoryId = Object.keys(workersStories)[0] || "";
   });
 
   let imageDisplayDialog: HTMLDialogElement;
-  let selectedStoryId: string = Object.keys(workersStories)[0] || "";
 
   function openImageDisplayDialog(imageId: string) {
     BusinessInitializer.GI().loadLikes(workersStories);
