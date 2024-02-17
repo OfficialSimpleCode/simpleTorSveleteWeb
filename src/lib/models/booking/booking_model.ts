@@ -1248,9 +1248,10 @@ export default class Booking extends ScheduleItem {
 
   get totalDebtAmount(): number {
     let amount = 0;
-    for (const debt of Object.values(this.debts)) {
+    this.debts.forEach((debt, id) => {
       amount += debt.amount;
-    }
+    });
+
     return amount;
   }
 

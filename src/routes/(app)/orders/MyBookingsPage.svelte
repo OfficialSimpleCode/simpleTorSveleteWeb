@@ -1,6 +1,6 @@
 <script lang="ts">
   import { base } from "$app/paths";
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { SubType } from "$lib/consts/purchases";
   import { maxButtonSize } from "$lib/consts/sizes";
   import { themeStore } from "$lib/controllers/theme_controller";

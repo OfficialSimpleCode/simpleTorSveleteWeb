@@ -1,5 +1,5 @@
 <script lang="ts">
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { AuthProvider, LoginReason } from "$lib/consts/auth";
 
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";

@@ -5,7 +5,7 @@
     type TextFieldEvent,
   } from "$lib/consts/text_fields";
   import { _, translate } from "$lib/utils/translate";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
 
   export let bgColor: string = "";
 
@@ -36,6 +36,8 @@
     // display error onlt if it isn't empty
     errorMessage = value === "" ? "" : validationResp ?? "";
 
+    console.log("ffffffffff", errorMessage);
+
     // prepearing the object
     const eventResp: TextFieldEvent = {
       value: value,
@@ -44,6 +46,20 @@
     // update the listeners field value change
     dispatch("valueChange", eventResp);
   }
+
+  onMount(() => {
+    //prevent the validation bubble that will pop in the end of the form
+    document.addEventListener(
+      "invalid",
+      (function () {
+        return function (e) {
+          e.preventDefault();
+          document.getElementById("textFormField")?.focus();
+        };
+      })(),
+      true
+    );
+  });
 </script>
 
 <label class="label {!lableTranslateKey ? 'hidden' : 'block'}" for="name">
@@ -58,6 +74,7 @@
       : ''} [&::-webkit-inner-spin-button]:appearance-none"
     type={inputOptionToStr[type]}
     placeholder={hint}
+    name="textFormField"
     {pattern}
     {value}
     disabled={!isActive}

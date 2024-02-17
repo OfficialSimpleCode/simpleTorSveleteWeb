@@ -1,5 +1,5 @@
 <script>
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import {
     appFacebook,
     appInstagram,

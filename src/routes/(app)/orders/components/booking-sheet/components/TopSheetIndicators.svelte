@@ -1,5 +1,5 @@
 <script lang="ts">
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import Booking from "$lib/models/booking/booking_model";
   import { Duration } from "$lib/models/core/duration";
   import { addDuration } from "$lib/utils/duration_utils";

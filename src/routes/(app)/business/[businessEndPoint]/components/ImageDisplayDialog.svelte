@@ -1,6 +1,6 @@
 <script lang="ts">
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { ArrayCommands } from "$lib/consts/db";
   import UserHelper from "$lib/helpers/user/user_helper";
   import { userStore } from "$lib/stores/User";
@@ -78,10 +78,7 @@
           document.dir === "rtl" ? getBefore(storyId) : getNext(storyId)}
       >
         <div class="h-4"></div>
-        <CustomCircleIcon
-          icon="mdi:keyboard-arrow-right"
-          circlePadding={"1px"}
-        />
+        <CustomCircleIcon icon="mdi:keyboard-arrow-right" circlePadding={1} />
         <div class="h-4"></div>
       </button>
     {/if}
@@ -94,10 +91,7 @@
       >
         <div class="h-4"></div>
 
-        <CustomCircleIcon
-          icon="mdi:keyboard-arrow-left"
-          circlePadding={"1px"}
-        />
+        <CustomCircleIcon icon="mdi:keyboard-arrow-left" circlePadding={1} />
 
         <div class="h-4"></div>
       </button>

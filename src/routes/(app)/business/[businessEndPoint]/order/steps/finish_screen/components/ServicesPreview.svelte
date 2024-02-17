@@ -1,6 +1,6 @@
 <script lang="ts">
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { bookingMakerStore } from "$lib/controllers/booking_controller";
   import { Duration } from "$lib/models/core/duration";
   import {

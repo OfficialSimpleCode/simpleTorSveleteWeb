@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PhonePickerEvent } from "$lib/consts/text_fields";
   import { _, translate } from "$lib/utils/translate";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
 
   import { TelInput, normalizedCountries } from "svelte-tel-input";
   import type {
@@ -56,6 +56,20 @@
   function capitalizeFirstLetter(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
+
+  onMount(() => {
+    //prevent the validation bubble that will pop in the end of the form
+    document.addEventListener(
+      "invalid",
+      (function () {
+        return function (e) {
+          e.preventDefault();
+          document.getElementById("phoneFormField")?.focus();
+        };
+      })(),
+      true
+    );
+  });
 </script>
 
 <div class="form-control">
@@ -97,6 +111,7 @@
       bind:value
       bind:valid
       bind:detailedValue
+      name="phoneFormField"
       placeholder={hint}
       disabled={!isActive}
       on:input={updatePhoneNumber}

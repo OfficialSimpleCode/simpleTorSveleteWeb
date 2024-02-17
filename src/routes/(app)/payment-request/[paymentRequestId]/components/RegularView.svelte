@@ -1,5 +1,5 @@
 <script lang="ts">
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { translate } from "$lib/utils/translate";
   import { paymentRequestStore } from "../payment_request_controller";
 

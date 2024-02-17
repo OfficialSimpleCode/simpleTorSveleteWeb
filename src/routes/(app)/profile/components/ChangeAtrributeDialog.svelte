@@ -27,10 +27,13 @@
       return;
     }
     loading = true;
+    console.log("ddddddddddddd");
     try {
       const resp = await onUpdate(text);
+
       if (resp) {
-        dialog.close();
+        console.log("ssssssssssssss");
+        history.back();
       }
     } finally {
       loading = false;
@@ -47,31 +50,32 @@
 >
   <div class="modal-box bg-base-200 pb-10">
     <DialogTitel {titleTransKey} {dialog} />
+    <form on:submit={onUpdateHandler}>
+      <div class="flex flex-col gap-5">
+        <div class="flex flex-col">
+          <CustomTextFormField
+            type={InputOptions.text}
+            value={initialValue}
+            pattern=""
+            {validationFunc}
+            isRequired={true}
+            on:valueChange={onChange}
+          />
+          <h3 class="font-bold text-xs opacity-70 px-2">{explain}</h3>
+        </div>
 
-    <div class="flex flex-col gap-5">
-      <div class="flex flex-col">
-        <CustomTextFormField
-          type={InputOptions.text}
-          value={initialValue}
-          pattern=""
-          {validationFunc}
-          isRequired={true}
-          on:valueChange={onChange}
-        />
-        <h3 class="font-bold text-xs opacity-70 px-2">{explain}</h3>
+        <button
+          class="btn btn-primary {loading ? 'opacity-70' : ''}"
+          on:click={onUpdateHandler}
+        >
+          {#if loading}
+            <div class="loading loading-spinner"></div>
+          {:else}
+            {translate("update")}
+          {/if}
+        </button>
       </div>
-
-      <button
-        class="btn btn-primary {loading ? 'opacity-70' : ''}"
-        on:click={onUpdateHandler}
-      >
-        {#if loading}
-          <div class="loading loading-spinner"></div>
-        {:else}
-          {translate("update")}
-        {/if}
-      </button>
-    </div>
+    </form>
   </div>
 
   <form method="dialog" class="modal-backdrop">

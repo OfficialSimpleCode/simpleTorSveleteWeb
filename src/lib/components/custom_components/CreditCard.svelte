@@ -2,7 +2,7 @@
   import Chip from "$lib/images/chip.png";
   import PaymentCard from "$lib/models/payment_hyp/payment_card";
   import { createEventDispatcher, type EventDispatcher } from "svelte";
-  import GeneralIcon from "../GeneralIcon.svelte";
+  import GeneralIcon from "./GeneralIcon.svelte";
 
   export let card: PaymentCard;
 

@@ -2,8 +2,8 @@
   import { pushState } from "$app/navigation";
   import { base } from "$app/paths";
   import { page } from "$app/stores";
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import SettingContainer from "$lib/components/SettingContainer.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import SettingsItem from "$lib/components/custom_components/SettingsItem.svelte";
   import VerifiedIcon from "$lib/components/custom_components/VerifiedIcon.svelte";
   import UserHelper from "$lib/helpers/user/user_helper";

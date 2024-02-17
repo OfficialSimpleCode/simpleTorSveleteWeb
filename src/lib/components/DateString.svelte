@@ -3,7 +3,7 @@
   import { getDayString } from "$lib/utils/string_utils";
   import { _, translate } from "$lib/utils/translate";
   import { format } from "date-fns";
-  import GeneralIcon from "./GeneralIcon.svelte";
+  import GeneralIcon from "./custom_components/GeneralIcon.svelte";
 
   export let date: Date;
   export let dayVertical: boolean = true;

@@ -1,8 +1,8 @@
 <script lang="ts">
   import Booking from "$lib/models/booking/booking_model";
 
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { containerRadius } from "$lib/consts/sizes";
   import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";

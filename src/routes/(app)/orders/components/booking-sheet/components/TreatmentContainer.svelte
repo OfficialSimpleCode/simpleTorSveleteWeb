@@ -1,6 +1,6 @@
 <script lang="ts">
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import type Booking from "$lib/models/booking/booking_model";
   import { Duration } from "$lib/models/core/duration";
   import type Treatment from "$lib/models/general/treatment_model";
@@ -50,9 +50,8 @@
 
   <CustomCircleIcon
     icon="ph:trash-bold"
-    translateKey=""
     size={16}
     handleClick={onDeleteTreatment}
     bgColor={"bg-base-200"}
-  ></CustomCircleIcon>
+  />
 </div>

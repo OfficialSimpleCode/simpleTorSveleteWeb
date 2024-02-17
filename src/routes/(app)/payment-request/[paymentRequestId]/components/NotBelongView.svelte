@@ -1,5 +1,5 @@
 <script lang="ts">
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import LogoAndName from "$lib/components/custom_components/LogoAndName.svelte";
   import { translate } from "$lib/utils/translate";
 </script>

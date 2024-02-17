@@ -1,5 +1,5 @@
 <script lang="ts">
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import type Booking from "$lib/models/booking/booking_model";
   import RecurranceIndicator from "./RecurranceIndicator.svelte";
 

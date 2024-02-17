@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
   import DialogTitel from "$lib/components/custom_components/DialogTitel.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import ConfirmActionDialog from "$lib/components/dialogs/ConfirmActionDialog.svelte";
   import {
     AuthProvider,

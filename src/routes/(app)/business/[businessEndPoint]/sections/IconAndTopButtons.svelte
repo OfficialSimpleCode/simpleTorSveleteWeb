@@ -8,7 +8,7 @@
   import { isConnectedStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
 
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { isAppleUser } from "$lib/consts/platform";
   import { containerRadius } from "$lib/consts/sizes";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";

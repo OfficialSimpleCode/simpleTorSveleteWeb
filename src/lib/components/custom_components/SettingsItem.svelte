@@ -1,7 +1,7 @@
 <script lang="ts">
   import { _ } from "svelte-i18n";
-  import GeneralIcon from "../GeneralIcon.svelte";
   import CustomArrow from "./CustomArrow.svelte";
+  import GeneralIcon from "./GeneralIcon.svelte";
 
   export let onTap: () => void;
 

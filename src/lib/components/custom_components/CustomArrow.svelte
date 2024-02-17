@@ -1,5 +1,5 @@
 <script lang="ts">
-  import GeneralIcon from "../GeneralIcon.svelte";
+  import GeneralIcon from "./GeneralIcon.svelte";
   export let left: Boolean = false;
 </script>
 

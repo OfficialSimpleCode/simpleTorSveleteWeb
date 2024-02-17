@@ -8,8 +8,8 @@
 
   // Assets
   import { base } from "$app/paths";
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
 
+  import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
   export let termDialog: HTMLDialogElement;
@@ -119,35 +119,22 @@
 
 <section class="flex justify-center relative xs:top-[-1rem] top-[-32px]">
   <!-- Social Links -->
-  <ul
+  <div
     class="flex items-center gap-6 sm:gap-8 bg-base-200 py-2 px-5 rounded-xl mx-6 sm:mx-16"
   >
     {#each socialLinks as socialLink}
-      <li
-        class="flex flex-col items-center w-[40px] xs:w-[55px] gap-[8px] py-1"
+      <div
+        class="flex flex-col items-center justify-center w-[40px] xs:w-[55px] gap-[2px] py-1"
       >
         <!-- show a tag if the icon is with href -->
-        {#if socialLink.href}
-          <a
-            href={socialLink.href}
-            target="_blank"
-            class=" w-6 h-6 sm:w-10 sm:h-10"
-          >
-            <GeneralIcon icon={socialLink.icon} size={26} hover={true} />
-          </a>
-        {:else}
-          <button on:click={socialLink.func} class=" w-6 h-6 sm:w-10 sm:h-10">
-            <GeneralIcon icon={socialLink.icon} size={26} hover={true} />
-          </button>
-        {/if}
-        <h5 class="xs:text-sm text-xs opacity-70 select-none">
-          {translate(
-            socialLink.name,
-            $_,
-            !noNeedGenderTrnaslate.includes(socialLink.name)
-          )}
-        </h5>
-      </li>
+
+        <CustomCircleIcon
+          icon={socialLink.icon}
+          href={socialLink.href}
+          handleClick={socialLink.func}
+          translateKey={socialLink.name}
+        />
+      </div>
     {/each}
-  </ul>
+  </div>
 </section>

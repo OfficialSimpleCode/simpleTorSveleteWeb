@@ -18,6 +18,7 @@ import { phoneToDocId } from "$lib/utils/user";
 
 import { AuthProvider, authProviderToStr } from "$lib/consts/auth";
 import { maxTimeBetweenLogInAndDelete } from "$lib/consts/limitation";
+import { ErrorsController } from "$lib/controllers/errors_controller";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import type Booking from "$lib/models/booking/booking_model";
@@ -313,6 +314,7 @@ export default class UserHelper {
   ): Promise<boolean> {
     if (emailValidation(email) != null) {
       AppErrorsHelper.GI().error = Errors.illegalFields;
+      ErrorsController.displayError();
       return false;
     }
     if (email === UserInitializer.GI().user.userPublicData.email) {
@@ -325,6 +327,7 @@ export default class UserHelper {
       ) > new Date()
     ) {
       AppErrorsHelper.GI().error = Errors.cantUpdateEmailTooShortTimeBetween;
+      ErrorsController.displayError();
       return false;
     }
 
@@ -344,6 +347,7 @@ export default class UserHelper {
         if (value) {
           UserInitializer.GI().user.userPublicData.isVerifiedEmail = isVerified;
           const now = new Date();
+          userStore.set(UserInitializer.GI().user);
           return await this.userRepo
             .updateFieldInsideDocAsMapRepo({
               path: usersCollection,
@@ -357,9 +361,10 @@ export default class UserHelper {
               }
               return value;
             });
+        } else {
+          ErrorsController.displayError();
         }
-        console.log(UserInitializer.GI().user.userPublicData.email);
-        userStore.set(UserInitializer.GI().user);
+
         return value;
       });
   }

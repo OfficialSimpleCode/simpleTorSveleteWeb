@@ -1,7 +1,7 @@
 <script>
   import { _ } from "$lib/utils/translate";
 
-  import GeneralIcon from "$lib/components/GeneralIcon.svelte";
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { bookingMakerStore } from "$lib/controllers/booking_controller";
 
   function handleTuggleClick() {

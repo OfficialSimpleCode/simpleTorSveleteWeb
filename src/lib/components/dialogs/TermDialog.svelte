@@ -5,8 +5,8 @@
   import { isConnectedStore, userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
   import { createEventDispatcher } from "svelte";
-  import GeneralIcon from "../GeneralIcon.svelte";
   import DialogTitel from "../custom_components/DialogTitel.svelte";
+  import GeneralIcon from "../custom_components/GeneralIcon.svelte";
 
   export let dialog: HTMLDialogElement;
 

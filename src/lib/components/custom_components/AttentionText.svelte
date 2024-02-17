@@ -1,6 +1,6 @@
 <script lang="ts">
   import { containerRadius } from "$lib/consts/sizes";
-  import GeneralIcon from "../GeneralIcon.svelte";
+  import GeneralIcon from "./GeneralIcon.svelte";
 
   export let text: string;
 

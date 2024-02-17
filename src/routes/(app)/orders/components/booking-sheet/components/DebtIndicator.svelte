@@ -10,7 +10,13 @@
   const displayDebt: boolean =
     booking.debts.size !== 0 &&
     booking.totalDebtAmount !== 0 &&
-    booking.debts.values().next().value.showUser;
+    Array.from(booking.debts.values())[0].showUser;
+
+  console.log(
+    booking.debts.size !== 0,
+    booking.totalDebtAmount,
+    Array.from(booking.debts.values())[0]
+  );
 </script>
 
 {#if displayDebt}
@@ -21,9 +27,9 @@
       icon="mdi:dollar"
       translateKey=""
       bgColor="bg-base-100  "
-      circlePadding="p-[2px]"
+      circlePadding={2}
       size={20}
-    ></CustomCircleIcon>
+    />
     <p>{translate("debtOnBooking", $_)}</p>
     <p>
       {new Price({

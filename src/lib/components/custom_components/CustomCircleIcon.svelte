@@ -1,53 +1,56 @@
 <script lang="ts">
   import { _, translate } from "$lib/utils/translate";
-  import GeneralIcon from "../GeneralIcon.svelte";
+  import GeneralIcon from "./GeneralIcon.svelte";
 
   export let icon: string;
   export let translateKey: string | undefined = undefined;
+
   export let handleClick: () => void = () => {};
   export let size: number = 26;
   export let bgColor: string = "bg-base-300";
   export let href: string | undefined = undefined;
 
-  export let circlePadding: string = "p-2";
+  export let circlePadding: number = 18;
   export let loading: boolean = false;
   export let active: boolean = true;
-  export let iconColor: string = "";
+  // const heightText = ``;
+  // const widthText = `w-[${size + circlePadding}px]`;
+  // console.log(icon, heightText, widthText);
+  const cssClass = `flex items-center justify-center rounded-full  hover:bg-primary ${bgColor} h-[38px] w-[38px] block shrink-0`;
 </script>
 
-{#if href}
-  <a {href} class={!active ? "opacity opacity-70" : ""}>
-    <div
-      class="flex flex-col justify-center gap-1 items-center rounded-full hover:bg-primary {bgColor} {circlePadding}"
+<div class="flex flex-col items-center">
+  {#if href}
+    <a
+      {href}
+      class=" h-{size + circlePadding} w-{size + circlePadding}{!active
+        ? 'opacity opacity-70'
+        : ''}"
     >
-      {#if !loading}
-        <GeneralIcon {icon} {size} color={iconColor} />
-      {:else}
-        <div class="loading loading-spinner"></div>
-      {/if}
-    </div>
-
-    {#if translateKey}
-      <div>
-        {translate(translateKey, $_)}
+      <div class={cssClass}>
+        {#if !loading}
+          <div class="">
+            <GeneralIcon {icon} {size} />
+          </div>
+        {:else}
+          <div class="loading loading-spinner"></div>
+        {/if}
       </div>
-    {/if}
-  </a>
-{:else}
-  <button on:click={handleClick} class={!active ? "opacity opacity-70" : ""}>
-    <div
-      class="flex flex-col justify-center gap-1 items-center rounded-full hover:bg-primary {bgColor} {circlePadding}"
-    >
-      {#if !loading}
-        <GeneralIcon {icon} {size} color={iconColor} />
-      {:else}
-        <div class="loading loading-spinner"></div>
-      {/if}
-    </div>
-
-    {#if translateKey}
-      <div>
-        {translate(translateKey, $_)}
+    </a>
+  {:else}
+    <button on:click={handleClick} class={!active ? "opacity opacity-70" : ""}>
+      <div class={cssClass}>
+        {#if !loading}
+          <GeneralIcon {icon} {size} />
+        {:else}
+          <div class="loading loading-spinner"></div>
+        {/if}
       </div>
-    {/if}
-  </button>{/if}
+    </button>{/if}
+
+  {#if translateKey}
+    <div>
+      <h3 class="text-sm pt-1">{translate(translateKey, $_)}</h3>
+    </div>
+  {/if}
+</div>
