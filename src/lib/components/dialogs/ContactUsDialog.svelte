@@ -29,15 +29,15 @@
         <!-- close button -->
         <CustomCircleIcon
           icon="mdi:whatsapp"
-          size={30}
+          size="md"
           href={`whatsapp://send?phone=${cuntactPhone}`}
         />
-        <CustomCircleIcon icon="mdi:instagram" size={30} href={appInstagram} />
-        <CustomCircleIcon icon="ph:globe" size={30} href={simpleTorHomePage} />
+        <CustomCircleIcon icon="mdi:instagram" href={appInstagram} size="md" />
+        <CustomCircleIcon icon="ph:globe" size="md" href={simpleTorHomePage} />
 
         <CustomCircleIcon
           icon="iconoir:message"
-          size={30}
+          size="md"
           href={simpleCodeWebUrl}
         />
       </div>

@@ -50,7 +50,7 @@
 
   <CustomCircleIcon
     icon="ph:trash-bold"
-    size={16}
+    size="sm"
     handleClick={onDeleteTreatment}
     bgColor={"bg-base-200"}
   />

@@ -16,7 +16,6 @@ import TicketInfo from "$lib/models/payment_hyp/payment_request/ticket_info";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { needToHoldOn } from "$lib/utils/booking_utils";
 import NotificationHandler from "../notifications/notification_handler";
-import NotificationsHelper from "../notifications/notifications/notification_helper";
 import PaymentRequestHelper from "../payment_request/payment_request_helper";
 import MultiBookingRepo from "./multi_booking_repo";
 
@@ -324,38 +323,6 @@ export default class MultiBookingHelper {
           ErrorsController.displayError();
         }
 
-        return value;
-      });
-  }
-
-  async updateNeedCancel({
-    booking,
-    worker,
-    needCancel,
-  }: {
-    needCancel: boolean;
-    booking: Booking;
-    worker: WorkerModel;
-  }): Promise<boolean> {
-    return await this.multiBookingRepo
-      .updateMultiBookingNeedCancel(booking, needCancel)
-      .then(async (value) => {
-        if (value) {
-          if (needCancel) {
-            NotificationsHelper.GI().notifyWorkerThatUserWantToCancelMultiBookingSigning(
-              { userBooking: booking, worker }
-            );
-          } else {
-            NotificationsHelper.GI().notifyWorkerThatUseRestoredHisMultiBookingSigning(
-              {
-                userBooking: booking,
-                worker,
-              }
-            );
-          }
-        } else {
-          ErrorsController.displayError();
-        }
         return value;
       });
   }

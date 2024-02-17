@@ -14,6 +14,7 @@
   function openContactUs() {
     pushDialog(contactUsDialog);
   }
+  console.log("im fotter");
 </script>
 
 {#if $page.state.showModal}

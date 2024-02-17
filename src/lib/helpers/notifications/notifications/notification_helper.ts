@@ -6,7 +6,6 @@ import {
 } from "$lib/consts/db";
 import DeveloperHelper from "$lib/helpers/developer_helper";
 import GeneralRepo from "$lib/helpers/general/general_repo";
-import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import type Booking from "$lib/models/booking/booking_model";
 import type BusinessModel from "$lib/models/business/business_model";
@@ -24,10 +23,12 @@ import PaymentRequest from "$lib/models/payment_hyp/payment_request/payment_requ
 import type BreakModel from "$lib/models/schedule/break_model";
 import type UserModel from "$lib/models/user/user_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
+import { activeBusiness } from "$lib/stores/Business";
 import { dateToNotifyBreak, dateToRemindBooking } from "$lib/utils/dates_utils";
 import { getFormatedTime } from "$lib/utils/string_utils";
 import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import { translate } from "$lib/utils/translate";
+import { get } from "svelte/store";
 import NotificationsRepo from "./notifications_repo";
 
 export default class NotificationsHelper {
@@ -337,7 +338,7 @@ export default class NotificationsHelper {
         action: EnterAction.openWorkerBooking,
         bookingData: userBooking.toBookingNotificationPayload,
       }),
-      title: translate("userWantsToDelete", undefined, false),
+      title: translate("userWantsToDeleteSigning", undefined, false),
       content: translate("userWantsToDeleteSigningContent", undefined, false)
         .replace("CUSTOMERNAME", userBooking.customerName)
         .replace("EVENTNAME", userBooking.treatmentsToStringNotDetailed)
@@ -364,7 +365,7 @@ export default class NotificationsHelper {
         action: EnterAction.openWorkerBooking,
         bookingData: userBooking.toBookingNotificationPayload,
       }),
-      title: translate("userRestore", undefined, false),
+      title: translate("userRestoreHisSigning", undefined, false),
       content: translate("userResotreContentMultiBooking", undefined, false)
         .replace("CUSTOMERNAME", userBooking.customerName)
         .replace("TREATMENTNAME", userBooking.treatmentsToStringNotDetailed)
@@ -636,7 +637,7 @@ export default class NotificationsHelper {
       return; // same user, no need to notify
     }
 
-    if (!BusinessInitializer.GI().activeBusiness) {
+    if (get(activeBusiness) !== true) {
       return;
     }
 

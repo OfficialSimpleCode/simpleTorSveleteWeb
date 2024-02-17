@@ -26,7 +26,7 @@
   <div class="flex items-center gap-2">
     <!-- lang icon -->
     <div class="dropdown dropdown-left dropdown-bottom items-center">
-      <CustomCircleIcon icon="mdi:language" size={22} />
+      <CustomCircleIcon icon="mdi:language" />
       <LanguageBoard />
     </div>
 
@@ -35,12 +35,11 @@
     <div class="indicator">
       <CustomCircleIcon
         icon="lets-icons:order-fill"
-        size={22}
         href={$businessStore != null
           ? `${base}/business/${get(businessStore).url}/orders`
           : `${base}/orders`}
       />
-      {#if Object.values($userStore.bookingsToShow).length > 0}
+      {#if $userStore.bookingsToShow != null && Object.values($userStore.bookingsToShow).length > 0}
         <span
           class="bg-primary badge badge-sm indicator-item rounded-badge mr-2"
         >

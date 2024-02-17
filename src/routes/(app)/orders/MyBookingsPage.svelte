@@ -17,13 +17,14 @@
     BusinessInitializer.GI().businessSubtype !== SubType.landingPage &&
     !$businessStore.isLandingPageMode &&
     $activeBusiness !== false;
+  console.log("jjjjjjjjjjjjjjjjj", showMakeBookingButton);
 </script>
 
 <main class=" h-full">
   <div class="md:pt-20 pt-2 flex flex-col gap-8 items-center h-full">
     <!-- title -->
 
-    {#if Object.values($userStore.bookingsToShow).length !== 0}
+    {#if $userStore.bookingsToShow != null && Object.values($userStore.bookingsToShow).length > 0}
       <!-- table object in widge screens -->
       <div class="overflow-x-auto w-full hidden md:block min-h-[400px] mx-10">
         <BookingsTable
@@ -41,8 +42,10 @@
           forceOpenBookingSheet={true}
         />
       </div>
-    {:else}
+    {:else if $userStore.bookingsToShow != null}
       <EmptyBookingPage />
+    {:else}
+      <div class="loading loading-spinner" />
     {/if}
     <div class="flex flex-col gap-2 w-full items-center">
       {#if showMakeBookingButton}

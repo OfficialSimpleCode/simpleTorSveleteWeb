@@ -4,7 +4,7 @@ import { redirect } from "@sveltejs/kit";
 export const load = async ({ url, params }) => {
   console.log(url);
   const businessUrl = params.businessEndPoint;
-  let businessDoc;
+  let businessDoc = undefined;
   //if the url is longer than 45 is must to be an id
   if (businessUrl.length < 45) {
     businessDoc = await BusinessInitializer.GI().getBusinessDocByQuery(
@@ -20,6 +20,10 @@ export const load = async ({ url, params }) => {
         url.href.replaceAll(businessUrl, businessDoc.business["urlEndPoint"])
       );
     }
+  }
+
+  if (businessDoc == null) {
+    throw Error();
   }
 
   return businessDoc;
