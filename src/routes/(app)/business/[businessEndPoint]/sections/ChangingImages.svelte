@@ -60,30 +60,35 @@
 <!-- <svelte:window bind:innerWidth={screenWidth} /> -->
 {#key currentIndex}
   <!-- wide screens -->
-  <img
-    class="md:h-1/2 w-full object-cover min-h-[270px] hidden xs:block transition-opacity"
-    src={useDefault
-      ? defaultImage
-      : $businessStore.design.changingImages[currentIndex]}
-    alt={"business image"}
-    style="animation: 1s ease-out"
-    in:fade={{ duration: 1000 }}
-  />
 
-  <!-- small screens -->
-  <div class="relative xs:hidden block">
+  <div class="md:h-[450px] w-full h-[370px] hidden xs:block">
     <img
-      class="w-[500px] h-[400px] object-cover transition-opacity"
+      class="md:h-[450px] w-full object-cover h-[370px] hidden xs:block transition-opacity"
       src={useDefault
         ? defaultImage
         : $businessStore.design.changingImages[currentIndex]}
       alt={"business image"}
-      style="animation: 1s ease-out;"
+      style="animation: 1s ease-out"
       in:fade={{ duration: 1000 }}
     />
+  </div>
+
+  <!-- small screens -->
+  <div class="relative xs:hidden block">
+    <div class="max-w-full h-[380px]">
+      <img
+        class="max-w-full h-[380px] object-cover transition-opacity"
+        src={useDefault
+          ? defaultImage
+          : $businessStore.design.changingImages[currentIndex]}
+        alt={"business image"}
+        style="animation: 1s ease-out;"
+        in:fade={{ duration: 1000 }}
+      />
+    </div>
 
     <div
-      class="h-[50px] bg-gradient-to-b from-transparent via-base-100 to-base-100 absolute bottom-[-2px] w-full"
+      class="h-[50px] bg-gradient-to-b from-transparent via-base-100 to-base-100 absolute bottom-[-2px] w-full bg-red"
     ></div>
   </div>
 {/key}

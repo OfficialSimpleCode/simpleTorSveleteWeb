@@ -8,13 +8,19 @@
   import { pushDialog } from "$lib/utils/general_utils";
   import { getDownloadingAppLink } from "$lib/utils/links_utils";
   import { _, translate } from "$lib/utils/translate";
-  import FooterSocialIcons from "../components/FooterSocialIcons.svelte";
+  import { onMount } from "svelte";
+  import FooterSocialIcons from "../../routes/(app)/business/[businessEndPoint]/components/FooterSocialIcons.svelte";
   let contactUsDialog: HTMLDialogElement;
-
+  let downloadLink = "";
+  export let generatedPage: boolean = true;
   function openContactUs() {
     pushDialog(contactUsDialog);
   }
-  console.log("im fotter");
+
+  // After the ui is loaded
+  onMount(() => {
+    downloadLink = getDownloadingAppLink($businessStore?.dynamicLink ?? "");
+  });
 </script>
 
 {#if $page.state.showModal}
@@ -27,10 +33,8 @@
     <header class="footer-title">
       {translate("treatments", $_).toLocaleUpperCase()}
     </header>
-    <a
-      target="_blank"
-      href={getDownloadingAppLink($businessStore?.dynamicLink ?? "")}
-      class="link link-hover">{translate("queueSystem", $_)}</a
+    <a target="_blank" href={downloadLink} class="link link-hover"
+      >{translate("queueSystem", $_)}</a
     >
     <button class="link link-hover"
       >{translate("systemsDevelopment", $_)}</button
@@ -57,7 +61,7 @@
     <header class="footer-title">
       {translate("legal", $_).toLocaleUpperCase()}
     </header>
-    <a href="https.google.com" target="_blank" class="link link-hover"
+    <a href="{base}/terms-of-use" target="_blank" class="link link-hover"
       >{translate("term", $_)}</a
     >
     <a href="{base}/privacy" class="link link-hover"
@@ -71,7 +75,7 @@
   class="footer px-10 border-t py-4 bg-base-200 text-base-content border-base-300"
 >
   <!-- logo and company details -->
-  <aside class="items-center grid-flow-col">
+  <aside class="items-center grid-flow-col {generatedPage ? '' : 'hidden'}">
     <Logo />
     <p>
       {translate("ourCompanyName", $_)}<br />{translate(

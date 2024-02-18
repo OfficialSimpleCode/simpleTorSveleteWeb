@@ -1,5 +1,4 @@
 <script lang="ts">
-  import SearchBusiness from "$lib/components/SearchBusiness.svelte";
 </script>
 
 <svelte:head>
@@ -7,4 +6,5 @@
   <meta name="description" content="SimpleTor Web Application" />
 </svelte:head>
 
-<SearchBusiness titleKey="businessSearchShowcase" />
+<HomePage />
+<!-- <SearchBusiness titleKey="businessSearchShowcase" /> -->
