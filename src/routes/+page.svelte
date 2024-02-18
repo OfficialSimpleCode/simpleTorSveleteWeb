@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HomePage from "./home_page/HomePage.svelte";
 </script>
 
 <svelte:head>
