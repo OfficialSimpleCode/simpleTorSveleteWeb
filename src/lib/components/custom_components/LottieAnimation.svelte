@@ -2,8 +2,16 @@
   import { cssSizesClasses } from "$lib/consts/css_classes";
   import { onMount } from "svelte";
   export let animationFile: string;
-  export let size: "xs" | "sm" | "md" | "lg" | "xl" | "xl2" | "xl3" | "xl4" =
-    "lg";
+  export let size:
+    | "xs"
+    | "sm"
+    | "md"
+    | "lg"
+    | "xl"
+    | "xl2"
+    | "xl3"
+    | "xl4"
+    | "xl5" = "lg";
 
   export let loop: boolean = false;
 

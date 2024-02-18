@@ -18,9 +18,11 @@ import "@syncfusion/ej2-lists/styles/material.css";
 import "@syncfusion/ej2-navigations/styles/material.css";
 import "@syncfusion/ej2-popups/styles/material.css";
 
+import { maxWidthToShow5Days } from "$lib/consts/booking_maker";
 import MultiBooking from "$lib/models/multi_booking/multi_booking";
 import type PhoneDataResult from "$lib/models/resps/phone_data_result";
 import type TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
+import { screenSizeStore } from "$lib/stores/sizes";
 import { loadBookingMakerTimeData } from "$lib/utils/booking_maker";
 import { isNotEmpty } from "$lib/utils/core_utils";
 import { allWeekDays } from "$lib/utils/dates_utils";
@@ -42,12 +44,13 @@ interface BookingMaker {
   note: string;
   timePickerObjects: Record<string, TimePickerObj[]>;
   timePickerDisplayDates: Date[];
+  numberOfShownDays: number;
 }
 export const bookingMakerStore = writable<BookingMaker>();
 
 export default class BookingController {
   static bookingToUpdate: Booking | undefined;
-  static visibleDates: Date[] = [];
+
   static firstDateToShow: Date | undefined;
   static phoneVerificationResult: PhoneDataResult | undefined;
   static pickedTimeObj: TimePickerObj | undefined;
@@ -70,6 +73,8 @@ export default class BookingController {
       isMultiEvent: false,
       timePickerObjects: {},
       timePickerDisplayDates: allWeekDays(new Date()),
+      numberOfShownDays:
+        get(screenSizeStore).width > maxWidthToShow5Days ? 7 : 5,
     };
 
     Object.entries(BookingController.bookingToUpdate?.treatments ?? {}).forEach(
@@ -156,10 +161,7 @@ export default class BookingController {
       bookingMaker.workerId != null &&
       Object.entries(bookingMaker.services).length > 0
     ) {
-      loadBookingMakerTimeData(
-        bookingMaker.timePickerDisplayDates,
-        BookingController.worker
-      );
+      loadBookingMakerTimeData();
     }
   }
 
@@ -252,7 +254,6 @@ export default class BookingController {
       } else {
         bookingMaker.currentStep += 1;
         bookingMakerStore.set(bookingMaker);
-        //this.addService(bookingMaker, treatment);
       }
     }
   }

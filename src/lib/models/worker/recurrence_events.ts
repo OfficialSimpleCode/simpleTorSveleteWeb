@@ -60,7 +60,12 @@ export default class RecurrenceEvents {
             recurrenceTimeId = timeSplited[1];
           }
           timeStr = timeSplited[0];
-
+          console.log(
+            dateToDayStr(date),
+            recurrenceTimeId,
+            dateToMonthStr(date),
+            workerId
+          );
           const event = Event.fromJson({
             json: eventJson,
             timeStr,
@@ -70,7 +75,8 @@ export default class RecurrenceEvents {
             monthString: dateToMonthStr(date),
             workerId,
           });
-
+          console.log(event);
+          console.log("Eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
           if (event.isVacation) {
             this.vacationsEvents[dateToDateStr(event.from)] = event;
           }
