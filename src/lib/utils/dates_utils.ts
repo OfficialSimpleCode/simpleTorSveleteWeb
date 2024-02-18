@@ -2,17 +2,19 @@ import { Religion, holidays } from "$lib/consts/worker_schedule";
 import type Booking from "$lib/models/booking/booking_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
 
+import { weekdays } from "$lib/consts/times";
 import { Duration } from "$lib/models/core/duration";
 import type MultiBooking from "$lib/models/multi_booking/multi_booking";
 import type BreakModel from "$lib/models/schedule/break_model";
 import { addDays, addMonths, format, startOfWeek } from "date-fns";
-import { subDuration } from "./duration_utils";
+import { addDuration, subDuration } from "./duration_utils";
 import {
   dateStrToDate,
   dateToDateStr,
   dateToMonthStr,
   dateToTimeStr,
   dateToUtc,
+  getStartOfWeek,
   timeStrToDate,
 } from "./times_utils";
 
@@ -35,20 +37,20 @@ export function setToStartOfYear(dateTime: Date): Date {
 export function getHolidayNames(
   worker: WorkerModel,
   date: Date
-): Map<Religion, string> {
-  const holidaysString = new Map<Religion, string>();
+): { [key in Religion]?: string } {
+  const holidaysString: { [key in Religion]?: string } = {};
   worker.religions.forEach((religion) => {
     let dateString = format(date, "dd-MM-yyyy");
     switch (religion) {
       case Religion.christian:
         dateString = dateString.substring(0, dateString.length - 4) + "0000";
         if (holidays[religion]?.[dateString] != null) {
-          holidaysString.set(religion, holidays[religion]![dateString]);
+          holidaysString[religion] = holidays[religion]![dateString];
         }
         return;
       default:
-        if (holidays[religion]?.[dateString] != null) {
-          holidaysString.set(religion, holidays[religion]![dateString]);
+        if (holidays[religion]![dateString] != null) {
+          holidaysString[religion] = holidays[religion]![dateString]!;
         }
         return;
     }
@@ -174,21 +176,20 @@ export function getWeekdayFromDate(date: Date): string {
   // Get the day of the week (0-6)
   var dayOfWeek = date.getDay();
 
-  // Define an array of weekday names
-  var weekdays = [
-    "sunday",
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-  ];
-
   // Get the weekday name
   var weekdayName = weekdays[dayOfWeek];
 
   return weekdayName;
+}
+
+export function allWeekDays(date: Date): Date[] {
+  let finalList: Date[] = [];
+  let firstDate = getStartOfWeek(date);
+  for (let i = 0; i < 7; i++) {
+    finalList.push(firstDate);
+    firstDate = addDuration(firstDate, new Duration({ days: 1 }));
+  }
+  return finalList;
 }
 
 ///Utc delta time is diffrent in some dates because of the light day saving time

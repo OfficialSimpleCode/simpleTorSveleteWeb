@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { customCircleIconClass } from "$lib/consts/css_classes";
+  import { cssSizesClasses } from "$lib/consts/css_classes";
   import { _, translate } from "$lib/utils/translate";
   import GeneralIcon from "./GeneralIcon.svelte";
 
@@ -21,9 +21,9 @@
 <div class="flex flex-col items-center">
   {#if href}
     <a {href} class={!active ? "opacity opacity-70" : ""}>
-      <div class="{ngClass} {customCircleIconClass[size].cssClass}">
+      <div class="{ngClass} {cssSizesClasses[size].cssClass}">
         {#if !loading}
-          <GeneralIcon {icon} size={customCircleIconClass[size].iconSize} />
+          <GeneralIcon {icon} size={cssSizesClasses[size].iconSize} />
         {:else}
           <div class="loading loading-spinner"></div>
         {/if}
@@ -31,9 +31,9 @@
     </a>
   {:else}
     <button on:click={handleClick} class={!active ? "opacity opacity-70" : ""}>
-      <div class="{ngClass} {customCircleIconClass[size].cssClass}">
+      <div class="{ngClass} {cssSizesClasses[size].cssClass}">
         {#if !loading}
-          <GeneralIcon {icon} size={customCircleIconClass[size].iconSize} />
+          <GeneralIcon {icon} size={cssSizesClasses[size].iconSize} />
         {:else}
           <div class="loading loading-spinner"></div>
         {/if}

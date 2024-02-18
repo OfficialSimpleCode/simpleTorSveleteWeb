@@ -1,5 +1,10 @@
-export const numberOfDaysInView: number = 5;
-export const minutesIn24Hours: number = 1440;
-export const minutesInHour: number = 60;
-export const timeHeight: number = 40;
-export const waitingListHeight: number = 150;
+// Define an array of weekday names
+export const weekdays = [
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+];

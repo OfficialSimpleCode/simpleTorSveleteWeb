@@ -7,8 +7,8 @@
   } from "$lib/consts/app_external_links";
   import { contactUsAnimation } from "$lib/consts/resources";
   import { translate } from "$lib/utils/translate";
-  import LottieAnimation from "../LottieAnimation.svelte";
   import CustomCircleIcon from "../custom_components/CustomCircleIcon.svelte";
+  import LottieAnimation from "../custom_components/LottieAnimation.svelte";
 
   export let dialog: HTMLDialogElement;
 
@@ -47,8 +47,7 @@
       <LottieAnimation
         animationFile={contactUsAnimation}
         loop={true}
-        height={260}
-        width={260}
+        size="xl4"
       />
 
       <!-- conatct us description -->

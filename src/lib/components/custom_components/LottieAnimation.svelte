@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { cssSizesClasses } from "$lib/consts/css_classes";
   import { onMount } from "svelte";
   export let animationFile: string;
-  export let height: number = 250;
-  export let width: number = 250;
+  export let size: "xs" | "sm" | "md" | "lg" | "xl" | "xl2" | "xl3" | "xl4" =
+    "lg";
+
   export let loop: boolean = false;
 
   let animationContainer: HTMLElement;
@@ -17,4 +19,4 @@
   });
 </script>
 
-<div bind:this={animationContainer} class="h-[{height}px] w-[{width}px]" />
+<div bind:this={animationContainer} class={cssSizesClasses[size].cssClass} />

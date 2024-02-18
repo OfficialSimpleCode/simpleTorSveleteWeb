@@ -1,9 +1,4 @@
 <script lang="ts">
-  import BookingController from "$lib/controllers/booking_controller";
-  import { Duration } from "$lib/models/core/duration";
-  import { setToMidNight } from "$lib/utils/dates_utils";
-  import { addDuration } from "$lib/utils/duration_utils";
-  import * as sync from "@syncfusion/ej2-base";
   import "@syncfusion/ej2-base/styles/material.css";
   import "@syncfusion/ej2-buttons/styles/material.css";
   import "@syncfusion/ej2-calendars/styles/material.css";
@@ -12,140 +7,10 @@
   import "@syncfusion/ej2-lists/styles/material.css";
   import "@syncfusion/ej2-navigations/styles/material.css";
   import "@syncfusion/ej2-popups/styles/material.css";
-  import * as schedule from "@syncfusion/ej2-schedule";
 
   import "@syncfusion/ej2-schedule/styles/material.css";
   import "@syncfusion/ej2-splitbuttons/styles/material.css";
-  import { onMount } from "svelte";
-
-  import { page } from "$app/stores";
-  import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
-  import TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
-  import { loadBookingMakerTimeData } from "$lib/utils/booking_maker";
-  import { dateToTimeStr } from "$lib/utils/times_utils";
-  import { onEventClick } from "./helpers/on_tap_time_obj";
-  const { Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop } = schedule;
-  let downloadAppDialog: HTMLDialogElement;
-
-  sync.registerLicense(
-    "Ngo9BigBOggjHTQxAR8/V1NAaF5cWWRCfEx0Q3xbf1x0ZFRHallSTnZYUiweQnxTdEFjWHxecHZQQWRbWEB+Wg=="
-  );
-
-  onMount(() => {
-    schedule.Schedule.Inject(
-      Day,
-      Week,
-      WorkWeek,
-      Month,
-      Agenda,
-      Resize,
-      DragAndDrop
-    );
-
-    (window as TemplateFunction).timePickerText = (data: any) => {
-      const timePickerObj = TimePickerObj.fromScheduleEvent(data);
-      if (timePickerObj.isWaitingList) {
-        return "waitingList";
-      }
-      if (timePickerObj.isVacation) {
-        return "vacation";
-      }
-      if (timePickerObj.isHoliday) {
-        return "holiday";
-      }
-      if (timePickerObj.displayDate != null) {
-        return dateToTimeStr(timePickerObj.displayDate);
-      }
-    };
-    interface TemplateFunction extends Window {
-      timePickerText?: Function;
-    }
-
-    BookingController.scheduleObj = new schedule.Schedule({
-      currentView: "Week",
-      dateFormat: "dd-MMM-yyyy",
-      width: "100%",
-      height: "100%",
-      views: ["Week"],
-
-      allowDragAndDrop: false,
-      showTimeIndicator: false,
-      workHours: { highlight: false },
-      showQuickInfo: false,
-      eventClick: (args) => onEventClick(args, downloadAppDialog),
-      minDate: setToMidNight(new Date()),
-      maxDate: addDuration(
-        new Date(),
-        new Duration({ days: BookingController.worker.daysToAllowBookings })
-      ),
-      //headerRows: [],
-
-      showHeaderBar: false,
-      allowMultiCellSelection: false,
-
-      timeScale: {},
-      eventSettings: {
-        fields: {
-          id: "id",
-          startTime: { name: "from" },
-          endTime: { name: "to" },
-        },
-
-        template: "#apptemplate",
-        enableMaxHeight: true,
-        allowEditing: false,
-      },
-    });
-
-    BookingController.scheduleObj.appendTo("#schedule");
-
-    //initial the first time lod the calendar
-    //delete the exsit events
-    BookingController.scheduleObj!.deleteEvent(
-      Object.values(BookingController.timePickerObjects)
-    );
-    loadBookingMakerTimeData(
-      BookingController.scheduleObj!.getCurrentViewDates(),
-      BookingController.worker,
-      [30]
-    );
-
-    BookingController.scheduleObj!.addEvent(
-      Object.values(BookingController.timePickerObjects)
-    );
-
-    //when the user interact with the schedule and navigate between
-    //dates need to load the new dates
-    BookingController.scheduleObj.actionComplete = (args) => {
-      if (
-        args.requestType === "viewNavigate" ||
-        args.requestType === "dateNavigate"
-      ) {
-        if (BookingController.scheduleObj == null) {
-          return;
-        }
-        //delete the exsit events
-        BookingController.scheduleObj!.deleteEvent(
-          Object.values(BookingController.timePickerObjects)
-        );
-        loadBookingMakerTimeData(
-          BookingController.scheduleObj!.getCurrentViewDates(),
-          BookingController.worker,
-          [30]
-        );
-
-        BookingController.scheduleObj!.addEvent(
-          Object.values(BookingController.timePickerObjects)
-        );
-      }
-    };
-    console.log(BookingController.timePickerObjects);
-  });
+  import TimePickerScheudle from "./components/schedule/TimePickerScheudle.svelte";
 </script>
 
-<!-- Dialog -->
-{#if $page.state.showModal}
-  <DownloadAppDialog bind:dialog={downloadAppDialog} />
-{/if}
-
-<div id="schedule"></div>
+<TimePickerScheudle />
