@@ -28,7 +28,6 @@
       translateKey=""
       bgColor="bg-base-100  "
       circlePadding={2}
-      size={20}
     />
     <p>{translate("debtOnBooking", $_)}</p>
     <p>

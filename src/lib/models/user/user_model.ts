@@ -66,7 +66,7 @@ export default class UserModel {
   devices: Record<string, Device> = {};
   bookings: UserBookings = new UserBookings();
   hasOldNotification: boolean = false;
-  bookingsToShow: Booking[] = [];
+  bookingsToShow: Booking[] | undefined;
 
   constructor({
     name = "",

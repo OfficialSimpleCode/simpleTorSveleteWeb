@@ -1,10 +1,5 @@
 import { dayLightSavingTimes } from "$lib/consts/schedule";
-import {
-  minutesIn24Hours,
-  minutesInHour,
-  timeHeight,
-  waitingListHeight,
-} from "$lib/consts/times";
+
 import { WindowSpaces } from "$lib/consts/worker";
 import BookingController, {
   bookingMakerStore,
@@ -28,7 +23,7 @@ import { length } from "./core_utils";
 export function loadBookingMakerTimeData(
   visibleDates: Date[],
   worker: WorkerModel | undefined,
-  timeIntervalHeight: number[],
+
   isUpdateSheet?: boolean,
   oldBooking?: Booking,
   oldBookingForReccurence?: Date
@@ -40,7 +35,7 @@ export function loadBookingMakerTimeData(
     return;
   }
   // empty the current events
-  BookingController.timePickerObjects = {};
+  bookingMaker.timePickerObjects = {};
   //remember the first date that user saw in the screen
   if (visibleDates.length > 1) {
     BookingController.firstDateToShow = visibleDates[0];
@@ -137,13 +132,11 @@ export function loadBookingMakerTimeData(
   maxLen = Math.max(maxLen + 1, 15); // adding 1 to put padding at the end
 
   maxLen += worker!.showWaitingListWhenThereIsChoises ? 4 : 0;
-  // fix the calendar timeIntervalHour size
-  fixCalendartSizes(maxLen, timeIntervalHeight);
-  const minutesForWaitingsList = minutesForWithingList(timeIntervalHeight);
+
   console.log(maxLen);
   Object.entries(daysTimes).forEach(([visibleDateStr, timeList]) => {
     const visibleDate = dateStrToDate(visibleDateStr);
-
+    bookingMaker.timePickerObjects[visibleDateStr] = [];
     if (worker!.recurrence.vacationInDate(visibleDate) != undefined) {
       if (worker!.showVacations) {
         const newTimePickerObj = new TimePickerObj({
@@ -151,11 +144,8 @@ export function loadBookingMakerTimeData(
           isVacation: true,
         });
         newTimePickerObj.from = visibleDate;
-        newTimePickerObj.duration = new Duration({
-          minutes: Math.floor(minutesForWaitingsList * 1.3),
-        });
-        BookingController.timePickerObjects[newTimePickerObj.id] =
-          newTimePickerObj.toJson();
+
+        bookingMaker.timePickerObjects[visibleDateStr].push(newTimePickerObj);
       }
       return;
     }
@@ -166,23 +156,16 @@ export function loadBookingMakerTimeData(
         isHoliday: true,
       });
       newTimePickerObj.from = visibleDate;
-      newTimePickerObj.duration = new Duration({
-        minutes: Math.floor(minutesForWaitingsList * 1.3),
-      });
-      BookingController.timePickerObjects[newTimePickerObj.id] =
-        newTimePickerObj.toJson();
+
+      bookingMaker.timePickerObjects[visibleDateStr].push(newTimePickerObj);
+
       return;
     }
-    const eventMinutes = Math.floor(minutesIn24Hours / maxLen);
 
     // put the events inside the events timePickerObjects to display them nex frame
     let minutesToPresent = 0;
     timeList.forEach((timeObj, index) => {
       if (bookingMaker.isMultiEvent !== true || timeObj.hasFreePlace) {
-        const minutesToAdd =
-          timeObj.showParticipants && timeObj.isMulti
-            ? Math.ceil(eventMinutes * 1.5)
-            : eventMinutes;
         let dateToPut = addDuration(
           visibleDate,
           new Duration({ minutes: minutesToPresent })
@@ -198,11 +181,8 @@ export function loadBookingMakerTimeData(
         const newTimePickerObj = TimePickerObj.fromTimePickerObj(timeObj);
 
         newTimePickerObj.from = dateToPut;
-        newTimePickerObj.duration = new Duration({ minutes: minutesToAdd });
 
-        BookingController.timePickerObjects[newTimePickerObj.id] =
-          newTimePickerObj.toJson();
-        minutesToPresent += minutesToAdd;
+        bookingMaker.timePickerObjects[visibleDateStr].push(newTimePickerObj);
       } else {
         if (
           bookingMaker.isMultiEvent === true &&
@@ -219,12 +199,8 @@ export function loadBookingMakerTimeData(
           visibleDate,
           new Duration({ minutes: minutesToPresent })
         );
-        newTimePickerObj.duration = new Duration({
-          minutes: Math.ceil(minutesForWaitingsList * 1.1),
-        });
-        BookingController.timePickerObjects[newTimePickerObj.id] =
-          newTimePickerObj.toJson();
-        minutesToPresent += Math.ceil(minutesForWaitingsList * 1.1);
+
+        bookingMaker.timePickerObjects[visibleDateStr].push(newTimePickerObj);
       }
     });
     if (
@@ -239,14 +215,13 @@ export function loadBookingMakerTimeData(
         visibleDate,
         new Duration({ minutes: minutesToPresent })
       );
-      (newTimePickerObj.duration = new Duration({
-        minutes: minutesForWaitingsList,
-      })),
-        (BookingController.timePickerObjects[newTimePickerObj.id] =
-          newTimePickerObj.toJson());
+
+      bookingMaker.timePickerObjects[visibleDateStr].push(newTimePickerObj);
       return;
     }
   });
+
+  bookingMakerStore.set(bookingMaker);
 }
 
 function getEdgeTimes(
@@ -281,26 +256,6 @@ function getEdgeTimes(
     finalTimes.add(last[0]);
   }
   return Array.from(finalTimes);
-}
-
-function fixCalendartSizes(
-  longestList: number,
-  timeIntervalHeight: number[]
-): void {
-  if (longestList === 0) {
-    return;
-  }
-  // divide the day minutes to all the events
-  const eventMinutes = Math.floor(minutesIn24Hours / longestList);
-  // calculate the neccessary heigth for hour to display "timeHeight" to time
-  timeIntervalHeight[0] = timeHeight * (minutesInHour / eventMinutes);
-}
-
-function minutesForWithingList(timeIntervalHeight: number[]): number {
-  // divide the day minutes to all the events
-  const housrToGetHeight = waitingListHeight / timeIntervalHeight[0];
-  // calculate the neccessary heigth for hour to display "timeHeight" to time
-  return Math.ceil(housrToGetHeight * minutesInHour);
 }
 
 function lastDate(worker: WorkerModel | undefined): Date | undefined {

@@ -6,11 +6,10 @@
 </script>
 
 {#if $isConnectedStore == null}
-  <CustomCircleIcon icon="" loading={true} size={22} />
+  <CustomCircleIcon icon="" loading={true} />
 {:else}
   <CustomCircleIcon
     icon={$isConnectedStore ? "iconamoon:profile-fill" : "ic:baseline-login"}
-    size={22}
     href={$isConnectedStore ? `${base}/profile` : `${base}/login`}
   />
 {/if}

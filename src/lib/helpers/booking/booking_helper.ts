@@ -558,15 +558,30 @@ export default class BookingHelper {
       }
 
       if (needCancel) {
-        NotificationsHelper.GI().notifyWorkerAboutUserWantToDelete(
-          booking,
-          worker
-        );
+        if (booking.isMultiRef) {
+          NotificationsHelper.GI().notifyWorkerThatUserWantToCancelMultiBookingSigning(
+            { userBooking: booking, worker }
+          );
+        } else {
+          NotificationsHelper.GI().notifyWorkerAboutUserWantToDelete(
+            booking,
+            worker
+          );
+        }
       } else {
-        NotificationsHelper.GI().notifyWorkerAboutUserRestoreBooking(
-          booking,
-          worker
-        );
+        if (booking.isMultiRef) {
+          NotificationsHelper.GI().notifyWorkerThatUseRestoredHisMultiBookingSigning(
+            {
+              userBooking: booking,
+              worker,
+            }
+          );
+        } else {
+          NotificationsHelper.GI().notifyWorkerAboutUserRestoreBooking(
+            booking,
+            worker
+          );
+        }
       }
     } else {
       ErrorsController.displayError();

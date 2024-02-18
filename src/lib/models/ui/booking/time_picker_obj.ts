@@ -1,6 +1,4 @@
-import { Duration } from "$lib/models/core/duration";
 import RecurrenceEvent from "$lib/models/schedule/recurrence_event";
-import { addDuration } from "$lib/utils/duration_utils";
 import pkg from "uuid";
 const { v4 } = pkg;
 export default class TimePickerObj {
@@ -11,7 +9,7 @@ export default class TimePickerObj {
   showParticipants: boolean = true;
   isWaitingList: boolean = false;
   showMultiWaitingList: boolean = true;
-  duration: Duration = new Duration({});
+
   isMulti: boolean = false;
   recurrenceMultiEvent?: RecurrenceEvent;
   fatherRecurrenceMultiEventDate?: Date;
@@ -90,7 +88,7 @@ export default class TimePickerObj {
       fatherRecurrenceMultiEventDate: other.fatherRecurrenceMultiEventDate,
     });
     clonedTimePickerObj.from = other.from;
-    clonedTimePickerObj.duration = other.duration;
+
     return clonedTimePickerObj;
   }
 
@@ -132,7 +130,7 @@ export default class TimePickerObj {
     clonedTimePickerObj.fatherRecurrenceMultiEventDate =
       event.fatherRecurrenceMultiEventDate;
     clonedTimePickerObj.from = event.from;
-    clonedTimePickerObj.duration = event.duration;
+
     return clonedTimePickerObj;
   }
 
@@ -140,9 +138,7 @@ export default class TimePickerObj {
     const data: Record<string, any> = {};
     data["from"] = this.from;
     data["id"] = this.id;
-    data["duration"] = this.duration.inMinutes;
 
-    data["to"] = addDuration(this.from, this.duration);
     if (this.displayDate != null) {
       data["displayDate"] = this.displayDate;
     }

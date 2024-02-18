@@ -17,13 +17,13 @@ import "@syncfusion/ej2-inputs/styles/material.css";
 import "@syncfusion/ej2-lists/styles/material.css";
 import "@syncfusion/ej2-navigations/styles/material.css";
 import "@syncfusion/ej2-popups/styles/material.css";
-import * as schedule from "@syncfusion/ej2-schedule";
 
 import MultiBooking from "$lib/models/multi_booking/multi_booking";
 import type PhoneDataResult from "$lib/models/resps/phone_data_result";
 import type TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
 import { loadBookingMakerTimeData } from "$lib/utils/booking_maker";
 import { isNotEmpty } from "$lib/utils/core_utils";
+import { allWeekDays } from "$lib/utils/dates_utils";
 import { get, writable } from "svelte/store";
 interface BookingMaker {
   workerId?: string;
@@ -40,14 +40,14 @@ interface BookingMaker {
   currentStep: number;
   isMultiEvent: boolean;
   note: string;
+  timePickerObjects: Record<string, TimePickerObj[]>;
+  timePickerDisplayDates: Date[];
 }
 export const bookingMakerStore = writable<BookingMaker>();
 
 export default class BookingController {
-  static timePickerObjects: Record<string, Record<string, any>> = {};
   static bookingToUpdate: Booking | undefined;
   static visibleDates: Date[] = [];
-  static scheduleObj: schedule.Schedule | undefined;
   static firstDateToShow: Date | undefined;
   static phoneVerificationResult: PhoneDataResult | undefined;
   static pickedTimeObj: TimePickerObj | undefined;
@@ -68,6 +68,8 @@ export default class BookingController {
       isBookingWithPaymentUpdate: false,
       currentStep: 0,
       isMultiEvent: false,
+      timePickerObjects: {},
+      timePickerDisplayDates: allWeekDays(new Date()),
     };
 
     Object.entries(BookingController.bookingToUpdate?.treatments ?? {}).forEach(
@@ -75,6 +77,7 @@ export default class BookingController {
         initialBookingMaker.services[treatment.id] = treatment;
       }
     );
+
     //initial back to undified the booking
     BookingController.bookingToUpdate = undefined;
     bookingMakerStore.set(initialBookingMaker);
@@ -151,19 +154,11 @@ export default class BookingController {
     //only if there picked worker and picked service  need to update the schedule
     if (
       bookingMaker.workerId != null &&
-      Object.entries(bookingMaker.services).length > 0 &&
-      BookingController.scheduleObj != undefined
+      Object.entries(bookingMaker.services).length > 0
     ) {
-      BookingController.scheduleObj.deleteEvent(
-        Object.values(BookingController.timePickerObjects)
-      );
       loadBookingMakerTimeData(
-        BookingController.scheduleObj.getCurrentViewDates(),
-        BookingController.worker,
-        [30]
-      );
-      BookingController.scheduleObj.addEvent(
-        Object.values(BookingController.timePickerObjects)
+        bookingMaker.timePickerDisplayDates,
+        BookingController.worker
       );
     }
   }
@@ -425,12 +420,7 @@ export function showPhoneVerificationAlert(worker: WorkerModel): boolean {
   const tempBooking = new Booking({});
   tempBooking.userFcms = UserInitializer.GI().user.fcmsTokens;
   tempBooking.isVerifiedPhone = true;
-  console.log("eweeeeeeeeeeeeeeeeeeee");
-  console.log(" worker.mustVerifyPhone", worker.mustVerifyPhone);
-  console.log(
-    " UserInitializer.GI().user.userPublicData.isVerifiedPhone",
-    UserInitializer.GI().user.userPublicData.isVerifiedPhone
-  );
+
   return (
     (sendMessage({ booking: tempBooking, worker: worker }) ==
       NotificationType.message ||

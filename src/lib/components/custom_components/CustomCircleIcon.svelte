@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { cssSizesClasses } from "$lib/consts/css_classes";
   import { _, translate } from "$lib/utils/translate";
   import GeneralIcon from "./GeneralIcon.svelte";
 
@@ -6,32 +7,23 @@
   export let translateKey: string | undefined = undefined;
 
   export let handleClick: () => void = () => {};
-  export let size: number = 26;
+
+  export let size: "xs" | "sm" | "md" | "lg" = "sm";
   export let bgColor: string = "bg-base-300";
   export let href: string | undefined = undefined;
 
-  export let circlePadding: number = 18;
   export let loading: boolean = false;
   export let active: boolean = true;
-  // const heightText = ``;
-  // const widthText = `w-[${size + circlePadding}px]`;
-  // console.log(icon, heightText, widthText);
-  const cssClass = `flex items-center justify-center rounded-full  hover:bg-primary ${bgColor} h-[38px] w-[38px] block shrink-0`;
+
+  const ngClass = `flex items-center justify-center rounded-full  hover:bg-primary ${bgColor}  block shrink-0 transition-all duration-200`;
 </script>
 
 <div class="flex flex-col items-center">
   {#if href}
-    <a
-      {href}
-      class=" h-{size + circlePadding} w-{size + circlePadding}{!active
-        ? 'opacity opacity-70'
-        : ''}"
-    >
-      <div class={cssClass}>
+    <a {href} class={!active ? "opacity opacity-70" : ""}>
+      <div class="{ngClass} {cssSizesClasses[size].cssClass}">
         {#if !loading}
-          <div class="">
-            <GeneralIcon {icon} {size} />
-          </div>
+          <GeneralIcon {icon} size={cssSizesClasses[size].iconSize} />
         {:else}
           <div class="loading loading-spinner"></div>
         {/if}
@@ -39,9 +31,9 @@
     </a>
   {:else}
     <button on:click={handleClick} class={!active ? "opacity opacity-70" : ""}>
-      <div class={cssClass}>
+      <div class="{ngClass} {cssSizesClasses[size].cssClass}">
         {#if !loading}
-          <GeneralIcon {icon} {size} />
+          <GeneralIcon {icon} size={cssSizesClasses[size].iconSize} />
         {:else}
           <div class="loading loading-spinner"></div>
         {/if}

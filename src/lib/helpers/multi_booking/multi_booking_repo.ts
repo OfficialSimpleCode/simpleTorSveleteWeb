@@ -15,7 +15,6 @@ import {
   usersCollection,
   workersCollection,
 } from "$lib/consts/db";
-import { EventFilterType } from "$lib/consts/worker_schedule";
 import type BookingInvoiceData from "$lib/models/booking/booking_invoice_data";
 import Booking from "$lib/models/booking/booking_model";
 import type BusinessModel from "$lib/models/business/business_model";
@@ -1364,78 +1363,6 @@ export default class MultiBookingRepo
     };
 
     return await this.runTransaction(transacionCommands);
-  }
-
-  async updateMultiBookingNeedCancel(
-    booking: Booking,
-    needCancel: boolean
-  ): Promise<boolean> {
-    const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
-    const signingDay = dateToDayStr(booking.bookingDate);
-    const signingMonth = dateToMonthStr(booking.bookingDate);
-    const signingDate = dateToDateStr(booking.bookingDate);
-    const signingTime = dateToTimeStr(booking.bookingDate);
-
-    const transacionCommands = async (
-      transaction: Transaction
-    ): Promise<any> => {
-      const multiBooking = booking.toMultiBooking;
-      const updateBooking = await this.getUpdatedMultiBookingDate({
-        transaction,
-        multiBookingToUpdate: multiBooking,
-        multiBookingUser:
-          Object.entries(multiBooking.users).length > 0
-            ? multiBooking.users[Object.keys(multiBooking.users)[0]]
-            : undefined,
-        workerAction: false,
-      });
-
-      if (!updateBooking) {
-        return false;
-      } else {
-        multiBooking.bookingDate = updateBooking.bookingDate;
-        booking.isUserExist = updateBooking.isUserExist;
-      }
-
-      // Add the user object from the worker collection
-      this.transactionUpdateAsMap({
-        transaction,
-        path: `${path}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`,
-        docId: signingDate,
-        fieldName: `${signingTime}.users.${booking.bookingId}.needCancel`,
-        value: needCancel,
-      });
-
-      // Decrement the counter in the events doc
-      this.transactionUpdateAsMap({
-        transaction,
-        path: `${path}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsEventsCollection}`,
-        docId: signingMonth,
-        fieldName: `${signingDay}.${signingTime}.WDC`,
-        command: NumericCommands.increment,
-      });
-
-      this.updateUserAsRegularBooking({
-        transaction: transaction,
-        booking: booking,
-        data: { [`${booking.bookingId}.needCancel`]: needCancel },
-      });
-
-      return true;
-    };
-
-    return await this.runTransaction(transacionCommands).then(async (value) => {
-      if (value) {
-        // Increment the eventsCounters
-        await this.realTimeEventsCounterHandler({
-          workerId: booking.workerId,
-          businessId: booking.buisnessId,
-          increment: true,
-          types: new Map([[EventFilterType.needCancel, needCancel ? 1 : -1]]),
-        });
-      }
-      return value;
-    });
   }
 
   async updateFieldsInMultiBookingUser({

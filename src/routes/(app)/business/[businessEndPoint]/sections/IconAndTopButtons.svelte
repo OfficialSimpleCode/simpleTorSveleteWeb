@@ -120,7 +120,7 @@
       </div>
     {:else}
       <div
-        class="bg-base-300 xs:px-16 px-5 py-3 {containerRadius}  border-primary border flex items-center"
+        class="bg-base-300 xs:px-16 px-10 py-3 {containerRadius}  border-primary border flex items-center"
       >
         <div class="loading loading-spinner w-7 h-7" />
       </div>

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { _, translate } from "$lib/utils/translate";
-  import LottieAnimation from "../LottieAnimation.svelte";
   import DialogTitel from "../custom_components/DialogTitel.svelte";
+  import LottieAnimation from "../custom_components/LottieAnimation.svelte";
   export let dialog: HTMLDialogElement;
   export let animation: string = "";
   export let image: string = "";
@@ -31,7 +31,7 @@
     <!-- animation if provided -->
     {#if animation}
       <div class="flex items-center justify-center bg-slate-600 h-[120px]">
-        <LottieAnimation animationFile={animation} loop={true} />
+        <LottieAnimation animationFile={animation} loop={true} size="md" />
       </div>
     {:else if image}
       <img src={image} alt={imageAlt} />

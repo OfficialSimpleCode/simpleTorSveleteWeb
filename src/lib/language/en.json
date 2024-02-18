@@ -850,6 +850,8 @@
   "userWantsToDelete": "Request for deletion",
   "userRestore": "Client new order",
   "userResotreContent": "CLIENT renewed his order on DATE",
+  "userWantsToDeleteSigning": "Customer wants to cancel registration",
+  "userRestoreHisSigning": "Customer has renewed registration",
   "userResotreContentMultiBooking": "CLIENT renewed his registration for the event TREATMENTNAME on DATE",
   "userWantDeleteContent": "CLIENT wants to delete his order on DATE",
   "signUpHeadline": "Create a user",

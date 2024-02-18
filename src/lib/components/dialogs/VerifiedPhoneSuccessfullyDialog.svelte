@@ -3,7 +3,7 @@
   import { formatedPhone } from "$lib/utils/string_utils";
   import { _, translate } from "$lib/utils/translate";
   import { authDataStore } from "../../../routes/(auth)/auth_controller";
-  import LottieAnimation from "../LottieAnimation.svelte";
+  import LottieAnimation from "../custom_components/LottieAnimation.svelte";
 
   export let dialog: HTMLDialogElement;
 </script>
@@ -22,7 +22,7 @@
     </h3>
     <!-- success anomation  -->
     <div class="flex items-center w-24">
-      <LottieAnimation animationFile={successAnimation} />
+      <LottieAnimation animationFile={successAnimation} size="md" />
     </div>
 
     <!-- explanation text -->

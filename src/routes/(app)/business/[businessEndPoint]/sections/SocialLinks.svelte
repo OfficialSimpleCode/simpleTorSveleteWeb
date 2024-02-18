@@ -131,6 +131,7 @@
         <CustomCircleIcon
           icon={socialLink.icon}
           href={socialLink.href}
+          size="md"
           handleClick={socialLink.func}
           translateKey={socialLink.name}
         />
