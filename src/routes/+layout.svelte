@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Maintanance from "$lib/components/Maintanance.svelte";
   import ToastManager from "$lib/components/ToastManager.svelte";
   import { LoadingStatuses } from "$lib/consts/loading_statuses";
   import { initialTheme } from "$lib/controllers/theme_controller";
@@ -16,9 +17,9 @@
 </script>
 
 <ToastManager />
-<div class="w-full h-full">
+<div class="w-full h-ful">
   {#if $appStateStore === LoadingStatuses.maintenanceMode}
-    <!-- TODO maintanance -->
+    <Maintanance />
     <div />
   {:else}
     <slot />

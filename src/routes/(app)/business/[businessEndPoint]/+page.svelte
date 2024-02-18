@@ -14,9 +14,9 @@
   import type { Update } from "$lib/models/business/update_model";
   import { businessStore } from "$lib/stores/Business";
   import { isConnectedStore, userStore } from "$lib/stores/User";
+  import Footer from "../../../../lib/components/Footer.svelte";
   import { popUpUpdate } from "./helpers/pop_up_update";
   import ChangingImages from "./sections/ChangingImages.svelte";
-  import Footer from "./sections/Footer.svelte";
   import IconAndTopButtons from "./sections/IconAndTopButtons.svelte";
   import ProductsSection from "./sections/ProductsSection.svelte";
   import StoryImages from "./sections/StoryImages.svelte";

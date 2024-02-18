@@ -13,3 +13,6 @@ export const successAnimation: string =
 
 export const contactUsAnimation: string =
   "https://lottie.host/18858504-d30c-4fbf-8dda-2808eb8e3b97/I2QRzX0rDA.json";
+
+export const maintananceAnimation: string =
+  "https://lottie.host/68ad8da1-c74c-4db1-ac55-c7cbdcb3df3b/ycZHuddbvd.json";

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import SearchBusiness from "$lib/components/SearchBusiness.svelte";
   import { logger } from "$lib/consts/application_general";
   import { storyImagesRatioX, storyImagesRatioY } from "$lib/consts/sizes";
   import { onMount } from "svelte";
+  import HomePage from "./(home_page)/HomePage.svelte";
   let screenHeight: number;
   onMount(() => {
     screenHeight = window.innerHeight;
@@ -32,4 +32,5 @@
   <meta name="description" content="SimpleTor Web Application" />
 </svelte:head>
 
-<SearchBusiness titleKey="businessSearchShowcase" />
+<HomePage />
+<!-- <SearchBusiness titleKey="businessSearchShowcase" /> -->

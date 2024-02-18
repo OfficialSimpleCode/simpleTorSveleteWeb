@@ -25,7 +25,7 @@
   <div
     class="flex flex-col items-center justify-center w-full pb-14 pt-10 {onBackground
       ? 'bg-base-100'
-      : 'bg-base-300'}  px-2 sm:px-16 gap-4"
+      : 'bg-base-200'}  px-2 sm:px-16 gap-4"
   >
     <!-- products title -->
     <h1 class="text-center font-bold text-2xl pb-2">

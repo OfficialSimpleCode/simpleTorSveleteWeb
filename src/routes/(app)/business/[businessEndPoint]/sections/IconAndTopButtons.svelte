@@ -69,12 +69,12 @@
 
 <section
   id="profile-row"
-  class="flex justify-between items-start gap-3 mx-8 sm:mx-16 relative xs:top-[-3rem] top-[-73px] text-center"
+  class="flex justify-between items-start mx-8 gap-x-3 sm:mx-16 relative xs:top-[-3rem] top-[-73px] text-center"
 >
   <!-- icon business name and address -->
-  <div class="flex flex-col justify-center items-center">
+  <div class="flex flex-col justify-center gap-y-3 items-center">
     <Avatar img={$businessStore.design.shopIconUrl} />
-    <h1 class="md:text-4xl xs:text-3xl text-2xl pt-2">
+    <h1 class="md:text-4xl xs:text-3xl text-2xl pt- max-w-64">
       {$businessStore.shopName}
     </h1>
     <button
@@ -96,10 +96,10 @@
 
   <!-- Order now and Share buttons or not available indicator -->
 
-  <div class="flex h-24 items-center px-4 md:px-10 lg:px-8 xl:px-16">
+  <div class="flex h-24 items-center">
     {#if $activeBusiness === true}
       <!-- Order now and Share buttons -->
-      <div class="flex gap-5 items-center">
+      <div class="flex xs:gap-5 gap-3 items-center">
         <a
           class="btn btn-primary xs:px-10 px-6"
           href="{base}/business/{$businessStore.url}/order"
