@@ -1,5 +1,8 @@
 <script lang="ts">
-  import { scheuleItemWidthClass } from "$lib/consts/css_classes";
+  import {
+    bookingMakerButton,
+    scheuleItemWidthClass,
+  } from "$lib/consts/css_classes";
   import { bookingMakerStore } from "$lib/controllers/booking_controller";
   import type TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
   import { dateIsoStr, dateToTimeStr } from "$lib/utils/times_utils";
@@ -18,14 +21,14 @@
 
 <button
   {id}
-  class="btn {isPicked
+  class=" {isPicked
     ? 'bg-base-200'
-    : 'bg-primary'} hover:bg-primary hover:opacity-90 {scheuleItemWidthClass} {isPicked
+    : 'bg-primary'} {bookingMakerButton}  {scheuleItemWidthClass} {isPicked
     ? 'outline outline-1'
     : ''}"
   on:click={() => onTimeItemClick(timeObj)}
 >
-  <h3>
+  <h3 class="text-xs sm:text-sm text-center">
     {timeObj.displayDate != null ? dateToTimeStr(timeObj.displayDate) : ""}
   </h3>
 </button>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { sendMessageAnimation } from "$lib/consts/resources";
+  import { phoneAnimation } from "$lib/consts/resources";
   import { translate } from "$lib/utils/translate";
   import DialogTitel from "../custom_components/DialogTitel.svelte";
   import DownloadAppButton from "../custom_components/DownloadAppButton.svelte";
@@ -22,11 +22,7 @@
       <h3 class="text-sm text-center mx-6">
         {translate(explainTranslateKey ?? "downloadTheAppExplain")}
       </h3>
-      <LottieAnimation
-        animationFile={sendMessageAnimation}
-        loop={true}
-        size="xl3"
-      />
+      <LottieAnimation animationFile={phoneAnimation} loop={true} size="xl3" />
       <DownloadAppButton />
     </div>
   </div>

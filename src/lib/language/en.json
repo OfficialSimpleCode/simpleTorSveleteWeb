@@ -3068,5 +3068,6 @@
   "theBusinessWillOpenDierctlyInApp": "A user who scans the barcode will be immediately transferred to the business in the application. If the user does not have the application, he will be transferred to the business website.",
   "verificationCanceling": "Verification cancellation",
   "cancelVerificationExplain": "Are you sure you want to cancel the phone number verification?",
-  "enterPhone": "Type a cell phone number"
+  "enterPhone": "Type a cell phone number",
+  "termToUse": "Terms of Use"
 }

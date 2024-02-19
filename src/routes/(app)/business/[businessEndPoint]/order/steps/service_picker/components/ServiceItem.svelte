@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { bookingMakerButton } from "$lib/consts/css_classes";
   import BookingController, {
     bookingMakerStore,
   } from "$lib/controllers/booking_controller";
   import { Duration } from "$lib/models/core/duration";
   import type Treatment from "$lib/models/general/treatment_model";
-  import { durationToString } from "$lib/utils/string_utils";
+  import { printDuration } from "$lib/utils/string_utils";
+  import { translate } from "$lib/utils/translate";
 
   export let treatment: Treatment;
 
@@ -13,29 +15,34 @@
 
 <div class="w-full flex flex-col items-center gap-2">
   <button
-    class="btn bg-primary hover:opacity-85 hover:bg-primary rounded-xl w-full h-20 sm:h-28 flex items-center px-6 gap-5 py-2 justify-between {isPicked
+    class="{bookingMakerButton} w-full h-20 sm:h-28 px-4 gap-5 py-2 {isPicked
       ? 'outline outline-2'
       : ''}"
     on:click={() => BookingController.onTapService(treatment)}
   >
-    <!-- name of the service -->
-    <h1 class="text-lg sm:text-2xl text-start w-[50%]">
-      {treatment.name}
-    </h1>
+    <div class="flex items-center justify-between gap-1 w-full">
+      <!-- name of the service -->
+      <h1 class="text-lg sm:text-2xl text-start w-[55%] line-clamp-2">
+        {treatment.name}
+      </h1>
 
-    <!-- other treatment data -->
-    <div class="flex items-center h-full w-[30%] sm:w-[20%] gap-[5px]">
-      <!-- horizontal divider  -->
-      <div class="divider divider-horizontal border-black" />
+      <!-- other treatment data -->
+      <div class="flex items-center h-full gap-[5px] w-[30%]">
+        <!-- horizontal divider  -->
+        <div class="divider divider-horizontal border-black" />
 
-      <!-- price and duration -->
-      <div class="flex flex-col">
-        <p class=" whitespace-nowrap text-sm sm:text-md" dir="ltr">
-          {treatment.price?.toString()}
-        </p>
-        <p class=" text-sm sm:text-md">
-          {durationToString(new Duration({ minutes: treatment.totalMinutes }))}
-        </p>
+        <!-- price and duration -->
+        <div class="flex flex-col w-full">
+          <p class=" whitespace-nowrap text-xs sm:text-md" dir="ltr">
+            {treatment.price?.toString()}
+          </p>
+
+          <p class=" text-xs sm:text-md">
+            {printDuration(new Duration({ minutes: treatment.totalMinutes })) +
+              " " +
+              translate("hours")}
+          </p>
+        </div>
       </div>
     </div>
   </button>

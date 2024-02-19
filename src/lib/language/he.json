@@ -3050,5 +3050,6 @@
   "theBusinessWillOpenDierctlyInApp": "משתמש שיסרוק את הברקוד יועבר מיד לעסק באפלקיציה אם אין למשתמש את האפליקציה הוא יועבר לאתר העסק",
   "verificationCanceling": "ביטול אימות",
   "cancelVerificationExplain": "האם אתה בטוח שאתה רוצה לבטל את אימות מספר הפלאפון?",
-  "enterPhone": "הקלד מספר פלאפון"
+  "enterPhone": "הקלד מספר פלאפון",
+  "termToUse": "תנאי שימוש"
 }

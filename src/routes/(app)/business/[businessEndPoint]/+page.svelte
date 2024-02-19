@@ -93,7 +93,7 @@
     <!-- Display images -->
     <StoryImages />
 
-    <ProductsSection></ProductsSection>
+    <ProductsSection />
   </div>
   <Footer />
 </main>

@@ -1,14 +1,18 @@
 <script lang="ts">
+  import { bookingMakerButton } from "$lib/consts/css_classes";
+  import { Gender } from "$lib/consts/gender";
   import BookingController, {
     bookingMakerStore,
   } from "$lib/controllers/booking_controller";
   import type WorkerModel from "$lib/models/worker/worker_model";
-  import { isManager } from "$lib/utils/general_utils";
+  import { isManager, pushDialog } from "$lib/utils/general_utils";
   import { imageByGender } from "$lib/utils/images_utils";
   import { dateToDateStr } from "$lib/utils/times_utils";
   import { _, translate } from "$lib/utils/translate";
+  import WorkerAboutDialog from "./WorkerAboutDialog.svelte";
 
   export let worker: WorkerModel;
+  let aboutDialog: HTMLDialogElement;
 
   // on tap save the worker and load the workes' treatment
   function onTapWorker(worker: WorkerModel) {
@@ -17,48 +21,59 @@
   $: isPicked = $bookingMakerStore.workerId === worker.id;
 </script>
 
+<WorkerAboutDialog bind:dialog={aboutDialog} {worker} />
+
 <button
-  class="btn bg-primary hover:opacity-85 hover:bg-primary rounded-xl w-full sm:min-w-[500px] md:w-[40%] h-20 sm:h-28 flex items-center px-2 gap-2 py-2 {isPicked
+  class="{bookingMakerButton} w-full h-20 sm:h-28 px-2 py-2 {isPicked
     ? 'outline outline-2'
     : ''}"
   on:click={() => onTapWorker(worker)}
 >
-  <!-- worke's avatar image -->
-  <div class="avatar">
-    <div class="w-14 sm:w-20 rounded-full">
-      <img
-        src={worker.profileImg || imageByGender(worker.gender)}
-        alt="employee"
-      />
+  <div class="flex flex-row items-center justify-start gap-1 w-full">
+    <!-- worke's avatar image -->
+    <div class="avatar">
+      <div class="w-16 rounded-full">
+        <img
+          src={worker.profileImg || imageByGender(worker.gender)}
+          alt="worker"
+        />
+      </div>
     </div>
-  </div>
 
-  <!-- worker details -->
-  <div class="w-[80%]">
-    <!-- name  -->
-    <h1
-      class="text-2xl sm:text-4xl text-start overflow-hidden w-[95%] whitespace-nowrap text-ellipsis"
-    >
-      {worker.name}
-    </h1>
+    <!-- worker details -->
+    <div class="flex flex-col w-[80%]">
+      <!-- name  -->
+      <h1
+        class="text-lg sm:text-2xl text-start overflow-hidden whitespace-nowrap text-ellipsis"
+      >
+        {worker.name}
+      </h1>
 
-    <div class="flex felx-row justify-between items-center gap-1">
-      <!-- worker abour or default -->
-      {#if worker.about === ""}
-        <p
-          class="opacity-90 text-start xs:text-lg text-sm overflow-hidden whitespace-nowrap text-ellipsis"
-        >
-          {translate(isManager(worker.id) ? "manager" : "worker", $_)}
-          {translate("since", $_)}: {dateToDateStr(worker.createdAt)}
+      <div class="flex flex-row justify-between items-center gap-1 w-full">
+        <!-- worker abour or default -->
+
+        <p class="opacity-90 text-start xs:text-md text-sm truncate">
+          {worker.about != ""
+            ? worker.about
+            : translate(
+                isManager(worker.id)
+                  ? worker.gender == Gender.female
+                    ? "ManagerInfoDefaultTextFemale"
+                    : "ManagerInfoDefaultText"
+                  : worker.gender == Gender.female
+                    ? "WorkerInfoDefaultTextFemale"
+                    : "WorkerInfoDefaultText",
+                $_,
+                false
+              ).replaceAll("DATE", dateToDateStr(worker.createdAt))}
         </p>
-      {:else}
-        <p
-          class="opacity-90 text-start xs:text-lg text-sm overflow-hidden w-[80%] whitespace-nowrap text-ellipsis"
-        >
-          {worker.about}
-        </p>
-      {/if}
-      <p class="mx-1 xs:text-lg text-sm">{translate("MoreText", $_)}</p>
+
+        <button on:click={() => pushDialog(aboutDialog)}>
+          <p class="xs:text-md text-sm hover:opacity-70">
+            {translate("MoreText", $_)}
+          </p>
+        </button>
+      </div>
     </div>
   </div>
 </button>
