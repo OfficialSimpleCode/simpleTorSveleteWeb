@@ -9,7 +9,7 @@
   <button
     class=""
     on:click={() => {
-      history.back();
+      dialog.close();
     }}
   >
     <Icon src={XCircle} size="24px" />

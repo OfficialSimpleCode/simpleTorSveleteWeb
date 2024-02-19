@@ -6,9 +6,11 @@
     getForwardDays,
     loadBookingMakerTimeData,
   } from "$lib/utils/booking_maker";
+  import { onMount } from "svelte";
   import DayColumn from "./components/DayColumn.svelte";
   import DayIndicator from "./components/DayIndicator.svelte";
 
+  import { dateIsoStr } from "$lib/utils/times_utils";
   import EmptyTimePickerSchedule from "./components/EmptyTimePickerSchedule.svelte";
   import ScheduleNavBar from "./components/ScheduleNavBar.svelte";
 
@@ -35,6 +37,22 @@
 
   //load the times obj for the first time after choose the service
   loadBookingMakerTimeData();
+
+  //
+  onMount(() => {
+    if ($bookingMakerStore.date != null) {
+      const htmlObj = document.getElementById(
+        dateIsoStr($bookingMakerStore.date)
+      );
+      if (htmlObj != null) {
+        htmlObj.scrollIntoView({
+          behavior: "auto",
+          block: "center",
+          inline: "center",
+        });
+      }
+    }
+  });
 
   $: isEmpty =
     Object.entries($bookingMakerStore.timePickerObjects).length === 0;

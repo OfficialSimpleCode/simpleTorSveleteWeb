@@ -13,6 +13,7 @@
   import { get } from "svelte/store";
   import { handleVerification } from "../../../../../../profile/helpers/handle_verification";
 
+  import AttentionText from "$lib/components/custom_components/AttentionText.svelte";
   import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
   import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
   import { maxButtonSize } from "$lib/consts/sizes";
@@ -97,7 +98,7 @@
   />
 {/if}
 <!-- xs:px-10 px-3 -->
-<div class="flex flex-row items-center justify-center w-full">
+<div class="flex flex-col items-center justify-center w-full gap-2">
   <button
     class="btn sm:text-xl btn-primary w-full {isLoading
       ? 'opacity-55'
@@ -120,13 +121,13 @@
     {/if}
 
     {#if publicCustomer.blocked}
-      <h3 class="text-sm">{translate("blockedUserCantOrder", $_)}</h3>
+      <AttentionText text={translate("blockedUserCantOrder", $_)} />
     {/if}
   </button>
   {#if needOnHold}
-    <h3 class="text-sm opacity-70 text-center">
-      {worker?.orderNeerDedlineBookingMessage ??
-        translate("bookingNeedConfirmation")}
-    </h3>
+    <AttentionText
+      text={worker?.orderNeerDedlineBookingMessage ??
+        translate("bookingNeedConfirmation", $_)}
+    />
   {/if}
 </div>

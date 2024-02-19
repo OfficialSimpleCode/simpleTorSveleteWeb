@@ -26,7 +26,7 @@
   <DownloadAppDialog bind:dialog={downloadAppDialog} />
 {/if}
 <button
-  class="btn bg-primary flex flex-col gap-3 hover:opacity-90 {scheuleItemWidthClass} h-[140px] sm:h-[160px]"
+  class="btn bg-primary flex flex-col gap-3 hover:bg-primary hover:opacity-90 {scheuleItemWidthClass} h-[140px] sm:h-[160px]"
   on:click={onClickWaitingList}
 >
   <h3 class="">{text}</h3>

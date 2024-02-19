@@ -14,12 +14,13 @@
   function onTapWorker(worker: WorkerModel) {
     BookingController.setWorkerId(worker.id);
   }
+  $: isPicked = $bookingMakerStore.workerId === worker.id;
 </script>
 
 <button
-  class="bg-primary rounded-xl w-full sm:min-w-[500px] md:w-[40%] h-20 sm:h-32 flex items-center px-2 gap-2 box-border py-2"
-  class:opacity-50={$bookingMakerStore.workerId !== worker.id}
-  class:border={$bookingMakerStore.workerId === worker.id}
+  class="btn bg-primary hover:opacity-85 hover:bg-primary rounded-xl w-full sm:min-w-[500px] md:w-[40%] h-20 sm:h-28 flex items-center px-2 gap-2 py-2 {isPicked
+    ? 'outline outline-2'
+    : ''}"
   on:click={() => onTapWorker(worker)}
 >
   <!-- worke's avatar image -->

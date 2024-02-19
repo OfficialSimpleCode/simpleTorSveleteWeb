@@ -1,7 +1,7 @@
 <script>
   import { _ } from "$lib/utils/translate";
 
-  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
+  import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import { bookingMakerStore } from "$lib/controllers/booking_controller";
 
   function handleTuggleClick() {
@@ -16,11 +16,13 @@
   }
 </script>
 
-<button
-  on:click={handleTuggleClick}
-  class="w-full flex flex-row gap-2 items-center max-w-[90%]"
-  class:opacity-50={!$bookingMakerStore.pickMultipleServices}
->
-  <GeneralIcon icon="mdi:checkbox-multiple-blank"></GeneralIcon>
-  {$_("chooseMulti")}
-</button>
+<div class="flex flex-col justify-start w-[90%]">
+  <button
+    on:click={handleTuggleClick}
+    class=" w-[70%] flex flex-row gap-2 items-center max-w-[80%] rounded-2xl"
+    class:opacity-60={!$bookingMakerStore.pickMultipleServices}
+  >
+    <CustomCircleIcon icon="mdi:checkbox-multiple-blank" size="md" />
+    {$_("chooseMulti")}
+  </button>
+</div>
