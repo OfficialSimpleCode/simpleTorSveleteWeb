@@ -55,6 +55,8 @@
     bind:dialog={makeSureRemoveVerification}
     contentTransKey="cancelVerificationExplain"
     titleTransKey="verificationCanceling"
+    cancelTranslateKey="exit"
+    saveTranslateKey="cancel"
     onSave={removeVerification}
   />
 

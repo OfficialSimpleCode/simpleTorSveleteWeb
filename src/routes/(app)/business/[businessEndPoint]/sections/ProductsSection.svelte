@@ -10,7 +10,7 @@
 
   let workersStories: Record<string, StoryImageData> = {};
 
-  workersStore.subscribe((workers) => {
+  $: workersStore.subscribe((workers) => {
     workersStories = {};
     Object.values(workers).forEach((worker) => {
       Object.entries(worker.storyImages).forEach(([imageId, image]) => {
@@ -18,7 +18,7 @@
       });
     });
   });
-  const onBackground = Object.entries(workersStories).length > 0;
+  $: onBackground = Object.entries(workersStories).length > 0;
 </script>
 
 {#if products.size > 0}

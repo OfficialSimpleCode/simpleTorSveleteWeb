@@ -2,7 +2,7 @@ import { logger } from "$lib/consts/application_general";
 import { LoginType } from "$lib/consts/auth";
 import { firebaseConfig } from "$lib/consts/firebase_config";
 import AppErrorsHelper from "$lib/helpers/app_errors";
-import { getApp, getApps, initializeApp } from "firebase/app";
+import { FirebaseError, getApp, getApps, initializeApp } from "firebase/app";
 import {
   FacebookAuthProvider,
   GoogleAuthProvider,
@@ -50,13 +50,15 @@ export class FirebaseAuthService extends VerificationService {
 
       return true;
     } catch (e) {
-      if (e instanceof Error) {
+      if (e instanceof FirebaseError) {
         console.error(`Error: ${e}`);
         logger.error(`it was an error the error is --> ${e}`);
-        logger.error(e.name);
-        AppErrorsHelper.GI().details = e.name;
+
+        const newCode = e.code.replace("auth/", "");
+        logger.error(newCode);
+        AppErrorsHelper.GI().details = newCode;
         AppErrorsHelper.GI().error =
-          verificationErrors[e.name] ?? Errors.unknown;
+          verificationErrors[newCode] ?? Errors.unknown;
       }
       return false;
     }
@@ -91,13 +93,15 @@ export class FirebaseAuthService extends VerificationService {
 
       return true;
     } catch (e) {
-      if (e instanceof Error) {
+      if (e instanceof FirebaseError) {
         console.error(`Error: ${e}`);
         logger.error(`it was an error the error is --> ${e}`);
-        logger.error(e.name);
-        AppErrorsHelper.GI().details = e.name;
+
+        const newCode = e.code.replace("auth/", "");
+        logger.error(newCode);
+        AppErrorsHelper.GI().details = newCode;
         AppErrorsHelper.GI().error =
-          verificationErrors[e.name] ?? Errors.unknown;
+          verificationErrors[newCode] ?? Errors.unknown;
       }
 
       return false;
@@ -130,13 +134,15 @@ export class FirebaseAuthService extends VerificationService {
       await this.signInWithAppleWebSRV(loginType);
       return true;
     } catch (e) {
-      if (e instanceof Error) {
+      if (e instanceof FirebaseError) {
         console.error(`Error: ${e}`);
         logger.error(`it was an error the error is --> ${e}`);
-        logger.error(e.name);
-        AppErrorsHelper.GI().details = e.name;
+
+        const newCode = e.code.replace("auth/", "");
+        logger.error(newCode);
+        AppErrorsHelper.GI().details = newCode;
         AppErrorsHelper.GI().error =
-          verificationErrors[e.name] ?? Errors.unknown;
+          verificationErrors[newCode] ?? Errors.unknown;
       }
       return false;
     }
@@ -196,13 +202,15 @@ export class FirebaseAuthService extends VerificationService {
       return true;
     } catch (e) {
       console.error(`Error: ${e}`);
-      if (e instanceof Error) {
+      if (e instanceof FirebaseError) {
         console.error(`Error: ${e}`);
         logger.error(`it was an error the error is --> ${e}`);
-        logger.error(e.name);
-        AppErrorsHelper.GI().details = e.name;
+
+        const newCode = e.code.replace("auth/", "");
+        logger.error(newCode);
+        AppErrorsHelper.GI().details = newCode;
         AppErrorsHelper.GI().error =
-          verificationErrors[e.name] ?? Errors.unknown;
+          verificationErrors[newCode] ?? Errors.unknown;
       }
       return false;
     }
@@ -270,14 +278,16 @@ export class FirebaseAuthService extends VerificationService {
       .then((confirmationResult) => {
         onCodeSent(confirmationResult.verificationId);
       })
-      .catch((error) => {
-        if (error instanceof Error) {
-          AppErrorsHelper.GI().details = error.message;
+      .catch((e) => {
+        if (e instanceof FirebaseError) {
+          console.error(`Error: ${e}`);
+          logger.error(`it was an error the error is --> ${e}`);
+
+          const newCode = e.code.replace("auth/", "");
+          logger.error(newCode);
+          AppErrorsHelper.GI().details = newCode;
           AppErrorsHelper.GI().error =
-            verificationErrors[error.message] ??
-            verificationErrors[error.name] ??
-            Errors.unknown;
-          onFailed(completePhone, error, codeSentTime, beforeSendTime);
+            verificationErrors[newCode] ?? Errors.unknown;
         }
       });
   }

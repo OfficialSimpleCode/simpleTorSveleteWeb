@@ -10,7 +10,7 @@
     E164Number,
   } from "svelte-tel-input/types";
 
-  export let titleTransKey: string = "businessPhone";
+  export let titleTransKey: string | undefined = undefined;
   // You must use E164 number format. It's guarantee the parsing and storing consistency.
   export let value: E164Number | null = "";
 
@@ -74,23 +74,26 @@
 
 <div class="form-control">
   <!-- title -->
-  <label class="label" for="phone-number">
-    <span class="label-text"
-      >{capitalizeFirstLetter(translate(titleTransKey, $_))}</span
-    >
-  </label>
-
+  {#if titleTransKey != null}
+    <label class="label" for="phone-number">
+      <span class="label-text"
+        >{capitalizeFirstLetter(translate(titleTransKey, $_))}</span
+      >
+    </label>
+  {/if}
   <!-- phone field -->
   <div dir="ltr" class="flex flex-row gap-2 xs:text-lg">
     <!-- selct for the prefix (by country) -->
     <select
-      class="country-select rounded-md input input-bordered"
+      class="country-select rounded-md input input-bordered w-[40%]"
       name="Country"
       disabled={!isActive}
       bind:value={selectedCountry}
     >
       <!-- title of the options -->
-      <option value={null} hidden={country !== null}>Please select</option>
+      <option value={null} hidden={country !== null}
+        >{translate("pleaseSelectCountry")}</option
+      >
 
       <!-- options -->
       {#each normalizedCountries as currentCountry (currentCountry.id)}

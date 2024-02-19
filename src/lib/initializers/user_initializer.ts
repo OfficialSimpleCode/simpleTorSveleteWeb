@@ -88,6 +88,7 @@ export default class UserInitializer {
         !logoutIfDosentExist &&
         (this.userDoc == null || !this.userDoc.exists())
       ) {
+        isConnectedStore.set(false);
         this.userDoc = undefined;
         return true; // new user log-in and not registered yet -> leave him logged-in
       }
@@ -147,14 +148,11 @@ export default class UserInitializer {
             BusinessInitializer.GI().business
           )
           .then((_) => {
-            console.log("eeeeeeeeeeeeeeeeeee");
-
             //add it after notify the manager bacause in the func above we
             //check if it is the first enterance of the user
             // add to the last visited buisnesses
 
             if (this.user.lastVisitedBuisnesses.includes(businessId)) {
-              console.log("rrrrrrrrrrrrrrrrr");
               // show the last business first - no need to await
               this.replaceVisitedBusiness(businessId, businessId);
             } else {

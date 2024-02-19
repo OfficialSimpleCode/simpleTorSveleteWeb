@@ -1,27 +1,28 @@
 <script lang="ts">
-  import { pushState } from "$app/navigation";
-  import { page } from "$app/stores";
-  import LogoAndName from "$lib/components/custom_components/LogoAndName.svelte";
+  import CustomPhoneField from "$lib/components/custom_components/CustomPhoneField.svelte";
   import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
+  import { sendSms } from "$lib/components/dialogs/phone_dialog/helpers/send_sms";
   import {
     AuthProvider,
     LoginReason,
-    authProviderToImage,
     authProviderToProviderId,
-    authProviderToStr,
     googleOrder,
   } from "$lib/consts/auth";
+  import { maxButtonSize } from "$lib/consts/sizes";
+  import type { PhonePickerEvent } from "$lib/consts/text_fields";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
-  import { ShowToast } from "$lib/stores/ToastManager";
+  import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
-
+  import LoginOption from "./components/LoginOption.svelte";
+  import LoginTitle from "./components/LoginTitle.svelte";
   import { handleLogin } from "./helpers/handle_login";
+
   export let loginReason: LoginReason = LoginReason.login;
-
-  let phoneDialog: HTMLDialogElement;
-  let loading: boolean = false;
-
+  let validPhone: boolean = false;
   let isActive: Map<AuthProvider, boolean> = new Map();
+  let phoneDialog: HTMLDialogElement;
+  let phoneNumber: string;
+  let loading: boolean = false;
 
   googleOrder.forEach((provider) => {
     //facebook is will be active soon
@@ -53,53 +54,18 @@
     }
     isActive.set(provider, true);
   });
+
   async function handleClick(authProvider: AuthProvider) {
-    if (loading) {
-      return;
-    }
-    console.log(VerificationHelper.GI().existsLoginProviders);
-    //facebook is will be active soon
-    if (AuthProvider.Facebook === authProvider) {
-      ShowToast({
-        text: translate("soon", $_),
-        status: "info",
-      });
-      return;
-    }
-
-    //handle the click for link provider
-    if (
-      loginReason === LoginReason.linkProvider &&
-      VerificationHelper.GI().existsLoginProviders.has(
-        authProviderToProviderId[authProvider]
-      )
-    ) {
-      ShowToast({
-        text: translate("alreadyInUse", $_),
-        status: "info",
-      });
-      return;
-    }
-
-    //handle the click for delete user
-    if (
-      loginReason === LoginReason.deleteUser &&
-      !VerificationHelper.GI().existsLoginProviders.has(
-        authProviderToProviderId[authProvider]
-      )
-    ) {
-      ShowToast({
-        text: translate("canVerifyOnlyWithExistProviders", $_),
-        status: "info",
-      });
-      return;
-    }
-
-    if (AuthProvider.Phone === authProvider) {
-      openPhoneDialog();
+    if (loading || !validPhone) {
       return;
     }
     loading = true;
+    if (AuthProvider.Phone === authProvider) {
+      sendSms({ phone: phoneNumber });
+      openPhoneDialog();
+      return;
+    }
+
     try {
       await handleLogin({
         provider: authProvider,
@@ -109,19 +75,27 @@
       loading = false;
     }
   }
+  function onFinishLogin() {
+    loading = false;
+  }
 
   function openPhoneDialog() {
-    pushState("", {
-      showModal: true,
-    });
-    setTimeout(() => phoneDialog.showModal(), 200);
+    pushDialog(phoneDialog);
+  }
+  function handlePhoneChange(event: CustomEvent<PhonePickerEvent>): void {
+    validPhone = event.detail.isValid;
+    phoneNumber = event.detail.value ?? "";
   }
 </script>
 
 <!-- Dialog -->
-{#if $page.state.showModal}
-  <PhoneDialog {loginReason} bind:dialog={phoneDialog} />
-{/if}
+
+<PhoneDialog
+  {loginReason}
+  bind:dialog={phoneDialog}
+  insideOtp={true}
+  on:onFinishLogin={onFinishLogin}
+/>
 
 <main class="flex w-full h-full">
   <img
@@ -129,77 +103,50 @@
     src="https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?cs=srgb&dl=action-athlete-barbell-841130.jpg&fm=jpg"
     alt="simpletor"
   />
+  <div class="flex flex-col items-center justify-center w-full pb-20">
+    <section
+      class="bg-base-200 py-7 px-5 rounded-md flex flex-col items-center gap-3 w-[93%] xs:w-[80%] md:w-[50%] lg:w-[80%]"
+    >
+      <!-- login title -->
+      <LoginTitle {loginReason} />
 
-  <div
-    class="flex-[1] flex flex-col xs:gap-8 gap-5 sm:mx-[70px] mx-3 my-[50px] justify-between items-center"
-  >
-    <LogoAndName
-      subTitle={translate(
-        loginReason == LoginReason.deleteUser
-          ? "sorryToSeeYouLeave"
-          : loginReason == LoginReason.linkProvider
-            ? "addAuthProvider"
-            : "joinOurFamily"
-      )}
-    />
+      <div class="flex flex-col gap-2 w-[90%] items-center">
+        <div class="divider divider-vertical px-3" />
 
-    <div class="flex flex-col xs:gap-8 gap-5 mb-[50px]">
-      <h1 class="text-4xl text-center">
-        {translate(
-          loginReason === LoginReason.deleteUser
-            ? "deleteUser"
-            : loginReason === LoginReason.linkProvider
-              ? "addingAuthProvider"
-              : "loggin"
-        )}
-      </h1>
-      {#if loginReason === LoginReason.linkProvider}
-        <h1 class="text-xs text-center opacity-70">
-          {translate("yourAcountIsImportantForUs")}
-        </h1>
-      {/if}
-
-      {#if loginReason === LoginReason.deleteUser}
-        <div class="flex flex-col">
-          <h1 class="text-md text-center opacity-70">
-            {translate("deleteUserIsSesnstive", undefined, false)}
-          </h1>
-          <h1 class="text-xs text-center opacity-70">
-            {translate("noticeYouHaveBusinesses")}
-          </h1>
+        <!-- Login option -->
+        <div class="flex flex-row items-center justify-center gap-5">
+          {#each googleOrder as authProvider, i}
+            <LoginOption {authProvider} bind:loading {loginReason} {isActive} />
+          {/each}
         </div>
-      {/if}
 
-      {#each googleOrder as authProvider, i}
-        <button
-          on:click={() => handleClick(authProvider)}
-          class="btn xs:btn-lg btn-outline w-full {!isActive.get(
-            authProvider
-          ) || loading
-            ? 'opacity-50'
-            : ''}"
-        >
-          <img
-            class="w-10 h-10"
-            src={authProviderToImage[authProvider]}
-            alt={authProviderToStr[authProvider]}
-          />{translate(
-            loginReason == LoginReason.deleteUser
-              ? "verifWith"
-              : loginReason == LoginReason.linkProvider
-                ? "addProviderWith"
-                : "signInWith"
-          ).replaceAll(
-            "PROVIDER",
-            translate(authProviderToStr[authProvider] ?? "")
-          )}
-        </button>
-      {/each}
-    </div>
+        <!-- Divider -->
+        <div class="divider divider-vertical px-3 py-4">
+          <h3 class="opacity-70 text-xs">
+            {translate("or", $_)}
+          </h3>
+        </div>
+      </div>
+      <div class="flex flex-row items-center w-full justify-center">
+        <div class="max-w-[400px]">
+          <!-- Phone field -->
+          <CustomPhoneField on:phoneChange={handlePhoneChange} />
+        </div>
+      </div>
 
-    <div class="h-[50px] mb-[50px]"></div>
-    {#if loading}
-      <div class="loading loading-spinner" />
-    {/if}
+      <!-- End Button -->
+      <button
+        class="btn btn-md sm:text-xl btn-primary w-[80%] {loading
+          ? 'opacity-55'
+          : ''} {maxButtonSize} hover:outline"
+        on:click={() => handleClick(AuthProvider.Phone)}
+      >
+        {#if loading}
+          <div class="loading loading-spinner" />
+        {:else}
+          {translate("login", $_)}
+        {/if}
+      </button>
+    </section>
   </div>
 </main>

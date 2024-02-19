@@ -8,6 +8,7 @@
   import { userStore } from "$lib/stores/User";
   import { get } from "svelte/store";
   import CustomCircleIcon from "../custom_components/CustomCircleIcon.svelte";
+  import BusinessNavigator from "./components/BusinessNavigator.svelte";
   import ProfileNavigator from "./components/ProfileNavigator.svelte";
 </script>
 
@@ -19,6 +20,7 @@
     <a href={`${base}/`} class=" text-xl hover:opacity-70">SimpleTor</a>
   </div>
   <div class="flex items-center gap-2">
+    <BusinessNavigator />
     <!-- lang icon -->
     <div class="dropdown dropdown-left dropdown-bottom items-center">
       <CustomCircleIcon icon="mdi:language" />

@@ -10,7 +10,7 @@
   "language": "Language",
   "timeBeforeNotify": "Duration before notify",
   "notificationList": "Notification list",
-  "loggin": "Loggin",
+  "loggin": "Login",
   "logout": "Logout",
   "deleteUser": "Delete user",
   "changeLanguage": "Language",
@@ -2222,7 +2222,7 @@
   "show": "Show",
   "showExplain": "The treatment will be available for customer order",
   "hideExplain": "The treatment will be hidden from the customers and will only be available for ordering from your schedule",
-  "confirmPolicy": "By signing up you agree to our ",
+  "confirmPolicy": "By press on ״Finish״ button  you agree to our ",
   "policy": "Privacy Policy",
   "emailInfo": "This email will be used by the employee to send documents such as receipts and reminders",
   "verified": "verified",
@@ -3069,5 +3069,9 @@
   "verificationCanceling": "Verification cancellation",
   "cancelVerificationExplain": "Are you sure you want to cancel the phone number verification?",
   "enterPhone": "Type a cell phone number",
-  "termToUse": "Terms of Use"
+  "termToUse": "Terms of Use",
+  "or": "or",
+  "login": "Login",
+  "loginExplain": "Welcome to the Simple Tor application - login to our system",
+  "pleaseSelectCountry": "Select a prefix"
 }
