@@ -1,7 +1,7 @@
 <script lang="ts">
   import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
   import { containerRadius } from "$lib/consts/sizes";
-
+  export let imageSrc: string;
   export let titleTransKey: string;
   export let subTitleTransKey: string;
   export let stepNumber: number;
@@ -9,25 +9,34 @@
 </script>
 
 <div
-  class="flex items-center gap-4 mx-3 bg-base-200 px-4 py-2 {containerRadius} border-2"
+  class="flex items-center gap-4 mx-3 bg-base-300 px-4 py-2 {containerRadius} border-2 hover:scale-110 hover:border-primary transform transition-transform duration-300"
 >
-  <!-- number and circle -->
-  <div
-    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-solid"
-  >
-    <span class="text-base font-bold leading-7">{stepNumber}</span>
-  </div>
+  <div class="flex flex-col justify-center gap-10">
+    <!-- step image -->
+    <div class=" lg:col-span-5 lg:flex max-w-[400px]">
+      <img src={imageSrc} alt="mockup" />
+    </div>
 
-  <!-- step title and sub title -->
-  <div class="flex flex-col">
-    <!-- title -->
-    <h3 class="mb-2 text-lg font-bold">
-      {titleTransKey}
-    </h3>
-    <!-- sub title -->
-    <p class="text-sm leading-7 opacity-70">
-      {subTitleTransKey}
-    </p>
+    <div class="flex flex-row justify-center items-center gap-3">
+      <!-- number and circle -->
+      <div
+        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-solid border-primary"
+      >
+        <span class="text-base font-bold leading-7">{stepNumber}</span>
+      </div>
+
+      <!-- step title and sub title -->
+      <div class="flex flex-col max-w-[320px] mb-4">
+        <!-- title -->
+        <h3 class="text-lg font-bold">
+          {titleTransKey}
+        </h3>
+        <!-- sub title -->
+        <p class="text-sm opacity-70">
+          {subTitleTransKey}
+        </p>
+      </div>
+    </div>
   </div>
 </div>
 
