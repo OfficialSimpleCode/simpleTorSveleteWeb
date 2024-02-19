@@ -26,7 +26,7 @@
 <button
   on:click={onTapWorker}
   class="{bookingMakerButton} w-full h-20 sm:h-28 px-2 py-2 {isPicked
-    ? 'outline outline-2'
+    ? 'border-solid border-2 border-white'
     : ''}"
 >
   <div class="flex flex-row items-center justify-start gap-1 w-full">

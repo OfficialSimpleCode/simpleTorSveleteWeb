@@ -51,8 +51,8 @@
         class="btn btn-outline flex-[1]"
         on:click={async () => {
           await onCancel();
+
           dialog.close();
-          history.back();
         }}
       >
         {#if loadingCancel}
@@ -71,7 +71,7 @@
             loadingSave = true;
             const resp = await onSave();
             if (resp !== false) {
-              history.back();
+              dialog.close();
             }
           } finally {
             loadingSave = false;

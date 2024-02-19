@@ -16,7 +16,7 @@
 <div class="w-full flex flex-col items-center gap-2">
   <button
     class="{bookingMakerButton} w-full h-20 sm:h-28 px-4 gap-5 py-2 {isPicked
-      ? 'outline outline-2'
+      ? 'border-solid border-2 border-white'
       : ''}"
     on:click={() => BookingController.onTapService(treatment)}
   >
@@ -52,20 +52,20 @@
     <div class="join self-end">
       <!-- decrease btn -->
       <button
-        class="btn btn-sm join-item bg-primary"
+        class="{bookingMakerButton} join-item btn-sm"
         on:click={() => BookingController.onRemoveTreatmentCount(treatment)}
       >
         -
       </button>
 
       <!-- amount selected indicator -->
-      <button class="btn btn-sm join-item w-min text-center bg-primary">
+      <button class="{bookingMakerButton} join-item w-min text-center btn-sm">
         {($bookingMakerStore.services[treatment.id] ?? treatment).count}
       </button>
 
       <!-- increase btn -->
       <button
-        class="btn btn-sm join-item bg-primary"
+        class="{bookingMakerButton} join-item btn-sm"
         on:click={() => BookingController.onAddTreatmentCount(treatment)}
       >
         +
