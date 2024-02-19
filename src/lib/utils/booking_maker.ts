@@ -16,6 +16,7 @@ import { addDuration } from "$lib/utils/duration_utils";
 import {
   dateStrToDate,
   dateToDateStr,
+  getStartOfWeek,
   isHoliday,
 } from "$lib/utils/times_utils";
 import { get } from "svelte/store";
@@ -250,4 +251,14 @@ function lastDate(worker: WorkerModel | undefined): Date | undefined {
     setToMidNight(new Date()),
     new Duration({ days: worker.daysToAllowBookings })
   );
+}
+
+export function getForwardDays(date: Date, days: number): Date[] {
+  let finalList: Date[] = [];
+  let firstDate = days % 7 === 0 ? getStartOfWeek(date) : date;
+  for (let i = 0; i < days; i++) {
+    finalList.push(firstDate);
+    firstDate = addDuration(firstDate, new Duration({ days: 1 }));
+  }
+  return finalList;
 }

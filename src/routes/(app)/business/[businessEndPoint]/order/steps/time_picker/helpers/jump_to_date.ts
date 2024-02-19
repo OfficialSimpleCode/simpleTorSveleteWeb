@@ -1,10 +1,15 @@
 import { bookingMakerStore } from "$lib/controllers/booking_controller";
-import { loadBookingMakerTimeData } from "$lib/utils/booking_maker";
-import { allWeekDays } from "$lib/utils/dates_utils";
+import {
+  getForwardDays,
+  loadBookingMakerTimeData,
+} from "$lib/utils/booking_maker";
 
 export function jumpToDate(newDate: Date) {
   bookingMakerStore.update((value) => {
-    value.timePickerDisplayDates = allWeekDays(newDate);
+    value.timePickerDisplayDates = getForwardDays(
+      newDate,
+      value.numberOfShownDays
+    );
     return value;
   });
   loadBookingMakerTimeData();

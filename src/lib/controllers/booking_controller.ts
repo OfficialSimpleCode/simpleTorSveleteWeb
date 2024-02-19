@@ -23,9 +23,11 @@ import MultiBooking from "$lib/models/multi_booking/multi_booking";
 import type PhoneDataResult from "$lib/models/resps/phone_data_result";
 import type TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
 import { screenSizeStore } from "$lib/stores/sizes";
-import { loadBookingMakerTimeData } from "$lib/utils/booking_maker";
+import {
+  getForwardDays,
+  loadBookingMakerTimeData,
+} from "$lib/utils/booking_maker";
 import { isNotEmpty } from "$lib/utils/core_utils";
-import { allWeekDays } from "$lib/utils/dates_utils";
 import { get, writable } from "svelte/store";
 interface BookingMaker {
   workerId?: string;
@@ -72,9 +74,13 @@ export default class BookingController {
       currentStep: 0,
       isMultiEvent: false,
       timePickerObjects: {},
-      timePickerDisplayDates: allWeekDays(new Date()),
+
       numberOfShownDays:
         get(screenSizeStore).width > maxWidthToShow5Days ? 7 : 5,
+      timePickerDisplayDates: getForwardDays(
+        new Date(),
+        get(screenSizeStore).width > maxWidthToShow5Days ? 7 : 5
+      ),
     };
 
     Object.entries(BookingController.bookingToUpdate?.treatments ?? {}).forEach(

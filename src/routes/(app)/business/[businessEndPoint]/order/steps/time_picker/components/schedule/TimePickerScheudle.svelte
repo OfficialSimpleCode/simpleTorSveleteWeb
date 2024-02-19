@@ -2,7 +2,10 @@
   import { maxWidthToShow5Days } from "$lib/consts/booking_maker";
   import { bookingMakerStore } from "$lib/controllers/booking_controller";
   import { screenSizeStore } from "$lib/stores/sizes";
-  import { loadBookingMakerTimeData } from "$lib/utils/booking_maker";
+  import {
+    getForwardDays,
+    loadBookingMakerTimeData,
+  } from "$lib/utils/booking_maker";
   import DayColumn from "./components/DayColumn.svelte";
   import DayIndicator from "./components/DayIndicator.svelte";
 
@@ -19,6 +22,12 @@
     if ($bookingMakerStore.numberOfShownDays !== daysToShow) {
       bookingMakerStore.update((value) => {
         value.numberOfShownDays = daysToShow;
+
+        value.timePickerDisplayDates = getForwardDays(
+          value.timePickerDisplayDates[0],
+          daysToShow
+        );
+        loadBookingMakerTimeData();
         return value;
       });
     }
