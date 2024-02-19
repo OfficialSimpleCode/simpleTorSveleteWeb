@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import { page } from "$app/stores";
   import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
 
@@ -7,6 +8,7 @@
   import BookingController, {
     bookingMakerStore,
   } from "$lib/controllers/booking_controller";
+  import { businessStore } from "$lib/stores/Business";
   import { _, translate } from "$lib/utils/translate";
   import OrderStepper from "./components/OrderStepper.svelte";
   import FinishScreen from "./steps/finish_screen/FinishScreen.svelte";
@@ -42,12 +44,14 @@
     {/if}
 
     <!-- cancel button -->
-    <div class="pb-4 w-[90%] mt-3">
-      <button
+    <div class="pb-4 w-[90%] mt-10 max-w-[360px]">
+      <a
         class="btn btn-outline sm:hidden w-full"
-        on:click={() => history.back()}
+        href={$businessStore != null
+          ? `${base}/business/${$businessStore.url}`
+          : base}
         >{translate("cancel", $_)}
-      </button>
+      </a>
     </div>
   </div>
 </main>

@@ -6,7 +6,7 @@
   import BookingController from "$lib/controllers/booking_controller";
   import type TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
   import { getHolidayNames } from "$lib/utils/dates_utils";
-  import { translate } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
 
   export let timeObj: TimePickerObj;
 
@@ -16,10 +16,10 @@
 </script>
 
 <section
-  class=" flex flex-col bg-primary {containerRadius} {scheuleItemWidthClass} h-[180px] sm:h-[220px]"
+  class=" flex flex-col bg-primary {containerRadius} {scheuleItemWidthClass} h-[180px] sm:h-[220px] justify-center"
 >
   <LottieAnimation animationFile={vacationAnimation} size="lg" />
   {#each holidays as holiday}
-    <h3 class="text-xs text-center">{translate(holiday)}</h3>
+    <h3 class="text-xs sm:text-sm text-center">{translate(holiday, $_)}</h3>
   {/each}
 </section>

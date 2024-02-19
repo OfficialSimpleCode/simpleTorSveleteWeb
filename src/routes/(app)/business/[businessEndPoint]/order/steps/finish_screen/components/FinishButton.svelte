@@ -97,7 +97,7 @@
   />
 {/if}
 <!-- xs:px-10 px-3 -->
-<div class="w-full">
+<div class="flex flex-row items-center justify-center w-full">
   <button
     class="btn sm:text-xl btn-primary w-full {isLoading
       ? 'opacity-55'

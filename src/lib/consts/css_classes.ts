@@ -1,7 +1,7 @@
 export const cssSizesClasses = {
   xs: {
     iconSize: 19,
-    cssClass: "h-[27px] sm:h-[32px] w-[27px] sm:w-[32px]",
+    cssClass: "h-[25px] sm:h-[29px] w-[25px] sm:w-[29px]",
   },
   sm: {
     iconSize: 22,
@@ -32,7 +32,11 @@ export const cssSizesClasses = {
     iconSize: 70,
     cssClass: "h-[200px] sm:h-[280px] w-[200px] sm:w-[280px]",
   },
+  xl5: {
+    iconSize: 70,
+    cssClass: "h-[270px] sm:h-[340px] w-[270px] sm:w-[340px]",
+  },
 };
 
 export const scheuleItemWidthClass =
-  "w-[50px] sm:w-[120px] md:w-[100px] items-center justify-center p-3";
+  "w-[67px]  lg:w-[110px] sm:w-[80px]  items-center  p-[2px]";

@@ -259,7 +259,7 @@ export default class WorkerModel {
       workerJson["isCustomersNeedRecurrence"] || false;
 
     this.showWaitingListWhenThereIsChoises =
-      workerJson["showWaitingListWhenThereIsChoises"] || true;
+      workerJson["showWaitingListWhenThereIsChoises"] ?? true;
     this.customWindowMinute = workerJson["customWindowMinute"] || 30;
     this.closeScheduleOnHolidays =
       workerJson["closeScheduleOnHolidays"] || false;

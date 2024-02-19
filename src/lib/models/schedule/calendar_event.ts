@@ -131,7 +131,7 @@ export default class Event {
     const isBreak = json["IB"] ?? false;
     const time = timeStrToDate(timeStr);
     const date = dateStrToDate(`${dayString}-${monthString}`);
-    const from = new Date(
+    newObj.from = new Date(
       date.getFullYear(),
       date.getMonth(),
       date.getDate(),
@@ -140,11 +140,11 @@ export default class Event {
     );
 
     newObj.to = addDuration(
-      from,
+      newObj.from,
       new Duration({ minutes: newObj.durationMinutes })
     );
     newObj.recurrenceEvent = json["RE"]
-      ? RecurrenceEvent.fromJson(json["RE"], from)
+      ? RecurrenceEvent.fromJson(json["RE"], newObj.from)
       : undefined;
 
     newObj.colorIndex = json["c"] ?? (newObj.isVacation ? 1 : 0);

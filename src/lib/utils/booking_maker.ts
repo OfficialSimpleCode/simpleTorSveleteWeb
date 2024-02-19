@@ -1,6 +1,7 @@
 import { dayLightSavingTimes } from "$lib/consts/schedule";
 
 import { WindowSpaces } from "$lib/consts/worker";
+import { weekDays } from "$lib/consts/worker_schedule";
 import BookingController, {
   bookingMakerStore,
 } from "$lib/controllers/booking_controller";
@@ -15,30 +16,23 @@ import { addDuration } from "$lib/utils/duration_utils";
 import {
   dateStrToDate,
   dateToDateStr,
+  getStartOfWeek,
   isHoliday,
 } from "$lib/utils/times_utils";
 import { get } from "svelte/store";
 import { length } from "./core_utils";
 
-export function loadBookingMakerTimeData(
-  visibleDates: Date[],
-  worker: WorkerModel | undefined,
-
-  isUpdateSheet?: boolean,
-  oldBooking?: Booking,
-  oldBookingForReccurence?: Date
-): void {
+export function loadBookingMakerTimeData(): void {
   const bookingMaker = get(bookingMakerStore);
-  BookingController.visibleDates = visibleDates;
-
+  const worker = BookingController.worker;
   if (worker == null) {
     return;
   }
   // empty the current events
   bookingMaker.timePickerObjects = {};
   //remember the first date that user saw in the screen
-  if (visibleDates.length > 1) {
-    BookingController.firstDateToShow = visibleDates[0];
+  if (bookingMaker.timePickerDisplayDates.length > 1) {
+    BookingController.firstDateToShow = bookingMaker.timePickerDisplayDates[0];
   }
   const lastDateTemp = lastDate(worker);
   if (lastDateTemp === undefined) {
@@ -49,7 +43,7 @@ export function loadBookingMakerTimeData(
   let maxLen = 0;
   // setting the new days data
 
-  visibleDates.forEach((visibleDate) => {
+  bookingMaker.timePickerDisplayDates.forEach((visibleDate) => {
     // generate only for days the worker allowed to order
     if (
       visibleDate >= lastDateTemp ||
@@ -77,9 +71,9 @@ export function loadBookingMakerTimeData(
           dayTimes = relevantHoures({
             worker: worker!,
             booking: Booking.fromBooking(booking),
-            isUpdate: isUpdateSheet,
-            oldBooking: oldBooking,
-            recurrenceSkipDate: oldBookingForReccurence,
+            isUpdate: bookingMaker.isUpdate,
+            oldBooking: bookingMaker.oldBooking,
+            recurrenceSkipDate: bookingMaker.oldBooking?.recurrenceChildDate,
             amoutLimit: 1,
           });
           break;
@@ -87,9 +81,9 @@ export function loadBookingMakerTimeData(
           dayTimes = relevantHoures({
             worker: worker,
             booking: Booking.fromBooking(booking),
-            isUpdate: isUpdateSheet,
-            oldBooking: oldBooking,
-            recurrenceSkipDate: oldBookingForReccurence,
+            isUpdate: bookingMaker.isUpdate,
+            oldBooking: bookingMaker.oldBooking,
+            recurrenceSkipDate: bookingMaker.oldBooking?.recurrenceChildDate,
             reverse: true,
             amoutLimit: 1,
           });
@@ -98,18 +92,18 @@ export function loadBookingMakerTimeData(
           dayTimes = getEdgeTimes(
             worker!,
             booking,
-            oldBooking,
-            isUpdateSheet,
-            oldBookingForReccurence
+            bookingMaker.oldBooking,
+            bookingMaker.isUpdate,
+            bookingMaker.oldBooking?.recurrenceChildDate
           );
           break;
         default:
           dayTimes = relevantHoures({
             worker: worker,
             booking: Booking.fromBooking(booking),
-            isUpdate: isUpdateSheet,
-            oldBooking: oldBooking,
-            recurrenceSkipDate: oldBookingForReccurence,
+            isUpdate: bookingMaker.isUpdate,
+            oldBooking: bookingMaker.oldBooking,
+            recurrenceSkipDate: bookingMaker.oldBooking?.recurrenceChildDate,
           });
 
           break;
@@ -123,20 +117,17 @@ export function loadBookingMakerTimeData(
     }
     // save the times list for this day
     daysTimes[dateToDateStr(visibleDate)] = dayTimes;
-
-    // save the length if is higher then current
-    maxLen = Math.max(maxLen, daysTimes[dateToDateStr(visibleDate)].length);
   });
 
-  // normalize the len to not cause heigth of 0 or very low like 20
-  maxLen = Math.max(maxLen + 1, 15); // adding 1 to put padding at the end
-
-  maxLen += worker!.showWaitingListWhenThereIsChoises ? 4 : 0;
-
-  console.log(maxLen);
   Object.entries(daysTimes).forEach(([visibleDateStr, timeList]) => {
     const visibleDate = dateStrToDate(visibleDateStr);
+    console.log("3333333333333333333333333333333333333333333");
+    console.log(visibleDateStr);
+    console.log("dddddddddddddddddddddddddddddddddddddddddddddd");
+    console.log(worker!.recurrence.vacationsEvents);
+
     bookingMaker.timePickerObjects[visibleDateStr] = [];
+
     if (worker!.recurrence.vacationInDate(visibleDate) != undefined) {
       if (worker!.showVacations) {
         const newTimePickerObj = new TimePickerObj({
@@ -144,7 +135,6 @@ export function loadBookingMakerTimeData(
           isVacation: true,
         });
         newTimePickerObj.from = visibleDate;
-
         bookingMaker.timePickerObjects[visibleDateStr].push(newTimePickerObj);
       }
       return;
@@ -156,7 +146,6 @@ export function loadBookingMakerTimeData(
         isHoliday: true,
       });
       newTimePickerObj.from = visibleDate;
-
       bookingMaker.timePickerObjects[visibleDateStr].push(newTimePickerObj);
 
       return;
@@ -179,9 +168,7 @@ export function loadBookingMakerTimeData(
           dateToPut = addDuration(dateToPut, new Duration({ hours: 1 }));
         }
         const newTimePickerObj = TimePickerObj.fromTimePickerObj(timeObj);
-
-        newTimePickerObj.from = dateToPut;
-
+        newTimePickerObj.from = visibleDate;
         bookingMaker.timePickerObjects[visibleDateStr].push(newTimePickerObj);
       } else {
         if (
@@ -190,34 +177,32 @@ export function loadBookingMakerTimeData(
         ) {
           return;
         }
-        const newTimePickerObj = new TimePickerObj({
-          ...timeObj,
-          isWaitingList: true,
-        });
+        const newTimePickerObj = TimePickerObj.fromTimePickerObj(timeObj);
 
-        newTimePickerObj.from = addDuration(
-          visibleDate,
-          new Duration({ minutes: minutesToPresent })
-        );
-
+        newTimePickerObj.isWaitingList = true;
+        newTimePickerObj.from = visibleDate;
         bookingMaker.timePickerObjects[visibleDateStr].push(newTimePickerObj);
       }
     });
+    // add the waiting list option
+
     if (
       (timeList.length === 0 || worker!.showWaitingListWhenThereIsChoises) &&
+      !worker!.waitingListExceptionDays.has(
+        weekDays[visibleDate.getDay() + 1]
+      ) &&
       bookingMaker.isMultiEvent != true
     ) {
       const newTimePickerObj = new TimePickerObj({
         displayDate: undefined,
         isWaitingList: true,
       });
-      newTimePickerObj.from = addDuration(
-        visibleDate,
-        new Duration({ minutes: minutesToPresent })
-      );
-
+      newTimePickerObj.from = visibleDate;
       bookingMaker.timePickerObjects[visibleDateStr].push(newTimePickerObj);
       return;
+    }
+    if (bookingMaker.timePickerObjects[visibleDateStr].length === 0) {
+      delete bookingMaker.timePickerObjects[visibleDateStr];
     }
   });
 
@@ -266,4 +251,14 @@ function lastDate(worker: WorkerModel | undefined): Date | undefined {
     setToMidNight(new Date()),
     new Duration({ days: worker.daysToAllowBookings })
   );
+}
+
+export function getForwardDays(date: Date, days: number): Date[] {
+  let finalList: Date[] = [];
+  let firstDate = days % 7 === 0 ? getStartOfWeek(date) : date;
+  for (let i = 0; i < days; i++) {
+    finalList.push(firstDate);
+    firstDate = addDuration(firstDate, new Duration({ days: 1 }));
+  }
+  return finalList;
 }

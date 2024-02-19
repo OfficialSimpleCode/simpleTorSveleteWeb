@@ -6,7 +6,7 @@ import { weekdays } from "$lib/consts/times";
 import { Duration } from "$lib/models/core/duration";
 import type MultiBooking from "$lib/models/multi_booking/multi_booking";
 import type BreakModel from "$lib/models/schedule/break_model";
-import { addDays, addMonths, format, startOfWeek } from "date-fns";
+import { addDays, addMonths, startOfWeek } from "date-fns";
 import { addDuration, subDuration } from "./duration_utils";
 import {
   dateStrToDate,
@@ -40,7 +40,8 @@ export function getHolidayNames(
 ): { [key in Religion]?: string } {
   const holidaysString: { [key in Religion]?: string } = {};
   worker.religions.forEach((religion) => {
-    let dateString = format(date, "dd-MM-yyyy");
+    let dateString = dateToDateStr(date);
+
     switch (religion) {
       case Religion.christian:
         dateString = dateString.substring(0, dateString.length - 4) + "0000";

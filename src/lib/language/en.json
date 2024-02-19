@@ -1882,7 +1882,7 @@
   "messageSent": "The message was sent successfully",
   "eventUpdate": "EVENTNAME: DATE at TIME",
   "noAvaliableTimes": "Sorry, no appointments available",
-  "tryNextDates": "Try next dates",
+  "tryNextDates": "Try other dates",
   "theClientWillReceivePush": "Clients will receive a push notification from the app",
   "freeFromPay": "free from prepayment",
   "topics": "Topics",

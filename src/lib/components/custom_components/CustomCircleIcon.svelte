@@ -15,7 +15,9 @@
   export let loading: boolean = false;
   export let active: boolean = true;
 
-  const ngClass = `flex items-center justify-center rounded-full  hover:bg-primary ${bgColor}  block shrink-0 transition-all duration-200`;
+  $: ngClass = `flex items-center justify-center rounded-full  ${
+    active ? "hover:bg-primary" : ""
+  } ${bgColor}  block shrink-0 transition-all duration-200`;
 </script>
 
 <div class="flex flex-col items-center">
