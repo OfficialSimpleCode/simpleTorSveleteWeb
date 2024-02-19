@@ -16,12 +16,7 @@
   style="direction: ltr;"
 >
   <div>
-    <a
-      href={$businessStore != null
-        ? `${base}/business/${get(businessStore).url}`
-        : `${base}/business`}
-      class="btn btn-ghost text-xl">SimpleTor</a
-    >
+    <a href={`${base}/`} class=" text-xl hover:opacity-70">SimpleTor</a>
   </div>
   <div class="flex items-center gap-2">
     <!-- lang icon -->

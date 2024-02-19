@@ -3,7 +3,8 @@
   import BookingController, {
     bookingMakerStore,
   } from "$lib/controllers/booking_controller";
-  import { _ } from "$lib/utils/translate";
+  import { ShowToast } from "$lib/stores/ToastManager";
+  import { _, translate } from "$lib/utils/translate";
   import ButtomContinueButton from "./components/ButtomContinueButton.svelte";
   import EmptyServicesScreen from "./components/EmptyServicesScreen.svelte";
   import MultipleServicesTuggle from "./components/MultipleServicesTuggle.svelte";
@@ -14,8 +15,12 @@
   function continueNextStep() {
     if (Object.keys($bookingMakerStore.services).length > 0) {
       $bookingMakerStore.currentStep += 1;
+    } else {
+      ShowToast({
+        text: translate("firstPickTreatment"),
+        status: "warning",
+      });
     }
-    // todo: tost to pick service
   }
   let isEmpty = true;
   $: worker.treatmentsSubjects.forEach((subject, index) => {

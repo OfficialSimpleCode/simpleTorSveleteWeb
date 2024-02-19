@@ -14,8 +14,11 @@
 
   export let loading: boolean = false;
   export let active: boolean = true;
+  export let marked: boolean = false;
 
-  $: ngClass = `flex items-center justify-center rounded-full  ${
+  $: ngClass = `flex items-center justify-center rounded-full ${
+    marked ? "bg-primary" : ""
+  }  ${
     active ? "hover:bg-primary" : ""
   } ${bgColor}  block shrink-0 transition-all duration-200`;
 </script>

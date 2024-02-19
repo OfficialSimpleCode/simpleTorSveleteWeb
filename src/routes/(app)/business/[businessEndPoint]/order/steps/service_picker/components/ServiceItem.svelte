@@ -24,16 +24,16 @@
     </h1>
 
     <!-- other treatment data -->
-    <div class="flex items-center h-full w-[30%]">
+    <div class="flex items-center h-full w-[30%] sm:w-[20%] gap-[5px]">
       <!-- horizontal divider  -->
       <div class="divider divider-horizontal border-black" />
 
       <!-- price and duration -->
       <div class="flex flex-col">
-        <p class=" whitespace-nowrap text-md sm:text-lg" dir="ltr">
+        <p class=" whitespace-nowrap text-sm sm:text-md" dir="ltr">
           {treatment.price?.toString()}
         </p>
-        <p class=" text-md sm:text-lg">
+        <p class=" text-sm sm:text-md">
           {durationToString(new Duration({ minutes: treatment.totalMinutes }))}
         </p>
       </div>

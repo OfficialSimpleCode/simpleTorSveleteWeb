@@ -22,7 +22,11 @@
     class=" w-[70%] flex flex-row gap-2 items-center max-w-[80%] rounded-2xl"
     class:opacity-60={!$bookingMakerStore.pickMultipleServices}
   >
-    <CustomCircleIcon icon="mdi:checkbox-multiple-blank" size="md" />
+    <CustomCircleIcon
+      icon="mdi:checkbox-multiple-blank"
+      size="md"
+      marked={$bookingMakerStore.pickMultipleServices}
+    />
     {$_("chooseMulti")}
   </button>
 </div>
