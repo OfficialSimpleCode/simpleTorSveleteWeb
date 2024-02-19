@@ -1,18 +1,24 @@
 <script lang="ts">
+  import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
+  import { containerRadius } from "$lib/consts/sizes";
+  export let icon: string;
+  export let bg: string;
   export let titleTransKey: string;
   export let subTitleTransKey: string;
 </script>
 
+<!-- "background-image: linear-gradient(rgb(80, 70, 229) 0%, rgb(43, 49, 203) 100%); border-color: rgb(93, 79, 240);" -->
+
 <!-- feature container -->
 <div
-  class="rounded-md border border-neutral-800 bg-neutral-900/50 p-8 text-center shadow"
+  class="{containerRadius} bg-base-200 p-8 text-center shadow hover:scale-110 transform transition-transform duration-300"
 >
   <!-- feature icon and the color around it -->
   <div
-    class="button-text mx-auto flex h-12 w-12 items-center justify-center rounded-md border"
-    style="background-image: linear-gradient(rgb(80, 70, 229) 0%, rgb(43, 49, 203) 100%); border-color: rgb(93, 79, 240);"
+    class="button-text mx-auto flex h-12 w-12 items-center justify-center rounded-md border {bg}"
   >
-    <svg
+    <GeneralIcon {icon} />
+    <!-- <svg
       xmlns="http://www.w3.org/2000/svg"
       class="icon icon-tabler icon-tabler-color-swatch"
       width="24"
@@ -32,7 +38,7 @@
       ></path>
       <path d="M7.3 13h-2.3a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h12"></path>
       <line x1="17" y1="17" x2="17" y2="17.01"></line>
-    </svg>
+    </svg> -->
   </div>
 
   <!-- title -->

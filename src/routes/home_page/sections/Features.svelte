@@ -37,30 +37,42 @@
       class="relative mx-auto max-w-7xl z-10 grid grid-cols-1 gap-10 pt-14 sm:grid-cols-2 lg:grid-cols-3"
     >
       <FeatureItem
+        bg="bg-green-500"
+        icon="mdi:sms"
         titleTransKey="הודעות ללקוחות"
         subTitleTransKey="המערכת שולחת הודעות ללקוחות על התורים שלהם, מתזכרת רותם לאשר הגעה ומזכירה להם לא לאחר"
       />
       <FeatureItem
+        bg="bg-red-500"
+        icon="mdi:sms"
         titleTransKey="סליקות וקבלות"
         subTitleTransKey="המערכת מאפשרת לסלוק את הלקוחות שלך ואף מנפיקה קבלות מאושרת כדין עבור כל עסקה או לפי בחירתך"
       />
 
       <FeatureItem
+        bg="bg-blue-500"
+        icon="mdi:sms"
         titleTransKey="זמינות מכל מקום"
         subTitleTransKey="בנוסף לאפליקציה המערכת בונה עבורכם דף נחיתה מעוצב שאפשר להזמין ממנו תורים"
       />
 
       <FeatureItem
+        bg="bg-yellow-500"
+        icon="mdi:sms"
         titleTransKey="שירות לקוחות"
         subTitleTransKey="שירות לקוחות ומענה אנושי 24/7 עם זמן מענה ממוצע של פחות מ 3 דקות"
       />
 
       <FeatureItem
+        bg="bg-indigo-700"
+        icon="mdi:sms"
         titleTransKey="הגנה על הפרטיות"
         subTitleTransKey="המידע שלכם אינו נגיש לאף אחד פרט אליכם ובאפשרותכם למחוק את כל המידע בלחיצת כפתור"
       />
 
       <FeatureItem
+        bg="bg-pink-500"
+        icon="mdi:sms"
         titleTransKey="תפוצה"
         subTitleTransKey="באפשרותם לשלוח הודעת תפוצה לכל הלקוחות שלכם בקליק"
       />

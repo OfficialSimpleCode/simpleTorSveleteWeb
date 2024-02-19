@@ -18,11 +18,13 @@ export default class RemoteConfigHelper {
 
   developers: Record<string, Developer> | undefined = undefined;
   appInMaintenance: boolean = false;
+  favoriteBusinesses: string[] | undefined = undefined;
 
   /// can load only in the browser side need the window
   ///obj - that mean after onMount
   async init() {
     await FirebseRometeConfig.GI().initService();
+    this.favoriteBusinesses = FirebseRometeConfig.GI().getFavoriteBusinesses();
     this.developers = parseDevelopers();
     if (FirebseRometeConfig.GI().isAppInMaintenance()) {
       appStateStore.set(LoadingStatuses.maintenanceMode);
