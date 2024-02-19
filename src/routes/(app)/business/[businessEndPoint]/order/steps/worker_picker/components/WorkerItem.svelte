@@ -15,7 +15,7 @@
   let aboutDialog: HTMLDialogElement;
 
   // on tap save the worker and load the workes' treatment
-  function onTapWorker(worker: WorkerModel) {
+  function onTapWorker() {
     BookingController.setWorkerId(worker.id);
   }
   $: isPicked = $bookingMakerStore.workerId === worker.id;
@@ -24,10 +24,10 @@
 <WorkerAboutDialog bind:dialog={aboutDialog} {worker} />
 
 <button
+  on:click={onTapWorker}
   class="{bookingMakerButton} w-full h-20 sm:h-28 px-2 py-2 {isPicked
     ? 'outline outline-2'
     : ''}"
-  on:click={() => onTapWorker(worker)}
 >
   <div class="flex flex-row items-center justify-start gap-1 w-full">
     <!-- worke's avatar image -->

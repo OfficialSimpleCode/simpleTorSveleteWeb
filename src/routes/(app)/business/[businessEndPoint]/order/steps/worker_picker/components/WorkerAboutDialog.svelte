@@ -13,40 +13,44 @@
 <dialog
   bind:this={dialog}
   on:close={() => history.back()}
-  class="modal modal-bottom sm:modal-middle"
+  class="modal modal-middle"
 >
   <div class="modal-box bg-base-200 items-center">
     <!-- title and top buttons -->
     <DialogTitel {dialog} />
 
     <!-- text, animation, and download button -->
-    <div class="flex flex-col gap-3 items-center">
-      <div class="avatar">
-        <div class="w-20 sm:w-28 rounded-full">
-          <img
-            src={worker.profileImg || imageByGender(worker.gender)}
-            alt="worker"
-          />
+    <div class="flex flex-col gap-4 items-center justify-center">
+      <div class="flex flex-col gap-1">
+        <div class="avatar">
+          <div class="w-20 sm:w-28 rounded-full">
+            <img
+              src={worker.profileImg || imageByGender(worker.gender)}
+              alt="worker"
+            />
+          </div>
         </div>
+        <h3 class="text-lg text-center mx-6">
+          {worker.name}
+        </h3>
       </div>
-      <h3 class="text-sm text-center mx-6">
-        {worker.name}
-      </h3>
-      <h3>
-        {worker.about != ""
-          ? worker.about
-          : translate(
-              isManager(worker.id)
-                ? worker.gender == Gender.female
-                  ? "ManagerInfoDefaultTextFemale"
-                  : "ManagerInfoDefaultText"
-                : worker.gender == Gender.female
-                  ? "WorkerInfoDefaultTextFemale"
-                  : "WorkerInfoDefaultText",
-              $_,
-              false
-            ).replaceAll("DATE", dateToDateStr(worker.createdAt))}
-      </h3>
+      <div class=" w-[220px]">
+        <h3 class="text-center text-xs sm:text-sm">
+          {worker.about != ""
+            ? worker.about
+            : translate(
+                isManager(worker.id)
+                  ? worker.gender == Gender.female
+                    ? "ManagerInfoDefaultTextFemale"
+                    : "ManagerInfoDefaultText"
+                  : worker.gender == Gender.female
+                    ? "WorkerInfoDefaultTextFemale"
+                    : "WorkerInfoDefaultText",
+                $_,
+                false
+              ).replaceAll("DATE", dateToDateStr(worker.createdAt))}
+        </h3>
+      </div>
     </div>
   </div>
   <!-- backdrop close dialog -->
