@@ -5,6 +5,7 @@
   import GenderPicker from "$lib/components/pickers/gender_picker/GenderPicker.svelte";
   import type { Gender } from "$lib/consts/gender";
 
+  import { ErrorsController } from "$lib/controllers/errors_controller";
   import UserHelper from "$lib/helpers/user/user_helper";
   import { isConnectedStore, userStore } from "$lib/stores/User";
   import { onMount } from "svelte";
@@ -25,7 +26,10 @@
   });
 
   async function updateGender(newGender: Gender) {
-    await UserHelper.GI().setGender(newGender);
+    const resp = await UserHelper.GI().setGender(newGender);
+    if (!resp) {
+      ErrorsController.displayError();
+    }
   }
 </script>
 

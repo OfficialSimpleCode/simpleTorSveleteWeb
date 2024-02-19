@@ -14,7 +14,7 @@
   export let worker: WorkerModel;
   let aboutDialog: HTMLDialogElement;
 
-  // on tap save the worker and load the workes' treatment
+  // on tap save the worker and load the workers' treatment
   function onTapWorker() {
     BookingController.setWorkerId(worker.id);
   }

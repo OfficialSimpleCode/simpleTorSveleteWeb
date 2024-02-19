@@ -2,6 +2,7 @@
   import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
   import DialogTitel from "$lib/components/custom_components/DialogTitel.svelte";
   import { InputOptions, type TextFieldEvent } from "$lib/consts/text_fields";
+  import { ErrorsController } from "$lib/controllers/errors_controller";
   import { translate } from "$lib/utils/translate";
   export let dialog: HTMLDialogElement;
   export let titleTransKey: string;
@@ -27,13 +28,14 @@
       return;
     }
     loading = true;
-    console.log("ddddddddddddd");
+
     try {
       const resp = await onUpdate(text);
 
       if (resp) {
-        console.log("ssssssssssssss");
         history.back();
+      } else {
+        ErrorsController.displayError();
       }
     } finally {
       loading = false;

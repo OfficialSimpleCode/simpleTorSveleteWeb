@@ -106,7 +106,6 @@ export default class UserHelper {
       revenueCatId: v4(),
       gender,
     });
-    console.log("currentUser", currentUser);
     currentUser.authProviders =
       authProvider != null ? new Map([[authProvider, new Date()]]) : new Map();
 
@@ -154,7 +153,7 @@ export default class UserHelper {
     const permissions = [
       ...Object.keys(UserInitializer.GI().user.userPublicData.permission),
     ];
-    console.log("qqqqqqqqqqqqqqqqq");
+
     await Promise.all(
       permissions.map(async (id) => {
         if (UserInitializer.GI().user.userPublicData.permission.get(id) === 1) {
@@ -332,6 +331,7 @@ export default class UserHelper {
     }
 
     UserInitializer.GI().user.userPublicData.email = email;
+
     return await this.userRepo
       .updateMultipleFieldsInsideDocAsMapRepo({
         path: `${usersCollection}/${
