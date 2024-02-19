@@ -12,6 +12,7 @@
     type PhonePickerEvent,
     type TextFieldEvent,
   } from "$lib/consts/text_fields";
+  import { ErrorsController } from "$lib/controllers/errors_controller";
   import UserHelper from "$lib/helpers/user/user_helper";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { businessStore } from "$lib/stores/Business";
@@ -73,16 +74,16 @@
 
   function onFinish() {
     goto(
-      `${base}/business/${
-        $businessStore != null
-          ? $businessStore.urlEndPoint ?? $businessStore.businessId
-          : ""
-      }`
+      `${base}/business/${$businessStore != null ? $businessStore.url : ""}`
     );
   }
 
   async function saveUserOnBusiness() {
-    await UserHelper.GI().saveMyselfAsCustomerAtBusiness($workersStore);
+    const resp =
+      await UserHelper.GI().saveMyselfAsCustomerAtBusiness($workersStore);
+    if (!resp) {
+      ErrorsController.displayError();
+    }
     onFinish();
   }
 
