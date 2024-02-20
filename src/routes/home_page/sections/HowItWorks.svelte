@@ -23,7 +23,7 @@
 
     <!-- steps -->
     <div
-      class="flex flex-col lg:flex-row xl:gap-x-10 md:gap-x-2 gap-x-5 gap-y-8"
+      class="flex flex-col lg:flex-row 2xl:gap-x-20 xl:gap-x-10 md:gap-x-2 gap-x-5 gap-y-8"
     >
       <HowItWorkStep
         imageSrc="https://lottie.host/f6698e26-fdce-4eb9-bb80-def9a8874750/OL8jB5DdGx.json"
