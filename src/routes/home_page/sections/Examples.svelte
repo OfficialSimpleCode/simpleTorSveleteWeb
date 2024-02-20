@@ -1,6 +1,7 @@
 <script lang="ts">
   import { containerRadius } from "$lib/consts/sizes";
   import DataButton from "../components/DataButton.svelte";
+  import DeviceMock from "../components/DeviceMock.svelte";
   let imageIndex: number = -1;
   const images: string[] = [
     "https://images.unsplash.com/photo-1516542076529-1ea3854896f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxNHx8Y29tcHV0ZXJ8ZW58MHwwfHx8MTY5OTE3MDk1N3ww&ixlib=rb-4.0.3&q=80&w=1080",
@@ -14,8 +15,8 @@
   }
 </script>
 
-<section class="">
-  <div class=" space-y-12 px-3">
+<section class="bg-base-200">
+  <div class="flex flex-col gap-10 w-full px-3 py-10">
     <!-- top titles -->
     <div>
       <!-- title -->
@@ -31,7 +32,7 @@
 
     <!-- side buttons and image -->
     <div
-      class="flex xl:flex-row flex-col items-center xl:justify-between justify-center max-w-[1600px] mx-auto"
+      class="flex xl:flex-row flex-col items-center xl:justify-between justify-center max-w-[1600px] w-full mx-auto"
     >
       <!-- buttons -->
       <div class="space-y-4 max-w-xl">
@@ -77,15 +78,27 @@
       </div>
 
       <!-- changin images -->
-      <div id="images" aria-hidden="true" class="pt-10">
-        <img
-          alt=""
-          width="620"
-          height="620"
-          src={images[Math.max(imageIndex, 0)]}
-          class="mx-auto {containerRadius}"
-          style="color:transparent"
-        />
+
+      <div id="images" class="py-10 w-full sm:flex justify-end">
+        <div
+          class="mx-auto xl:mx-0 py-5 px-5 {containerRadius} bg-base-300 bg-opacity-40 sm:w-[600px]"
+        >
+          <div class="max-w-[200px] mx-auto">
+            <DeviceMock
+              mediaSrc={images[Math.max(imageIndex, 0)]}
+              uuid="ExamplePhone"
+            />
+          </div>
+          <!-- <img
+            alt=""
+            width="620"
+            height="620"
+            src={}
+            class="mx-auto {containerRadius} bg-yellow-300"
+            style="color:transparent"
+          />
+        </div> -->
+        </div>
       </div>
     </div>
   </div>

@@ -37,7 +37,7 @@
     <h4 class="text-lg">{titleTransKey}</h4>
 
     <!-- item sub title -->
-    <p class="">
+    <p class="text-sm opacity-70">
       {subTitleTransKey}
     </p>
   </div>

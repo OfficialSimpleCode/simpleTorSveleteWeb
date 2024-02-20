@@ -5,7 +5,7 @@
 <section class="bg-base-100">
   <div
     id="features"
-    class="relative block px-6 py-10 md:py-20 md:px-10 border-t border-b border-neutral-900 bg-neutral-900/30"
+    class="relative block px-6 py-10 md:py-10 md:px-10 border-t border-b border-neutral-900 bg-neutral-900/30"
   >
     <!-- top text -->
     <div class="relative mx-auto max-w-5xl text-center">
@@ -17,9 +17,7 @@
       </span> -->
 
       <!-- title -->
-      <h2
-        class="block w-full bg-gradient-to-b from-white to-gray-400 bg-clip-text font-bold text-transparent text-3xl sm:text-4xl"
-      >
+      <h2 class="block w-full bg-gradient-to-b text-3xl sm:text-4xl">
         הפיצ'רים המרכזיים שלנו
       </h2>
 
@@ -34,7 +32,7 @@
 
     <!-- features items -->
     <div
-      class="relative mx-auto max-w-7xl z-10 grid grid-cols-1 gap-10 pt-14 sm:grid-cols-2 lg:grid-cols-3"
+      class="relative mx-auto max-w-7xl z-10 grid grid-cols-1 gap-10 pt-8 sm:grid-cols-2 lg:grid-cols-3"
     >
       <FeatureItem
         bg="bg-green-500"

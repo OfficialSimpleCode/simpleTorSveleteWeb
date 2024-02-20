@@ -3,10 +3,7 @@
 </script>
 
 <section class="bg-base-100">
-  <div
-    id="features"
-    class="relative block px-6 py-10 md:py-20 md:px-10 border-t border-b border-neutral-900 bg-neutral-900/30"
-  >
+  <div id="features" class="relative px-10 py-10 md:px-10">
     <!-- top text -->
     <div class="relative mx-auto max-w-5xl text-center">
       <!-- preview text -->
@@ -34,11 +31,12 @@
 
     <!-- features items -->
     <div
-      class="relative mx-auto max-w-7xl z-10 grid grid-cols-1 gap-10 pt-14 xs:grid-cols-2 lg:grid-cols-3"
+      class="relative mx-auto max-w-7xl z-10 grid grid-cols-1 gap-10 pt-14 xs:grid-cols-2 lg:grid-cols-4"
     >
       <DataItem titleTransKey="1M+" subTitleTransKey="הזמנות שונות" />
-      <DataItem titleTransKey="10K" subTitleTransKey="בעלי עסקים" />
       <DataItem titleTransKey="128" subTitleTransKey="מדינות שונות" />
+      <DataItem titleTransKey="10K" subTitleTransKey="בעלי עסקים" />
+      <DataItem titleTransKey="5" subTitleTransKey="כוכבים בחנויות" />
     </div>
   </div>
 </section>

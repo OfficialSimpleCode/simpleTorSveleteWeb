@@ -75,9 +75,9 @@
 
   <!-- small screens -->
   <div class="relative xs:hidden block">
-    <div class="max-w-full h-[380px]">
+    <div class="aspect-[5/4]">
       <img
-        class="max-w-full h-[380px] object-cover transition-opacity"
+        class="aspect-[5/4] object-cover transition-opacity"
         src={useDefault
           ? defaultImage
           : $businessStore.design.changingImages[currentIndex]}

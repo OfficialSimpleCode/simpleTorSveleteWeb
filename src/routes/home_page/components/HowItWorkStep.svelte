@@ -1,5 +1,6 @@
 <script lang="ts">
   import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
+  import LottieAnimation from "$lib/components/custom_components/LottieAnimation.svelte";
   import { containerRadius } from "$lib/consts/sizes";
   export let imageSrc: string;
   export let titleTransKey: string;
@@ -9,15 +10,17 @@
 </script>
 
 <div
-  class="flex items-center gap-4 mx-3 bg-base-300 px-4 py-2 {containerRadius} border-2 hover:scale-110 hover:border-primary transform transition-transform duration-300"
+  class="lg:max-w-[300px] sx:max-w-full max-w-[300px] flex items-center gap-4 bg-base-300 xs:px-4 md:px-2 py-2 {containerRadius} border-2 hover:scale-105 sm:hover:scale-110 hover:border-primary border-base-300 transform transition-transform duration-300"
 >
-  <div class="flex flex-col justify-center gap-10">
+  <div class="flex flex-col justify-center items-center gap-10 mx-auto">
     <!-- step image -->
-    <div class=" lg:col-span-5 lg:flex max-w-[400px]">
-      <img src={imageSrc} alt="mockup" />
+    <div class="lg:col-span-5 lg:flex px-10 py-5">
+      <!-- <img src={imageSrc} alt="mockup" /> -->
+      <!-- <DeviceMock mediaSrc={imageSrc} uuid={`HowItWorks-${stepNumber}`} /> -->
+      <LottieAnimation loop animationFile={imageSrc} size="xl3" />
     </div>
 
-    <div class="flex flex-row justify-center items-center gap-3">
+    <div class="flex flex-row justify-center items-center gap-3 px-4">
       <!-- number and circle -->
       <div
         class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-solid border-primary"
