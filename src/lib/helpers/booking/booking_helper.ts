@@ -248,9 +248,6 @@ export default class BookingHelper {
       );
       return true;
     }
-    console.log("32222222222222222222222222222222222222222222");
-    console.log(oldBooking);
-    console.log(newBooking);
 
     newBooking.updateBookingByBooking({
       oldBooking: oldBooking,

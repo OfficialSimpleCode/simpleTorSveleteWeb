@@ -21,8 +21,8 @@
       {translate("phoneIsVerfied", $_)}
     </h3>
     <!-- success anomation  -->
-    <div class="flex items-center w-24">
-      <LottieAnimation animationFile={successAnimation} size="md" />
+    <div class="flex items-center">
+      <LottieAnimation animationFile={successAnimation} size="xl2" />
     </div>
 
     <!-- explanation text -->

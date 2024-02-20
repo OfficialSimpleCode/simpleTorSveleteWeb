@@ -1,7 +1,8 @@
 <script lang="ts">
   import { translate } from "$lib/utils/translate";
   import { Icon, XCircle } from "svelte-hero-icons";
-  export let titleTransKey: string;
+  export let titleTransKey: string = "";
+  export let title: string | undefined = undefined;
   export let dialog: HTMLDialogElement;
 </script>
 
@@ -9,11 +10,11 @@
   <button
     class=""
     on:click={() => {
-      history.back();
+      dialog.close();
     }}
   >
     <Icon src={XCircle} size="24px" />
   </button>
-  <h3 class="font-bold text-me">{translate(titleTransKey)}</h3>
+  <h3 class="font-bold text-me">{title ?? translate(titleTransKey)}</h3>
   <div class="w-[24px]" />
 </div>

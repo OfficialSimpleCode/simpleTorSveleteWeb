@@ -60,16 +60,16 @@
 >
   <div class="modal-box bg-base-200">
     <div class="flex justify-between items-center mb-[4rem]">
+      <button class="hover:opacity-70" on:click={() => dialog.close()}>
+        <Icon src={XCircle} size="24px" />
+      </button>
+      <h3 class="font-bold text-lg">{translate("Share")}</h3>
       <button
-        class="btn btn-ghost"
+        class="hover:opacity-70"
         class:text-success={copied}
         on:click={copyToClipboard}
       >
         <Icon src={copied ? CheckCircle : Link} size="24px" />
-      </button>
-      <h3 class="font-bold text-lg">{translate("Share")}</h3>
-      <button class="btn btn-ghost" on:click={() => dialog.close()}>
-        <Icon src={XCircle} size="24px" />
       </button>
     </div>
 

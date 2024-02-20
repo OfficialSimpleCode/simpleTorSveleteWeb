@@ -1,64 +1,71 @@
 <script lang="ts">
+  import { bookingMakerButton } from "$lib/consts/css_classes";
   import BookingController, {
     bookingMakerStore,
   } from "$lib/controllers/booking_controller";
+  import { Duration } from "$lib/models/core/duration";
   import type Treatment from "$lib/models/general/treatment_model";
+  import { printDuration } from "$lib/utils/string_utils";
+  import { translate } from "$lib/utils/translate";
 
   export let treatment: Treatment;
 
-  function isPickedService(): boolean {
-    return Object.keys($bookingMakerStore.services).includes(treatment.id);
-  }
+  $: isPicked = Object.keys($bookingMakerStore.services).includes(treatment.id);
 </script>
 
-<div class="w-full sm:min-w-[480px] flex flex-col items-center gap-2">
+<div class="w-full flex flex-col items-center gap-2">
   <button
-    class="bg-primary rounded-xl w-full h-20 sm:h-28 flex items-center px-6 box-border gap-5 border justify-between"
-    class:opacity-50={!isPickedService() && $bookingMakerStore}
-    class:border={isPickedService() && $bookingMakerStore}
+    class="{bookingMakerButton} w-full h-20 sm:h-28 px-4 gap-5 py-2 {isPicked
+      ? 'border-solid border-2 border-white'
+      : ''}"
     on:click={() => BookingController.onTapService(treatment)}
   >
-    <!-- name of the service -->
-    <h1 class="text-lg sm:text-3xl text-start">
-      {treatment.name}
-    </h1>
+    <div class="flex items-center justify-between gap-1 w-full">
+      <!-- name of the service -->
+      <h1 class="text-lg sm:text-2xl text-start w-[55%] line-clamp-2">
+        {treatment.name}
+      </h1>
 
-    <!-- other treatment data -->
-    <div class="flex items-center h-full">
-      <!-- horizontal divider  -->
-      <div class="divider divider-horizontal border-black" />
+      <!-- other treatment data -->
+      <div class="flex items-center h-full gap-[5px] w-[30%]">
+        <!-- horizontal divider  -->
+        <div class="divider divider-horizontal border-black" />
 
-      <!-- price and duration -->
-      <div class="flex flex-col">
-        <p class=" whitespace-nowrap" dir="ltr">
-          {treatment.price}
-        </p>
-        <p class="">
-          {treatment.totalMinutes}
-        </p>
+        <!-- price and duration -->
+        <div class="flex flex-col w-full">
+          <p class=" whitespace-nowrap text-xs sm:text-md" dir="ltr">
+            {treatment.price?.toString()}
+          </p>
+
+          <p class=" text-xs sm:text-md">
+            {printDuration(new Duration({ minutes: treatment.totalMinutes })) +
+              " " +
+              translate("hours")}
+          </p>
+        </div>
       </div>
     </div>
   </button>
 
   <!-- option to pick more than 1 of this cureent sevice -->
-  {#if $bookingMakerStore.pickMultipleServices && isPickedService()}
+  {#if $bookingMakerStore.pickMultipleServices && isPicked}
     <div class="join self-end">
       <!-- decrease btn -->
       <button
-        class="btn btn-sm join-item bg-primary"
+        class="{bookingMakerButton} join-item btn-sm"
         on:click={() => BookingController.onRemoveTreatmentCount(treatment)}
       >
         -
       </button>
 
       <!-- amount selected indicator -->
-      <button class="btn btn-sm join-item w-min text-center bg-primary">
+      <button class="{bookingMakerButton} join-item w-min text-center btn-sm">
         {($bookingMakerStore.services[treatment.id] ?? treatment).count}
       </button>
 
       <!-- increase btn -->
       <button
-        class="btn btn-sm join-item bg-primary"
+        class="{bookingMakerButton} join-item btn-sm"
         on:click={() => BookingController.onAddTreatmentCount(treatment)}
       >
         +

@@ -1,17 +1,15 @@
 <script lang="ts">
-  import { goto, pushState } from "$app/navigation";
+  import { pushState } from "$app/navigation";
   import { base } from "$app/paths";
   import { page } from "$app/stores";
   import Avatar from "$lib/components/Avatar.svelte";
   import NavigationDialog from "$lib/components/dialogs/NavigationDialog.svelte";
   import { activeBusiness, businessStore } from "$lib/stores/Business";
-  import { isConnectedStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
 
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { isAppleUser } from "$lib/consts/platform";
   import { containerRadius } from "$lib/consts/sizes";
-  import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { onMount } from "svelte";
   import ShareDialog from "../components/ShareDialog.svelte";
 
@@ -26,20 +24,6 @@
       showModal: true,
     });
     setTimeout(() => navigationDialog.showModal(), 100);
-  }
-
-  // open order booking sheet
-  function orderNow() {
-    if (!$isConnectedStore) {
-      VerificationHelper.GI().setupLoggin();
-      goto(`${base}/login`);
-      return;
-    }
-    goto(
-      `${base}/business/${
-        $businessStore != null ? $businessStore.urlEndPoint : ""
-      }/order`
-    );
   }
 
   // open the bsuiness share screen
@@ -72,9 +56,9 @@
   class="flex justify-between items-start mx-8 gap-x-3 sm:mx-16 relative xs:top-[-3rem] top-[-73px] text-center"
 >
   <!-- icon business name and address -->
-  <div class="flex flex-col justify-center gap-y-3 items-center">
+  <div class="flex flex-col justify-center items-center">
     <Avatar img={$businessStore.design.shopIconUrl} />
-    <h1 class="md:text-4xl xs:text-3xl text-2xl pt- max-w-64">
+    <h1 class="md:text-4xl xs:text-3xl text-2xl pt-2 max-w-64">
       {$businessStore.shopName}
     </h1>
     <button

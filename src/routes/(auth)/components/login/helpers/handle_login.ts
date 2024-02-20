@@ -6,11 +6,11 @@ import {
   loginReasonToLoginType,
 } from "$lib/consts/auth";
 
+import { ErrorsController } from "$lib/controllers/errors_controller";
 import UserHelper from "$lib/helpers/user/user_helper";
 import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
 import UserInitializer from "$lib/initializers/user_initializer";
 import PhoneDataResult from "$lib/models/resps/phone_data_result";
-import { businessStore } from "$lib/stores/Business";
 import { isConnectedStore } from "$lib/stores/User";
 import type { EventDispatcher } from "svelte";
 import { get } from "svelte/store";
@@ -21,10 +21,12 @@ export async function handleLogin({
   otp = "",
   loginReason,
   dispatch = undefined,
+  dialog = undefined,
 }: {
   provider: AuthProvider;
   loginReason: LoginReason;
   otp?: string;
+  dialog?: HTMLDialogElement;
   dispatch?: EventDispatcher<any>;
 }): Promise<PhoneDataResult | undefined> {
   const resp = await VerificationHelper.GI().handleLogin({
@@ -34,17 +36,15 @@ export async function handleLogin({
   });
 
   if (!resp) {
+    ErrorsController.displayError();
     return;
   }
 
   if (loginReason === LoginReason.deleteUser) {
     const resp = await deleteUser();
     if (resp) {
-      goto(
-        `${base}/business/${
-          get(businessStore) != null ? get(businessStore).urlEndPoint : ""
-        }`
-      );
+      //comeback to the place he was before login
+      history.back();
     }
     return;
   }
@@ -56,20 +56,15 @@ export async function handleLogin({
   if (loginReason === LoginReason.linkProvider) {
     const resp = await addProvider(provider);
     if (resp != null) {
-      goto(
-        `${base}/business/${
-          get(businessStore) != null ? get(businessStore).urlEndPoint : ""
-        }`
-      );
+      //comeback to the place he was before login
+      history.back();
     }
   }
   if (loginReason === LoginReason.phoneVerification) {
     let resp: PhoneDataResult | undefined;
-    console.log("1111111111111111111111111");
+
     if (VerificationHelper.GI().phoneVerificationWithFirebase) {
-      console.log("333333333333");
       resp = await addProvider(provider);
-      console.log("ssssssssssssssssssssssssssss", resp);
     } else {
       const userClaims = await VerificationHelper.GI().userClaims();
       const isUserPhone =
@@ -82,10 +77,8 @@ export async function handleLogin({
 
       resp = await updatePhone({ customIsVerifiedPhone: true });
     }
-    console.log("555555555555555");
-    if (resp != null) {
-      console.log("666666666666");
 
+    if (resp != null) {
       //update the auth store for the new phone data result
       authDataStore.update((val) => {
         val.phoneData = resp!;
@@ -100,20 +93,28 @@ export async function handleLogin({
 
   await setUpUser();
 
+  if (dispatch != null) {
+    dispatch("onFinishLogin");
+  }
+
+  //sign in page
   if (get(isConnectedStore) !== true) {
+    //need to change this var to be allowed to get in to the setup page
+    VerificationHelper.GI().needToSignUp = true;
     goto(`${base}/login/account-setup`);
     return;
   }
 
   //need to exit from the phone dialog also
-  if (provider == AuthProvider.Phone) {
-    history.back();
+  if (provider == AuthProvider.Phone && dialog != null) {
+    dialog.close();
   }
+
+  //comeback to the place he was before login
   history.back();
 }
 
 async function deleteUser() {
-  console.log("ddddddddddddd");
   return await UserHelper.GI().deleteUser(UserInitializer.GI().user);
 }
 

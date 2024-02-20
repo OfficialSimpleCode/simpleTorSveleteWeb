@@ -29,6 +29,7 @@ export class VerificationHelper {
   public currentCredential?: PhoneAuthCredential;
   public phoneVerificationWithFirebase: boolean = true;
   public canUseAuthVars = false;
+  public needToSignUp = false;
 
   public verificationRepo: VerificationRepo = new VerificationRepo();
 
@@ -54,6 +55,7 @@ export class VerificationHelper {
   public setupLoggin(): void {
     this.verificationID = "";
     this.currentAuthProvider = undefined;
+    this.needToSignUp = false;
     this.currentCredential = undefined;
     this.submitedPhone = "";
     this.phoneVerificationWithFirebase = true;

@@ -17,7 +17,6 @@ export async function deleteBooking({
   deleteOption: DeleteOption;
 }): Promise<boolean> {
   const worker = get(workersStore)[booking.workerId];
-  //TODO delete dialog
   if (worker == null) {
     return await BookingHelper.GI().deleteBookingOnlyFromUserDoc({
       booking: booking,
@@ -27,18 +26,12 @@ export async function deleteBooking({
   //user need the worker permmision to delete update the booking status
   //update the need cancel to the opposite of the current
   if (deleteOption === DeleteOption.needConfirmation) {
-    const loadingResp = booking.isMultiRef
-      ? await MultiBookingHelper.GI().updateNeedCancel({
-          worker: worker,
-          booking: booking,
-          needCancel: true,
-        })
-      : await BookingHelper.GI().updateNeedCancel({
-          worker: worker,
-          booking: booking,
-          needCancel: true,
-          bookingDateForReccurence: booking.recurrenceChildDate,
-        });
+    const loadingResp = await BookingHelper.GI().updateNeedCancel({
+      worker: worker,
+      booking: booking,
+      needCancel: true,
+      bookingDateForReccurence: booking.recurrenceChildDate,
+    });
 
     if (loadingResp == true) {
       if (booking.recurrenceEvent != null) {

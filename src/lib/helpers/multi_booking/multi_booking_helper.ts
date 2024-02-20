@@ -209,8 +209,6 @@ export default class MultiBookingHelper {
         payemntRequestPreview?.toBookingPaymentRequestData;
     }
 
-    console.log("eeeeeeeeeeeeeeeeeeeeee");
-
     const value = await this.multiBookingRepo.signUsersToMultiBooking({
       invoiceCoverCounter,
       multiBooking,

@@ -48,11 +48,11 @@
     <!-- button actions buttons -->
     <div class="modal-action w-full flex px-2 gap-2 pt-2">
       <button
-        class="btn btn-outline flex-[1]"
+        class="btn btn-sm btn-outline flex-[1]"
         on:click={async () => {
           await onCancel();
+
           dialog.close();
-          history.back();
         }}
       >
         {#if loadingCancel}
@@ -62,7 +62,9 @@
         {/if}
       </button>
       <button
-        class="btn btn-primary flex-[1] {loadingSave ? 'opacity-70' : ''}"
+        class="btn btn-sm btn-primary flex-[1] {loadingSave
+          ? 'opacity-70'
+          : ''}"
         on:click={async () => {
           try {
             if (loadingSave) {
@@ -71,7 +73,7 @@
             loadingSave = true;
             const resp = await onSave();
             if (resp !== false) {
-              history.back();
+              dialog.close();
             }
           } finally {
             loadingSave = false;

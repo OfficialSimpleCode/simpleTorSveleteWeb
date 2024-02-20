@@ -5,17 +5,22 @@
 
   import { Icon, InformationCircle } from "svelte-hero-icons";
   export let message: string;
-  export let location: "left" | "right" = "right";
-  export let useAbsolute: boolean = true;
 </script>
 
-<div
-  class={useAbsolute ? "absolute top-4 tooltip" : ""}
-  class:right-4={location == "right"}
-  class:tooltip-left={location == "right"}
-  class:left-4={location == "left"}
-  class:tooltip-right={location == "left"}
+<button
+  class="hover:opacity-70"
+  data-tooltip-target="tooltip-light"
+  type="button"
   data-tip={message}
 >
   <Icon src={InformationCircle} size="26px" />
+</button>
+
+<div
+  id="tooltip-light"
+  role="tooltip"
+  class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 tooltip"
+>
+  {message}
+  <div class="tooltip-arrow" data-popper-arrow></div>
 </div>

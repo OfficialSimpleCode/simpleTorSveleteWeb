@@ -1,6 +1,5 @@
 <script lang="ts">
   import { base } from "$app/paths";
-  import { page } from "$app/stores";
   import Logo from "$lib/components/Logo.svelte";
   import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
   import ContactUsDialog from "$lib/components/dialogs/ContactUsDialog.svelte";
@@ -23,9 +22,8 @@
   });
 </script>
 
-{#if $page.state.showModal}
-  <ContactUsDialog bind:dialog={contactUsDialog} />
-{/if}
+<ContactUsDialog bind:dialog={contactUsDialog} />
+
 <!-- top footer -->
 <footer class="footer p-10 bg-base-200 text-base-content">
   <!-- services -->
@@ -61,8 +59,8 @@
     <header class="footer-title">
       {translate("legal", $_).toLocaleUpperCase()}
     </header>
-    <a href="{base}/terms-of-use" target="_blank" class="link link-hover"
-      >{translate("term", $_)}</a
+    <a href="{base}/terms-of-use" class="link link-hover"
+      >{translate("termToUse", $_)}</a
     >
     <a href="{base}/privacy" class="link link-hover"
       >{translate("policy", $_)}</a

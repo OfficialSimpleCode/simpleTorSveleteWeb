@@ -8,8 +8,10 @@
   import BookingController, {
     bookingMakerStore,
   } from "$lib/controllers/booking_controller";
+  import BusinessInitializer from "$lib/initializers/business_initializer";
   import { businessStore } from "$lib/stores/Business";
   import { _, translate } from "$lib/utils/translate";
+  import { onDestroy } from "svelte";
   import OrderStepper from "./components/OrderStepper.svelte";
   import FinishScreen from "./steps/finish_screen/FinishScreen.svelte";
   import ServicePicker from "./steps/service_picker/ServicePicker.svelte";
@@ -17,6 +19,10 @@
   import WorkerPicker from "./steps/worker_picker/WorkerPicker.svelte";
   let verificationDialog: HTMLDialogElement;
   BookingController.initializeBookingMaker();
+
+  onDestroy(() => {
+    BusinessInitializer.GI().cancelAllWorkersRegularListenings();
+  });
 </script>
 
 <!-- Dialog -->

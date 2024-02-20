@@ -7,7 +7,6 @@
 
   import { pushState } from "$app/navigation";
   import { base } from "$app/paths";
-  import { page } from "$app/stores";
   import UpdatePopUpDialog from "$lib/components/dialogs/UpdatePopUpDialog.svelte";
   import UserHelper from "$lib/helpers/user/user_helper";
   import UserInitializer from "$lib/initializers/user_initializer";
@@ -72,10 +71,9 @@
   });
 </script>
 
-{#if $page.state.showModal}
-  <TermDialog bind:dialog={termDialog} />
-  <UpdatePopUpDialog update={updateToPop} bind:dialog={popUpUpdateDialog} />
-{/if}
+<TermDialog bind:dialog={termDialog} />
+<UpdatePopUpDialog update={updateToPop} bind:dialog={popUpUpdateDialog} />
+
 <main class="w-full h-full">
   <!-- background image -->
   <ChangingImages />
@@ -95,7 +93,7 @@
     <!-- Display images -->
     <StoryImages />
 
-    <ProductsSection></ProductsSection>
+    <ProductsSection />
   </div>
   <Footer />
 </main>

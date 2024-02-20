@@ -1,20 +1,20 @@
 <script lang="ts">
   import { weekDays } from "$lib/consts/worker_schedule";
   import { getDayString } from "$lib/utils/string_utils";
+  import { dateToDateStr, dateToTimeStr } from "$lib/utils/times_utils";
   import { _, translate } from "$lib/utils/translate";
-  import { format } from "date-fns";
   import GeneralIcon from "./custom_components/GeneralIcon.svelte";
 
   export let date: Date;
   export let dayVertical: boolean = true;
   export let showTodayAndTommrow: boolean = false;
 
-  const timeStr: string = format(date, "HH:mm");
-  const dayStr: string = format(date, "dd-MM-yyyy");
+  const timeStr: string = dateToTimeStr(date);
+  const dayStr: string = dateToDateStr(date);
 </script>
 
 <div
-  class="flex flex-row items-center justify-center text-center bg-base-300 py-2 px-4 rounded-lg w-min text-nowrap"
+  class="flex flex-row items-center justify-center text-center bg-base-300 py-6 px-4 rounded-lg w-min text-nowrap"
 >
   <!-- first elemnt the full date + the day name -->
   <div class="flex flex-row items-center justify-center gap-2">

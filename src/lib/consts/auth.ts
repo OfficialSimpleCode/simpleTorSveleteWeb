@@ -34,7 +34,6 @@ export const googleOrder: AuthProvider[] = [
   AuthProvider.Google,
   AuthProvider.Facebook,
   AuthProvider.Apple,
-  AuthProvider.Phone,
 ];
 
 export const authProviderFromStr: Record<string, AuthProvider> = {

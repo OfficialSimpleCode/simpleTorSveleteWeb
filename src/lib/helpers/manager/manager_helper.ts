@@ -41,17 +41,16 @@ export default class ManagerHelper {
     });
 
     if (deleteResp) {
+      // Delete all the schedule notification of the bookings
+      await Promise.all([
+        NotificationHandler.GI().cancelAllBookingsScheduleNoification(
+          deleteResp.bookings
+        ),
+        NotificationHandler.GI().cancelAllBreaksScheduleNotifications(
+          deleteResp.breaks
+        ),
+      ]);
     }
-
-    //   // Delete all the schedule notification of the bookings
-    //   await Promise.all([
-    //     NotificationHandler.GI().cancelAllBookingsScheduleNoification(
-    //       deleteResp.bookings
-    //     ),
-    //     NotificationHandler.GI().cancelAllBreaksScheduleNotifications(
-    //       deleteResp.breaks
-    //     ),
-    //   ]);
 
     if (buisnessId == GeneralData.currentBusinesssId) {
       delete BusinessInitializer.GI().workers[workerId];
