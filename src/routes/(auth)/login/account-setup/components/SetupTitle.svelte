@@ -8,6 +8,6 @@
   </h1>
 
   <p class="text-xs text-start opacity-70">
-    {translate("signUpSubtitle", $_, false)}
+    {translate("happyToHaveYou", $_, false)}
   </p>
 </div>

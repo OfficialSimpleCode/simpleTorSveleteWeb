@@ -5,29 +5,39 @@
   import {
     AuthProvider,
     LoginReason,
+    authProviderList,
     authProviderToProviderId,
     googleOrder,
   } from "$lib/consts/auth";
   import { maxButtonSize } from "$lib/consts/sizes";
   import type { PhonePickerEvent } from "$lib/consts/text_fields";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
+  import { ShowToast } from "$lib/stores/ToastManager";
+  import { isConnectedStore } from "$lib/stores/User";
   import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
+  import DeleteUserDialog from "./components/DeleteUserDialog.svelte";
   import LoginOption from "./components/LoginOption.svelte";
   import LoginTitle from "./components/LoginTitle.svelte";
   import { handleLogin } from "./helpers/handle_login";
 
   export let loginReason: LoginReason = LoginReason.login;
   let validPhone: boolean = false;
-  let isActive: Map<AuthProvider, boolean> = new Map();
+  let isActive: { [key in AuthProvider]?: boolean } = {};
   let phoneDialog: HTMLDialogElement;
   let phoneNumber: string;
   let loading: boolean = false;
+  let deleteUserDialog: HTMLDialogElement;
 
-  googleOrder.forEach((provider) => {
+  $: authProviderList.forEach((provider) => {
+    //not allow to coonnect until we know for sure if the user is connected or not
+    if ($isConnectedStore == null) {
+      return;
+    }
+
     //facebook is will be active soon
     if (AuthProvider.Facebook === provider) {
-      isActive.set(provider, false);
+      isActive[provider] = false;
       return;
     }
 
@@ -38,24 +48,40 @@
         authProviderToProviderId[provider]
       )
     ) {
-      isActive.set(provider, false);
+      isActive[provider] = false;
       return;
     }
 
     //handle the click for delete user
     if (
+      $isConnectedStore === true &&
       loginReason === LoginReason.deleteUser &&
       !VerificationHelper.GI().existsLoginProviders.has(
         authProviderToProviderId[provider]
       )
     ) {
-      isActive.set(provider, false);
+      isActive[provider] = false;
       return;
     }
-    isActive.set(provider, true);
+    isActive[provider] = true;
   });
 
   async function handleClick(authProvider: AuthProvider) {
+    if (isActive[authProvider] !== true) {
+      if (
+        $isConnectedStore === true &&
+        loginReason === LoginReason.linkProvider &&
+        VerificationHelper.GI().existsLoginProviders.has(
+          authProviderToProviderId[authProvider]
+        )
+      ) {
+        ShowToast({
+          text: translate("alreadyInUse", $_),
+          status: "info",
+        });
+      }
+      return;
+    }
     if (loading || !validPhone) {
       return;
     }
@@ -70,6 +96,7 @@
       await handleLogin({
         provider: authProvider,
         loginReason: loginReason,
+        deleteUserDialog: deleteUserDialog,
       });
     } finally {
       loading = false;
@@ -96,7 +123,7 @@
   insideOtp={true}
   on:onFinishLogin={onFinishLogin}
 />
-
+<DeleteUserDialog bind:dialog={deleteUserDialog} />
 <main class="flex w-full h-full">
   <img
     class="flex-[1] object-cover !max-w-[50%] hidden lg:flex"
@@ -116,7 +143,12 @@
         <!-- Login option -->
         <div class="flex flex-row items-center justify-center gap-5">
           {#each googleOrder as authProvider, i}
-            <LoginOption {authProvider} bind:loading {loginReason} {isActive} />
+            <LoginOption
+              {authProvider}
+              bind:loading
+              {loginReason}
+              isActive={isActive[authProvider] ?? false}
+            />
           {/each}
         </div>
 
@@ -136,7 +168,8 @@
 
       <!-- End Button -->
       <button
-        class="btn btn-md sm:text-xl btn-primary w-[80%] {loading
+        class="btn btn-md sm:text-xl btn-primary w-[80%] {loading ||
+        isActive[AuthProvider.Phone] != true
           ? 'opacity-55'
           : ''} {maxButtonSize} hover:outline"
         on:click={() => handleClick(AuthProvider.Phone)}
@@ -144,7 +177,14 @@
         {#if loading}
           <div class="loading loading-spinner" />
         {:else}
-          {translate("login", $_)}
+          {translate(
+            loginReason === LoginReason.deleteUser
+              ? "delete"
+              : loginReason === LoginReason.linkProvider
+                ? "addAuthProvider"
+                : "login",
+            $_
+          )}
         {/if}
       </button>
     </section>

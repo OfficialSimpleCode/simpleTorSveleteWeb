@@ -72,7 +72,7 @@
     }
   }
 
-  function onFinish() {
+  async function onFinish() {
     goto(
       `${base}/business/${$businessStore != null ? $businessStore.url : ""}`
     );

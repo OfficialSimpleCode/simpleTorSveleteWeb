@@ -3054,6 +3054,8 @@
   "termToUse": "תנאי שימוש",
   "or": "או",
   "login": "התחבר",
-  "loginExplain": "ברוכים הבאים לאפליקצית Simple Tor - התחבר למערכת שלנו",
-  "pleaseSelectCountry": "בחר קידומת"
+  "loginExplain": "כדי להמשיך נצטרך לוודא את זהותך אנא התחבר באמצעות אחת מהדרכים למטה",
+  "pleaseSelectCountry": "בחר קידומת",
+  "happyToHaveYou": "ברוך הבא! - עוד כמה פרטים עליך ונוכל להמשיך",
+  "deleteUserExplainWithBusinesss": "שים לב! במידה וקיימים עסקים על המשתמש הם ימחקו לצמיתות"
 }
