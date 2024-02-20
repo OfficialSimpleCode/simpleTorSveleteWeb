@@ -1,3 +1,5 @@
+import { emojisRegex } from "$lib/consts/string";
+
 class ScheduleMessage {
   messageId: string = "";
   destNumber: string = "";
@@ -24,7 +26,6 @@ class ScheduleMessage {
   // This method sends JSON to the server in Python; keys need to match Python syntax
   toJson(): { [key: string]: string } {
     const data: { [key: string]: string } = {};
-    const emojisRegex = /<some emojis regex pattern>/g; // TODO Replace with your actual emojis regex
 
     data["body"] = this.body.replace(emojisRegex, "");
     data["dest_number"] = this.removePhoneNumberPrefix(this.destNumber);

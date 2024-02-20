@@ -1,4 +1,5 @@
 import { ErrorsTypeLog } from "$lib/consts/application_general";
+import { ErrorsController } from "$lib/controllers/errors_controller";
 import DeveloperHelper from "$lib/helpers/developer_helper";
 import type { Errors } from "$lib/services/errors/messages";
 import { dateIsoStr } from "$lib/utils/times_utils";
@@ -19,13 +20,7 @@ export async function onVerificationFailed(
       beforeSendTime: beforeSendTime,
     },
   });
-  //TODO show error
-  //   TopOverlyNotification({
-  //     title: "Error",
-  //     fullWidget: AppErrorsHelper.GI().displayError({ details: false }),
-  //     content: "",
-  //     duration: Duration.seconds(2),
-  //   }).show();
+  ErrorsController.displayError();
 }
 
 export async function onExternalProviderVerificationFailed(
@@ -44,11 +39,5 @@ export async function onExternalProviderVerificationFailed(
       beforeSendTime: beforeSendTime,
     },
   });
-  //TODO show error
-  //   TopOverlyNotification({
-  //     title: "Error",
-  //     fullWidget: AppErrors().displayError({ details: false }),
-  //     content: "",
-  //     duration: Duration.seconds(2),
-  //   }).show();
+  ErrorsController.displayError();
 }

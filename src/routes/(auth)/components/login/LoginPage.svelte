@@ -105,7 +105,7 @@
   />
   <div class="flex flex-col items-center justify-center w-full pb-20">
     <section
-      class="bg-base-200 py-7 px-5 rounded-md flex flex-col items-center gap-3 w-[93%] xs:w-[80%] md:w-[50%] lg:w-[80%]"
+      class="bg-base-200 py-7 px-5 rounded-md flex flex-col items-center gap-3 w-[93%] xs:w-[80%] md:w-[50%] lg:w-[60%]"
     >
       <!-- login title -->
       <LoginTitle {loginReason} />
