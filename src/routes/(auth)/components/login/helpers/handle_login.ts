@@ -3,6 +3,7 @@ import { base } from "$app/paths";
 import {
   AuthProvider,
   LoginReason,
+  LoginType,
   loginReasonToLoginType,
 } from "$lib/consts/auth";
 
@@ -29,13 +30,27 @@ export async function handleLogin({
   provider: AuthProvider;
   loginReason: LoginReason;
   otp?: string;
-  deleteUserDialog?: HTMLDialogElement;
+
   dialog?: HTMLDialogElement;
+  deleteUserDialog?: HTMLDialogElement;
   dispatch?: EventDispatcher<any>;
 }): Promise<PhoneDataResult | undefined> {
+  if (get(isConnectedStore) == null) {
+    return;
+  }
+  // if the user not connected the login type need to be login and not reauthenticate
+  // reauthenticate is only for connected users
+  let loginType = loginReasonToLoginType.get(loginReason)!;
+  if (loginReason === LoginReason.deleteUser) {
+    loginType =
+      get(isConnectedStore) === false
+        ? LoginType.login
+        : LoginType.reauthenticate;
+  }
+
   const resp = await VerificationHelper.GI().handleLogin({
     provider: provider,
-    loginType: loginReasonToLoginType.get(loginReason)!,
+    loginType: loginType,
     otp: otp,
   });
 
@@ -43,8 +58,15 @@ export async function handleLogin({
     ErrorsController.displayError();
     return;
   }
+  console.log("222222222222222222222222222");
+  console.log(resp);
 
   if (loginReason === LoginReason.deleteUser) {
+    console.log("fffffffffffff");
+    if (deleteUserDialog != null) {
+      console.log("rrrrrrrrrr");
+      pushDialog(deleteUserDialog);
+    }
     return;
   }
 
@@ -53,8 +75,10 @@ export async function handleLogin({
   }
 
   if (loginReason === LoginReason.linkProvider) {
-    if (deleteUserDialog != null) {
-      pushDialog(deleteUserDialog);
+    const resp = await addProvider(provider);
+    if (resp != null) {
+      //go to profile that we can see the new added provider
+      goto(`${base}/profile`);
     }
     return;
   }
@@ -85,6 +109,8 @@ export async function handleLogin({
       if (dispatch != null) {
         dispatch("onVerifyPhone");
       }
+    } else {
+      ErrorsController.displayError();
     }
     return;
   }
@@ -108,8 +134,8 @@ export async function handleLogin({
     dialog.close();
   }
 
-  //comeback to the place he was before login
-  history.back();
+  //go to the main page or to the loaded business if exist
+  comeBack();
 }
 
 function comeBack() {
@@ -122,16 +148,17 @@ function comeBack() {
 
 export async function finishDeleteUser() {
   const resp = await UserHelper.GI().deleteUser(UserInitializer.GI().user);
-  console.log(resp);
 
   if (!resp) {
-    console.log("rrrrrrrrrrrrrrrrrrrrrrrrr");
     ErrorsController.displayError();
   } else {
-    console.log("33333333333333333333333333333");
     //after delete user need to go to business if loaded if not
     //go to the app page
-    comeBack();
+    if (get(businessStore) != null) {
+      goto(`${base}/business/${get(businessStore).url}`);
+    } else {
+      goto(`/`);
+    }
   }
   return;
 }

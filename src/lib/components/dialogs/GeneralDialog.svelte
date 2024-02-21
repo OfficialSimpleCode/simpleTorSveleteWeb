@@ -9,7 +9,7 @@
   export let titleTransKey: string;
   export let content: string;
   export let onSave: () => Promise<any>;
-  export let onCancel: CallableFunction = () => {};
+  export let onCancel: () => Promise<any> = async () => {};
   export let cancelTranslateKey: string = "cancel";
   export let saveTranslateKey: string = "save";
 

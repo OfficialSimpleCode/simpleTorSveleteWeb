@@ -14,19 +14,12 @@
     loadingLogout = true;
     try {
       const resp = await UserHelper.GI().logout();
-      console.log(resp);
+
       if (resp) {
         if ($businessStore != null) {
-          console.log("3333333333333333");
-          goto(
-            `${base}/business/${
-              $businessStore.urlEndPoint ?? $businessStore.businessId
-            }`
-          );
+          goto(`${base}/business/${$businessStore.url}`);
         } else {
-          console.log(base);
-          console.log("222222222222");
-          goto(base);
+          goto(`${base}/`);
         }
       }
     } finally {

@@ -19,7 +19,7 @@
 
   export let loginReason: LoginReason = LoginReason.login;
   let validPhone: boolean = false;
-  let isActive: Map<AuthProvider, boolean> = new Map();
+  let isActive: { [key in AuthProvider]?: boolean } = {};
   let phoneDialog: HTMLDialogElement;
   let phoneNumber: string;
   let loading: boolean = false;
@@ -27,7 +27,7 @@
   googleOrder.forEach((provider) => {
     //facebook is will be active soon
     if (AuthProvider.Facebook === provider) {
-      isActive.set(provider, false);
+      isActive[provider] = false;
       return;
     }
 
@@ -38,7 +38,7 @@
         authProviderToProviderId[provider]
       )
     ) {
-      isActive.set(provider, false);
+      isActive[provider] = false;
       return;
     }
 
@@ -49,10 +49,10 @@
         authProviderToProviderId[provider]
       )
     ) {
-      isActive.set(provider, false);
+      isActive[provider] = false;
       return;
     }
-    isActive.set(provider, true);
+    isActive[provider] = true;
   });
 
   async function handleClick(authProvider: AuthProvider) {

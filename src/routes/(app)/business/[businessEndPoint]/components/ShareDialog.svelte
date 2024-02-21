@@ -53,7 +53,7 @@
 
 <dialog
   bind:this={dialog}
-  class="modal modal-bottom sm:modal-middle"
+  class="modal modal-middle"
   on:close={() => {
     history.back();
   }}
