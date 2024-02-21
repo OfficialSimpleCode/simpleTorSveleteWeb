@@ -23,3 +23,9 @@ export const timeAnimation: string =
 
 export const phoneAnimation: string =
   "https://lottie.host/1afae149-b1a2-4e7c-aa37-2df2305dfaab/2Qj3S8jP1i.json";
+
+export const notFoundPageAnimation: string =
+  "https://lottie.host/9b2b68ff-9de9-4821-87c9-06c381746242/L1OG6aSVEe.json";
+
+export const generalErrorAnimation: string =
+  "https://lottie.host/d2f3bec0-e343-4e85-9bcc-6b7af26e6dd1/8nfJfDphcm.json";
