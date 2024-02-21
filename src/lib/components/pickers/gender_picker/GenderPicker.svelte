@@ -24,10 +24,10 @@
   </div>
 
   <div
-    class="flex flex-row gap-2 px-4 xs:py-4 py-6 items-center justify-center"
+    class="flex flex-row gap-5 px-4 xs:py-4 py-6 items-center justify-center"
   >
     {#each genderList as gender, i}
-      <GenderItem {pickedGender} {gender} {handleClick} />
+      <GenderItem bind:pickedGender {gender} {handleClick} />
     {/each}
   </div>
 </section>

@@ -61,7 +61,12 @@
     class:bg-primary={$bookingMakerStore.currentStep === 0}
     on:click={() => clickedOnStep(0)}
   >
-    <p class="overflow-hidden whitespace-nowrap text-ellipsis">
+    <p
+      class="overflow-hidden whitespace-nowrap text-ellipsis {$bookingMakerStore.currentStep ===
+      0
+        ? 'text-primary-content'
+        : ''}"
+    >
       {$bookingMakerStore.workerId != null
         ? $workersStore[$bookingMakerStore.workerId].name
         : translate("worker", $_)}
@@ -73,7 +78,12 @@
     class:bg-primary={$bookingMakerStore.currentStep === 1}
     on:click={() => clickedOnStep(1)}
   >
-    <p class="overflow-hidden whitespace-nowrap text-ellipsis">
+    <p
+      class="overflow-hidden whitespace-nowrap text-ellipsis {$bookingMakerStore.currentStep ===
+      1
+        ? 'text-primary-content'
+        : ''}"
+    >
       {Object.keys($bookingMakerStore.services).length === 0
         ? translate("treatment", $_)
         : getServicesName()}
@@ -86,7 +96,12 @@
     class:bg-primary={$bookingMakerStore.currentStep === 2}
     on:click={() => clickedOnStep(2)}
   >
-    <p class="overflow-hidden whitespace-nowrap text-ellipsis">
+    <p
+      class="overflow-hidden whitespace-nowrap text-ellipsis {$bookingMakerStore.currentStep ===
+      2
+        ? 'text-primary-content'
+        : ''}"
+    >
       {$bookingMakerStore.date
         ? dateToDateStr($bookingMakerStore.date)
         : translate("time", $_)}

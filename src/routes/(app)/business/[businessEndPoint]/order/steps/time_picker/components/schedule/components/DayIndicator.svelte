@@ -29,7 +29,7 @@
 >
   <div
     class="rounded-full {isToday
-      ? 'bg-primary'
+      ? 'bg-primary text-primary-content'
       : 'bg-base-100'} flex flex-col items-center justify-center w-[30px]"
   >
     <h3>{date.getDate()}</h3>

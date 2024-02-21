@@ -78,7 +78,7 @@
           document.dir === "rtl" ? getBefore(storyId) : getNext(storyId)}
       >
         <div class="h-4"></div>
-        <CustomCircleIcon icon="mdi:keyboard-arrow-right" size="md" />
+        <CustomCircleIcon icon="mdi:keyboard-arrow-right" size="xs" />
         <div class="h-4"></div>
       </button>
     {/if}
@@ -91,7 +91,7 @@
       >
         <div class="h-4"></div>
 
-        <CustomCircleIcon icon="mdi:keyboard-arrow-left" size="md" />
+        <CustomCircleIcon icon="mdi:keyboard-arrow-left" size="xs" />
 
         <div class="h-4"></div>
       </button>

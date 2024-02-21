@@ -2,7 +2,7 @@
   import { base } from "$app/paths";
   import { businessStore } from "$lib/stores/Business";
 
-  $: ngClass = `flex items-center justify-center rounded-full hover:bg-primary bg-base-300 block shrink-0 transition-all duration-200`;
+  $: ngClass = `flex items-center justify-center rounded-full hover:bg-primary hover:text-primary-content bg-base-300 block shrink-0 transition-all duration-200`;
 </script>
 
 {#if $businessStore != null}

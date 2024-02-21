@@ -1,26 +1,34 @@
 <script lang="ts">
   import { Gender, genderToImage, genderToStr } from "$lib/consts/gender";
+  import { containerRadius } from "$lib/consts/sizes";
   import { _, translate } from "$lib/utils/translate";
   export let gender: Gender;
   export let pickedGender: Gender;
   export let handleClick: (gender: Gender) => void;
 </script>
 
-<div class="flex flex-col items-center justify-centers icon">
+<div class="flex flex-col items-center justify-center gap-1 icon">
   <button
     on:click={() => handleClick(gender)}
-    class=" rounded-lg btn btn-ghost join-item px-1 bg-base-300 border xs:h-[80px] xs:w-[80px] h-[60px] w-[60px] {pickedGender ===
-    gender
-      ? 'border-primary'
-      : 'border-gray-500'} "
+    class="flex items-center justify-center rounded-full
+       hover:bg-primary
+       shrink-0 transition-all duration-200 w-[50px] h-[50px] sm:h-[65px] sm:w-[65px]"
   >
     <img
-      class="w-full h-full object-scale-down rounded-lg p-3"
+      class="object-scale-down rounded-lg p-1"
       src={genderToImage[gender]}
       alt={genderToImage[gender]}
     />
   </button>
-  <p class="xs:text-md text-sm capitalize">
-    {translate(genderToStr[gender], $_)}
-  </p>
+  <div
+    class="{pickedGender === gender ? 'bg-primary' : ''} {containerRadius} px-2"
+  >
+    <p
+      class="xs:text-md text-sm capitalize {pickedGender === gender
+        ? 'text-primary-content'
+        : ''} "
+    >
+      {translate(genderToStr[gender], $_)}
+    </p>
+  </div>
 </div>

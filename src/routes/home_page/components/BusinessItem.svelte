@@ -7,7 +7,7 @@
 
 <!-- business container -->
 <a
-  href="{base}/business/972-504040624--bc2db320-a666-11ed-bd96-25918a6dd7b8"
+  href="{base}/business/{businessData.queryName}"
   class="
   flex flex-col justify-center {containerRadius} aspect-[5/4] bg-base-200 text-center shadow m-1 hover:scale-105 transform transition-transform duration-300"
   style="background-image: url({businessData.bannerImage}); background-size: cover; background-position: center;"
@@ -21,7 +21,7 @@
   <!-- feature icon and the color around it -->
   <Avatar img={businessData.iconImage} />
   <div
-    class="flex flex-col justify-center items-center backdrop-blur-md mx-auto px-3 my-2 {containerRadius}"
+    class="flex flex-col justify-center items-center backdrop-blur-xl mx-auto px-3 my-2 {containerRadius}"
   >
     <!-- title -->
     <h3 class="my-1">{businessData.name}</h3>
