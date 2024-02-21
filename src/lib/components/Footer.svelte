@@ -68,10 +68,9 @@
   </nav>
 </footer>
 
+<div class="h-[.5px] mx-5 bg-base-300 bg-opacity-40 rounded-3xl mb-4"></div>
 <!-- bottom footer -->
-<footer
-  class="footer px-10 border-t py-4 bg-base-200 text-base-content border-base-300"
->
+<footer class="footer px-10 py-4 bg-base-200 text-base-content border-base-300">
   <!-- logo and company details -->
   <aside class="items-center grid-flow-col {generatedPage ? '' : 'hidden'}">
     <Logo />

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
   import { containerRadius } from "$lib/consts/sizes";
   import DataButton from "../components/DataButton.svelte";
   import DeviceMock from "../components/DeviceMock.svelte";
@@ -16,7 +17,7 @@
 </script>
 
 <section class="bg-base-200">
-  <div class="flex flex-col gap-10 w-full px-3 py-10">
+  <div class="flex flex-col gap-10 w-full px-3 py-10 lg:py-28">
     <!-- top titles -->
     <div>
       <!-- title -->
@@ -32,10 +33,11 @@
 
     <!-- side buttons and image -->
     <div
-      class="flex xl:flex-row flex-col items-center xl:justify-between justify-center max-w-[1600px] w-full mx-auto"
+      id="images"
+      class="flex xl:flex-row flex-col-reverse items-center xl:justify-between justify-center max-w-[1800px] w-full mx-auto bg-base-100 xl:py-0 sm:py-10 py-3 sm:px-[50px] px-[10px] {containerRadius}"
     >
       <!-- buttons -->
-      <div class="space-y-4 max-w-xl">
+      <div class="flex flex-col xl:gap-y-8 gap-y-5 xl:w-[700px]">
         <DataButton
           on:changeSelection={changeSelection}
           selected={imageIndex}
@@ -43,7 +45,7 @@
           bg="bg-red-500"
           icon="mdi:sms"
           titleTransKey="תצוגת יומן"
-          subTitleTransKey="מגוון אפשרויות תצוגה, גרירות של תורים ניווט בין עובדים, ושליטה מלאה על ההזמנות"
+          subTitleTransKey="5 אפשרויות תצוגה, גרירות, יומני עובדים, ותצוגת תור מפורטת"
         />
 
         <DataButton
@@ -53,7 +55,7 @@
           bg="bg-blue-500"
           icon="mdi:sms"
           titleTransKey="הזמנת תור"
-          subTitleTransKey="עמוד העסק המעוצב שלך יאפשר הזמנת תור מהירה וקלילה ללקוחות שלך כדי שלא יתבלבלו"
+          subTitleTransKey="כפתור ברור במרכז המסך, 4 קליקים והתור הוזמן, אין אפשרות להסתבך"
         />
 
         <DataButton
@@ -63,7 +65,7 @@
           bg="bg-yellow-500"
           icon="mdi:sms"
           titleTransKey="שליטה על עובדים"
-          subTitleTransKey="פאנל ניהול עובדים מהמתקדמים ביותר, שליטה על הרשאות, כניסה ליומן, נתונים ודוחות על בסיס יומי"
+          subTitleTransKey="פאנל עוצמתי, ניהול הרשאות, דוח הספקים וכניסה לימנים"
         />
 
         <DataButton
@@ -73,17 +75,18 @@
           bg="bg-indigo-700"
           icon="mdi:sms"
           titleTransKey="שיבוץ אירוע"
-          subTitleTransKey="היומן שלנו מאפשר שיבוץ אירוע מכל סוג, מתריע לכם גם על אירועים אישיים במידה ותרצו ואפילו מסתנכרן עם יומנים חיצוניים"
+          subTitleTransKey="סנכרון עם יומני חוץ, תמיכה בקביעת אירועים אישיים כולל התראות אישיות"
         />
+        <DownloadAppButton />
       </div>
 
       <!-- changin images -->
 
-      <div id="images" class="py-10 w-full sm:flex justify-end">
+      <div class="xl:py-10 pb-10 w-full sm:flex justify-end">
         <div
-          class="mx-auto xl:mx-0 py-5 px-5 {containerRadius} bg-base-300 bg-opacity-40 sm:w-[600px]"
+          class="mx-auto xl:mx-0 py-5 px-5 {containerRadius} bg-base-200 sm:w-[600px]"
         >
-          <div class="max-w-[200px] mx-auto">
+          <div class="sm:max-w-[300px] max-w-[250px] mx-auto">
             <DeviceMock
               mediaSrc={images[Math.max(imageIndex, 0)]}
               uuid="ExamplePhone"

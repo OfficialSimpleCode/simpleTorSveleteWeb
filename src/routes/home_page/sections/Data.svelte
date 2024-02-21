@@ -3,7 +3,7 @@
 </script>
 
 <section class="bg-base-100">
-  <div id="features" class="relative px-10 py-10 md:px-10">
+  <div id="features" class="relative px-10 md:px-10 py-10 lg:py-28">
     <!-- top text -->
     <div class="relative mx-auto max-w-5xl text-center">
       <!-- preview text -->

@@ -7,10 +7,12 @@
   export let subTitleTransKey: string;
   export let stepNumber: number;
   export let withArrow: boolean = true;
+
+  const colors: string[] = ["text-blue-200", "text-pink-200", "text-green-200"];
 </script>
 
 <div
-  class="lg:max-w-[300px] sx:max-w-full max-w-[300px] flex items-center gap-4 bg-base-300 xs:px-4 md:px-2 py-2 {containerRadius} border-2 hover:scale-105 sm:hover:scale-110 hover:border-primary border-base-300 transform transition-transform duration-300"
+  class="lg:max-w-[300px] sx:max-w-full max-w-[330px] flex items-center gap-4 bg-base-300 xs:px-4 md:px-2 pb-6 {containerRadius} border-2 hover:scale-105 sm:hover:scale-110 hover:border-primary border-base-300 transform transition-transform duration-300"
 >
   <div class="flex flex-col justify-center items-center gap-10 mx-auto">
     <!-- step image -->
@@ -20,24 +22,30 @@
       <LottieAnimation loop animationFile={imageSrc} size="xl3" />
     </div>
 
-    <div class="flex flex-row justify-center items-center gap-3 px-4">
+    <div class="flex flex-row justify-center items-center gap-3">
       <!-- number and circle -->
-      <div
-        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-solid border-primary"
+      <!-- <div
+        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full {colors[
+          stepNumber - 1
+        ]} border-2 border-solid border-primary"
       >
         <span class="text-base font-bold leading-7">{stepNumber}</span>
-      </div>
+      </div> -->
 
       <!-- step title and sub title -->
-      <div class="flex flex-col max-w-[320px] mb-4">
+      <div
+        class="flex flex-col justify-center items-centermax-w-[320px] {colors[
+          stepNumber - 1
+        ]} "
+      >
         <!-- title -->
         <h3 class="text-lg font-bold">
           {titleTransKey}
         </h3>
         <!-- sub title -->
-        <p class="text-sm opacity-70">
+        <!-- <p class="text-sm opacity-70">
           {subTitleTransKey}
-        </p>
+        </p> -->
       </div>
     </div>
   </div>
@@ -45,9 +53,15 @@
 
 <!-- arrow seperator -->
 <div
-  class="flex justify-center {withArrow ? '' : 'hidden'} lg:rotate-0 -rotate-90"
+  class="flex justify-center {withArrow
+    ? ''
+    : 'hidden'} lg:rotate-0 -rotate-90 items-center"
 >
-  <CustomArrow />
+  <div
+    class="bg-base-300 rounded-full flex w-9 h-9 items-center justify-center"
+  >
+    <CustomArrow />
+  </div>
 </div>
 
 <!-- <div class="rotate-90 lg:rotate-0 {withArrow ? '' : 'hidden'}">

@@ -17,7 +17,7 @@
   <div
     class="button-text mx-auto flex h-12 w-12 items-center justify-center rounded-md border {bg}"
   >
-    <GeneralIcon {icon} />
+    <GeneralIcon {icon} size={34} />
     <!-- <svg
       xmlns="http://www.w3.org/2000/svg"
       class="icon icon-tabler icon-tabler-color-swatch"
@@ -42,7 +42,7 @@
   </div>
 
   <!-- title -->
-  <h3 class="mt-6">{titleTransKey}</h3>
+  <h3 class="mt-3 sm:text-xl text-lg">{titleTransKey}</h3>
 
   <!-- sub title -->
   <p class="my-4 mb-0 font-normal leading-relaxed tracking-wide opacity-70">

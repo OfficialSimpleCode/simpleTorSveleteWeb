@@ -6,7 +6,7 @@
 
 <section class="bg-base-100">
   <div
-    class="flex lg:flex-row flex-col-reverse items-center gap-y-16 text-center lg:text-start lg:justify-between px-10 max-w-[1500px] mx-auto lg:py-20 py-10"
+    class="flex lg:flex-row flex-col items-center gap-y-16 text-center lg:text-start lg:justify-between px-10 max-w-[1500px] mx-auto lg:py-20 py-10"
   >
     <!-- title  -->
     <div>

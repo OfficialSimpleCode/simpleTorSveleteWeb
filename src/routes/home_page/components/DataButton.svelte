@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { containerRadius } from "$lib/consts/sizes";
   import { createEventDispatcher } from "svelte";
   export let selected: number;
   export let currentIndex: number;
@@ -20,7 +19,7 @@
   on:mouseover={changeSelection}
   on:focus={changeSelection}
   href="#images"
-  class="flex border-2 {containerRadius} px-4 py-2 text-start {selected ===
+  class="flex bg-base-200 border rounded-[30px] px-4 sm:py-5 py-4 text-start {selected ===
   currentIndex
     ? 'border-primary'
     : ''}"
@@ -34,7 +33,7 @@
   <!-- item text -->
   <div class="ml-4">
     <!-- item title -->
-    <h4 class="text-lg">{titleTransKey}</h4>
+    <h4 class="sm:text-2xl text-lg">{titleTransKey}</h4>
 
     <!-- item sub title -->
     <p class="text-sm opacity-70">
