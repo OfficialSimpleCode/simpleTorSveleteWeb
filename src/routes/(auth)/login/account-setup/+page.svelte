@@ -60,22 +60,24 @@
       );
 
       if (resp != null) {
+        if ($businessStore != null) {
+          pushDialog(saveMeUsUserDialog);
+        } else {
+          onFinish();
+        }
       }
     } finally {
-      if ($businessStore != null) {
-        pushDialog(saveMeUsUserDialog);
-      } else {
-        onFinish();
-      }
       // For setup server errors
       processing = false;
     }
   }
 
-  function onFinish() {
-    goto(
-      `${base}/business/${$businessStore != null ? $businessStore.url : ""}`
-    );
+  async function onFinish() {
+    if ($businessStore != null) {
+      goto(`${base}/business/${$businessStore.url}`);
+    } else {
+      goto(`${base}/`);
+    }
   }
 
   async function saveUserOnBusiness() {

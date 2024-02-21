@@ -116,7 +116,13 @@
         <!-- Login option -->
         <div class="flex flex-row items-center justify-center gap-5">
           {#each googleOrder as authProvider, i}
-            <LoginOption {authProvider} bind:loading {loginReason} {isActive} />
+            <LoginOption
+              {authProvider}
+              bind:loading
+              bind:deleteUserDialog
+              {loginReason}
+              isActive={isActive[authProvider] ?? false}
+            />
           {/each}
         </div>
 

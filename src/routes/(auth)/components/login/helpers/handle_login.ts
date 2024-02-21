@@ -11,7 +11,9 @@ import UserHelper from "$lib/helpers/user/user_helper";
 import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
 import UserInitializer from "$lib/initializers/user_initializer";
 import PhoneDataResult from "$lib/models/resps/phone_data_result";
+import { businessStore } from "$lib/stores/Business";
 import { isConnectedStore } from "$lib/stores/User";
+import { pushDialog } from "$lib/utils/general_utils";
 import type { EventDispatcher } from "svelte";
 import { get } from "svelte/store";
 import { authDataStore } from "../../../auth_controller";
@@ -22,10 +24,12 @@ export async function handleLogin({
   loginReason,
   dispatch = undefined,
   dialog = undefined,
+  deleteUserDialog = undefined,
 }: {
   provider: AuthProvider;
   loginReason: LoginReason;
   otp?: string;
+  deleteUserDialog?: HTMLDialogElement;
   dialog?: HTMLDialogElement;
   dispatch?: EventDispatcher<any>;
 }): Promise<PhoneDataResult | undefined> {
@@ -41,11 +45,6 @@ export async function handleLogin({
   }
 
   if (loginReason === LoginReason.deleteUser) {
-    const resp = await deleteUser();
-    if (resp) {
-      //comeback to the place he was before login
-      history.back();
-    }
     return;
   }
 
@@ -54,11 +53,10 @@ export async function handleLogin({
   }
 
   if (loginReason === LoginReason.linkProvider) {
-    const resp = await addProvider(provider);
-    if (resp != null) {
-      //comeback to the place he was before login
-      history.back();
+    if (deleteUserDialog != null) {
+      pushDialog(deleteUserDialog);
     }
+    return;
   }
   if (loginReason === LoginReason.phoneVerification) {
     let resp: PhoneDataResult | undefined;
@@ -114,8 +112,28 @@ export async function handleLogin({
   history.back();
 }
 
-async function deleteUser() {
-  return await UserHelper.GI().deleteUser(UserInitializer.GI().user);
+function comeBack() {
+  if (get(businessStore) != null) {
+    goto(`${base}/business/${get(businessStore).url}`);
+  } else {
+    goto(`${base}/`);
+  }
+}
+
+export async function finishDeleteUser() {
+  const resp = await UserHelper.GI().deleteUser(UserInitializer.GI().user);
+  console.log(resp);
+
+  if (!resp) {
+    console.log("rrrrrrrrrrrrrrrrrrrrrrrrr");
+    ErrorsController.displayError();
+  } else {
+    console.log("33333333333333333333333333333");
+    //after delete user need to go to business if loaded if not
+    //go to the app page
+    comeBack();
+  }
+  return;
 }
 
 async function updatePhone({

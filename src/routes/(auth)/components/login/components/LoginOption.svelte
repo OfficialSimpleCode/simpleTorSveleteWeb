@@ -13,7 +13,12 @@
   export let authProvider: AuthProvider;
   export let loading: boolean;
   export let loginReason: LoginReason;
+<<<<<<< Updated upstream
   export let isActive: Map<AuthProvider, boolean>;
+=======
+  export let isActive: boolean;
+  export let deleteUserDialog: HTMLDialogElement;
+>>>>>>> Stashed changes
 
   async function handleClick(authProvider: AuthProvider) {
     if (loading) {
@@ -62,6 +67,7 @@
       await handleLogin({
         provider: authProvider,
         loginReason: loginReason,
+        deleteUserDialog: deleteUserDialog,
       });
     } finally {
       loading = false;

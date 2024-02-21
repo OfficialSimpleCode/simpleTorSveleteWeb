@@ -1,6 +1,5 @@
 <script lang="ts">
   import { base } from "$app/paths";
-  import { page } from "$app/stores";
   import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
 
   import { LoginReason } from "$lib/consts/auth";
@@ -26,13 +25,13 @@
 </script>
 
 <!-- Dialog -->
-{#if $page.state.showModal}
-  <PhoneDialog
-    loginReason={LoginReason.phoneVerification}
-    insideOtp={true}
-    bind:dialog={verificationDialog}
-  />
-{/if}
+
+<PhoneDialog
+  loginReason={LoginReason.phoneVerification}
+  insideOtp={true}
+  bind:dialog={verificationDialog}
+/>
+
 <main class="h-screen w-screen flex flex-col items-center gap-2 bg-base-100">
   <!-- stepper -->
   <OrderStepper />
