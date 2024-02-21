@@ -58,7 +58,7 @@
     history.back();
   }}
 >
-  <div class="modal-box bg-base-200">
+  <div class="modal-box bg-base-200 max-h-[570px] sm:max-h-full">
     <div class="flex justify-between items-center mb-[4rem]">
       <button class="hover:opacity-70" on:click={() => dialog.close()}>
         <Icon src={XCircle} size="24px" />
@@ -74,7 +74,7 @@
     </div>
 
     <!-- QR card -->
-    <div class="h-[60%] w-[80%] bg-base-100 rounded-lg mx-auto">
+    <div class="h-[60%] w-[100%] xs:w-[80%] bg-base-100 rounded-lg mx-auto">
       <div class="relative top-[-2.5rem]">
         <div
           class="flex flex-col items-center rtl:right-[calc(50%-3rem)] ltr:left-[calc(50%-3rem)]"
