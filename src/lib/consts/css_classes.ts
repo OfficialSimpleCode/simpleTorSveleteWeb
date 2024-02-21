@@ -38,6 +38,11 @@ export const cssSizesClasses = {
     iconSize: 70,
     cssClass: "h-[270px] sm:h-[340px] w-[270px] sm:w-[340px]",
   },
+  xl6: {
+    iconSize: 100,
+    cssClass:
+      "h-[330px] sm:h-[500px] w-[330px] sm:w-[500px] xs:w-[400px] xs:h-[400px]",
+  },
 };
 
 export const scheuleItemWidthClass =

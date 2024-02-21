@@ -11,7 +11,8 @@
     | "xl2"
     | "xl3"
     | "xl4"
-    | "xl5" = "lg";
+    | "xl5"
+    | "xl6" = "lg";
 
   export let loop: boolean = false;
 
