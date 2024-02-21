@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { page } from "$app/stores";
   import TermDialog from "$lib/components/dialogs/TermDialog.svelte";
 
   import { LoginReason } from "$lib/consts/auth";
@@ -76,27 +75,26 @@
   }
 </script>
 
-{#if $page.state.showModal}
-  <PhoneDialog
-    loginReason={LoginReason.phoneVerification}
-    insideOtp={true}
-    on:onVerifyPhone={onVerifiedPhone}
-    bind:dialog={verificationDialog}
-  />
+<PhoneDialog
+  loginReason={LoginReason.phoneVerification}
+  insideOtp={true}
+  on:onVerifyPhone={onVerifiedPhone}
+  bind:dialog={verificationDialog}
+/>
 
-  <TermDialog
-    on:onConfirmTerm={() => {
-      termDialog.close();
-      handleClick();
-    }}
-    bind:dialog={termDialog}
-  />
+<TermDialog
+  on:onConfirmTerm={() => {
+    termDialog.close();
+    handleClick();
+  }}
+  bind:dialog={termDialog}
+/>
 
-  <DownloadAppDialog
-    bind:dialog={downloadAppDialog}
-    explainTranslateKey={"paymentOnBookingAreNotAvailableOnWeb"}
-  />
-{/if}
+<DownloadAppDialog
+  bind:dialog={downloadAppDialog}
+  explainTranslateKey={"paymentOnBookingAreNotAvailableOnWeb"}
+/>
+
 <!-- xs:px-10 px-3 -->
 <div class="flex flex-col items-center justify-center w-full gap-2">
   <button

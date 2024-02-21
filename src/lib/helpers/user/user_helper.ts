@@ -221,6 +221,7 @@ export default class UserHelper {
 
   async _beforeLogout(): Promise<void> {
     UserInitializer.GI().cancelPublicDataListening(UserInitializer.GI().user);
+    BusinessInitializer.GI().cancelAllWorkersRegularListenings();
   }
 
   async markUserDeletedOnAllWorkerBookings(): Promise<void> {

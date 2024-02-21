@@ -6,17 +6,21 @@
 </script>
 
 <main class="w-full h-full">
-  <div class="flex flex-col items-center py-10 px-10 h-full gap-4 text-center">
+  <div
+    class="flex flex-col items-center pt-20 px-10 h-full gap-5 text-center justify-center"
+  >
     <!-- maintanance animation -->
-    <LottieAnimation size="sm" animationFile={maintananceAnimation} />
+    <LottieAnimation size="xl4" animationFile={maintananceAnimation} />
 
     <!-- title -->
-    <h1 class="text-xl">{translate("maintenanceDescription", $_)}</h1>
+    <h1 class="text-md">{translate("maintenanceDescription", $_)}</h1>
 
     <!-- reload button -->
-    <a
-      class="text-lg bg-primary py-1 px-10 {containerRadius}"
-      href="https://google.com">{translate("Reload", $_)}</a
+    <button
+      class="btn btn-md text-lg btn-primary py-1 px-10 {containerRadius}"
+      on:click={() => {
+        location.reload();
+      }}>{translate("Reload", $_)}</button
     >
   </div>
 </main>

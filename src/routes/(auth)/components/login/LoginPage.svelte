@@ -13,13 +13,15 @@
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
+  import DeleteUserDialog from "./components/DeleteUserDialog.svelte";
   import LoginOption from "./components/LoginOption.svelte";
   import LoginTitle from "./components/LoginTitle.svelte";
   import { handleLogin } from "./helpers/handle_login";
 
   export let loginReason: LoginReason = LoginReason.login;
+  let deleteUserDialog: HTMLDialogElement;
   let validPhone: boolean = false;
-  let isActive: Map<AuthProvider, boolean> = new Map();
+  let isActive: { [key in AuthProvider]?: boolean } = {};
   let phoneDialog: HTMLDialogElement;
   let phoneNumber: string;
   let loading: boolean = false;
@@ -27,7 +29,7 @@
   googleOrder.forEach((provider) => {
     //facebook is will be active soon
     if (AuthProvider.Facebook === provider) {
-      isActive.set(provider, false);
+      isActive[provider] = false;
       return;
     }
 
@@ -38,7 +40,7 @@
         authProviderToProviderId[provider]
       )
     ) {
-      isActive.set(provider, false);
+      isActive[provider] = false;
       return;
     }
 
@@ -49,10 +51,10 @@
         authProviderToProviderId[provider]
       )
     ) {
-      isActive.set(provider, false);
+      isActive[provider] = false;
       return;
     }
-    isActive.set(provider, true);
+    isActive[provider] = true;
   });
 
   async function handleClick(authProvider: AuthProvider) {
@@ -96,6 +98,7 @@
   insideOtp={true}
   on:onFinishLogin={onFinishLogin}
 />
+<DeleteUserDialog bind:dialog={deleteUserDialog} />
 
 <main class="flex w-full h-full">
   <img
@@ -116,7 +119,13 @@
         <!-- Login option -->
         <div class="flex flex-row items-center justify-center gap-5">
           {#each googleOrder as authProvider, i}
-            <LoginOption {authProvider} bind:loading {loginReason} {isActive} />
+            <LoginOption
+              {authProvider}
+              bind:loading
+              bind:deleteUserDialog
+              {loginReason}
+              isActive={isActive[authProvider] ?? false}
+            />
           {/each}
         </div>
 

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { page } from "$app/stores";
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
   import {
@@ -25,9 +24,9 @@
 </script>
 
 <!-- Dialog -->
-{#if $page.state.showModal}
-  <DownloadAppDialog bind:dialog={downloadAppDialog} />
-{/if}
+
+<DownloadAppDialog bind:dialog={downloadAppDialog} />
+
 <button
   class="{bookingMakerButton}  flex flex-col gap-3 {scheuleItemWidthClass} h-[140px] sm:h-[160px]"
   on:click={onClickWaitingList}

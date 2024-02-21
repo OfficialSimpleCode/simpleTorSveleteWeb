@@ -13,7 +13,8 @@
   export let authProvider: AuthProvider;
   export let loading: boolean;
   export let loginReason: LoginReason;
-  export let isActive: Map<AuthProvider, boolean>;
+  export let deleteUserDialog: HTMLDialogElement;
+  export let isActive: boolean;
 
   async function handleClick(authProvider: AuthProvider) {
     if (loading) {
@@ -62,6 +63,7 @@
       await handleLogin({
         provider: authProvider,
         loginReason: loginReason,
+        deleteUserDialog: deleteUserDialog,
       });
     } finally {
       loading = false;
@@ -71,9 +73,8 @@
 
 <button
   on:click={() => handleClick(authProvider)}
-  class="btn btn-outline w-[63px] xs:w-[70px] h-[63px] xs:h-[70px] {!isActive.get(
-    authProvider
-  ) || loading
+  class="btn btn-outline w-[63px] xs:w-[70px] h-[63px] xs:h-[70px] {!isActive ||
+  loading
     ? 'opacity-50'
     : ''}"
 >

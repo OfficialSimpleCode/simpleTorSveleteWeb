@@ -9,7 +9,7 @@
   export let titleTransKey: string;
   export let content: string;
   export let onSave: () => Promise<any>;
-  export let onCancel: CallableFunction = () => {};
+  export let onCancel: () => Promise<any> = async () => {};
   export let cancelTranslateKey: string = "cancel";
   export let saveTranslateKey: string = "save";
 
@@ -50,9 +50,18 @@
       <button
         class="btn btn-sm btn-outline flex-[1]"
         on:click={async () => {
-          await onCancel();
-
-          dialog.close();
+          if (loadingCancel) {
+            return;
+          }
+          try {
+            loadingCancel = true;
+            const resp = await onCancel();
+            if (resp !== false) {
+              dialog.close();
+            }
+          } finally {
+            loadingCancel = false;
+          }
         }}
       >
         {#if loadingCancel}
@@ -66,10 +75,10 @@
           ? 'opacity-70'
           : ''}"
         on:click={async () => {
+          if (loadingSave) {
+            return;
+          }
           try {
-            if (loadingSave) {
-              return;
-            }
             loadingSave = true;
             const resp = await onSave();
             if (resp !== false) {

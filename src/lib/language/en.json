@@ -3072,6 +3072,8 @@
   "termToUse": "Terms of Use",
   "or": "or",
   "login": "Login",
-  "loginExplain": "Welcome to the Simple Tor application - login to our system",
-  "pleaseSelectCountry": "Select a prefix"
+  "loginExplain": "To continue we will need to verify your identity. Please log in using one of the methods below",
+  "pleaseSelectCountry": "Select a prefix",
+  "happyToHaveYou": "Welcome! - a few more details about you and we can continue",
+  "deleteUserExplainWithBusinesss": "Notice! If there are businesses on the user, they will be permanently deleted"
 }

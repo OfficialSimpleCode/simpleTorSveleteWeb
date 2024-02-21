@@ -3,6 +3,7 @@ import { base } from "$app/paths";
 import {
   AuthProvider,
   LoginReason,
+  LoginType,
   loginReasonToLoginType,
 } from "$lib/consts/auth";
 
@@ -11,7 +12,9 @@ import UserHelper from "$lib/helpers/user/user_helper";
 import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
 import UserInitializer from "$lib/initializers/user_initializer";
 import PhoneDataResult from "$lib/models/resps/phone_data_result";
+import { businessStore } from "$lib/stores/Business";
 import { isConnectedStore } from "$lib/stores/User";
+import { pushDialog } from "$lib/utils/general_utils";
 import type { EventDispatcher } from "svelte";
 import { get } from "svelte/store";
 import { authDataStore } from "../../../auth_controller";
@@ -22,16 +25,32 @@ export async function handleLogin({
   loginReason,
   dispatch = undefined,
   dialog = undefined,
+  deleteUserDialog = undefined,
 }: {
   provider: AuthProvider;
   loginReason: LoginReason;
   otp?: string;
+
   dialog?: HTMLDialogElement;
+  deleteUserDialog?: HTMLDialogElement;
   dispatch?: EventDispatcher<any>;
 }): Promise<PhoneDataResult | undefined> {
+  if (get(isConnectedStore) == null) {
+    return;
+  }
+  // if the user not connected the login type need to be login and not reauthenticate
+  // reauthenticate is only for connected users
+  let loginType = loginReasonToLoginType.get(loginReason)!;
+  if (loginReason === LoginReason.deleteUser) {
+    loginType =
+      get(isConnectedStore) === false
+        ? LoginType.login
+        : LoginType.reauthenticate;
+  }
+
   const resp = await VerificationHelper.GI().handleLogin({
     provider: provider,
-    loginType: loginReasonToLoginType.get(loginReason)!,
+    loginType: loginType,
     otp: otp,
   });
 
@@ -39,12 +58,14 @@ export async function handleLogin({
     ErrorsController.displayError();
     return;
   }
+  console.log("222222222222222222222222222");
+  console.log(resp);
 
   if (loginReason === LoginReason.deleteUser) {
-    const resp = await deleteUser();
-    if (resp) {
-      //comeback to the place he was before login
-      history.back();
+    console.log("fffffffffffff");
+    if (deleteUserDialog != null) {
+      console.log("rrrrrrrrrr");
+      pushDialog(deleteUserDialog);
     }
     return;
   }
@@ -56,9 +77,10 @@ export async function handleLogin({
   if (loginReason === LoginReason.linkProvider) {
     const resp = await addProvider(provider);
     if (resp != null) {
-      //comeback to the place he was before login
-      history.back();
+      //go to profile that we can see the new added provider
+      goto(`${base}/profile`);
     }
+    return;
   }
   if (loginReason === LoginReason.phoneVerification) {
     let resp: PhoneDataResult | undefined;
@@ -87,6 +109,8 @@ export async function handleLogin({
       if (dispatch != null) {
         dispatch("onVerifyPhone");
       }
+    } else {
+      ErrorsController.displayError();
     }
     return;
   }
@@ -110,12 +134,33 @@ export async function handleLogin({
     dialog.close();
   }
 
-  //comeback to the place he was before login
-  history.back();
+  //go to the main page or to the loaded business if exist
+  comeBack();
 }
 
-async function deleteUser() {
-  return await UserHelper.GI().deleteUser(UserInitializer.GI().user);
+function comeBack() {
+  if (get(businessStore) != null) {
+    goto(`${base}/business/${get(businessStore).url}`);
+  } else {
+    goto(`${base}/`);
+  }
+}
+
+export async function finishDeleteUser() {
+  const resp = await UserHelper.GI().deleteUser(UserInitializer.GI().user);
+
+  if (!resp) {
+    ErrorsController.displayError();
+  } else {
+    //after delete user need to go to business if loaded if not
+    //go to the app page
+    if (get(businessStore) != null) {
+      goto(`${base}/business/${get(businessStore).url}`);
+    } else {
+      goto(`/`);
+    }
+  }
+  return;
 }
 
 async function updatePhone({
