@@ -481,10 +481,10 @@ export default class UserModel {
   }
 
   firstEnterance(businessId: string): boolean {
-    const visitedBusinesses: string[] = [...this.lastVisitedBuisnesses];
-    this.lastVisitedBuisnessesRemoved.forEach((value) => {
-      visitedBusinesses.push(value);
-    });
+    const visitedBusinesses: string[] = [
+      ...this.lastVisitedBuisnesses,
+      ...this.lastVisitedBuisnessesRemoved,
+    ];
 
     return !visitedBusinesses.includes(businessId);
   }

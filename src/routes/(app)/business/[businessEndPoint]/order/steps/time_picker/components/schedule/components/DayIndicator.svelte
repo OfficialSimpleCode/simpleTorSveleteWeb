@@ -23,14 +23,14 @@
 </script>
 
 <div
-  class="flex flex-col gap-1 border-y-[1px] {isActive
+  class="flex flex-col flex-1 gap-1 border-y-[1px] {isActive
     ? ''
-    : 'opacity-50'} rounded-[6px] items-center justify-center py-[6px] {scheuleItemWidthClass}"
+    : 'opacity-50'} rounded-[6px] items-center justify-center py-[6px] {scheuleItemWidthClass} "
 >
   <div
-    class="rounded-full h-[30px] w-[30px] {isToday
+    class="rounded-full {isToday
       ? 'bg-primary'
-      : 'bg-base-100'} flex flex-col items-center justify-center"
+      : 'bg-base-100'} flex flex-col items-center justify-center w-[30px]"
   >
     <h3>{date.getDate()}</h3>
   </div>
