@@ -5,19 +5,19 @@
 
 <!-- the container -->
 <div
-  class="group bg-base-300 {containerRadius} max-sm:max-w-sm max-sm:mx-auto p-6"
+  class="group bg-base-300 {containerRadius} hover:scale-105 transform transition-transform duration-300 max-sm:max-w-sm max-sm:mx-auto p-6"
 >
-  <div class="flex items-center gap-5 mb-5 sm:mb-9">
+  <div class="flex items-center gap-3 mb-5 sm:mb-9">
     <!-- avator of the user -->
     <img
-      class="rounded-full object-cover max-w-14 max-h-14"
+      class="rounded-full object-cover w-10 h-10"
       src={reviewItem.imageUrl}
       alt="Emily"
     />
 
     <!-- name and bio -->
     <div class="grid">
-      <h5 class=" transition-all duration-500">{reviewItem.name}</h5>
+      <h5 class="transition-all duration-500">{reviewItem.name}</h5>
       <span class="text-sm leading-6 opacity-70">{reviewItem.bio}</span>
     </div>
   </div>
@@ -46,7 +46,7 @@
 
   <!-- review text -->
   <p
-    class="text-smtransition-all duration-500 group-hover:text-gray-800 opacity-70"
+    class="text-smtransition-all duration-300 group-hover:opacity-100 opacity-70"
   >
     {reviewItem.content}
   </p>

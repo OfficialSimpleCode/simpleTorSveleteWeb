@@ -1,6 +1,6 @@
 <script>
   import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
-  import topBarGif from "$lib/images/example.gif";
+  import topBarGif from "$lib/images/video example.mp4";
   import DeviceMock from "../components/DeviceMock.svelte";
 </script>
 

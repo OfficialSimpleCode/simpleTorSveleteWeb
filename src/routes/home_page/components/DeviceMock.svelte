@@ -51,6 +51,12 @@
     id={`${uuid}Images`}
     class="rounded-[30px] overflow-hidden aspect-[272/572] bg-white dark:bg-black"
   >
-    <img class="object-cover" src={mediaSrc} alt="mockup" />
+    {#key mediaSrc}
+      <video loop autoplay class="object-cover">
+        <source src={mediaSrc} type="video/mp4" />
+
+        <track kind="captions" /></video
+      >
+    {/key}
   </div>
 </div>

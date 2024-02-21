@@ -1,14 +1,18 @@
 <script lang="ts">
   import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
   import { containerRadius } from "$lib/consts/sizes";
+  import calendarViewsMov from "$lib/media/videos/calendar_views_mov.mp4";
+  import createEventMov from "$lib/media/videos/create_event_mov.mp4";
+  import orderMov from "$lib/media/videos/order_mov.mp4";
+  import workersPanelMov from "$lib/media/videos/workers_panel_mov.mp4";
   import DataButton from "../components/DataButton.svelte";
   import DeviceMock from "../components/DeviceMock.svelte";
   let imageIndex: number = -1;
   const images: string[] = [
-    "https://images.unsplash.com/photo-1516542076529-1ea3854896f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxNHx8Y29tcHV0ZXJ8ZW58MHwwfHx8MTY5OTE3MDk1N3ww&ixlib=rb-4.0.3&q=80&w=1080",
-    "https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://plus.unsplash.com/premium_photo-1676637000058-96549206fe71?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1488372759477-a7f4aa078cb6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    calendarViewsMov,
+    orderMov,
+    workersPanelMov,
+    createEventMov,
   ];
 
   function changeSelection(event: CustomEvent<any>) {
@@ -89,7 +93,7 @@
           <div class="sm:max-w-[300px] max-w-[250px] mx-auto">
             <DeviceMock
               mediaSrc={images[Math.max(imageIndex, 0)]}
-              uuid="ExamplePhone"
+              uuid={images[Math.max(imageIndex, 0)]}
             />
           </div>
           <!-- <img
