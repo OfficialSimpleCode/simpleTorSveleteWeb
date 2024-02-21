@@ -617,11 +617,11 @@ export default class NotificationsHelper {
     }
 
     // no need to notify on enter of manager to business
-    if (user.id.startsWith("+972-5550")) {
+    if (user.phoneNumber.startsWith("+972-5550")) {
       return;
     }
 
-    // no need to notify on enter of manager to business
+    // no need to notify on enter of developer to business
     if (developers.includes(user.id)) {
       return;
     }

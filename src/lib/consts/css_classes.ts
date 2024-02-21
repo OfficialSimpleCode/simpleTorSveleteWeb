@@ -45,7 +45,6 @@ export const cssSizesClasses = {
   },
 };
 
-export const scheuleItemWidthClass =
-  "w-[67px]  lg:w-[110px] sm:w-[80px]  items-center  p-[2px]";
+export const scheuleItemWidthClass = "items-center  p-[2px] w-full";
 
 export const bookingMakerButton = `btn btn-primary  hover:outline ${containerRadius}`;

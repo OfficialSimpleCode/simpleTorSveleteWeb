@@ -21,9 +21,9 @@
 
 <button
   {id}
-  class=" {isPicked
+  class="{bookingMakerButton}  flex flex-row {isPicked
     ? 'bg-base-200'
-    : 'bg-primary'} {bookingMakerButton}  {scheuleItemWidthClass} {isPicked
+    : 'bg-primary'}  {scheuleItemWidthClass} {isPicked
     ? 'outline outline-1'
     : ''}"
   on:click={() => onTimeItemClick(timeObj)}

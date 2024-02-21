@@ -58,12 +58,14 @@
     Object.entries($bookingMakerStore.timePickerObjects).length === 0;
 </script>
 
-<div class="flex flex-col items-center justify-center gap-1">
+<div
+  class="flex flex-col items-center justify-center gap-1 w-[95%] xs:w-[84%] sm:w-[85%]"
+>
   <!-- nav bar -->
   <ScheduleNavBar />
 
   <!-- days indicators -->
-  <div class="flex flex-row gap-[3px]">
+  <div class="flex flex-row gap-[4px] w-full">
     {#each { length: $bookingMakerStore.numberOfShownDays } as _, index}
       <DayIndicator {index} />
     {/each}
@@ -73,7 +75,11 @@
   {#if isEmpty}
     <EmptyTimePickerSchedule />
   {:else}
-    <div class="flex flex-row gap-[3px]">
+    <div
+      class="grid {$bookingMakerStore.numberOfShownDays === 7
+        ? 'grid-cols-7'
+        : 'grid-cols-5'} w-full"
+    >
       {#each { length: $bookingMakerStore.numberOfShownDays } as _, index}
         <DayColumn {index} />
       {/each}

@@ -20,7 +20,7 @@ import { BusinessDesign } from "$lib/models/business/business_design";
 import BusinessModel from "$lib/models/business/business_model";
 import WorkerModel from "$lib/models/worker/worker_model";
 import { activeBusiness, businessStore } from "$lib/stores/Business";
-import { userStore } from "$lib/stores/User";
+import { isConnectedStore, userStore } from "$lib/stores/User";
 import { workersStore } from "$lib/stores/Workers";
 import { checkForReminders } from "$lib/utils/booking_utils";
 import { subTypeFromProductId } from "$lib/utils/subscription_utils";
@@ -30,6 +30,7 @@ import {
   type DocumentData,
   type DocumentSnapshot,
 } from "firebase/firestore";
+import { get } from "svelte/store";
 import UserInitializer from "./user_initializer";
 
 export default class BusinessInitializer {
@@ -88,6 +89,10 @@ export default class BusinessInitializer {
       );
 
       activeBusiness.set(this.isBusinessActive());
+
+      if (get(isConnectedStore) === true) {
+        UserInitializer.GI().actionsOnBusiness();
+      }
 
       // Make the business data listener from the real-time database
       this.makeBusinessDataListener();
@@ -340,14 +345,6 @@ export default class BusinessInitializer {
   //---------------------------------------listeners --------------------------------------
 
   startWorkerListening(worker: WorkerModel): void {
-    // const updateTitle =
-    //   translate("realTimeUpdateRecivedTitle", { needGender: false }) + "!";
-    // const updateContet = translate("realTimeUpdateRecived", {
-    //   needGender: false,
-    // });
-    // let workerDocUpdates = 0;
-    // firstTimeListenToWorkerDoc = true;
-
     try {
       console.log("cjdoscijdsoicdos");
       if (!worker.workerDocListner) {
@@ -357,15 +354,6 @@ export default class BusinessInitializer {
           path: `${buisnessCollection}/${this.business.businessId}/${workersCollection}`,
           docId: worker.id,
           onChanged: (workerListenerJson) => {
-            // workerDocUpdates++;
-
-            // if (workerDocUpdates > 2) {
-            //   new TopOverlyNotification({
-            //     title: updateTitle,
-            //     content: updateContet,
-            //   }).show();
-            // }
-
             this.updateWorkerObj(workerListenerJson, worker.id);
           },
         });

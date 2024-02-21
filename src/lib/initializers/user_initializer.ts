@@ -119,13 +119,11 @@ export default class UserInitializer {
   }
 
   async actionsOnBusiness() {
-    console.log("rrrrrrrrrrrrrrrr3333333333333r");
     const businessId = BusinessInitializer.GI().business.businessId;
     if (businessId === "") {
       return;
     }
 
-    console.log("rrrwwwwwwwwww");
     // notify to the manager on new customer
     let managerId: string = businessId.split("--")[0];
     if (managerId.length < 16) {
@@ -141,6 +139,7 @@ export default class UserInitializer {
       index++;
       if (BusinessInitializer.GI().workers[managerId] != null) {
         sendMessage = true;
+
         NotificationsHelper.GI()
           .notifyFirstTimeEnterBusiness(
             BusinessInitializer.GI().workers[managerId]!,
@@ -189,7 +188,7 @@ export default class UserInitializer {
     }
     //remove the old business from the last visited list
     this.user.lastVisitedBuisnesses = this.user.lastVisitedBuisnesses.filter(
-      (element) => element != oldBusinessId
+      (businessId) => businessId != oldBusinessId
     );
     this.user.lastVisitedBuisnesses.push(newBusinessId);
 
@@ -203,30 +202,23 @@ export default class UserInitializer {
 
   async addVisitedBusiness(businessId: string): Promise<void> {
     if (this.user.lastVisitedBuisnessesRemoved.includes(businessId)) {
-      const success =
-        await this.userRepo.updateMultipleFieldsInsideDocAsArrayRepo({
-          path: usersCollection,
-          docId: this.user.id,
-          data: {
-            ["lastVisitedBuisnesses"]: {
-              command: ArrayCommands.add,
-              value: businessId,
-            },
-            ["lastVisitedBuisnessesRemoved"]: {
-              command: ArrayCommands.remove,
-              value: businessId,
-            },
-          },
-        });
+      //remove from lastVisitedBuisnessesRemoved
+      this.user.lastVisitedBuisnessesRemoved =
+        this.user.lastVisitedBuisnessesRemoved.filter(
+          (businessIdTemp) => businessId !== businessIdTemp
+        );
+      //add to the lastVisitedBuisnesses
+      this.user.lastVisitedBuisnesses.push(businessId);
 
-      if (success) {
-        const index =
-          this.user.lastVisitedBuisnessesRemoved.indexOf(businessId);
-        if (index !== -1) {
-          this.user.lastVisitedBuisnessesRemoved.splice(index, 1);
-        }
-        this.user.lastVisitedBuisnessesRemoved.push(businessId);
-      }
+      await this.userRepo.updateMultipleFieldsInsideDocAsMapRepo({
+        path: usersCollection,
+        docId: this.user.id,
+        data: {
+          ["lastVisitedBuisnesses"]: this.user.lastVisitedBuisnesses,
+          ["lastVisitedBuisnessesRemoved"]:
+            this.user.lastVisitedBuisnessesRemoved,
+        },
+      });
     } else {
       this.user.lastVisitedBuisnesses.push(businessId);
       await this.userRepo.updateFieldInsideDocAsMapRepo({
