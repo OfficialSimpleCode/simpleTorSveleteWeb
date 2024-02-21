@@ -13,11 +13,13 @@
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
+  import DeleteUserDialog from "./components/DeleteUserDialog.svelte";
   import LoginOption from "./components/LoginOption.svelte";
   import LoginTitle from "./components/LoginTitle.svelte";
   import { handleLogin } from "./helpers/handle_login";
 
   export let loginReason: LoginReason = LoginReason.login;
+  let deleteUserDialog: HTMLDialogElement;
   let validPhone: boolean = false;
   let isActive: { [key in AuthProvider]?: boolean } = {};
   let phoneDialog: HTMLDialogElement;
@@ -96,6 +98,7 @@
   insideOtp={true}
   on:onFinishLogin={onFinishLogin}
 />
+<DeleteUserDialog bind:dialog={deleteUserDialog} />
 
 <main class="flex w-full h-full">
   <img
