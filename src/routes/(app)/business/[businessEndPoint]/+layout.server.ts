@@ -1,5 +1,5 @@
 import BusinessInitializer from "$lib/initializers/business_initializer.js";
-import { redirect } from "@sveltejs/kit";
+import { error, redirect } from "@sveltejs/kit";
 
 export const load = async ({ url, params }) => {
   console.log(url);
@@ -23,7 +23,7 @@ export const load = async ({ url, params }) => {
   }
 
   if (businessDoc == null) {
-    throw Error();
+    throw error(404, "page not found");
   }
 
   return businessDoc;
