@@ -52,7 +52,13 @@
     class="rounded-[30px] overflow-hidden aspect-[272/572] bg-white dark:bg-black"
   >
     {#key mediaSrc}
-      <video loop autoplay class="object-cover">
+      <video
+        id={mediaSrc}
+        placeholder="nvdoisvoidsnvoids"
+        loop
+        autoplay
+        class="object-cover"
+      >
         <source src={mediaSrc} type="video/mp4" />
 
         <track kind="captions" /></video
