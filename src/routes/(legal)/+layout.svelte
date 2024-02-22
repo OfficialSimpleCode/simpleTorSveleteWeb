@@ -10,7 +10,7 @@
   });
 </script>
 
-<div class="h-screen w-screen">
+<div class="h-full w-full">
   <Navbar />
   <slot />
 </div>

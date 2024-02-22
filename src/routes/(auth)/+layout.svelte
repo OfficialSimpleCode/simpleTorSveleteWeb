@@ -2,7 +2,7 @@
   import Navbar from "$lib/components/navbar/Navbar.svelte";
 </script>
 
-<div class="h-screen w-screen">
+<div class="h-screen w-full">
   <Navbar />
   <slot />
 </div>

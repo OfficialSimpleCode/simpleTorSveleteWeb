@@ -32,7 +32,7 @@
   bind:dialog={verificationDialog}
 />
 
-<main class="h-screen w-screen flex flex-col items-center gap-2 bg-base-100">
+<main class="h-full w-full flex flex-col items-center gap-2 bg-base-100">
   <!-- stepper -->
   <OrderStepper />
 
