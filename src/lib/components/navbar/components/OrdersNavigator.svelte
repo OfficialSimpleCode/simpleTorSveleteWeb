@@ -11,7 +11,7 @@
   <CustomCircleIcon
     icon="lets-icons:order-fill"
     href={$businessStore != null
-      ? `${base}/business/${get(businessStore).url}/orders`
+      ? `${base}/business/${get(businessStore)?.url}/orders`
       : `${base}/orders`}
   />
   {#if $userStore.bookingsToShow != null && Object.values($userStore.bookingsToShow).length > 0}

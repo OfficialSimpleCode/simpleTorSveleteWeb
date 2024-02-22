@@ -8,7 +8,7 @@
 {#if $businessStore != null}
   <a href="{base}/business/{$businessStore.url}">
     <div
-      class="{ngClass} flex flex-row h-[34px] sm:h-[40px] px-2 gap-1 max-w-[110px]"
+      class="{ngClass} flex flex-row h-[34px] sm:h-[40px] px-2 gap-1 max-w-[80px] xs:max-w-[110px]"
     >
       <h3 class="text-xs truncate text-ellipsis">
         {$businessStore.shopName}

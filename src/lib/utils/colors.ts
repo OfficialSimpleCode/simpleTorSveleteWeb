@@ -4,12 +4,12 @@ import better from "better-color-tools";
 
 export function getTheme(
   themeKey: string,
-  themes: Map<string, BusinessTheme>
+  themes: Record<string, BusinessTheme>
 ): BusinessTheme {
   if (Object.keys(defaultThemes).includes(themeKey)) {
     return defaultThemes[themeKey];
   } else {
-    return themes.get(themeKey)!;
+    return themes[themeKey]!;
   }
 }
 

@@ -4,6 +4,7 @@
   import BusinessInitializer from "$lib/initializers/business_initializer";
   import { businessStore } from "$lib/stores/Business";
   import { workersStore } from "$lib/stores/Workers.js";
+  import { isNotEmpty } from "$lib/utils/core_utils";
   import { _, translate } from "$lib/utils/translate";
   import ImageDisplayDialog from "../components/ImageDisplayDialog.svelte";
 
@@ -42,13 +43,13 @@
 
 {#if Object.keys(workersStories).length > 0}
   <div
-    class="mt-10 {$businessStore.design.products.size > 0
+    class="mt-10 {isNotEmpty($businessStore?.design.products ?? {})
       ? 'bg-base-200'
       : 'bg-base-300'} w-full pb-14 px-2 pt-10 xs:px-16"
   >
     <h1 class="text-center font-bold text-2xl pb-6">
-      {$businessStore.design.storyTitle
-        ? $businessStore.design.storyTitle
+      {$businessStore?.design.storyTitle ?? ""
+        ? $businessStore?.design.storyTitle ?? ""
         : translate("myWorks", $_).replaceAll(":", "")}
     </h1>
     <div

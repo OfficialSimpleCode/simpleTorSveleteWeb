@@ -4,11 +4,13 @@ import type { Update } from "$lib/models/business/update_model";
 
 export function popUpUpdate(): Update | undefined {
   let updateToPop: Update | undefined;
-  BusinessInitializer.GI().business.design.updates.forEach((update, index) => {
-    if (update.popOnEnter) {
-      updateToPop = update;
+  Object.entries(BusinessInitializer.GI().business.design.updates).forEach(
+    ([index, update]) => {
+      if (update.popOnEnter) {
+        updateToPop = update;
+      }
     }
-  });
+  );
 
   if (
     UserInitializer.GI().isConnected &&
