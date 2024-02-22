@@ -4,7 +4,7 @@ import RemoteConfigHelper from "$lib/helpers/remote_config_helper";
 export function subTypeFromProductId(
   productId: string,
   businessId: string
-): SubType {
+): SubType | undefined {
   const ownerId = businessId.split("--")[0];
 
   if (productId.includes("basic")) {
@@ -23,6 +23,8 @@ export function subTypeFromProductId(
       productId =
         RemoteConfigHelper.GI().developers![ownerId].businessProductId;
     }
+  } else {
+    return undefined;
   }
 
   return SubType.trial;

@@ -3,8 +3,13 @@ import BusinessInitializer from "$lib/initializers/business_initializer";
 import type { Developer } from "$lib/models/developers/developer";
 import FirebseRometeConfig from "$lib/services/external_services/firebase_remote_config";
 import { appStateStore } from "$lib/stores/AppState";
-import { activeBusiness, businessStore } from "$lib/stores/Business";
+import {
+  activeBusiness,
+  businessStore,
+  businessSubStore,
+} from "$lib/stores/Business";
 import { parseDevelopers } from "$lib/utils/remote_config_utils";
+import { subTypeFromProductId } from "$lib/utils/subscription_utils";
 import { get } from "svelte/store";
 
 export default class RemoteConfigHelper {
@@ -29,9 +34,15 @@ export default class RemoteConfigHelper {
     if (FirebseRometeConfig.GI().isAppInMaintenance()) {
       appStateStore.set(LoadingStatuses.maintenanceMode);
     }
+    const business = get(businessStore);
     //check if the business active after the dvelopers are loaded
-    if (get(businessStore) != null && get(activeBusiness) == null) {
+    if (business != null && get(activeBusiness) == null) {
       activeBusiness.set(BusinessInitializer.GI().isBusinessActive());
+      // Update the subtype before continuing to the rest of the loading
+
+      businessSubStore.set(
+        subTypeFromProductId(business.productId, business.businessId)
+      );
     }
   }
 }

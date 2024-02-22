@@ -58,9 +58,5 @@ export async function updateBooking({ booking }: { booking: Booking }) {
   BusinessInitializer.GI().startWorkerListening(worker);
   BusinessInitializer.GI().startTimesListening(worker, false);
 
-  goto(
-    `${base}/business/${
-      get(businessStore) != null ? get(businessStore).urlEndPoint : ""
-    }/order`
-  );
+  goto(`${base}/business/${get(businessStore)?.url ?? ""}/order`);
 }

@@ -129,7 +129,7 @@ export default class UserInitializer {
     if (managerId.length < 16) {
       managerId = `+${managerId}`;
     }
-    console.log(managerId);
+
     //send to the manager that the user enter first time
     //the loading of the workers is not waited so need to check every 100 ms if the
     //manager worker obj is loaded
@@ -284,7 +284,7 @@ export default class UserInitializer {
 
   async deleteSeenUpdateIfNeeded(
     businessId: string,
-    businessUpdates: Map<string, Update>
+    businessUpdates: Record<string, Update>
   ): Promise<boolean> {
     if (this.isConnected) {
       return true;
@@ -293,7 +293,7 @@ export default class UserInitializer {
     const seenUpdates = this.user.seenUpdates[businessId] || {};
     const existUpdatesId = new Set<string>();
 
-    businessUpdates.forEach((update, _) => {
+    Object.entries(businessUpdates).forEach(([_, update]) => {
       existUpdatesId.add(update.id);
     });
 

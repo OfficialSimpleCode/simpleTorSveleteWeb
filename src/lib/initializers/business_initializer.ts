@@ -19,7 +19,11 @@ import { BusinessData } from "$lib/models/business/business_data";
 import { BusinessDesign } from "$lib/models/business/business_design";
 import BusinessModel from "$lib/models/business/business_model";
 import WorkerModel from "$lib/models/worker/worker_model";
-import { activeBusiness, businessStore } from "$lib/stores/Business";
+import {
+  activeBusiness,
+  businessStore,
+  businessSubStore,
+} from "$lib/stores/Business";
 import { isConnectedStore, userStore } from "$lib/stores/User";
 import { workersStore } from "$lib/stores/Workers";
 import { checkForReminders } from "$lib/utils/booking_utils";
@@ -59,18 +63,16 @@ export default class BusinessInitializer {
 
   businessIcon: string = "";
 
-  businessSubtype: SubType = SubType.trial;
-
   get maxClientPerWorker(): number | undefined {
-    return appLimits[BusinessInitializer.GI().businessSubtype]![
+    return appLimits[get(businessSubStore) ?? SubType.trial]![
       BuisnessLimitations.clientPerWorker
     ];
   }
 
   initBusiness(businessId: string): boolean {
     try {
-      this.businessSubtype = SubType.trial;
       this.workers = {};
+      this.emptyBusinessData();
 
       GeneralData.currentBusinesssId = businessId;
 
@@ -83,9 +85,8 @@ export default class BusinessInitializer {
       this._loadBusinessWorkers(businessId);
 
       // Update the subtype before continuing to the rest of the loading
-      this.businessSubtype = subTypeFromProductId(
-        this.business.productId,
-        businessId
+      businessSubStore.set(
+        subTypeFromProductId(this.business.productId, businessId)
       );
 
       activeBusiness.set(this.isBusinessActive());
@@ -332,23 +333,22 @@ export default class BusinessInitializer {
   }
 
   emptyBusinessData(): void {
-    this.businessSubtype = SubType.trial;
     this.business = BusinessModel.empty();
     this.business.businessData = new BusinessData();
 
     // No need to wait
     this.cancelBusinessDataListener();
     GeneralData.currentBusinesssId = "";
-    businessStore.set(new BusinessModel({}));
+    businessStore.set(undefined);
+    activeBusiness.set(undefined);
+    businessSubStore.set(undefined);
   }
 
   //---------------------------------------listeners --------------------------------------
 
   startWorkerListening(worker: WorkerModel): void {
     try {
-      console.log("cjdoscijdsoicdos");
       if (!worker.workerDocListner) {
-        console.log("cjdoscijdsoge2542353454");
         // Make a listener for the worker object doc
         worker.workerDocListner = this.generalRepo.docListenerRepo({
           path: `${buisnessCollection}/${this.business.businessId}/${workersCollection}`,

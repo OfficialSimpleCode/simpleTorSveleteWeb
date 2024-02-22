@@ -2,14 +2,14 @@
   import Carousel from "$lib/components/carousel/Carousel.svelte";
   import CarouselItem from "$lib/components/carousel/CarouselItem.svelte";
   import { containerRadius } from "$lib/consts/sizes";
-  import { Update } from "$lib/models/business/update_model";
   import { businessStore } from "$lib/stores/Business";
+  import { isNotEmpty, length } from "$lib/utils/core_utils";
   import { _, translate } from "$lib/utils/translate";
 
-  const businessUpdates: Map<string, Update> = $businessStore.design.updates;
+  $: businessUpdates = $businessStore?.design.updates ?? {};
 </script>
 
-{#if businessUpdates.size > 0}
+{#if isNotEmpty(businessUpdates)}
   <div class="flex items-center justify-center text-center xs:pt-5">
     <div
       class="flex items-center justify-center text-center py-2 bg-base-200 {containerRadius} max-w-[800px] w-full mx-6"
@@ -17,9 +17,9 @@
       <Carousel
         autoScroll={true}
         interval={20000}
-        showArrows={$businessStore.design.updates.size > 1}
+        showArrows={length(businessUpdates) > 1}
       >
-        {#each businessUpdates as [id, update]}
+        {#each Object.entries(businessUpdates) as [id, update]}
           <CarouselItem>
             <div
               class="flex h-[200px] flex-col justify-center items-center w-full relative px-2"

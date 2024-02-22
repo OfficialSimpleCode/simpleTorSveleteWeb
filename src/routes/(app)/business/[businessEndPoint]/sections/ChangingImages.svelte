@@ -15,9 +15,10 @@
   let b = "h-[1000px]";
   let useDefault: boolean = false;
   let defaultImage: string = "";
-  useDefault = $businessStore.design.changingImages.length === 0;
-  defaultImage =
-    computeLuminance($businessStore.design.pickedTheme.background) > 0.5
+  $: changingImages = $businessStore?.design.changingImages ?? [];
+  $: useDefault = changingImages.length === 0;
+  $: defaultImage =
+    computeLuminance($businessStore?.design.pickedTheme.background ?? 0) > 0.5
       ? defaultBannerImageLight
       : defaultBannerImageDark;
   // After the ui is loaded
@@ -44,11 +45,13 @@
     console.log("The b is -> ", b);
 
     // starting the changin images animation
-    if ($businessStore.design.changingImages.length > 1) {
-      setInterval(() => {
-        currentIndex =
-          (currentIndex + 1) % $businessStore.design.changingImages.length;
-      }, $businessStore.design.changingImagesSwapSeconds * 1000);
+    if (changingImages.length > 1) {
+      setInterval(
+        () => {
+          currentIndex = (currentIndex + 1) % changingImages.length;
+        },
+        ($businessStore?.design.changingImagesSwapSeconds ?? 6) * 1000
+      );
     }
   });
 
@@ -64,9 +67,7 @@
   <div class="md:h-[450px] w-full h-[370px] hidden xs:block">
     <img
       class="md:h-[450px] w-full object-cover h-[370px] hidden xs:block transition-opacity"
-      src={useDefault
-        ? defaultImage
-        : $businessStore.design.changingImages[currentIndex]}
+      src={useDefault ? defaultImage : changingImages[currentIndex]}
       alt={"business image"}
       style="animation: 1s ease-out"
       in:fade={{ duration: 1000 }}
@@ -78,9 +79,7 @@
     <div class="aspect-[5/4]">
       <img
         class="aspect-[5/4] object-cover transition-opacity"
-        src={useDefault
-          ? defaultImage
-          : $businessStore.design.changingImages[currentIndex]}
+        src={useDefault ? defaultImage : changingImages[currentIndex]}
         alt={"business image"}
         style="animation: 1s ease-out;"
         in:fade={{ duration: 1000 }}

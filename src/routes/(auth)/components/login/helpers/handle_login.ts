@@ -140,7 +140,7 @@ export async function handleLogin({
 
 function comeBack() {
   if (get(businessStore) != null) {
-    goto(`${base}/business/${get(businessStore).url}`);
+    goto(`${base}/business/${get(businessStore)?.url ?? ""}`);
   } else {
     goto(`${base}/`);
   }
@@ -155,7 +155,7 @@ export async function finishDeleteUser() {
     //after delete user need to go to business if loaded if not
     //go to the app page
     if (get(businessStore) != null) {
-      goto(`${base}/business/${get(businessStore).url}`);
+      goto(`${base}/business/${get(businessStore)?.url ?? ""}`);
     } else {
       goto(`/`);
     }

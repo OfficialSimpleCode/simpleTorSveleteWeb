@@ -4,8 +4,11 @@
   import { SubType } from "$lib/consts/purchases";
   import { maxButtonSize } from "$lib/consts/sizes";
   import { themeStore } from "$lib/controllers/theme_controller";
-  import BusinessInitializer from "$lib/initializers/business_initializer";
-  import { activeBusiness, businessStore } from "$lib/stores/Business";
+  import {
+    activeBusiness,
+    businessStore,
+    businessSubStore,
+  } from "$lib/stores/Business";
   import { userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
   import BookingList from "./pages/BookingList.svelte";
@@ -14,7 +17,8 @@
 
   const showMakeBookingButton =
     $businessStore != null &&
-    BusinessInitializer.GI().businessSubtype !== SubType.landingPage &&
+    $businessSubStore != null &&
+    $businessSubStore !== SubType.landingPage &&
     !$businessStore.isLandingPageMode &&
     $activeBusiness !== false;
   console.log("jjjjjjjjjjjjjjjjj", showMakeBookingButton);
@@ -52,7 +56,7 @@
         <div class="pb-4 w-[90%] flex flex-row items-center justify-center">
           <a
             class="btn w-full btn-primary {maxButtonSize}"
-            href={`${base}/business/${$businessStore.url}/order`}
+            href={`${base}/business/${$businessStore?.url ?? ""}/order`}
           >
             {#if $activeBusiness === true}
               <div class="flex flex-row gap-1 items-center">

@@ -1,14 +1,18 @@
 <script lang="ts">
   import { pushState } from "$app/navigation";
   import { base } from "$app/paths";
-  import { page } from "$app/stores";
   import Avatar from "$lib/components/Avatar.svelte";
   import NavigationDialog from "$lib/components/dialogs/NavigationDialog.svelte";
-  import { activeBusiness, businessStore } from "$lib/stores/Business";
+  import {
+    activeBusiness,
+    businessStore,
+    businessSubStore,
+  } from "$lib/stores/Business";
   import { _, translate } from "$lib/utils/translate";
 
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { isAppleUser } from "$lib/consts/platform";
+  import { subsLevels } from "$lib/consts/purchases";
   import { containerRadius } from "$lib/consts/sizes";
   import { onMount } from "svelte";
   import ShareDialog from "../components/ShareDialog.svelte";
@@ -41,15 +45,14 @@
 </script>
 
 <!-- the page dialogs -->
-{#if $page.state.showModal}
-  <ShareDialog
-    bind:dialog={shareDialog}
-    name={$businessStore.shopName}
-    address={$businessStore.adress}
-  />
 
-  <NavigationDialog bind:dialog={navigationDialog} />
-{/if}
+<ShareDialog
+  bind:dialog={shareDialog}
+  name={$businessStore?.shopName ?? ""}
+  address={$businessStore?.adress ?? ""}
+/>
+
+<NavigationDialog bind:dialog={navigationDialog} />
 
 <section
   id="profile-row"
@@ -57,21 +60,36 @@
 >
   <!-- icon business name and address -->
   <div class="flex flex-col justify-center items-center">
-    <Avatar img={$businessStore.design.shopIconUrl} />
+    <div class="relative">
+      <Avatar img={$businessStore?.design.shopIconUrl ?? ""} />
+      <div
+        class="absolute bottom-0 left-0 {$businessSubStore == null ||
+        subsLevels[$businessSubStore] < 5
+          ? 'hidden'
+          : ''}"
+      >
+        <GeneralIcon
+          icon="material-symbols:verified"
+          style="color: #42A5F5"
+          size={25}
+        />
+      </div>
+    </div>
+
     <h1 class="md:text-4xl xs:text-3xl text-2xl pt-2 max-w-64">
-      {$businessStore.shopName}
+      {$businessStore?.shopName ?? ""}
     </h1>
     <button
       class="flex items-center gap-1 link opacity-70 link-hover"
       on:click={openNavigationDialog}
     >
       <div
-        class="flex flex-row {$businessStore.adress !== ''
+        class="flex flex-row {$businessStore?.adress !== ''
           ? 'block'
           : 'hidden'} items-center"
       >
         <h1 class="text-xs xs:text-sm">
-          {$businessStore.adress}
+          {$businessStore?.adress ?? ""}
         </h1>
         <GeneralIcon icon="mdi:map-marker-outline" size={16}></GeneralIcon>
       </div>
@@ -86,7 +104,7 @@
       <div class="flex xs:gap-5 gap-3 items-center">
         <a
           class="btn btn-primary xs:px-10 px-6"
-          href="{base}/business/{$businessStore.url}/order"
+          href="{base}/business/{$businessStore?.url ?? ''}/order"
         >
           {translate("setBooking", $_)}
         </a>

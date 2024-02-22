@@ -1,5 +1,8 @@
 <script lang="ts">
-  import { businessTypeToStr } from "$lib/consts/business_types";
+  import {
+    BusinessesTypes,
+    businessTypeToStr,
+  } from "$lib/consts/business_types";
   import { businessStore } from "$lib/stores/Business";
   import { _, translate } from "$lib/utils/translate";
 
@@ -13,42 +16,49 @@
 
   onMount(() => {
     if (
-      $themeStore == null ||
-      $businessStore.design.pickedTheme.id != $themeStore.id
+      $businessStore != null &&
+      ($themeStore == null ||
+        $businessStore?.design.pickedTheme.id != $themeStore.id)
     ) {
-      $themeStore = $businessStore.design.pickedTheme;
+      $themeStore = $businessStore?.design.pickedTheme;
     }
   });
 </script>
 
 <svelte:head>
   <title>
-    {$businessStore.shopName} | {translate(
-      businessTypeToStr[$businessStore.businesseType],
+    {$businessStore?.shopName} | {translate(
+      businessTypeToStr[$businessStore?.businesseType ?? BusinessesTypes.Other],
       $_
     )}
   </title>
   <meta
     name="description"
-    content={translate(businessTypeToStr[$businessStore.businesseType], $_)}
+    content={translate(
+      businessTypeToStr[$businessStore?.businesseType ?? BusinessesTypes.Other],
+      $_
+    )}
   />
   <link
     rel="icon"
-    href={$businessStore.design.shopIconUrl}
+    href={$businessStore?.design.shopIconUrl}
     type="image/x-icon"
   />
-  <meta name="author" content={$businessStore.ownersName} />
+  <meta name="author" content={$businessStore?.ownersName} />
   <meta
     property="og:title"
-    content="{$businessStore.shopName} | {translate(
-      businessTypeToStr[$businessStore.businesseType],
+    content="{$businessStore?.shopName ?? ''} | {translate(
+      businessTypeToStr[$businessStore?.businesseType ?? BusinessesTypes.Other],
       $_
     )}"
   />
-  <meta property="og:image" content={$businessStore.design.shopIconUrl} />
+  <meta property="og:image" content={$businessStore?.design.shopIconUrl} />
   <meta
     property="og:description"
-    content={translate(businessTypeToStr[$businessStore.businesseType], $_)}
+    content={translate(
+      businessTypeToStr[$businessStore?.businesseType ?? BusinessesTypes.Other],
+      $_
+    )}
   />
 </svelte:head>
 

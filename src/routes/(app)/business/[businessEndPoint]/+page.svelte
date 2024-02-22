@@ -55,11 +55,11 @@
     updateToPop = popUpUpdate();
     if (updateToPop != null) {
       const newSeenUpdates = new Set(
-        $userStore.seenUpdates[$businessStore.businessId] ?? new Set()
+        $userStore.seenUpdates[$businessStore?.businessId ?? ""] ?? new Set()
       );
       newSeenUpdates.add(updateToPop.id);
       UserHelper.GI().updateSeenUpdates(
-        $businessStore.businessId,
+        $businessStore?.businessId ?? "",
         newSeenUpdates
       );
 
