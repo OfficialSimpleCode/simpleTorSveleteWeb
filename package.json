@@ -6,7 +6,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "start": "sirv --host 0.0.0.0 --port 5173"
   },
   "devDependencies": {
     "@fontsource/fira-mono": "^4.5.10",
@@ -25,6 +26,7 @@
     "dpdm": "^3.14.0",
     "madge": "^6.1.0",
     "postcss": "^8.4.33",
+    "sirv-cli": "^2.0.2",
     "svelte": "^4.2.7",
     "svelte-check": "^3.6.0",
     "svelte-qrcode": "^1.0.0",

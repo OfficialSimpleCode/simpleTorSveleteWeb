@@ -114,7 +114,7 @@ export const reviews: ReviewItem[] = [
   {
     name: "ShiraSa123",
     bio: "Beautician",
-    content: "אפליקציה מדהימה ממליצה בחום!",
+    content: "אפליקציה מדהימה ממליצה לכולם בחום! כמה חיפשתי כזה דברר",
     imageUrl:
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
   },
@@ -129,7 +129,8 @@ export const reviews: ReviewItem[] = [
   {
     name: "יה-לי סולץ",
     bio: "Yoga Studio",
-    content: "מערכת מעולה ממליצה עליה מאוד!",
+    content:
+      "מערכת מעולה ממליצה עליה לכל מי שיש לו עסק ורוצה להפסיק את השיגועים מהלקוחות",
     imageUrl:
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
   },

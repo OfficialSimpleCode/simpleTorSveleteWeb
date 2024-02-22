@@ -23,67 +23,68 @@
 </script>
 
 <ContactUsDialog bind:dialog={contactUsDialog} />
+<footer class="bg-base-200">
+  <!-- top footer -->
+  <div class="footer p-10 text-base-content">
+    <!-- services -->
+    <nav>
+      <header class="footer-title">
+        {translate("treatments", $_).toLocaleUpperCase()}
+      </header>
+      <a target="_blank" href={downloadLink} class="link link-hover"
+        >{translate("queueSystem", $_)}</a
+      >
+      <button class="link link-hover"
+        >{translate("systemsDevelopment", $_)}</button
+      >
+      <button class="link link-hover" on:click={openContactUs}
+        >{translate("ContactUs", $_)}</button
+      >
+    </nav>
 
-<!-- top footer -->
-<footer class="footer p-10 bg-base-200 text-base-content">
-  <!-- services -->
-  <nav>
-    <header class="footer-title">
-      {translate("treatments", $_).toLocaleUpperCase()}
-    </header>
-    <a target="_blank" href={downloadLink} class="link link-hover"
-      >{translate("queueSystem", $_)}</a
-    >
-    <button class="link link-hover"
-      >{translate("systemsDevelopment", $_)}</button
-    >
-    <button class="link link-hover" on:click={openContactUs}
-      >{translate("ContactUs", $_)}</button
-    >
-  </nav>
+    <!-- comany -->
+    <nav>
+      <header class="footer-title">
+        {translate("company", $_).toLocaleUpperCase()}
+      </header>
+      <a
+        target="_blank"
+        href="https://officialsimplecode.github.io/SimpleCodeWeb/"
+        class="link link-hover">{translate("companySite", $_)}</a
+      >
+    </nav>
 
-  <!-- comany -->
-  <nav>
-    <header class="footer-title">
-      {translate("company", $_).toLocaleUpperCase()}
-    </header>
-    <a
-      target="_blank"
-      href="https://officialsimplecode.github.io/SimpleCodeWeb/"
-      class="link link-hover">{translate("companySite", $_)}</a
-    >
-  </nav>
+    <!-- legal -->
+    <nav>
+      <header class="footer-title">
+        {translate("legal", $_).toLocaleUpperCase()}
+      </header>
+      <a href="{base}/terms-of-use" class="link link-hover"
+        >{translate("termToUse", $_)}</a
+      >
+      <a href="{base}/privacy" class="link link-hover"
+        >{translate("policy", $_)}</a
+      >
+    </nav>
+  </div>
 
-  <!-- legal -->
-  <nav>
-    <header class="footer-title">
-      {translate("legal", $_).toLocaleUpperCase()}
-    </header>
-    <a href="{base}/terms-of-use" class="link link-hover"
-      >{translate("termToUse", $_)}</a
-    >
-    <a href="{base}/privacy" class="link link-hover"
-      >{translate("policy", $_)}</a
-    >
-  </nav>
-</footer>
+  <div class="h-[1px] mx-5 bg-base-300 bg-opacity-90 rounded-3xl mb-4"></div>
+  <!-- bottom footer -->
+  <div class="footer px-10 py-4 text-base-content border-base-300">
+    <!-- logo and company details -->
+    <aside class="items-center grid-flow-col {generatedPage ? '' : 'hidden'}">
+      <Logo />
+      <p>
+        {translate("ourCompanyName", $_)}<br />{translate(
+          "createdBySimpleTor",
+          $_
+        )}
+      </p>
+    </aside>
 
-<div class="h-[.5px] mx-5 bg-base-300 bg-opacity-40 rounded-3xl mb-4"></div>
-<!-- bottom footer -->
-<footer class="footer px-10 py-4 bg-base-200 text-base-content border-base-300">
-  <!-- logo and company details -->
-  <aside class="items-center grid-flow-col {generatedPage ? '' : 'hidden'}">
-    <Logo />
-    <p>
-      {translate("ourCompanyName", $_)}<br />{translate(
-        "createdBySimpleTor",
-        $_
-      )}
-    </p>
-  </aside>
+    <DownloadAppButton />
 
-  <DownloadAppButton />
-
-  <!-- social links -->
-  <FooterSocialIcons />
+    <!-- social links -->
+    <FooterSocialIcons />
+  </div>
 </footer>

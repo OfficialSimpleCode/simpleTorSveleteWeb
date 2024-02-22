@@ -55,12 +55,14 @@
       <video
         id={mediaSrc}
         placeholder="nvdoisvoidsnvoids"
-        loop
         autoplay
+        muted
+        loop
+        controls={false}
+        playsinline
         class="object-cover"
       >
         <source src={mediaSrc} type="video/mp4" />
-
         <track kind="captions" /></video
       >
     {/key}
