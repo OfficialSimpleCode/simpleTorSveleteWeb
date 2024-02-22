@@ -40,6 +40,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/svelte-fontawesome": "^0.2.1",
+    "@jill64/svelte-device-theme": "^1.2.13",
     "@lottiefiles/svelte-lottie-player": "^0.3.1",
     "@syncfusion/ej2-schedule": "^24.1.41",
     "@types/intl": "^1.2.2",

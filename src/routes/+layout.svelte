@@ -10,10 +10,13 @@
   import { appStateStore } from "$lib/stores/AppState";
   import { screenSizeStore } from "$lib/stores/sizes";
   import { onMount } from "svelte";
+
   import "../app.css";
   let screenHeight: number;
+
   onMount(() => {
     RemoteConfigHelper.GI().init();
+    console.log("wwwwwwwwwwwwwwwwwwwwwwww");
     initialTheme(localStorage, document);
     handleLocaleChanges(localStorage, document);
 

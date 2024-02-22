@@ -18,14 +18,15 @@
 
       <!-- sub title -->
       <p
-        class="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400"
+        class="max-w-2xl mb-6 font-light lg:mb-8 md:text-lg lg:text-xl opacity-70"
       >
         מערכת ניהול עסק מתקדמת, זימוני תורים, ניהול עובדים, תשלומים וקבלות,
         מהטלפון בבית
       </p>
 
       <!-- download app button -->
-      <div class="lg:flex block lg:justify-start">
+
+      <div class="flex justify-center lg:justify-start w-full">
         <div class="">
           <DownloadAppButton />
         </div>

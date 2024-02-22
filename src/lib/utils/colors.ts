@@ -15,6 +15,7 @@ export function getTheme(
 
 export function loadColorFromTheme(key: string, theme: BusinessTheme): string {
   let color = theme.toJson()[key].toString(16);
+
   color = "#" + color.slice(2);
   return color;
 }

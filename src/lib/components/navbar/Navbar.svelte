@@ -5,6 +5,7 @@
   // Assets
 
   import CustomCircleIcon from "../custom_components/CustomCircleIcon.svelte";
+  import BrightnessNavigator from "./components/BrightnessNavigator.svelte";
   import BusinessNavigator from "./components/BusinessNavigator.svelte";
   import OrdersNavigator from "./components/OrdersNavigator.svelte";
   import ProfileNavigator from "./components/ProfileNavigator.svelte";
@@ -18,6 +19,7 @@
     <a href={`${base}/`} class=" text-xl hover:opacity-70">SimpleTor</a>
   </div>
   <div class="flex items-center gap-2">
+    <BrightnessNavigator />
     <BusinessNavigator />
     <!-- lang icon -->
     <div class="dropdown dropdown-left dropdown-bottom items-center">

@@ -20,7 +20,9 @@
       ($themeStore == null ||
         $businessStore?.design.pickedTheme.id != $themeStore.id)
     ) {
-      $themeStore = $businessStore?.design.pickedTheme;
+      const theme = $businessStore?.design.pickedTheme;
+      theme.onBusiness = true;
+      $themeStore = theme;
     }
   });
 </script>

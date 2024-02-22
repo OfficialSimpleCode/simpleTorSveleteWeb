@@ -14,6 +14,8 @@ export class BusinessTheme {
   id: string = "";
   fontName: string = "";
   themeName: string = "";
+  //if the current theme is on business equals true if on landing page equals false
+  onBusiness: boolean = false;
 
   constructor({
     background = 0,
