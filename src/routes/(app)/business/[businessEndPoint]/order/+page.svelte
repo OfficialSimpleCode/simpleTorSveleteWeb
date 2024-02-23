@@ -49,7 +49,7 @@
     {/if}
 
     <!-- cancel button -->
-    <div class="pb-4 w-[90%] mt-10 max-w-[360px]">
+    <div class="pb-4 mt-6 max-w-[360px] w-[300px]">
       <a
         class="btn btn-outline sm:hidden w-full"
         href={$businessStore != null

@@ -29,8 +29,8 @@ export default class BusinessModel {
   urlEndPoint: string | undefined;
   billingIssue: Map<string, Date> = new Map();
   isLandingPageMode: boolean = false;
-  allWorkersIds: Map<string, string> = new Map();
-  workersIds: Map<string, string> = new Map();
+  allWorkersIds: Record<string, string> = {};
+  workersIds: Record<string, string> = {};
   hypPath?: HypPaths;
   expiredDate: Date = new Date();
   workersPermissions: WorkersPermissions = new WorkersPermissions();
@@ -154,9 +154,10 @@ export default class BusinessModel {
       this.design.pickedThemeKey = theme;
       Object.entries<Record<string, any>>(json["products"]).forEach(
         ([productId, productJson]) => {
-          this.design.products.set(
+          this.design.products[productId] = ProductModel.fromJson(
+            productJson,
             productId,
-            ProductModel.fromJson(productJson, productId, withOutTimestamp)
+            withOutTimestamp
           );
         }
       );
@@ -169,9 +170,9 @@ export default class BusinessModel {
 
       if (json["updates"]) {
         (json["updates"] as Record<string, any>[]).forEach((update, index) => {
-          this.design.updates.set(
-            index.toString(),
-            Update.fromJson(update, index.toString())
+          this.design.updates[index.toString()] = Update.fromJson(
+            update,
+            index.toString()
           );
         });
       }
@@ -206,33 +207,28 @@ export default class BusinessModel {
     if (json["hypPath"] != null) {
       this.hypPath = hypPathFromStr[json["hypPath"]];
     }
-
-    this.allWorkersIds = new Map();
-    if (json["allWorkersIds"] != null) {
-      Object.entries<string>(json["allWorkersIds"]).forEach(
-        ([workerId, details]) => {
-          this.allWorkersIds.set(workerId, details);
-        }
-      );
+    let ownerId = this.businessId.split("--")[0];
+    if (ownerId.length < 20) {
+      ownerId = `+${ownerId}`;
+    }
+    if (this.allWorkersIds[ownerId] == null) {
+      this.allWorkersIds[ownerId] = "";
     }
 
-    const ownerPhone = this.businessId.split("--")[0];
-    if (!this.allWorkersIds.hasOwnProperty("+" + ownerPhone)) {
-      this.allWorkersIds.set("+" + ownerPhone, "");
-    }
-
-    this.workersIds = new Map();
+    this.workersIds = {};
     if (json["workersIds"] != null) {
       Object.entries<string>(json["workersIds"]).forEach(
         ([workerId, details]) => {
-          this.workersIds.set(workerId, details);
+          this.workersIds[workerId] = details;
         }
       );
     }
 
-    if (!this.workersIds.hasOwnProperty(ownerPhone)) {
-      this.workersIds.set(ownerPhone, "");
+    if (this.workersIds[ownerId.replaceAll("+", "")] == null) {
+      this.workersIds[ownerId.replaceAll("+", "")] = "";
     }
+
+    console.log(this.workersIds);
 
     this.dynamicLink = json["dynamicLink"] ?? "";
     this.masofNumber = json["masofNumber"] ?? "";

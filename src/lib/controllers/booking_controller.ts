@@ -22,12 +22,13 @@ import { maxWidthToShow5Days } from "$lib/consts/booking_maker";
 import MultiBooking from "$lib/models/multi_booking/multi_booking";
 import type PhoneDataResult from "$lib/models/resps/phone_data_result";
 import type TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
+import { businessStore } from "$lib/stores/Business";
 import { screenSizeStore } from "$lib/stores/sizes";
 import {
   getForwardDays,
   loadBookingMakerTimeData,
 } from "$lib/utils/booking_maker";
-import { isNotEmpty } from "$lib/utils/core_utils";
+import { isNotEmpty, length } from "$lib/utils/core_utils";
 import { get, writable } from "svelte/store";
 interface BookingMaker {
   workerId?: string;
@@ -82,6 +83,12 @@ export default class BookingController {
         get(screenSizeStore).width > maxWidthToShow5Days ? 7 : 5
       ),
     };
+    const currentBusiness = get(businessStore);
+    console.log(
+      currentBusiness != null,
+      length(currentBusiness?.workersIds ?? {}),
+      !BookingController.bookingToUpdate
+    );
 
     Object.entries(BookingController.bookingToUpdate?.treatments ?? {}).forEach(
       ([index, treatment]) => {
@@ -92,6 +99,22 @@ export default class BookingController {
     //initial back to undified the booking
     BookingController.bookingToUpdate = undefined;
     bookingMakerStore.set(initialBookingMaker);
+
+    //jump to the service picker there is only one worker no need for the worker picker
+    if (
+      currentBusiness != null &&
+      length(currentBusiness.workersIds ?? {}) === 1 &&
+      !BookingController.bookingToUpdate
+    ) {
+      let workerId = Object.keys(currentBusiness.workersIds)[0];
+      if (workerId.length < 25) {
+        //the worker id is phone number need to add the + sign
+        workerId = `+${workerId}`;
+      }
+      this.setWorkerId(workerId);
+    }
+
+    console.log(get(bookingMakerStore));
   }
 
   static get worker(): WorkerModel {

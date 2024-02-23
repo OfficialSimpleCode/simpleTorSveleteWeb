@@ -96,9 +96,15 @@
 />
 
 <!-- xs:px-10 px-3 -->
-<div class="flex flex-col items-center justify-center w-full gap-2">
+<div class="flex flex-col items-center justify-center gap-3 w-full">
+  {#if needOnHold}
+    <AttentionText
+      text={worker?.orderNeerDedlineBookingMessage ??
+        translate("bookingNeedConfirmation", $_)}
+    />
+  {/if}
   <button
-    class="btn sm:text-xl btn-primary w-full {isLoading
+    class="btn btn-primary w-[300px] sm:w-[200px] {isLoading
       ? 'opacity-55'
       : ''} {maxButtonSize} hover:outline"
     on:click={handleClick}
@@ -122,10 +128,4 @@
       <AttentionText text={translate("blockedUserCantOrder", $_)} />
     {/if}
   </button>
-  {#if needOnHold}
-    <AttentionText
-      text={worker?.orderNeerDedlineBookingMessage ??
-        translate("bookingNeedConfirmation", $_)}
-    />
-  {/if}
 </div>

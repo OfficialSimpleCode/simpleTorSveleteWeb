@@ -21,7 +21,7 @@
   bind:this={dialog}
   class="modal modal-middle bg-center"
   on:close={() => {
-    history.back();
+    dialog.close();
   }}
 >
   <div class="modal-box bg-base-200 pb-10">

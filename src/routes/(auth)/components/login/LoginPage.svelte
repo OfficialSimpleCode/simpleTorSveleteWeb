@@ -11,6 +11,7 @@
   import { maxButtonSize } from "$lib/consts/sizes";
   import type { PhonePickerEvent } from "$lib/consts/text_fields";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
+  import { isConnectedStore } from "$lib/stores/User";
   import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
   import DeleteUserDialog from "./components/DeleteUserDialog.svelte";
@@ -26,7 +27,10 @@
   let phoneNumber: string;
   let loading: boolean = false;
 
-  googleOrder.forEach((provider) => {
+  $: googleOrder.forEach((provider) => {
+    if ($isConnectedStore == null) {
+      return;
+    }
     //facebook is will be active soon
     if (AuthProvider.Facebook === provider) {
       isActive[provider] = false;

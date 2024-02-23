@@ -18,6 +18,12 @@
 //   }
 
 //   reminderTemplate(multiBookingUser: MultiBookingUser): string {
+// const sendMessageTime = subDuration(
+//     this.bookingDate,
+//     new Duration({
+//       minutes: this.remindersTypes.get(BookingReminderType.regular) ?? 0,
+//     })
+//   );
 //     return translate("alertMultiBookingTemplate", undefined, false)
 //       .replace(
 //         "ADRESS",
@@ -35,7 +41,7 @@
 //               )
 //           : ""
 //       )
-//       .replace("DATE", getFormatedTime(this.bookingDate))
+//       .replace("DATE", getFormatedTime(this.bookingDate,sendMessageTime))
 //       .replace("WORKERNAME", this.workerName)
 //       .replace("TREATMENTNAME", this.treatment.name)
 //       .replace("BUSINESSNAME", this.businessName)
@@ -43,12 +49,18 @@
 //   }
 
 //   confirmArrivalReminderTemplate(multiBookingUser: MultiBookingUser): string {
+// const sendMessageTime = subDuration(
+//     this.bookingDate,
+//     new Duration({
+//       minutes: this.remindersTypes.get(BookingReminderType.confirmArrival) ?? 0,
+//     })
+//   );
 //     return translate(
 //       "confirmArrivalMultiBookingReminderTemplate",
 //       undefined,
 //       false
 //     )
-//       .replace("DATE", getFormatedTime(this.bookingDate))
+//       .replace("DATE", getFormatedTime(this.bookingDate,sendMessageTime))
 //       .replace("WORKERNAME", this.workerName)
 //       .replace("TREATMENTNAME", this.treatment.name)
 //       .replace("BUSINESSNAME", this.businessName)

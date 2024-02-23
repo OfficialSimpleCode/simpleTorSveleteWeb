@@ -57,33 +57,33 @@
 >
   <!-- worker step -->
   <button
-    class="btn bg-base-300 sm:w-[190px] xs:w-[135px] w-[108px] rounded-lg px-2"
+    class="btn bg-base-300 sm:w-[190px] xs:w-[135px] w-[108px] rounded-lg px-2 hover:text-base-content {$bookingMakerStore.currentStep ===
+    0
+      ? 'text-primary-content'
+      : ''}"
     class:bg-primary={$bookingMakerStore.currentStep === 0}
     on:click={() => clickedOnStep(0)}
   >
-    <p
-      class="overflow-hidden whitespace-nowrap text-ellipsis {$bookingMakerStore.currentStep ===
-      0
-        ? 'text-primary-content'
-        : ''}"
-    >
-      {$bookingMakerStore.workerId != null
-        ? $workersStore[$bookingMakerStore.workerId].name
-        : translate("worker", $_)}
-    </p>
+    {#if $workersStore[$bookingMakerStore.workerId ?? ""] == null}
+      <div class="loading loading-spinner" />
+    {:else}
+      <p class="overflow-hidden whitespace-nowrap text-ellipsis">
+        {$bookingMakerStore.workerId != null
+          ? $workersStore[$bookingMakerStore.workerId].name
+          : translate("worker", $_)}
+      </p>
+    {/if}
   </button>
   <!-- service step -->
   <button
-    class="btn bg-base-300 sm:w-[150px] xs:w-[135px] w-[108px] rounded-lg px-2"
+    class="btn bg-base-300 sm:w-[150px] xs:w-[135px] w-[108px] rounded-lg px-2 hover:text-base-content {$bookingMakerStore.currentStep ===
+    1
+      ? 'text-primary-content'
+      : ''}"
     class:bg-primary={$bookingMakerStore.currentStep === 1}
     on:click={() => clickedOnStep(1)}
   >
-    <p
-      class="overflow-hidden whitespace-nowrap text-ellipsis {$bookingMakerStore.currentStep ===
-      1
-        ? 'text-primary-content'
-        : ''}"
-    >
+    <p class="overflow-hidden whitespace-nowrap text-ellipsis">
       {Object.keys($bookingMakerStore.services).length === 0
         ? translate("treatment", $_)
         : getServicesName()}
@@ -92,16 +92,14 @@
 
   <!-- time step -->
   <button
-    class="btn bg-base-300 sm:w-[150px] xs:w-[135px] w-[108px] rounded-lg px-2"
+    class="btn bg-base-300 sm:w-[150px] xs:w-[135px] w-[108px] rounded-lg px-2 hover:text-base-content {$bookingMakerStore.currentStep ===
+    2
+      ? 'text-primary-content'
+      : ''}"
     class:bg-primary={$bookingMakerStore.currentStep === 2}
     on:click={() => clickedOnStep(2)}
   >
-    <p
-      class="overflow-hidden whitespace-nowrap text-ellipsis {$bookingMakerStore.currentStep ===
-      2
-        ? 'text-primary-content'
-        : ''}"
-    >
+    <p class="overflow-hidden whitespace-nowrap text-ellipsis">
       {$bookingMakerStore.date
         ? dateToDateStr($bookingMakerStore.date)
         : translate("time", $_)}

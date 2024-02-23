@@ -21,7 +21,7 @@
     <p class="mt-8">
       <a
         href={downloadLink}
-        class="btn lg:btn-md btn-primary px-16 text-lg bg-primary {containerRadius}"
+        class="btn btn-primary px-6 sm:px-20 text-lg bg-primary {containerRadius} "
         >התחל עכשיו
       </a>
     </p>

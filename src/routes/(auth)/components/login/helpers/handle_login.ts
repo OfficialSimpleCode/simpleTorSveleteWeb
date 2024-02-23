@@ -148,17 +148,14 @@ function comeBack() {
 
 export async function finishDeleteUser() {
   const resp = await UserHelper.GI().deleteUser(UserInitializer.GI().user);
-
-  if (!resp) {
-    ErrorsController.displayError();
-  } else {
+  console.log("111111111111111");
+  if (resp) {
+    console.log("ssssssssssssssssss");
     //after delete user need to go to business if loaded if not
     //go to the app page
-    if (get(businessStore) != null) {
-      goto(`${base}/business/${get(businessStore)?.url ?? ""}`);
-    } else {
-      goto(`/`);
-    }
+    comeBack();
+  } else {
+    ErrorsController.displayError();
   }
   return;
 }

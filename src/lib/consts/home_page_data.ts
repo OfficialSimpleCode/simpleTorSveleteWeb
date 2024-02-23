@@ -53,8 +53,7 @@ export const reviews: ReviewItem[] = [
   {
     name: "שקד כהן שי",
     bio: "barber",
-    content:
-      "ניהנתי ממש להשתמש באפליקציה עשתה לי המון סדר וכיף הגדן בגדןבןד בגןדבמגןדו בגדד גדהדכ הכ",
+    content: "ניהנתי ממש להשתמש באפליקציה עשתה לי המון סדר וכיף",
     imageUrl:
       "https://play-lh.googleusercontent.com/a-/ALV-UjW_LEhKuJr2bfjElmWepUVEfgXU1Bjvw6QfqaSBS7I2GD6x=s48-rw",
   },

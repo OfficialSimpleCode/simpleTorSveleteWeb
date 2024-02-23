@@ -1,16 +1,14 @@
 <script lang="ts">
   import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
-  import BookingController, {
-    bookingMakerStore,
-  } from "$lib/controllers/booking_controller";
+  import { bookingMakerStore } from "$lib/controllers/booking_controller";
+  import WorkerModel from "$lib/models/worker/worker_model";
   import { ShowToast } from "$lib/stores/ToastManager";
+  import { workersStore } from "$lib/stores/Workers";
   import { _, translate } from "$lib/utils/translate";
   import ButtomContinueButton from "./components/ButtomContinueButton.svelte";
   import EmptyServicesScreen from "./components/EmptyServicesScreen.svelte";
   import MultipleServicesTuggle from "./components/MultipleServicesTuggle.svelte";
   import ServiceItem from "./components/ServiceItem.svelte";
-
-  const worker = BookingController.worker;
 
   function continueNextStep() {
     if (Object.keys($bookingMakerStore.services).length > 0) {
@@ -23,6 +21,8 @@
     }
   }
   let isEmpty = true;
+  $: worker =
+    $workersStore[$bookingMakerStore.workerId ?? ""] ?? new WorkerModel({});
   $: worker.treatmentsSubjects.forEach((subject, index) => {
     isEmpty = isEmpty && subject.treatments.size === 0;
   });

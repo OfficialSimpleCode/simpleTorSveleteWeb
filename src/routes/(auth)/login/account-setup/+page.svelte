@@ -5,6 +5,7 @@
   import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
   import GeneralDialog from "$lib/components/dialogs/GeneralDialog.svelte";
   import GenderPicker from "$lib/components/pickers/gender_picker/GenderPicker.svelte";
+  import { AuthProvider } from "$lib/consts/auth";
   import { Gender } from "$lib/consts/gender";
   import { maxButtonSize } from "$lib/consts/sizes";
   import {
@@ -56,7 +57,9 @@
         pickedGender,
         fullName,
         phoneNumber,
-        email
+        email,
+        verifiedEmail,
+        VerificationHelper.GI().currentAuthProvider === AuthProvider.Phone
       );
 
       if (resp != null) {
@@ -176,12 +179,14 @@
           {translate("confirmPolicy", $_)}
           <a
             href="{base}/privacy"
+            target="_blank"
             class="font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline"
             >{translate("policy", $_)}</a
           >
           {translate("and", $_)}
           <a
             href="{base}/terms-of-use"
+            target="_blank"
             class="font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline"
             >{translate("termToUse", $_)}</a
           >

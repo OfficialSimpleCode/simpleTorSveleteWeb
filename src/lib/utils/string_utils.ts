@@ -5,7 +5,7 @@ import {
 import { weekDays } from "$lib/consts/worker_schedule";
 import type { Duration } from "$lib/models/core/duration";
 import { addDays, format } from "date-fns";
-import { dateIsoStr, dateToDateStr } from "./times_utils";
+import { dateIsoStr, dateToDateStr, dateToTimeStr } from "./times_utils";
 import { translate } from "./translate";
 
 export function durationToString(
@@ -132,25 +132,38 @@ export function loadBusinessesTypesIntepeter(): Map<string, BusinessesTypes> {
 
 export function getFormatedTime(
   date: Date,
+  considerNow: Date | undefined = undefined,
   withTime: boolean = true,
   withDayOfTheWeek: boolean = true
 ): string {
-  const day = format(date, "dd-MM-yyyy");
-  const time = format(date, "HH:mm");
+  const day = dateToDateStr(date);
+  const time = dateToTimeStr(date);
   let templete = "DATE DAY IN TIME";
   return templete
     .replaceAll("DATE", day)
     .replaceAll(" TIME", withTime ? " " + time : "")
-    .replaceAll("DAY", withDayOfTheWeek ? `(${getDayString(date)})` : "")
+    .replaceAll(
+      "DAY",
+      withDayOfTheWeek ? `(${getDayString(date, "", considerNow)})` : ""
+    )
     .replaceAll(" IN", withTime ? " " + translate("at") : "");
 }
 
-export function getDayString(date: Date, beforeDay: string = ""): string {
+///Get `date` and return the day of the week in string also return if its
+/// tommorow or today - get `considerNow` that we consider that as a
+/// now for a future messages
+export function getDayString(
+  date: Date,
+  beforeDay: string = "",
+  considerNow: Date | undefined = undefined
+): string {
   let todayOrTomorrow = "";
-  if (dateToDateStr(date) === dateToDateStr(addDays(new Date(), 1))) {
+  if (
+    dateToDateStr(date) === dateToDateStr(addDays(considerNow ?? new Date(), 1))
+  ) {
     todayOrTomorrow = translate("tomorrow");
   }
-  if (dateToDateStr(date) === dateToDateStr(new Date())) {
+  if (dateToDateStr(date) === dateToDateStr(considerNow ?? new Date())) {
     todayOrTomorrow = translate("today");
   }
   const day = weekDays[date.getDay()];
