@@ -17,7 +17,7 @@
   <div
     class="button-text mx-auto flex h-12 w-12 items-center justify-center rounded-md border {bg}"
   >
-    <GeneralIcon {icon} size={34} />
+    <GeneralIcon {icon} size={34} style="color:white" />
   </div>
 
   <!-- title -->

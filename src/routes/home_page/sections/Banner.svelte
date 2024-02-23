@@ -11,7 +11,7 @@
     <!-- title  -->
     <div>
       <h1
-        class="max-w-2xl mb-4 text-3xl font-extrabold tracking-tight leading-none md:text-4xl xl:text-5xl dark:text-white"
+        class="max-w-2xl mb-4 text-3xl font-extrabold tracking-tight leading-none md:text-4xl xl:text-5xl"
       >
         ניהול התורים בעסק ללא מאמץ
       </h1>

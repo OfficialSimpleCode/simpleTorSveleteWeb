@@ -5,7 +5,7 @@
 <section class="bg-base-100">
   <div
     id="features"
-    class="relative block px-6 py-10 lg:py-28 md:py-10 md:px-10 border-t border-b border-neutral-900 bg-neutral-900/30"
+    class="relative block px-6 py-10 lg:py-28 md:py-10 md:px-10 bg-base-100"
   >
     <!-- top text -->
     <div class="relative mx-auto max-w-5xl text-center">
@@ -23,7 +23,7 @@
 
       <!-- sub title -->
       <p
-        class="mx-auto my-4 w-full max-w-xl bg-transparent text-center font-medium leading-relaxed tracking-wide text-gray-400"
+        class="mx-auto my-4 w-full max-w-xl bg-transparent text-center font-medium leading-relaxed tracking-wide opacity-70"
       >
         ההמערכת כוללת מאות אפשרויות שנותנות לך שליטה מלאה על העסק, בחרנו עבורך
         את הפיצ'רים שהלקוחות שלנו הכי אוהבים

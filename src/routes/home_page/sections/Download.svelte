@@ -21,8 +21,7 @@
     <p class="mt-8">
       <a
         href={downloadLink}
-        type="button"
-        class=" py-5 px-16 text-lg bg-primary hover:bg-opacity-70 {containerRadius}"
+        class="btn lg:btn-md btn-primary px-16 text-lg bg-primary {containerRadius}"
         >התחל עכשיו
       </a>
     </p>

@@ -21,10 +21,10 @@
   <!-- feature icon and the color around it -->
   <Avatar img={businessData.iconImage} />
   <div
-    class="flex flex-col justify-center items-center backdrop-blur-xl mx-auto px-3 my-2 {containerRadius}"
+    class="flex flex-col justify-center items-center backdrop-blur-2xl mx-auto px-3 my-2 {containerRadius}"
   >
     <!-- title -->
-    <h3 class="my-1">{businessData.name}</h3>
+    <h3 class="my-1 text-white">{businessData.name}</h3>
   </div>
 
   <!-- sub title
