@@ -15,7 +15,6 @@
   on:close={() => {
     insideOtp = false;
     dialog.close();
-    history.back();
   }}
 >
   <div class="modal-box bg-base-200 pb-10">

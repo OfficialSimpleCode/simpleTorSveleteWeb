@@ -3059,5 +3059,6 @@
   "happyToHaveYou": "ברוך הבא! - עוד כמה פרטים עליך ונוכל להמשיך",
   "deleteUserExplainWithBusinesss": "שים לב! במידה וקיימים עסקים על המשתמש הם ימחקו לצמיתות",
   "notFoundPage": "דף זה לא נמצא",
-  "notFoundPageExplain": "דף זה לא קיים במערכת שלנו אנא נסה לנווט לדף אחר"
+  "notFoundPageExplain": "דף זה לא קיים במערכת שלנו אנא נסה לנווט לדף אחר",
+  "loginToSeeBookings": "התחבר כדי לצפות בהזמנות"
 }
