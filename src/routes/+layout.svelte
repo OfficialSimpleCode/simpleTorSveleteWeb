@@ -10,6 +10,7 @@
   import { appStateStore } from "$lib/stores/AppState";
   import { screenSizeStore } from "$lib/stores/sizes";
   import { onMount } from "svelte";
+  import { page } from "$app/stores";
 
   import "../app.css";
   let screenHeight: number;
@@ -37,7 +38,7 @@
 
       storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
       storyImagesWidth = Math.floor(
-        storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
+        storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
       );
 
       logger.debug("screenHeight", screenHeight);
@@ -48,9 +49,15 @@
 
   $: storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
   $: storyImagesWidth = Math.floor(
-    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
+    storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY),
   );
 </script>
+
+<svelte:head>
+  {#if !$page.url.pathname.includes("/business")}
+    <link rel="icon" href="/AppIcon.png" />
+  {/if}
+</svelte:head>
 
 <ToastManager />
 <div class="w-full h-ful">
