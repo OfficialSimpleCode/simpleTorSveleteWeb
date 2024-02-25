@@ -1,7 +1,5 @@
 <script>
   import Navbar from "$lib/components/navbar/Navbar.svelte";
-  import { decrypt, encrypt, hashText1 } from "$lib/utils/try1";
-  import { decrypt1, encrypt1 } from "$lib/utils/try2";
   import Footer from "../../lib/components/Footer.svelte";
   import Banner from "./sections/Banner.svelte";
   import Businesses from "./sections/Businesses.svelte";
@@ -12,13 +10,13 @@
   import HowItWorks from "./sections/HowItWorks.svelte";
   import Testimonials from "./sections/Testimonials.svelte";
 
-  console.log(hashText1("shilo", "saadon")); // encryptText1
-  const v = encrypt("shilo", "saadon");
-  console.log(v);
-  console.log(decrypt("Fyx6urTcY6uFQgemMuynwg==", "saadon"));
-  const w = encrypt1("shilo", "saadon");
-  console.log("aaa enc ", w);
-  console.log("aaa dec ", decrypt1(w, "saadon"));
+  // console.log(hashText1("shilo", "saadon")); // encryptText1
+  // const v = encrypt("shilo", "saadon");
+  // console.log(v);
+  // console.log(decrypt("Fyx6urTcY6uFQgemMuynwg==", "saadon"));
+  // const w = encrypt1("shilo", "saadon");
+  // console.log("aaa enc ", w);
+  // console.log("aaa dec ", decrypt1(w, "saadon"));
   // encryptText1("shilo", "saadon", "salt").then((value) => {
   //   console.log("encrotion is ", value);
   //   decryptText1(value, "saadon", "salt").then((dec) => {
