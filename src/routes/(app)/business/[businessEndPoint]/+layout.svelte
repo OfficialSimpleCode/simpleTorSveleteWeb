@@ -36,10 +36,13 @@
   </title>
   <meta
     name="description"
-    content={translate(
-      businessTypeToStr[$businessStore?.businesseType ?? BusinessesTypes.Other],
-      $_
-    )}
+    content={$businessStore?.businessSummary ??
+      translate(
+        businessTypeToStr[
+          $businessStore?.businesseType ?? BusinessesTypes.Other
+        ],
+        $_
+      )}
   />
   <link
     rel="icon"
@@ -57,10 +60,13 @@
   <meta property="og:image" content={$businessStore?.design.shopIconUrl} />
   <meta
     property="og:description"
-    content={translate(
-      businessTypeToStr[$businessStore?.businesseType ?? BusinessesTypes.Other],
-      $_
-    )}
+    content={$businessStore?.businessSummary ??
+      translate(
+        businessTypeToStr[
+          $businessStore?.businesseType ?? BusinessesTypes.Other
+        ],
+        $_
+      )}
   />
 </svelte:head>
 
