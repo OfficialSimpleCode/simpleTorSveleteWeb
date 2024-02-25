@@ -10,6 +10,7 @@
 <div class="indicator">
   <CustomCircleIcon
     icon="lets-icons:order-fill"
+    bgColor="bg-base-200"
     href={$businessStore != null
       ? `${base}/business/${get(businessStore)?.url}/orders`
       : `${base}/orders`}

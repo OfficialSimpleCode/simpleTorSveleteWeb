@@ -16,6 +16,7 @@
 <div class="indicator {onBusiness ? 'hidden' : ''}">
   <CustomCircleIcon
     icon={$themeStore?.id === "lightIos" ? "ph:sun-fill" : "ph:moon-fill"}
+    bgColor="bg-base-200"
     handleClick={onClick}
   />
 </div>

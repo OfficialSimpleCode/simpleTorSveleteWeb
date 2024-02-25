@@ -5,7 +5,7 @@ import { get } from "svelte/store";
 
 export function openOrdersPage() {
   if (get(businessStore) != null) {
-    goto(`${base}/business/${get(businessStore).url}/orders`);
+    goto(`${base}/business/${get(businessStore)?.url ?? ""}/orders`);
   } else {
     goto(`${base}/orders`);
   }

@@ -14,6 +14,8 @@
   import { isAppleUser } from "$lib/consts/platform";
   import { subsLevels } from "$lib/consts/purchases";
   import { containerRadius } from "$lib/consts/sizes";
+  import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
+  import { isConnectedStore } from "$lib/stores/User";
   import { onMount } from "svelte";
   import ShareDialog from "../components/ShareDialog.svelte";
 
@@ -36,6 +38,12 @@
       showModal: true,
     });
     setTimeout(() => shareDialog.showModal(), 100);
+  }
+
+  function onMakeBooking() {
+    if ($isConnectedStore === false && $businessStore != null) {
+      VerificationHelper.GI().needToMakeBookingAfterLogin = true;
+    }
   }
 
   // After the ui is loaded
@@ -91,7 +99,7 @@
         <h1 class="text-xs xs:text-sm">
           {$businessStore?.adress ?? ""}
         </h1>
-        <GeneralIcon icon="mdi:map-marker-outline" size={16}></GeneralIcon>
+        <GeneralIcon icon="mdi:map-marker-outline" size={16} />
       </div>
     </button>
   </div>
@@ -103,8 +111,11 @@
       <!-- Order now and Share buttons -->
       <div class="flex xs:gap-5 gap-3 items-center">
         <a
+          on:click={onMakeBooking}
           class="btn btn-primary xs:px-10 px-6"
-          href="{base}/business/{$businessStore?.url ?? ''}/order"
+          href={$isConnectedStore
+            ? `${base}/business/${$businessStore?.url ?? ""}/order`
+            : `${base}/login`}
         >
           {translate("setBooking", $_)}
         </a>

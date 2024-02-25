@@ -17,6 +17,7 @@ import { Errors } from "$lib/services/errors/messages";
 import { phoneToDocId } from "$lib/utils/user";
 
 import { AuthProvider, authProviderToStr } from "$lib/consts/auth";
+import { NotificationType } from "$lib/consts/booking";
 import { maxTimeBetweenLogInAndDelete } from "$lib/consts/limitation";
 import { ErrorsController } from "$lib/controllers/errors_controller";
 import BusinessInitializer from "$lib/initializers/business_initializer";
@@ -43,6 +44,7 @@ import DbPathesHelper from "../db_paths_helper";
 import { GeneralData } from "../general_data";
 import ManagerHelper from "../manager/manager_helper";
 import MultiBookingRepo from "../multi_booking/multi_booking_repo";
+import MessagesHelper from "../notifications/messages/messages_helper";
 import NotificationHandler from "../notifications/notification_handler";
 import { VerificationHelper } from "../verification/verification_helper";
 import { VerificationRepo } from "../verification/verification_repo";
@@ -362,8 +364,6 @@ export default class UserHelper {
               }
               return value;
             });
-        } else {
-          ErrorsController.displayError();
         }
 
         return value;
@@ -757,8 +757,82 @@ export default class UserHelper {
   }
 
   async handleScheduleMessgesPhoneChange(newPhone: string): Promise<void> {
-    ///TODO notification
-    return;
+    const regularBookingsToUpdate: Record<string, Booking> = {};
+    const recurrenceBookingsToUpdate: Record<string, Booking> = {};
+    await UserInitializer.GI().getAllBookingsDocs();
+    const user = UserInitializer.GI().user;
+
+    // Process regular bookings and recurrence bookings separately
+    Object.entries(user.bookings.recurrence || {}).forEach(
+      ([bookingId, booking]) => {
+        if (booking.notificationType !== NotificationType.message) {
+          return;
+        }
+
+        if (booking.recurrenceEvent !== null) {
+          recurrenceBookingsToUpdate[bookingId] = booking;
+        } else {
+          regularBookingsToUpdate[bookingId] = booking;
+        }
+      }
+    );
+
+    Object.values(user.bookings.futureBookings).forEach((monthBookings) => {
+      Object.entries(monthBookings).forEach(([bookingId, booking]) => {
+        if (booking.notificationType !== NotificationType.message) {
+          return;
+        }
+
+        regularBookingsToUpdate[bookingId] = booking;
+      });
+    });
+
+    // Cancel and reschedule messages for regular bookings
+    await MessagesHelper.GI()
+      .cancelScheduleMessageToMultipleBookings(regularBookingsToUpdate)
+      .then(async (value) => {
+        if (value) {
+          for (const booking of Object.values(regularBookingsToUpdate)) {
+            booking.customerPhone = newPhone;
+          }
+          await MessagesHelper.GI().scheduleMessageToMultipleBookings(
+            regularBookingsToUpdate
+          );
+        }
+        return value;
+      });
+
+    // Process recurrence bookings
+    const futures: Promise<boolean>[] = [];
+    Object.entries(recurrenceBookingsToUpdate).forEach(
+      ([bookingId, booking]) => {
+        if (!booking.recurrenceNotificationsLastDate) {
+          return;
+        }
+        futures.push(
+          NotificationHandler.GI()
+            .deleteRecurrenceBookingNotificationsInRange({
+              start: new Date(),
+              end: booking.recurrenceNotificationsLastDate,
+              recurrenceBooking: booking,
+            })
+            .then(async (value) => {
+              if (value) {
+                booking.customerPhone = newPhone;
+                await NotificationHandler.GI().makeNotificationForRecurrenceBooking(
+                  { booking }
+                );
+              }
+              return value;
+            })
+        );
+      }
+    );
+
+    // Wait for all recurrence bookings updates to complete
+    if (futures.length > 0) {
+      await Promise.all(futures);
+    }
   }
 
   async makeReminderToAllBookingsWithoutRemminder(isVerified: boolean) {

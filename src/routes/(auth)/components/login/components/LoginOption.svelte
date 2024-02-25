@@ -9,12 +9,14 @@
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { ShowToast } from "$lib/stores/ToastManager";
   import { _, translate } from "$lib/utils/translate";
+  import { createEventDispatcher } from "svelte";
   import { handleLogin } from "../helpers/handle_login";
   export let authProvider: AuthProvider;
   export let loading: boolean;
   export let loginReason: LoginReason;
   export let deleteUserDialog: HTMLDialogElement;
   export let isActive: boolean;
+  const dispatch = createEventDispatcher();
 
   async function handleClick(authProvider: AuthProvider) {
     if (loading) {
@@ -63,6 +65,7 @@
       await handleLogin({
         provider: authProvider,
         loginReason: loginReason,
+        dispatch: dispatch,
         deleteUserDialog: deleteUserDialog,
       });
     } finally {

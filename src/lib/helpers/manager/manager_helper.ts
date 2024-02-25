@@ -57,7 +57,7 @@ export default class ManagerHelper {
       workersStore.set(BusinessInitializer.GI().workers);
     }
 
-    return deleteResp !== null;
+    return deleteResp != null;
   }
 
   async deleteBuisness(
@@ -132,7 +132,7 @@ export default class ManagerHelper {
             BusinessInitializer.GI().emptyBusinessData();
           }
         }
-        return deleteResp !== null;
+        return deleteResp != null;
       });
   }
 }

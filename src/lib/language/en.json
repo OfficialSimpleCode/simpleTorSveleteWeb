@@ -3077,5 +3077,6 @@
   "happyToHaveYou": "Welcome! - a few more details about you and we can continue",
   "deleteUserExplainWithBusinesss": "Notice! If there are businesses on the user, they will be permanently deleted",
   "notFoundPage": "This page was not found",
-  "notFoundPageExplain": "This page does not exist in our system, please try to navigate to another page"
+  "notFoundPageExplain": "This page does not exist in our system, please try to navigate to another page",
+  "loginToSeeBookings": "Login to view orders"
 }

@@ -10,11 +10,12 @@
 </script>
 
 {#if $isConnectedStore == null}
-  <CustomCircleIcon icon="" loading={true} />
+  <CustomCircleIcon icon="" loading={true} bgColor="bg-base-200" />
 {:else}
   <CustomCircleIcon
     icon={$isConnectedStore ? "iconamoon:profile-fill" : "ic:baseline-login"}
     href={$isConnectedStore ? `${base}/profile` : `${base}/login`}
+    bgColor="bg-base-200"
   />
   {#if $isConnectedStore}
     <Tooltip

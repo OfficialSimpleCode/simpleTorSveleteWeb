@@ -3,6 +3,7 @@ import { base } from "$app/paths";
 import BookingController, {
   bookingMakerStore,
 } from "$lib/controllers/booking_controller";
+import { ErrorsController } from "$lib/controllers/errors_controller";
 import BookingHelper from "$lib/helpers/booking/booking_helper";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import { get } from "svelte/store";
@@ -27,5 +28,7 @@ export async function updateBooking() {
   if (result) {
     //jump to my bookings page after succedded with the order
     goto(`${base}/appointments`);
+  } else {
+    ErrorsController.displayError();
   }
 }

@@ -41,6 +41,7 @@ import FutureNotification from "../notifications/future_notification";
 import type { EnterAction } from "../notifications/notification_payload";
 import NotificationPayload from "../notifications/notification_payload";
 import NotificationTopic from "../notifications/notification_topic";
+import ScheduleMessage from "../notifications/schedule_message";
 import UserNotification from "../notifications/user_notification";
 import BookingReference from "../payment_hyp/booking_reference";
 import Event from "../schedule/calendar_event";
@@ -48,10 +49,11 @@ import RecurrenceEvent from "../schedule/recurrence_event";
 import ScheduleItem from "../schedule/schedule_item";
 import type UserModel from "../user/user_model";
 import type WorkerModel from "../worker/worker_model";
+import MultiBookingTextTemplate from "./multi_booking_text_template";
 import MultiBookingTime from "./multi_booking_time";
 import MultiBookingUser from "./multi_booking_user";
 import type MultiBookingUsersPerCustomer from "./multi_booking_users_per_customer";
-//import MultiBookingTextTemplate from "./multi_booking_text_template";
+
 const { v4 } = pkg;
 export default class MultiBooking extends ScheduleItem {
   treatment: Treatment = new Treatment();
@@ -251,11 +253,11 @@ export default class MultiBooking extends ScheduleItem {
     return new ScheduleMessage({
       messageId: multiBookingUser.reminderId(type),
       destNumber: multiBookingUser.customerPhone,
-      body: "",
-      // body: new MultiBookingTextTemplate(this).reminderTemplateByType(
-      //   multiBookingUser,
-      //   type
-      // ),
+
+      body: new MultiBookingTextTemplate(this).reminderTemplateByType(
+        multiBookingUser,
+        type
+      ),
       timeToSend,
     });
   }
@@ -664,7 +666,7 @@ export default class MultiBooking extends ScheduleItem {
     const booking: Booking = new Booking({});
     booking.bookingDate = this.bookingDate;
     booking.bookingHistory = { ...this.bookingHistory };
-    booking.treatments = new Map([["0", this.treatment]]);
+    booking.treatments = { "0": this.treatment };
     booking.bookingId = bookingUserId;
     booking.workerId = this.workerId;
     booking.workerPhone = this.workerPhone;

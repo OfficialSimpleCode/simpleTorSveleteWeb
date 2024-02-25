@@ -1,3 +1,4 @@
+import { ErrorsController } from "$lib/controllers/errors_controller";
 import BookingHelper from "$lib/helpers/booking/booking_helper";
 import type Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
@@ -33,9 +34,13 @@ export async function confirmArrival(
     return;
   }
 
-  await BookingHelper.GI().confirmBookingArrival({
+  const resp = await BookingHelper.GI().confirmBookingArrival({
     booking: booking,
     bookingDateForReccurence: booking.recurrenceChildDate,
     worker: worker!,
   });
+
+  if (!resp) {
+    ErrorsController.displayError();
+  }
 }

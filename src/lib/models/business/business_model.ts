@@ -27,6 +27,8 @@ export default class BusinessModel {
   notifyOnNewCustomer: boolean = true;
   searchable: boolean = true;
   urlEndPoint: string | undefined;
+  businessSummary: string | undefined;
+  keyWords: string[] = [];
   billingIssue: Map<string, Date> = new Map();
   isLandingPageMode: boolean = false;
   allWorkersIds: Record<string, string> = {};
@@ -188,13 +190,22 @@ export default class BusinessModel {
         json["workersPermissions"]
       );
     }
-    this.urlEndPoint = json["urlEndPoint"];
+
     this.previewDoc = json["previewDoc"] ?? "";
     this.workersProductsId = json["workersProductsId"] ?? "";
     this.pendingWorkersProductsId = json["pendingWorkersProductsId"] ?? "";
     this.shopName = json["shopName"] ?? "";
     this.isLandingPageMode = json["isLandingPageMode"] ?? false;
     this.searchable = json["searchable"] ?? true;
+
+    this.urlEndPoint = json["urlEndPoint"];
+
+    this.businessSummary = json["businessSummary"];
+    console.log(
+      "ddddddd5555555555555555555555555555555555555555ddddddddddddddddddddddddddd"
+    );
+    console.log(this.businessSummary);
+    this.keyWords = json["keyWords"] ?? [];
 
     if (json["expiredDate"] != null) {
       this.expiredDate = dateStrToDate(json["expiredDate"]);
@@ -292,6 +303,14 @@ export default class BusinessModel {
     data.pendingProductId = this.pendingProductId;
     data.productId = this.productId;
     data.shopName = this.shopName;
+
+    if (this.keyWords.length > 0) {
+      data["keyWords"] = this.keyWords;
+    }
+
+    if (this.businessSummary != null) {
+      data["businessSummary"] = this.businessSummary;
+    }
     if (this.hypPath) {
       data.hypPath = this.hypPath;
     }

@@ -12,6 +12,7 @@ import type Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
 import type MultiBooking from "$lib/models/multi_booking/multi_booking";
 import type MultiBookingUser from "$lib/models/multi_booking/multi_booking_user";
+import type ScheduleMessage from "$lib/models/notifications/schedule_message";
 import PaymentRequest from "$lib/models/payment_hyp/payment_request/payment_request";
 import { isEmpty } from "$lib/utils/core_utils";
 import { subDuration } from "$lib/utils/duration_utils";

@@ -10,4 +10,8 @@
 
 <LanguageDialog bind:dialog={langDialog} />
 
-<CustomCircleIcon icon="mdi:language" handleClick={openLangDialog} />
+<CustomCircleIcon
+  icon="mdi:language"
+  handleClick={openLangDialog}
+  bgColor="bg-base-200"
+/>

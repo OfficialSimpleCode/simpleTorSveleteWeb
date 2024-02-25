@@ -3,6 +3,7 @@ import { base } from "$app/paths";
 import BookingController, {
   bookingMakerStore,
 } from "$lib/controllers/booking_controller";
+import { ErrorsController } from "$lib/controllers/errors_controller";
 import MultiBookingHelper from "$lib/helpers/multi_booking/multi_booking_helper";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
@@ -182,6 +183,9 @@ async function handleSinging({
       workerAction: false,
       clientNote: get(bookingMakerStore).note,
     });
+  }
+  if (resp == null) {
+    ErrorsController.displayError();
   }
   return resp != null;
 }

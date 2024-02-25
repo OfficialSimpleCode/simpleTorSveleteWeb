@@ -11,6 +11,7 @@
 <svelte:head>
   <title>Simple Tor</title>
   <meta name="description" content="SimpleTor Web Application" />
+  <link rel="icon" href="/AppIcon.png" />
 </svelte:head>
 
 <HomePage />

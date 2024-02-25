@@ -1,6 +1,7 @@
 import BookingController, {
   bookingMakerStore,
 } from "$lib/controllers/booking_controller";
+import { ErrorsController } from "$lib/controllers/errors_controller";
 import { openOrdersPage } from "$lib/controllers/page_controller";
 import BookingHelper from "$lib/helpers/booking/booking_helper";
 import { pushDialog } from "$lib/utils/general_utils";
@@ -40,5 +41,7 @@ export async function addBooking({
   if (result != null) {
     //jump to my bookings page after succedded with the order
     openOrdersPage();
+  } else {
+    ErrorsController.displayError();
   }
 }

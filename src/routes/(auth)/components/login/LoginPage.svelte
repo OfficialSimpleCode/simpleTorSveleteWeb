@@ -1,16 +1,20 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
+  import { base } from "$app/paths";
   import CustomPhoneField from "$lib/components/custom_components/CustomPhoneField.svelte";
   import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
   import { sendSms } from "$lib/components/dialogs/phone_dialog/helpers/send_sms";
   import {
     AuthProvider,
     LoginReason,
+    authProviderList,
     authProviderToProviderId,
     googleOrder,
   } from "$lib/consts/auth";
   import { maxButtonSize } from "$lib/consts/sizes";
   import type { PhonePickerEvent } from "$lib/consts/text_fields";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
+  import { businessStore } from "$lib/stores/Business";
   import { isConnectedStore } from "$lib/stores/User";
   import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
@@ -27,7 +31,7 @@
   let phoneNumber: string;
   let loading: boolean = false;
 
-  $: googleOrder.forEach((provider) => {
+  $: authProviderList.forEach((provider) => {
     if ($isConnectedStore == null) {
       return;
     }
@@ -83,6 +87,15 @@
   }
   function onFinishLogin() {
     loading = false;
+    if (VerificationHelper.GI().needToMakeBookingAfterLogin) {
+      goto(`${base}/business/${$businessStore?.url ?? ""}/order`);
+    } else {
+      if ($businessStore != null) {
+        goto(`${base}/business/${$businessStore?.url ?? ""}`);
+      } else {
+        goto(`${base}/`);
+      }
+    }
   }
 
   function openPhoneDialog() {
@@ -127,6 +140,7 @@
               {authProvider}
               bind:loading
               bind:deleteUserDialog
+              on:onFinishLogin={onFinishLogin}
               {loginReason}
               isActive={isActive[authProvider] ?? false}
             />

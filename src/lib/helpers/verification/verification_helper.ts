@@ -19,7 +19,7 @@ export class VerificationHelper {
   public static GI(): VerificationHelper {
     return this._singleton;
   }
-
+  public needToMakeBookingAfterLogin: boolean = false;
   public signInUserId: string = "";
   public currentAuthProvider?: AuthProvider;
   public verificationID: string = "";

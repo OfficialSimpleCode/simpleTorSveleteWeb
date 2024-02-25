@@ -119,6 +119,7 @@ export async function handleLogin({
 
   if (dispatch != null) {
     dispatch("onFinishLogin");
+    return;
   }
 
   //sign in page
@@ -148,9 +149,8 @@ function comeBack() {
 
 export async function finishDeleteUser() {
   const resp = await UserHelper.GI().deleteUser(UserInitializer.GI().user);
-  console.log("111111111111111");
+
   if (resp) {
-    console.log("ssssssssssssssssss");
     //after delete user need to go to business if loaded if not
     //go to the app page
     comeBack();
