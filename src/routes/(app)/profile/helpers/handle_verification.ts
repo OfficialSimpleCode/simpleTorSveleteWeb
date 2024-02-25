@@ -9,7 +9,6 @@ export async function handleVerification(
   herf?: string
 ) {
   if (get(userStore).userPublicData.isVerifiedPhone) {
-    console.log("Rrrrrrrrrrrrrrrrrr");
     return;
   }
   sendSms({ phone: get(userStore).userPublicData.phoneNumber });

@@ -1,7 +1,6 @@
 <script lang="ts">
   import { pushState } from "$app/navigation";
   import { base } from "$app/paths";
-  import { page } from "$app/stores";
   import SettingContainer from "$lib/components/SettingContainer.svelte";
   import SettingsItem from "$lib/components/custom_components/SettingsItem.svelte";
   import ConfirmActionDialog from "$lib/components/dialogs/ConfirmActionDialog.svelte";
@@ -35,33 +34,32 @@
 </script>
 
 <!-- Dialog -->
-{#if $page.state.showModal}
-  <PhoneDialog
-    loginReason={LoginReason.phoneVerification}
-    insideOtp={true}
-    on:onVerifyPhone={() => {
-      //remove the otp dialog
-      history.back();
-      //push the successfully verified dialog
-      pushState("", {
-        showModal: true,
-      });
-      setTimeout(() => verificationSuccessfully.showModal(), 200);
-    }}
-    bind:dialog={verificationDialog}
-  />
 
-  <ConfirmActionDialog
-    bind:dialog={makeSureRemoveVerification}
-    contentTransKey="cancelVerificationExplain"
-    titleTransKey="verificationCanceling"
-    cancelTranslateKey="exit"
-    saveTranslateKey="cancel"
-    onSave={removeVerification}
-  />
+<PhoneDialog
+  loginReason={LoginReason.phoneVerification}
+  insideOtp={true}
+  on:onVerifyPhone={() => {
+    //remove the otp dialog
+    verificationDialog.close();
+    //push the successfully verified dialog
+    pushState("", {
+      showModal: true,
+    });
+    setTimeout(() => verificationSuccessfully.showModal(), 200);
+  }}
+  bind:dialog={verificationDialog}
+/>
 
-  <VerifiedPhoneSuccessfullyDialog bind:dialog={verificationSuccessfully} />
-{/if}
+<ConfirmActionDialog
+  bind:dialog={makeSureRemoveVerification}
+  contentTransKey="cancelVerificationExplain"
+  titleTransKey="verificationCanceling"
+  cancelTranslateKey="exit"
+  saveTranslateKey="cancel"
+  onSave={removeVerification}
+/>
+
+<VerifiedPhoneSuccessfullyDialog bind:dialog={verificationSuccessfully} />
 
 <SettingContainer
   explainText={translate(

@@ -1,7 +1,6 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
-  import { page } from "$app/stores";
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import {
     AuthProvider,
@@ -33,13 +32,12 @@
 </script>
 
 <!-- Dialog -->
-{#if $page.state.showModal}
-  <AuthOptionDialog
-    bind:explainDialog
-    date={pickedDate}
-    authProvider={pickedProvider}
-  />
-{/if}
+
+<AuthOptionDialog
+  bind:explainDialog
+  date={pickedDate}
+  authProvider={pickedProvider}
+/>
 
 <!-- Auth Options -->
 <section

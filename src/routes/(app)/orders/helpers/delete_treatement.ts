@@ -1,3 +1,4 @@
+import { ErrorsController } from "$lib/controllers/errors_controller";
 import BookingHelper from "$lib/helpers/booking/booking_helper";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import Booking from "$lib/models/booking/booking_model";
@@ -49,6 +50,8 @@ export async function deleteTreatment(
   });
   if (resp) {
     return history.back();
+  } else {
+    ErrorsController.displayError();
   }
   //TODO handle split treatment
 }

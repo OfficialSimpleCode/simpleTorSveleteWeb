@@ -1,11 +1,10 @@
 import { DeleteOption } from "$lib/consts/booking";
+import { ErrorsController } from "$lib/controllers/errors_controller";
 import BookingHelper from "$lib/helpers/booking/booking_helper";
 import MultiBookingHelper from "$lib/helpers/multi_booking/multi_booking_helper";
 import type Booking from "$lib/models/booking/booking_model";
-import { Duration } from "$lib/models/core/duration";
 import { ShowToast } from "$lib/stores/ToastManager";
 import { workersStore } from "$lib/stores/Workers";
-import { addDuration } from "$lib/utils/duration_utils";
 import { translate } from "$lib/utils/translate";
 import { get } from "svelte/store";
 
@@ -18,9 +17,22 @@ export async function deleteBooking({
 }): Promise<boolean> {
   const worker = get(workersStore)[booking.workerId];
   if (worker == null) {
-    return await BookingHelper.GI().deleteBookingOnlyFromUserDoc({
+    const resp = await BookingHelper.GI().deleteBookingOnlyFromUserDoc({
       booking: booking,
     });
+    if (resp) {
+      ShowToast({
+        status: "success",
+        text: translate(
+          booking.isPassed
+            ? "successfullydeletedBooking"
+            : "successfullyCanceledBooking"
+        ),
+      });
+    } else {
+      ErrorsController.displayError();
+    }
+    return resp;
   }
 
   //user need the worker permmision to delete update the booking status
@@ -42,12 +54,15 @@ export async function deleteBooking({
         }
       }
       booking.needCancel = true;
+    } else {
+      ErrorsController.displayError();
     }
 
-    return true;
+    return loadingResp;
   }
   let resp = undefined;
   let msg: string = "";
+  //children of recurrence
   if (booking.recurrenceEvent != null && booking.recurrenceChildDate != null) {
     resp = await BookingHelper.GI().addExceptionDateToRecurreceBooking({
       recurrenceBooking: booking,
@@ -56,34 +71,40 @@ export async function deleteBooking({
       workerAction: false,
     });
     msg = translate(
-      addDuration(
-        booking.currentDisplayDate,
-        new Duration({ minutes: booking.totalMinutes })
-      ) < new Date()
+      booking.isPassed
         ? "successfullydeletedBooking"
         : "successfullyCanceledBooking"
     );
   }
-  if (booking.isMultiRef) {
+  //multi booking ref
+  else if (booking.isMultiRef) {
     resp = await MultiBookingHelper.GI().signOutUserUserAction({
       booking: booking,
       worker: worker,
     });
     msg = translate("signOutSuccessfully");
-  } else {
-    resp = await BookingHelper.GI().deleteBooking({
-      booking: booking,
-      worker: worker,
-    });
   }
-  msg = translate(
-    booking.isPassed
-      ? "successfullydeletedBooking"
-      : "successfullyCanceledBooking"
-  );
-  if (msg != "") {
-    ShowToast({ status: "success", text: msg });
+  //regular
+  else {
+    resp =
+      (await BookingHelper.GI().deleteBooking({
+        booking: booking,
+        worker: worker,
+      })) != null;
+    msg = translate(
+      booking.isPassed
+        ? "successfullydeletedBooking"
+        : "successfullyCanceledBooking"
+    );
   }
 
-  return resp != null;
+  if (resp) {
+    if (msg != "") {
+      ShowToast({ status: "success", text: msg });
+    }
+  } else {
+    ErrorsController.displayError();
+  }
+
+  return resp;
 }

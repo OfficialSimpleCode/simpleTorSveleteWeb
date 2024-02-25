@@ -1,6 +1,5 @@
 import { BookingStatuses } from "$lib/consts/booking";
 import BookingController from "$lib/controllers/booking_controller";
-import { ErrorsController } from "$lib/controllers/errors_controller";
 import MyBookingsUIController from "$lib/controllers/my_bookings_controller";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
@@ -15,6 +14,8 @@ import type PaymentRequestUser from "$lib/models/payment_hyp/payment_request/pay
 import TicketInfo from "$lib/models/payment_hyp/payment_request/ticket_info";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { needToHoldOn } from "$lib/utils/booking_utils";
+import { dateToDateStr, setToMidNight } from "$lib/utils/times_utils";
+import DbPathesHelper from "../db_paths_helper";
 import NotificationHandler from "../notifications/notification_handler";
 import PaymentRequestHelper from "../payment_request/payment_request_helper";
 import MultiBookingRepo from "./multi_booking_repo";
@@ -117,8 +118,6 @@ export default class MultiBookingHelper {
         workerAction,
       });
       return newMultiBooking;
-    } else {
-      ErrorsController.displayError();
     }
     return undefined;
   }
@@ -140,7 +139,6 @@ export default class MultiBookingHelper {
     fromPayment?: boolean;
     clientNote?: string;
   }): Promise<MultiBooking | undefined> {
-    console.log("wwwwwwwwwwwwwwww");
     let newOnHoldUsers = 0;
     let invoiceCoverCounter = 0;
     const newUsersObj: Record<string, MultiBookingUser> = {};
@@ -262,8 +260,6 @@ export default class MultiBookingHelper {
       }
 
       return multiBooking;
-    } else {
-      ErrorsController.displayError();
     }
     return undefined;
   }
@@ -317,8 +313,6 @@ export default class MultiBookingHelper {
             worker: worker,
             workerAction: false,
           });
-        } else {
-          ErrorsController.displayError();
         }
 
         return value;
@@ -337,4 +331,61 @@ export default class MultiBookingHelper {
   }
 
   _removeUsersLocally({}: {}): void {}
+
+  async removeMultiBookingLocally({
+    multiBooking,
+    worker,
+  }: {
+    multiBooking: MultiBooking;
+    worker: WorkerModel;
+  }): Promise<void> {
+    if (multiBooking.bookingDate < setToMidNight(new Date())) {
+      UserInitializer.GI().addLocalDocToDelete({
+        userId: worker.id,
+        path: DbPathesHelper.GI().workerLocalBookingsPath(
+          multiBooking.workerId,
+          multiBooking.buisnessId
+        ),
+        docId: dateToDateStr(multiBooking.bookingDate),
+      });
+    }
+  }
+
+  async saveMultiBookingLocaly({
+    multiBooking,
+    worker,
+    recurrenceMultiBooking,
+  }: {
+    multiBooking: MultiBooking;
+    worker: WorkerModel;
+    recurrenceMultiBooking?: MultiBooking;
+    saveFuture?: boolean;
+  }): Promise<void> {
+    if (multiBooking.bookingDate < setToMidNight(new Date())) {
+      UserInitializer.GI().addLocalDocToDelete({
+        userId: worker.id,
+        path: DbPathesHelper.GI().workerLocalBookingsPath(
+          multiBooking.workerId,
+          multiBooking.buisnessId
+        ),
+        docId: dateToDateStr(multiBooking.bookingDate),
+      });
+    }
+    if (
+      recurrenceMultiBooking &&
+      recurrenceMultiBooking.bookingDate < setToMidNight(new Date())
+    ) {
+      recurrenceMultiBooking.recurrenceEvent?.exceptionDates.add(
+        dateToDateStr(multiBooking.bookingDate)
+      );
+      UserInitializer.GI().addLocalDocToDelete({
+        userId: worker.id,
+        path: DbPathesHelper.GI().workerLocalBookingsPath(
+          recurrenceMultiBooking.workerId,
+          recurrenceMultiBooking.buisnessId
+        ),
+        docId: dateToDateStr(recurrenceMultiBooking.bookingDate),
+      });
+    }
+  }
 }

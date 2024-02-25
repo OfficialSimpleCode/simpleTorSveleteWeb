@@ -28,17 +28,16 @@
       return;
     }
     loading = true;
-
+    let resp = false;
     try {
-      const resp = await onUpdate(text);
-
+      resp = await onUpdate(text);
+    } finally {
+      loading = false;
       if (resp) {
-        history.back();
+        dialog.close();
       } else {
         ErrorsController.displayError();
       }
-    } finally {
-      loading = false;
     }
   }
 </script>
@@ -47,7 +46,7 @@
   bind:this={dialog}
   class="modal modal-middle bg-center"
   on:close={() => {
-    history.back();
+    dialog.close();
   }}
 >
   <div class="modal-box bg-base-200 pb-10">

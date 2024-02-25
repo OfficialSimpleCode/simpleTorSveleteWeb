@@ -15,7 +15,7 @@ import type PaymentRequestUser from "$lib/models/payment_hyp/payment_request/pay
 import BreakModel from "$lib/models/schedule/break_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { isNotEmpty } from "$lib/utils/core_utils";
-import { subDuration } from "$lib/utils/duration_utils";
+import { addDuration, subDuration } from "$lib/utils/duration_utils";
 import { sendMessagePaymentRequest } from "$lib/utils/notifications_utils";
 import { dateToDateStr, setToMidNight } from "$lib/utils/times_utils";
 import MessagesHelper from "./messages/messages_helper";
@@ -818,6 +818,77 @@ export default class NotificationHandler {
 
     await Promise.all(futures);
     return true;
+  }
+
+  async makeNotificationForRecurrenceBooking({
+    booking,
+    forceType,
+    worker,
+  }: {
+    booking: Booking;
+    forceType?: NotificationType;
+    worker?: WorkerModel;
+  }): Promise<void> {
+    if (!booking.recurrenceEvent) {
+      return;
+    }
+
+    // Ensure either worker or booking has the last date to schedule notifications
+    if (!worker && !booking.recurrenceNotificationsLastDate) {
+      return;
+    }
+
+    const lastDateToSchedule = (worker?.notifications
+      .recurrenceNotificationsLastDate ??
+      booking.recurrenceNotificationsLastDate)!;
+
+    // Only iterate until the recurrenceNotificationsLastDate
+    if (booking.bookingDate > lastDateToSchedule) {
+      return;
+    }
+
+    let datePointer = setToMidNight(booking.bookingDate);
+    const datesToNotify: Set<Date> = new Set();
+
+    // Collect all the dates we need to add notification to
+    while (datePointer <= lastDateToSchedule) {
+      if (booking.recurrenceEvent.isAccureInDate({ date: datePointer })) {
+        datesToNotify.add(datePointer);
+      }
+      datePointer = addDuration(datePointer, new Duration({ days: 1 }));
+    }
+
+    // Prepare booking objects for message or push notification
+    const bookingForMessage: Record<string, Booking> = {};
+
+    datesToNotify.forEach((date) => {
+      const newBooking = new Booking({ ...booking });
+      newBooking.bookingDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        booking.bookingDate.getHours(),
+        booking.bookingDate.getMinutes()
+      );
+
+      if (
+        (forceType ?? booking.notificationType) === NotificationType.message
+      ) {
+        newBooking.bookingId = `${newBooking.bookingId}--${dateToDateStr(
+          newBooking.bookingDate
+        )}`;
+        bookingForMessage[newBooking.bookingId] = newBooking;
+      } else if (
+        (forceType ?? booking.notificationType) === NotificationType.push
+      ) {
+        NotificationsHelper.GI().makeScheduleBookingNotification({
+          booking: newBooking,
+        });
+      }
+    });
+
+    // Schedule messages for multiple bookings
+    MessagesHelper.GI().scheduleMessageToMultipleBookings(bookingForMessage);
   }
 
   ///Get strat , end and delete all the recurrnece

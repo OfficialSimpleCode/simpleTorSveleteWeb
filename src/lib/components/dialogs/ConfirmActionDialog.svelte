@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { PhonePickerEvent } from "$lib/consts/text_fields";
+  import { ErrorsController } from "$lib/controllers/errors_controller";
   import deleteIcon from "$lib/images/delete.webp";
   import { userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
@@ -33,6 +34,8 @@
       if (resp) {
         value = "";
         dialog.close();
+      } else {
+        ErrorsController.displayError();
       }
     }
   }

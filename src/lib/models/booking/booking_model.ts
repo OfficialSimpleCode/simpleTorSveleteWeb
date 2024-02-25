@@ -55,6 +55,7 @@ import BookingNotificationPayload from "../notifications/booking_notification_pa
 import BusinessPayloadData from "../notifications/business_data_payload";
 import FutureNotification from "../notifications/future_notification";
 import NotificationTopic from "../notifications/notification_topic";
+import type ScheduleMessage from "../notifications/schedule_message";
 import BookingReferencePaymentObj from "../payment_hyp/booking_reference";
 import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
 import Event from "../schedule/calendar_event";

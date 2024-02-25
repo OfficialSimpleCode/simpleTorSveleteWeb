@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { page } from "$app/stores";
   import DialogTitel from "$lib/components/custom_components/DialogTitel.svelte";
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import ConfirmActionDialog from "$lib/components/dialogs/ConfirmActionDialog.svelte";
@@ -35,14 +34,13 @@
   }
 </script>
 
-{#if $page.state.showModal}
-  <ConfirmActionDialog
-    bind:dialog={makeSureDeleteialog}
-    contentTransKey="providerDeletionExplain"
-    titleTransKey="providerDeletion"
-    onSave={deleteProvider}
-  />
-{/if}
+<ConfirmActionDialog
+  bind:dialog={makeSureDeleteialog}
+  contentTransKey="providerDeletionExplain"
+  titleTransKey="providerDeletion"
+  onSave={deleteProvider}
+/>
+
 <dialog
   bind:this={explainDialog}
   class="modal modal-middle"

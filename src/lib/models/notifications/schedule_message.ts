@@ -1,6 +1,6 @@
 import { emojisRegex } from "$lib/consts/string";
 
-class ScheduleMessage {
+export default class ScheduleMessage {
   messageId: string = "";
   destNumber: string = "";
   body: string = "";

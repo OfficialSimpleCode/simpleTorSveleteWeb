@@ -19,6 +19,7 @@ import { dateToDateStr } from "$lib/utils/times_utils";
 
 import AppErrorsHelper from "../app_errors";
 import DbPathesHelper from "../db_paths_helper";
+import { GeneralData } from "../general_data";
 import NotificationHandler from "../notifications/notification_handler";
 import NotificationsHelper from "../notifications/notifications/notification_helper";
 import { BookingRepo } from "./booking_repo";
@@ -87,18 +88,15 @@ export default class BookingHelper {
           return value;
         }
         if (value instanceof Booking) {
-          // this._addBookingLocally({
-          //   booking,
-          //   worker,
-          //   newCustomerData,
-          //   needPayInAdvance,
-          // });
-          await NotificationHandler.GI().afterAddBooking({
+          this._addBookingLocally({
+            booking,
+            worker,
+            needPayInAdvance,
+          });
+          NotificationHandler.GI().afterAddBooking({
             booking,
             worker,
           });
-        } else {
-          ErrorsController.displayError();
         }
         return value;
       });
@@ -106,40 +104,25 @@ export default class BookingHelper {
 
   async deleteBookingOnlyFromUserDoc({
     booking,
-    deleteFromPassed,
   }: {
     booking: Booking;
     deleteFromPassed?: boolean;
   }): Promise<boolean> {
-    // if (
-    //   deleteFromPassed &&
-    //   !(await this._commitBookingTransactionDueDeletion(booking, false))
-    // ) {
-    //   return false;
-    // }
-
     return await this.bookingRepo
       .deleteBookingOnlyFromUser({ booking })
       .then(async (value) => {
         if (value) {
-          // NotificationHandler().afterDeleteBooking({
-          //   booking,
-          //   workerAction: false,
-          //   notifyWorker: false,
-          // });
-          // this._deleteBookingLocally({
-          //   booking,
-          //   fromUpdate: false,
-          //   worker: null,
-          //   deleteAllBooking: true,
-          //   workerAction: false,
-          //   removeFromDeviceCalendar: true,
-          //   newCustomerData: null,
-          // });
-        } else {
-          ErrorsController.displayError();
+          NotificationHandler.GI().afterDeleteBooking({
+            booking,
+            notifyWorker: false,
+          });
+          this._deleteBookingLocally({
+            booking,
+            fromUpdate: false,
+            worker: undefined,
+            workerAction: false,
+          });
         }
-
         return value;
       });
   }
@@ -165,13 +148,12 @@ export default class BookingHelper {
       needDelete: true,
     });
 
-    //   if (
-
-    //     MyBookingsUIController.markedBookings &&
-    //     MyBookingsUIController.markedBookings.size > 0
-    //   ) {
-    //     MyBookingsUIController.markedBookings.clear();
-    //   }
+    if (
+      MyBookingsUIController.markedBookings &&
+      MyBookingsUIController.markedBookings.size > 0
+    ) {
+      MyBookingsUIController.markedBookings.clear();
+    }
 
     const resp = await this.bookingRepo.deleteBooking({
       booking,
@@ -185,16 +167,12 @@ export default class BookingHelper {
     if (resp) {
       resp.forEach((deletedBooking) => {
         // // Delete the booking locally
-        // _deleteBookingLocally({
-        //   booking: deletedBooking,
-        //   worker,
-        //   fromUpdate: false,
-        //   removeFromDeviceCalendar: !workerAction,
-        //   newCustomerData,
-        //   workerAction,
-        //   deleteAllBooking,
-        //   cancelDate,
-        // });
+        this._deleteBookingLocally({
+          booking: deletedBooking,
+          worker,
+          fromUpdate: false,
+          workerAction: false,
+        });
         // Handle notification for the deleted booking
         NotificationHandler.GI().afterDeleteBooking({
           booking: deletedBooking,
@@ -297,30 +275,19 @@ export default class BookingHelper {
       })
       .then(async (value) => {
         if (value) {
-          console.log("value", value);
-          //   if (bookingListener) {
-          //     bookingListener.value = newBooking;
-          //     bookingListener.notifyListeners();
-          //   }
-          //   const oldBookingForCustomerData = Booking.fromBooking(oldBooking);
-          //   oldBookingForCustomerData.recurrenceEvent = null;
-          //   _deleteBookingLocally({
-          //     booking: oldBookingForCustomerData,
-          //     fromUpdate: true,
-          //     worker: oldWorker,
-          //     removeFromDeviceCalendar: !newBooking.signOnDeviceCalendar,
-          //     newCustomerData: oldBookingCustomerData,
-          //     workerAction,
-          //     deleteAllBooking: true,
-          //   });
-          //   _addBookingLocally({
-          //     booking: newBooking,
-          //     worker: newWorker,
-          //     workerAction,
-          //     newCustomerData: newBookingCustomerData,
-          //     needPayInAdvance: false,
-          //     fromUpdate: true,
-          //   });
+          const oldBookingForCustomerData = Booking.fromBooking(oldBooking);
+          oldBookingForCustomerData.recurrenceEvent = undefined;
+          this._deleteBookingLocally({
+            booking: oldBookingForCustomerData,
+            fromUpdate: true,
+            worker: oldWorker,
+            workerAction,
+          });
+          this._addBookingLocally({
+            booking: newBooking,
+            worker: newWorker,
+            needPayInAdvance: false,
+          });
           NotificationHandler.GI().afterUpdateBooking({
             newBooking,
             oldBooking,
@@ -331,10 +298,7 @@ export default class BookingHelper {
             isOldBoookingPassed,
             oldBookingDateForReccurence,
           });
-        } else {
-          ErrorsController.displayError();
         }
-
         return value;
       });
 
@@ -397,8 +361,6 @@ export default class BookingHelper {
         minutesBeforeAlert: minutesBeforeAlert,
         hasConfirmArrivalReminder: hasConfirmArrivalReminder,
       });
-    } else {
-      ErrorsController.displayError();
     }
     return resp;
   }
@@ -493,8 +455,6 @@ export default class BookingHelper {
           invoice,
         });
       }
-    } else {
-      ErrorsController.displayError();
     }
     return resp;
   }
@@ -580,52 +540,9 @@ export default class BookingHelper {
           );
         }
       }
-    } else {
-      ErrorsController.displayError();
     }
 
     return resp;
-  }
-
-  async saveBookingLocaly({
-    booking,
-    worker,
-    recurrenceBooking,
-  }: {
-    booking: Booking;
-    worker: WorkerModel;
-    recurrenceBooking: Booking | undefined;
-  }) {
-    // Add the days to delete the bookings data to the worker
-    // The data that is currently in the worker phone is not updated
-    // Need to update it when the worker enters the app
-    if (booking.bookingDate < setToMidNight(new Date())) {
-      UserInitializer.GI().addLocalDocToDelete({
-        userId: worker.id,
-        path: DbPathesHelper.GI().workerLocalBookingsPath(
-          booking.workerId,
-          booking.buisnessId
-        ),
-        docId: dateToDateStr(booking.bookingDate),
-      });
-    }
-    if (
-      recurrenceBooking &&
-      recurrenceBooking.recurrenceEvent &&
-      recurrenceBooking.bookingDate < setToMidNight(new Date())
-    ) {
-      recurrenceBooking.recurrenceEvent.exceptionDates.add(
-        dateToDateStr(booking.bookingDate)
-      );
-      UserInitializer.GI().addLocalDocToDelete({
-        userId: worker.id,
-        path: DbPathesHelper.GI().workerLocalBookingsPath(
-          recurrenceBooking.workerId,
-          recurrenceBooking.buisnessId
-        ),
-        docId: dateToDateStr(recurrenceBooking.bookingDate),
-      });
-    }
   }
 
   async addExceptionDateToRecurreceBooking({
@@ -692,5 +609,136 @@ export default class BookingHelper {
     }
 
     return value === true;
+  }
+
+  _addBookingLocally({
+    booking,
+    worker,
+
+    needPayInAdvance = false,
+  }: {
+    booking: Booking;
+    worker: WorkerModel;
+
+    needPayInAdvance?: boolean;
+  }): void {
+    // avoid cases where the client needs to pay in advance
+    if (needPayInAdvance) {
+      return;
+    }
+
+    // the worker orders from his schedule or from the regular order
+    if (booking.buisnessId === GeneralData.currentBusinesssId) {
+      this.saveBookingLocaly({ booking, worker });
+    }
+  }
+
+  /**
+   * NOTICE: this function is used by the delete and update functions, be careful.
+   */
+  _deleteBookingLocally({
+    booking,
+    fromUpdate,
+    worker,
+
+    workerAction,
+  }: {
+    booking: Booking;
+    fromUpdate: boolean;
+    worker: WorkerModel | undefined;
+    workerAction: boolean;
+  }) {
+    if (worker != null) {
+      if (!fromUpdate && workerAction && booking.recurrenceEvent != null) {
+        const hasEvents = worker.recurrence.recurrenceEventsList.length > 0;
+
+        if (!hasEvents) {
+          // that means the booking we delete is the last recurrence event
+          // cancel the listener and initialize all vars
+          if (worker.recurrence.listener != null) {
+            worker.recurrence.recurrenceEvents = {};
+            worker.hasRecurrenceEvents = false;
+            worker.recurrence.listener!();
+            worker.recurrence.listener = undefined;
+          }
+        }
+      }
+
+      // delete the booking from the local db
+      if (
+        booking.buisnessId === GeneralData.currentBusinesssId &&
+        booking.bookingDate < setToMidNight(new Date())
+      ) {
+        // delete the booking from local
+        this.removeBookingLocally({ booking, worker });
+      }
+    }
+
+    if (UserInitializer.GI().user.id === booking.customerId) {
+      UserInitializer.GI().user.bookings.deleteBooking(booking);
+    }
+  }
+
+  async saveBookingLocaly({
+    booking,
+    worker,
+    recurrenceBooking,
+  }: {
+    booking: Booking;
+    worker: WorkerModel;
+    recurrenceBooking?: Booking | undefined;
+  }) {
+    // Add the days to delete the bookings data to the worker
+    // The data that is currently in the worker phone is not updated
+    // Need to update it when the worker enters the app
+    if (booking.bookingDate < setToMidNight(new Date())) {
+      UserInitializer.GI().addLocalDocToDelete({
+        userId: worker.id,
+        path: DbPathesHelper.GI().workerLocalBookingsPath(
+          booking.workerId,
+          booking.buisnessId
+        ),
+        docId: dateToDateStr(booking.bookingDate),
+      });
+    }
+    if (
+      recurrenceBooking &&
+      recurrenceBooking.recurrenceEvent &&
+      recurrenceBooking.bookingDate < setToMidNight(new Date())
+    ) {
+      recurrenceBooking.recurrenceEvent.exceptionDates.add(
+        dateToDateStr(booking.bookingDate)
+      );
+      UserInitializer.GI().addLocalDocToDelete({
+        userId: worker.id,
+        path: DbPathesHelper.GI().workerLocalBookingsPath(
+          recurrenceBooking.workerId,
+          recurrenceBooking.buisnessId
+        ),
+        docId: dateToDateStr(recurrenceBooking.bookingDate),
+      });
+    }
+  }
+
+  removeBookingLocally({
+    booking,
+    worker,
+  }: {
+    booking: Booking;
+    worker: WorkerModel;
+  }) {
+    // add the days to delete the bookings data to the worker
+    // the data that is currently in the worker phone is not updated
+    // need to update it when the worker enters the app
+    if (booking.isPassed) {
+      UserInitializer.GI().addLocalDocToDelete({
+        userId: worker.id,
+        path: DbPathesHelper.GI().workerLocalBookingsPath(
+          booking.workerId,
+          booking.buisnessId
+        ),
+        docId: dateToDateStr(booking.bookingDate),
+      });
+    }
   }
 }

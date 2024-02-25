@@ -3,6 +3,7 @@
   import { base } from "$app/paths";
   import SettingContainer from "$lib/components/SettingContainer.svelte";
   import SettingsItem from "$lib/components/custom_components/SettingsItem.svelte";
+  import { ErrorsController } from "$lib/controllers/errors_controller";
   import UserHelper from "$lib/helpers/user/user_helper";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { businessStore } from "$lib/stores/Business";
@@ -21,6 +22,8 @@
         } else {
           goto(`${base}/`);
         }
+      } else {
+        ErrorsController.displayError();
       }
     } finally {
       loadingLogout = false;
