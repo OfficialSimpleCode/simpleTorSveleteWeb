@@ -23,6 +23,22 @@
   //     console.log("decription is ", dec);
   //   });
   // }); // encryptText1
+
+  // const pass = "saadon";
+  // const enc = Encryptor.GI().encrypt("shilo-,$#@±encryped this code", pass);
+  // console.log(" ----------------------------- ");
+  // console.log("hash ->", Encryptor.GI().hashTextSha256("shilo", "saadon"));
+  // console.log(enc);
+  // console.log(
+  //   Encryptor.GI().decrypt(
+  //     "d374f16176c2001ae892cc1ef10143c1:ed1aa0dabd785751d898d2a78332e99e:bd569fc5953fd2625e62e359b846993f78e11517d4e7f3dcae75af8bd0463d77",
+  //     pass
+  //   )
+  // );
+  // console.log(" ----------------------------- ");
+
+  // 2609c61633d590627a7f76a39fa98930:b143a3efa772eac5cbf3037e487fb073:9b6683ddbc1fcf6645e0f504922a2f5d
+  // 2f3876689b1b96178eda6c290bf5b8b9:c0fc9d131c8ced8a5bdb89dbea6e29b6:093d113f6670ae70f694b5f1aa70424f
 </script>
 
 <main class="w-full h-full bg-base-200">
