@@ -64,7 +64,7 @@
     class:bg-primary={$bookingMakerStore.currentStep === 0}
     on:click={() => clickedOnStep(0)}
   >
-    {#if $workersStore[$bookingMakerStore.workerId ?? ""] == null}
+    {#if $workersStore[$bookingMakerStore.workerId ?? ""] == null && ($bookingMakerStore.workerId ?? "") !== ""}
       <div class="loading loading-spinner" />
     {:else}
       <p class="overflow-hidden whitespace-nowrap text-ellipsis">

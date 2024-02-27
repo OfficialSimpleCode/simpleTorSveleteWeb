@@ -19,6 +19,7 @@ import { phoneToDocId } from "$lib/utils/user";
 import { AuthProvider, authProviderToStr } from "$lib/consts/auth";
 import { NotificationType } from "$lib/consts/booking";
 import { maxTimeBetweenLogInAndDelete } from "$lib/consts/limitation";
+import { paymentPasswordHashSalt } from "$lib/consts/payments";
 import { ErrorsController } from "$lib/controllers/errors_controller";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
@@ -26,10 +27,10 @@ import type Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
 import type PaymentCard from "$lib/models/payment_hyp/payment_card";
 import type WorkerModel from "$lib/models/worker/worker_model";
+import Encryptor from "$lib/services/encryption_service/encryptor";
 import { isConnectedStore, userStore } from "$lib/stores/User";
 import { workersStore } from "$lib/stores/Workers";
 import { addDuration, subDuration } from "$lib/utils/duration_utils";
-import { hashText } from "$lib/utils/encryptions";
 import {
   dateIsoStr,
   dateToDateStr,
@@ -292,18 +293,22 @@ export default class UserHelper {
         });
       });
     }
+    const hashedPassword = Encryptor.GI().shortHashTextSha256(
+      newPassowrd,
+      paymentPasswordHashSalt
+    );
     return await this.userRepo
       .updateMultipleFieldsInsideDocAsMapRepo({
         docId: UserInitializer.GI().user.id,
         path: usersCollection,
         data: {
-          cardPaymentsPass: hashText(newPassowrd),
+          cardPaymentsPass: hashedPassword,
           paymentCards: newPaymentCardsJson,
         },
       })
       .then(async (value) => {
         if (value) {
-          UserInitializer.GI().user.cardPaymentsPass = hashText(newPassowrd);
+          UserInitializer.GI().user.cardPaymentsPass = hashedPassword;
           UserInitializer.GI().user.paymentCards = newPaymentCards;
         }
         return value;

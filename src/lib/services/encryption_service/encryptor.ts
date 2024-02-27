@@ -1,9 +1,9 @@
-import {
-  createCipheriv,
-  createDecipheriv,
-  pbkdf2Sync,
-  randomBytes,
-} from "crypto";
+// import {
+//   createCipheriv,
+//   createDecipheriv,
+//   pbkdf2Sync,
+//   randomBytes,
+// } from "crypto";
 import pkg from "crypto-js";
 const { SHA256 } = pkg;
 
@@ -42,39 +42,39 @@ export default class Encryptor {
     return computedHash == hashText; // Compare computed hash with provided hashText
   }
 
-  // Encrypts data using AES-256-CBC algorithm
-  encrypt(data: string, password: string): string {
-    // Generate a random salt
-    const salt = randomBytes(16);
-    // Derive a key using PBKDF2 with 1000 iterations, a key length of 32 bytes, and SHA-256
-    const key = pbkdf2Sync(password, salt, 1000, 32, "sha256");
-    // Generate a random initialization vector (IV)
-    const iv = randomBytes(16);
-    // Create a cipher using AES-256-CBC algorithm with the derived key and IV
-    const cipher = createCipheriv("aes-256-cbc", key, iv);
-    // Encrypt the data
-    let encrypted = cipher.update(data, "utf8", "hex");
-    encrypted += cipher.final("hex");
-    // Combine IV, salt, and encrypted data into a single string separated by colons
-    const result =
-      iv.toString("hex") + ":" + salt.toString("hex") + ":" + encrypted;
-    return result;
-  }
+  // // Encrypts data using AES-256-CBC algorithm
+  // encrypt(data: string, password: string): string {
+  //   // Generate a random salt
+  //   const salt = randomBytes(16);
+  //   // Derive a key using PBKDF2 with 1000 iterations, a key length of 32 bytes, and SHA-256
+  //   const key = pbkdf2Sync(password, salt, 1000, 32, "sha256");
+  //   // Generate a random initialization vector (IV)
+  //   const iv = randomBytes(16);
+  //   // Create a cipher using AES-256-CBC algorithm with the derived key and IV
+  //   const cipher = createCipheriv("aes-256-cbc", key, iv);
+  //   // Encrypt the data
+  //   let encrypted = cipher.update(data, "utf8", "hex");
+  //   encrypted += cipher.final("hex");
+  //   // Combine IV, salt, and encrypted data into a single string separated by colons
+  //   const result =
+  //     iv.toString("hex") + ":" + salt.toString("hex") + ":" + encrypted;
+  //   return result;
+  // }
 
-  // Decrypts data encrypted with AES-256-CBC algorithm
-  decrypt(encryptedData: string, password: string): string {
-    // Split the encrypted data into IV, salt, and encrypted parts
-    const parts = encryptedData.split(":");
-    const iv = Buffer.from(parts.shift()!, "hex");
-    const salt = Buffer.from(parts.shift()!, "hex");
-    const encrypted = parts.join(":");
-    // Derive a key using PBKDF2 with the provided password and salt
-    const key = pbkdf2Sync(password, salt, 1000, 32, "sha256");
-    // Create a decipher using AES-256-CBC algorithm with the derived key and IV
-    const decipher = createDecipheriv("aes-256-cbc", key, iv);
-    // Decrypt the data
-    let decrypted = decipher.update(encrypted, "hex", "utf8");
-    decrypted += decipher.final("utf8");
-    return decrypted;
-  }
+  // // Decrypts data encrypted with AES-256-CBC algorithm
+  // decrypt(encryptedData: string, password: string): string {
+  //   // Split the encrypted data into IV, salt, and encrypted parts
+  //   const parts = encryptedData.split(":");
+  //   const iv = Buffer.from(parts.shift()!, "hex");
+  //   const salt = Buffer.from(parts.shift()!, "hex");
+  //   const encrypted = parts.join(":");
+  //   // Derive a key using PBKDF2 with the provided password and salt
+  //   const key = pbkdf2Sync(password, salt, 1000, 32, "sha256");
+  //   // Create a decipher using AES-256-CBC algorithm with the derived key and IV
+  //   const decipher = createDecipheriv("aes-256-cbc", key, iv);
+  //   // Decrypt the data
+  //   let decrypted = decipher.update(encrypted, "hex", "utf8");
+  //   decrypted += decipher.final("utf8");
+  //   return decrypted;
+  // }
 }

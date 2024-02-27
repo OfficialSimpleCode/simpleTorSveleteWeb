@@ -3,31 +3,14 @@
   import { base } from "$app/paths";
   import SettingContainer from "$lib/components/SettingContainer.svelte";
   import SettingsItem from "$lib/components/custom_components/SettingsItem.svelte";
-  import { ErrorsController } from "$lib/controllers/errors_controller";
-  import UserHelper from "$lib/helpers/user/user_helper";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
-  import { businessStore } from "$lib/stores/Business";
+  import { pushDialog } from "$lib/utils/general_utils";
+  import LogoutDialog from "../components/LogoutDialog.svelte";
   let loadingLogout: boolean = false;
-  async function onLogout() {
-    if (loadingLogout) {
-      return;
-    }
-    loadingLogout = true;
-    try {
-      const resp = await UserHelper.GI().logout();
+  let logoutDialog: HTMLDialogElement;
 
-      if (resp) {
-        if ($businessStore != null) {
-          goto(`${base}/business/${$businessStore.url}`);
-        } else {
-          goto(`${base}/`);
-        }
-      } else {
-        ErrorsController.displayError();
-      }
-    } finally {
-      loadingLogout = false;
-    }
+  function onClickLogout() {
+    pushDialog(logoutDialog);
   }
 
   async function onDeleteUser() {
@@ -36,11 +19,13 @@
   }
 </script>
 
+<LogoutDialog bind:dialog={logoutDialog} />
+
 <SettingContainer>
   <div slot="children" class="flex flex-col join join-vertical">
     <SettingsItem
       icon="material-symbols:logout"
-      onTap={onLogout}
+      onTap={onClickLogout}
       name={"logout"}
     >
       <div slot="trailing">

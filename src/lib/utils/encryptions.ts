@@ -1,4 +1,3 @@
-import * as crypto from "crypto";
 import pkg from "crypto-js";
 
 const { AES, enc, SHA256 } = pkg;
@@ -38,52 +37,22 @@ export function generateKey(password: string): CryptoJS.lib.WordArray {
   return enc.Utf8.parse(preKey);
 }
 
-export function hashText(text: string, salt: string = "simpleCode"): string {
-  if (text === "") {
-    return "";
-  }
-  return SHA256(text + salt).toString(enc.Base64url);
-}
+// export function hashText(text: string, salt: string = "simpleCode"): string {
+//   if (text === "") {
+//     return "";
+//   }
+//   return SHA256(text + salt).toString(enc.Base64url);
+// }
 
-export function hashId({ id }: { id: string }): string {
-  if (id.length < 7) {
-    return "";
-  }
-  const salt = id.substring(3, 6); // unic salt prevent pre-hash attack
-  const hashValue = crypto
-    .createHash("sha256")
-    .update(id + salt)
-    .digest("hex");
-  const hashBytes = enc.Hex.parse(hashValue.toString());
-  return hashBytes.toString(enc.Hex).substring(0, 10).replace(/[/.*]/g, "");
-}
-
-export function isVerifiedPasswordForHash({
-  hash,
-  password,
-}: {
-  hash: string;
-  password: string;
-}): boolean {
-  const passwordHash = SHA256(password + "simpleCode").toString(enc.Hex);
-  return passwordHash === hash;
-}
-
-export function shortHashText({
-  text,
-  salt = "a",
-}: {
-  text: string;
-  salt?: string;
-}): string {
-  if (text === "") {
-    return "";
-  }
-  return SHA256(text + salt).toString(enc.Hex);
-}
-
-export function sha256ofString(input: string): string {
-  const bytes = enc.Utf8.parse(input);
-  const digest = SHA256(bytes);
-  return digest.toString(enc.Hex);
-}
+// export function hashId({ id }: { id: string }): string {
+//   if (id.length < 7) {
+//     return "";
+//   }
+//   const salt = id.substring(3, 6); // unic salt prevent pre-hash attack
+//   const hashValue = crypto
+//     .createHash("sha256")
+//     .update(id + salt)
+//     .digest("hex");
+//   const hashBytes = enc.Hex.parse(hashValue.toString());
+//   return hashBytes.toString(enc.Hex).substring(0, 10).replace(/[/.*]/g, "");
+// }

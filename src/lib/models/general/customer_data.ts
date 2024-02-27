@@ -1,5 +1,6 @@
 import { Gender } from "$lib/consts/gender";
-import { hashId } from "$lib/utils/encryptions";
+import { publicCustomerHashSalt } from "$lib/consts/worker";
+import Encryptor from "$lib/services/encryption_service/encryptor";
 import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
 import MultiBookingUser from "../multi_booking/multi_booking_user";
@@ -359,7 +360,10 @@ export default class CustomerData {
     return new PublicCustomer({
       freeFromPayments: this.freeFromPayments,
       blocked: this.blocked,
-      hashNumber: hashId({ id: this.customerUuid }),
+      hashNumber: Encryptor.GI().shortHashTextSha256(
+        this.customerUuid,
+        publicCustomerHashSalt
+      ),
     });
   }
 

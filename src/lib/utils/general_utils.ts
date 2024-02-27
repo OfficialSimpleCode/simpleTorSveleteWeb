@@ -102,7 +102,7 @@ export async function isNetworkConnected() {
 }
 
 export async function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function convertMapToObject(
@@ -123,9 +123,6 @@ export function pushDialog(
   dialog: HTMLDialogElement | undefined,
   herf?: string
 ) {
-  console.log("ffffffff");
-
-  console.log("3333333333");
   pushState(herf ?? "", {
     showModal: true,
   });

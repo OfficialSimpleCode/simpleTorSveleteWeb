@@ -360,7 +360,7 @@ export default class BusinessInitializer {
       }
 
       // Get the customer public to get data on the customer
-      if (worker.publicCustomers.publicCustomersData === null) {
+      if (worker.publicCustomers.publicCustomersData == null) {
         this.generalRepo
           .getDocRepo({
             path: `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}/${worker.id}/${dataCollection}`,

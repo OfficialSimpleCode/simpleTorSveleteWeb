@@ -1,4 +1,3 @@
-import { encryptText } from "$lib/utils/encryptions";
 import pkg from "uuid";
 import type { CurrencyModel } from "../general/currency_model";
 import CustomerData from "../general/customer_data";
@@ -91,7 +90,7 @@ export default class PaymentResp {
         customerData:
           customerData ||
           user?.userPublicData.customerData ||
-          (new CustomerData().customerUuid = userId || ""),
+          (new CustomerData({}).customerUuid = userId || ""),
         createdAt: paymentTime,
         paymentsMethods: new PaymentsMethods({
           amount: newPaymentResp.amount,
@@ -150,32 +149,32 @@ export default class PaymentResp {
     return newPaymentResp;
   }
 
-  newPaymentCard({
-    token,
-    cardPassword,
-  }: {
-    token: string;
-    cardPassword: string;
-  }): PaymentCard | undefined {
-    if (!this.paymentCard) return undefined;
+  // newPaymentCard({
+  //   token,
+  //   cardPassword,
+  // }: {
+  //   token: string;
+  //   cardPassword: string;
+  // }): PaymentCard | undefined {
+  //   if (!this.paymentCard) return undefined;
 
-    return new PaymentCard({
-      cardId: v4(),
-      brand: this.paymentCard.brand,
-      token: encryptText({ text: `${token}`, password: cardPassword }),
-      validityMonth: encryptText({
-        text: this.paymentCard.validityMonth,
-        password: cardPassword,
-      }),
-      validityYear: encryptText({
-        text: this.paymentCard.validityYear,
-        password: cardPassword,
-      }),
-      name: this.paymentCard.name,
-      userId: this.paymentCard.userId,
-      bankName: this.paymentCard.bankName,
-      l4Digits: this.paymentCard.l4Digits,
-      businessId: this.businessInfo.businessId,
-    });
-  }
+  //   return new PaymentCard({
+  //     cardId: v4(),
+  //     brand: this.paymentCard.brand,
+  //     token: Encryptor.GI().encrypt(token, cardPassword),
+  //     validityMonth: Encryptor.GI().encrypt(
+  //       this.paymentCard.validityMonth,
+  //       cardPassword
+  //     ),
+  //     validityYear: Encryptor.GI().encrypt(
+  //       this.paymentCard.validityYear,
+  //       cardPassword
+  //     ),
+  //     name: this.paymentCard.name,
+  //     userId: this.paymentCard.userId,
+  //     bankName: this.paymentCard.bankName,
+  //     l4Digits: this.paymentCard.l4Digits,
+  //     businessId: this.businessInfo.businessId,
+  //   });
+  // }
 }

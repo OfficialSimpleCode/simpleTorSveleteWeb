@@ -24,7 +24,7 @@ export const paymentRequestColletion = "PaymentRequests";
 export const paymentsCollection = "Payments";
 export const bookingsCollection = "Bookings";
 export const onlinePaymentsCollection = "OnlinePayments";
-export const phonesCollection = "Phones";
+export const phonesCollection = "PhonesMap";
 export const phoneDataCollections = "collections";
 
 export const secretsCollection = "Secrets";
@@ -38,7 +38,7 @@ export const reportsCollection = "Reports";
 
 // fireStore docs
 export const customersDataDoc = "customersData";
-export const publicCustomersDataDoc = "publicCustomersData";
+export const publicCustomersDataDoc = "publicCustomers";
 export const invoicesDataDoc = "invoicesData";
 
 export const clientsByPhoneDoc = "clients";

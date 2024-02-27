@@ -33,3 +33,5 @@ export const windowbyRecommedation: Record<WindowSpaces, string> = {
   [WindowSpaces.longestTreatment]: "mostBusinesses",
   [WindowSpaces.custom]: "notRecommended",
 };
+
+export const publicCustomerHashSalt = "publicCustomer";

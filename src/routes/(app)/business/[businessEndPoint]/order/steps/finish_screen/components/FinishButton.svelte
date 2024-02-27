@@ -16,6 +16,7 @@
   import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
   import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
   import { maxButtonSize } from "$lib/consts/sizes";
+  import { getPublicCustomer } from "../helpers/get_public_user";
   import { handleApproveTerm } from "../helpers/handle_approving_term";
   import { onFinishNavigator } from "../helpers/on_finish_navigator";
   export let verificationDialog: HTMLDialogElement;
@@ -23,7 +24,9 @@
   let downloadAppDialog: HTMLDialogElement;
   let isLoading: boolean = false;
 
-  const publicCustomer: PublicCustomer = new PublicCustomer(); //getPublicCustomer();
+  const publicCustomer: PublicCustomer = getPublicCustomer();
+
+  console.log(publicCustomer);
 
   const worker = BookingController.worker;
 
@@ -48,6 +51,9 @@
     }
   }
   async function handleClick() {
+    if (publicCustomer.blocked) {
+      return;
+    }
     if (!handleApproveTerm(termDialog)) {
       return;
     }
@@ -106,26 +112,28 @@
   <button
     class="btn btn-primary w-[300px] sm:w-[200px] {isLoading
       ? 'opacity-55'
-      : ''} {maxButtonSize} hover:outline"
+      : ''} {maxButtonSize} hover:outline flex flex-col"
     on:click={handleClick}
   >
     {#if isLoading}
       <div class="loading loading-spinner" />
     {:else}
-      {translate(
-        publicCustomer.blocked
-          ? "blockUser"
-          : needOnHold
-            ? "askForConfirmation"
-            : $bookingMakerStore.isUpdate
-              ? "update"
-              : "order2",
-        $_
-      )}
+      {publicCustomer.blocked
+        ? translate("blockUser", $_, false)
+        : translate(
+            needOnHold
+              ? "askForConfirmation"
+              : $bookingMakerStore.isUpdate
+                ? "update"
+                : "order2",
+            $_
+          )}
     {/if}
 
     {#if publicCustomer.blocked}
-      <AttentionText text={translate("blockedUserCantOrder", $_)} />
+      <h3 class="opacity-70">
+        {translate("blockedUserCantOrder", $_)}
+      </h3>
     {/if}
   </button>
 </div>
