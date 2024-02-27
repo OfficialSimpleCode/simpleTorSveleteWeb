@@ -4,11 +4,11 @@
 </script>
 
 <head>
-  <meta name="description" content="Simple tor app's privacy policy" />
+  <meta name="description" content="Simple tor app's terms of use" />
   <link rel="icon" href={appIcon} type="image/webp" />
   <meta name="author" content="SA SIMPLE CODE LTD" />
-  <meta property="og:title" content="Simple Tor | privacy policy" />
-  <title>Simple Tor | privacy policy</title>
+  <meta property="og:title" content="Simple Tor | terms of use" />
+  <title>Simple Tor | terms of use</title>
 </head>
 
 <body class="bg-base-100 items-center">

@@ -9,8 +9,9 @@
 </script>
 
 <svelte:head>
-  <title>Simple Tor</title>
+  <title>Simple Tor | ניהול תורים | מערכת לניהול תורים</title>
   <meta name="description" content="SimpleTor Web Application" />
+  <link rel="icon" href="/AppIcon.png" />
 </svelte:head>
 
 <HomePage />
