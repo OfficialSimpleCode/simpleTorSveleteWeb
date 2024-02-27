@@ -27,7 +27,7 @@ export default class BusinessModel {
   notifyOnNewCustomer: boolean = true;
   searchable: boolean = true;
   urlEndPoint: string | undefined;
-  businessSummary: string | undefined;
+  businessDescription: string | undefined;
   keyWords: string[] = [];
   billingIssue: Map<string, Date> = new Map();
   isLandingPageMode: boolean = false;
@@ -200,11 +200,8 @@ export default class BusinessModel {
 
     this.urlEndPoint = json["urlEndPoint"];
 
-    this.businessSummary = json["businessSummary"];
-    console.log(
-      "ddddddd5555555555555555555555555555555555555555ddddddddddddddddddddddddddd"
-    );
-    console.log(this.businessSummary);
+    this.businessDescription = json["businessDescription"];
+
     this.keyWords = json["keyWords"] ?? [];
 
     if (json["expiredDate"] != null) {
@@ -308,8 +305,8 @@ export default class BusinessModel {
       data["keyWords"] = this.keyWords;
     }
 
-    if (this.businessSummary != null) {
-      data["businessSummary"] = this.businessSummary;
+    if (this.businessDescription != null) {
+      data["businessDescription"] = this.businessDescription;
     }
     if (this.hypPath) {
       data.hypPath = this.hypPath;

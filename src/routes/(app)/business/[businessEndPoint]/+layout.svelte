@@ -36,7 +36,7 @@
   </title>
   <meta
     name="description"
-    content={$businessStore?.businessSummary ??
+    content={$businessStore?.businessDescription ??
       translate(
         businessTypeToStr[
           $businessStore?.businesseType ?? BusinessesTypes.Other
@@ -60,7 +60,7 @@
   <meta property="og:image" content={$businessStore?.design.shopIconUrl} />
   <meta
     property="og:description"
-    content={$businessStore?.businessSummary ??
+    content={$businessStore?.businessDescription ??
       translate(
         businessTypeToStr[
           $businessStore?.businesseType ?? BusinessesTypes.Other
