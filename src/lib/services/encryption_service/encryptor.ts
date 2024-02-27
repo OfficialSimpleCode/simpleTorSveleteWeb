@@ -24,7 +24,9 @@ export default class Encryptor {
 
   // Computes a short SHA-256 hash of a text concatenated with a salt
   shortHashTextSha256(text: string, salt: string): string {
-    return this.hashTextSha256(text, salt).substring(0, 32); // Compute the full SHA256 hash and return the first 32 characters
+    const hashedText = this.hashTextSha256(text, salt);
+    // Compute the full SHA256 hash and return the first 32 characters
+    return hashedText.substring(0, Math.min(32, hashedText.length));
   }
 
   // Verifies if a given text matches a hash value when hashed with a specific salt
