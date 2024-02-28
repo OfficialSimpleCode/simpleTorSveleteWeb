@@ -53,30 +53,28 @@ export const reviews: ReviewItem[] = [
   {
     name: "שקד כהן שי",
     bio: "barber",
-    content: "ניהנתי ממש להשתמש באפליקציה עשתה לי המון סדר וכיף",
+    content: "shakedReview",
     imageUrl:
       "https://play-lh.googleusercontent.com/a-/ALV-UjW_LEhKuJr2bfjElmWepUVEfgXU1Bjvw6QfqaSBS7I2GD6x=s48-rw",
   },
   {
     name: "Merav750",
     bio: "Nails Salon",
-    content: "וואו!! אחלה של שירות, אפליקציה מדהימה, עשה לי סדר של ממש!",
+    content: "meravReview",
     imageUrl:
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
   },
   {
     name: "ליאל בן חור",
     bio: "chef",
-    content:
-      "אפליקציה מעולה עשתה לי סדר בתורים, שירות לקוחות מצויין ממליץ ממש!",
+    content: "lielReview",
     imageUrl:
       "https://play-lh.googleusercontent.com/a/ACg8ocIFWwBlRqs4g_NzfBWcNwrmMX8nkbWbtmRFCGcFWYlO=s48-rw-mo",
   },
   {
     name: "Sagi Zarum",
     bio: "Trainer",
-    content:
-      "אפליקציה נוחה מסודרת יעילה שכל בעל עסק צריך חוסכת זמן וטרחה לי וללקוחות שלי",
+    content: "saguiReview",
     imageUrl:
       "https://play-lh.googleusercontent.com/a/ACg8ocIdLgy1EL2xl7qxzVIEjOMpbbzY5nMUU0BneWDnKNcU=s48-rw-mo",
   },
@@ -84,28 +82,28 @@ export const reviews: ReviewItem[] = [
   {
     name: "Amit mormy",
     bio: "Tattos' Artist",
-    content: "אפלקיציה מטורפת עזרה לי ממש בניהול העסק",
+    content: "amitReview",
     imageUrl:
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
   },
   {
     name: "דניאל מרה",
     bio: "D.G",
-    content: "אפליקציה ממש נוחה עשתה לי סדר, אחלה שי שירות לקוחות ממליץ לכולם",
+    content: "danielReview",
     imageUrl:
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
   },
   {
     name: "Shilo",
     bio: "Personal Trainer",
-    content: "וואו!! אחלה של שירות, אפליקציה מדהימה, עשה לי סדר של ממש!",
+    content: "shiloReview",
     imageUrl:
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
   },
   {
     name: "Hagay",
     bio: "Accountant",
-    content: "Amazing app, made my work super easy thank you !!",
+    content: "hagaiReview",
     imageUrl:
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
   },
@@ -113,14 +111,14 @@ export const reviews: ReviewItem[] = [
   {
     name: "ShiraSa123",
     bio: "Beautician",
-    content: "אפליקציה מדהימה ממליצה לכולם בחום! כמה חיפשתי כזה דברר",
+    content: "shiraReview",
     imageUrl:
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
   },
   {
     name: "עומר ויצמן",
     bio: "Barber",
-    content: "אפליקציה מעולה פיצרים מטורפים עד הפרטים הכי קטנים",
+    content: "omerReview",
     imageUrl:
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
   },
@@ -128,8 +126,7 @@ export const reviews: ReviewItem[] = [
   {
     name: "יה-לי סולץ",
     bio: "Yoga Studio",
-    content:
-      "מערכת מעולה ממליצה עליה לכל מי שיש לו עסק ורוצה להפסיק את השיגועים מהלקוחות",
+    content: "yahliReview",
     imageUrl:
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
   },
