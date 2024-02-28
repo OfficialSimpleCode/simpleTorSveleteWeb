@@ -1,5 +1,4 @@
 <script>
-  import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
   import HowItWorkStep from "../components/HowItWorkStep.svelte";
 </script>
 
@@ -19,7 +18,7 @@
         >
           הפיכת העסק לאוטונומי ב 3 שלבים
         </p> -->
-        <DownloadAppButton />
+        <!-- <DownloadAppButton /> -->
       </div>
     </div>
 

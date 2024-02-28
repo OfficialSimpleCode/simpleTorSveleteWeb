@@ -30,8 +30,8 @@
       class="relative mx-auto max-w-7xl z-10 grid gap-10 pt-14 grid-cols-2 lg:grid-cols-4"
     >
       <DataItem titleTransKey="1M+" subTitleTransKey="הזמנות שונות" />
-      <DataItem titleTransKey="128" subTitleTransKey="מדינות שונות" />
-      <DataItem titleTransKey="10K" subTitleTransKey="בעלי עסקים" />
+      <DataItem titleTransKey="10K+" subTitleTransKey="חיפושים בפלטפורמה" />
+      <DataItem titleTransKey="38" subTitleTransKey="קטגוריות עסקים" />
       <DataItem titleTransKey="5" subTitleTransKey="כוכבים בחנויות" />
     </div>
   </div>

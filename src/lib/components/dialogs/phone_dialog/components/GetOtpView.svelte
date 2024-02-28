@@ -68,6 +68,7 @@
     on:valueChange={onChanged}
     type={InputOptions.number}
     isActive={!loading}
+    isOTP={true}
   />
 
   {#if VerificationHelper.GI().phoneVerificationWithFirebase && !loading}

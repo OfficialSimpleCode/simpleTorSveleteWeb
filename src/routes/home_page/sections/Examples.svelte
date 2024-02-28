@@ -1,5 +1,4 @@
 <script lang="ts">
-  import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
   import { containerRadius } from "$lib/consts/sizes";
   import calendarViewsMov from "$lib/media/videos/calendar_views_mov.mp4";
   import createEventMov from "$lib/media/videos/create_event_mov.mp4";
@@ -81,7 +80,7 @@
           titleTransKey="שיבוץ אירוע"
           subTitleTransKey="סנכרון עם יומני חוץ, תמיכה בקביעת אירועים אישיים כולל התראות אישיות"
         />
-        <DownloadAppButton />
+        <!-- <DownloadAppButton /> -->
       </div>
 
       <!-- changin images -->

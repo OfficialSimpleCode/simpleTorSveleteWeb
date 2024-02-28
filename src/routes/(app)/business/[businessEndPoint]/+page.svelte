@@ -2,7 +2,6 @@
   // Models
   // Components
   import TermDialog from "$lib/components/dialogs/TermDialog.svelte";
-  import SocialLinks from "./sections/SocialLinks.svelte";
   // other (utils / stores)
 
   import { pushState } from "$app/navigation";
@@ -18,6 +17,7 @@
   import ChangingImages from "./sections/ChangingImages.svelte";
   import IconAndTopButtons from "./sections/IconAndTopButtons.svelte";
   import ProductsSection from "./sections/ProductsSection.svelte";
+  import SocialLinks from "./sections/SocialLinks.svelte";
   import StoryImages from "./sections/StoryImages.svelte";
   import Updates from "./sections/Updates.svelte";
   let termDialog: HTMLDialogElement;

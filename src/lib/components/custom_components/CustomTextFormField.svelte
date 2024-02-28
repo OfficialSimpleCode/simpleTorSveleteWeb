@@ -17,6 +17,7 @@
   export let type: InputOptions = InputOptions.text;
   export let withErrorSpacing: boolean = false;
   export let isActive: boolean = true;
+  export let isOTP: boolean = false;
   export let hint: string = "";
 
   export let value = "";
@@ -72,6 +73,7 @@
     class="input input-bordered {bgColor} w-full {validationResp
       ? 'border-red-700'
       : ''} [&::-webkit-inner-spin-button]:appearance-none"
+    autocomplete={isOTP ? "one-time-code" : undefined}
     type={inputOptionToStr[type]}
     placeholder={hint}
     name="textFormField"

@@ -19,9 +19,10 @@
   import { onMount } from "svelte";
   import ShareDialog from "../components/ShareDialog.svelte";
 
+  export let shrinkedDisplay: boolean = false;
+
   let shareDialog: HTMLDialogElement;
   let navigationDialog: HTMLDialogElement;
-
   let iconStr: string = "mdi:ios-share";
 
   // open choose navigation option dialog
@@ -64,7 +65,9 @@
 
 <section
   id="profile-row"
-  class="flex justify-between items-start mx-8 gap-x-3 sm:mx-16 relative xs:top-[-3rem] top-[-73px] text-center"
+  class="flex {shrinkedDisplay
+    ? 'flex-col justify-center items-center '
+    : 'justify-between items-start md:hidden'} mx-8 gap-x-3 sm:mx-16 relative md:top-0 top-[-73px] text-center"
 >
   <!-- icon business name and address -->
   <div class="flex flex-col justify-center items-center">
@@ -112,7 +115,7 @@
       <div class="flex xs:gap-5 gap-3 items-center">
         <a
           on:click={onMakeBooking}
-          class="btn btn-primary xs:px-10 px-6"
+          class="btn btn-primary xs:px-10 px-6 md:px-20"
           href={$isConnectedStore
             ? `${base}/business/${$businessStore?.url ?? ""}/order`
             : `${base}/login`}

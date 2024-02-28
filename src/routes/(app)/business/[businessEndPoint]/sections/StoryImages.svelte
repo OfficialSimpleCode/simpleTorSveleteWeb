@@ -43,7 +43,7 @@
 
 {#if Object.keys(workersStories).length > 0}
   <div
-    class="mt-10 {isNotEmpty($businessStore?.design.products ?? {})
+    class="mt-10 md:mt-0 {isNotEmpty($businessStore?.design.products ?? {})
       ? 'bg-base-200'
       : 'bg-base-300'} w-full pb-14 px-2 pt-10 xs:px-16"
   >

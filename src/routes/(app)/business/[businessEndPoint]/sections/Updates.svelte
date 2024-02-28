@@ -10,7 +10,7 @@
 </script>
 
 {#if isNotEmpty(businessUpdates)}
-  <div class="flex items-center justify-center text-center xs:pt-5">
+  <div class="flex items-center justify-center text-center xs:pt-5 md:my-20">
     <div
       class="flex items-center justify-center text-center py-2 bg-base-200 {containerRadius} max-w-[800px] w-full mx-6"
     >

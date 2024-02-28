@@ -12,6 +12,7 @@
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
+  export let shrinkedDisplay: boolean = false;
   export let termDialog: HTMLDialogElement;
   let navigationDialog: HTMLDialogElement;
 
@@ -117,10 +118,12 @@
   <NavigationDialog bind:dialog={navigationDialog} />
 {/if}
 
-<section class="flex justify-center relative xs:top-[-1rem] top-[-32px]">
+<section class="flex justify-center relative md:top-2.5 top-[-32px]">
   <!-- Social Links -->
   <div
-    class="flex items-center gap-6 sm:gap-8 bg-base-200 py-2 px-5 rounded-xl mx-6 sm:mx-16"
+    class="flex items-center gap-6 sm:gap-8 {shrinkedDisplay
+      ? ''
+      : 'md:hidden bg-base-200'}  py-2 px-5 rounded-xl mx-6 sm:mx-16"
   >
     {#each socialLinks as socialLink}
       <div

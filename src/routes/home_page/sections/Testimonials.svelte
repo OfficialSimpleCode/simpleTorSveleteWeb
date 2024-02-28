@@ -6,14 +6,14 @@
   $: itemToDisplay = 0;
   reviews;
   function forwords() {
-    $: itemToDisplay += 1;
+    itemToDisplay += 1;
   }
 
   function backwords() {
     if (itemToDisplay === 0) {
-      $: itemToDisplay = reviews.length - 1;
+      itemToDisplay = reviews.length - 1;
     } else {
-      $: itemToDisplay -= 1;
+      itemToDisplay -= 1;
     }
   }
 </script>
@@ -32,7 +32,7 @@
       >
       <!-- title -->
       <h2 class="text-4xl leading-[3.25rem] mb-8 lg:text-start text-center">
-        23k+ לקוחות דירגו אותנו <span class="text-primary">בחנויות</span>
+        50 שניות בממוצע למענה <span class="text-primary">מהתמיכה</span>
       </h2>
 
       <!-- Slider controls (arrows) -->
