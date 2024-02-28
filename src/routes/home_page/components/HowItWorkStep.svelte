@@ -5,7 +5,6 @@
   import { containerRadius } from "$lib/consts/sizes";
   import { themeStore } from "$lib/controllers/theme_controller";
   import { computeLuminance } from "$lib/utils/general_utils";
-  import { onMount } from "svelte";
   export let imageSrc: string;
   export let titleTransKey: string;
 
@@ -19,15 +18,14 @@
       goto(`#HowItWorkStep-${stepNumber + 1}`);
     }
   }
-  console.log("themeStore -> ", themeStore);
-
-  onMount(() => {
-    if ($themeStore) {
-      const lightMode = computeLuminance($themeStore.background) > 0.5;
-      colors = lightMode
-        ? ["text-blue-600", "text-pink-600", "text-green-600"]
-        : ["text-blue-200", "text-pink-200", "text-green-200"];
+  themeStore.subscribe((value) => {
+    if (value == null) {
+      return;
     }
+    const lightMode = computeLuminance($themeStore.background) > 0.5;
+    colors = lightMode
+      ? ["text-blue-600", "text-pink-600", "text-green-600"]
+      : ["text-blue-200", "text-pink-200", "text-green-200"];
   });
 </script>
 
