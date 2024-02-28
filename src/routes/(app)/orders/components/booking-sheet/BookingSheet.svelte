@@ -26,8 +26,8 @@
   <DownloadAppDialog bind:dialog={downloadAppDialog} />
 {/if}
 <DialogStrucher bind:dialog>
-  <div class="modal-box bg-base-200 h-[60%] py-5 px-3 xs:px-5">
-    <div class="flex flex-col items-start h-32 gap-4 mb-2">
+  <div class="modal-box bg-base-200 max-h-[80%] py-5 px-3 xs:px-5">
+    <div class="flex flex-col items-start gap-4 mb-2">
       <!-- indicators -> past booking, reacurrance .. -->
       <TopSheetIndicators {booking}></TopSheetIndicators>
 
