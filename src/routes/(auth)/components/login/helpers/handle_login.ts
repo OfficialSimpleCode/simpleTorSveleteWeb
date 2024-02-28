@@ -58,13 +58,9 @@ export async function handleLogin({
     ErrorsController.displayError();
     return;
   }
-  console.log("222222222222222222222222222");
-  console.log(resp);
 
   if (loginReason === LoginReason.deleteUser) {
-    console.log("fffffffffffff");
     if (deleteUserDialog != null) {
-      console.log("rrrrrrrrrr");
       pushDialog(deleteUserDialog);
     }
     return;

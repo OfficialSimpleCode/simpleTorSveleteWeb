@@ -44,6 +44,7 @@ export class VerificationRepo
       beforeSendTime: Date
     ) => void;
   }): Promise<void> {
+    console.log("3333333333");
     await this.sendSmsWithExternalProviderSRV({
       userId: this.userId,
       phoneNumber: completePhone,
@@ -63,6 +64,7 @@ export class VerificationRepo
     userName: string;
     phoneNumber: string;
   }): Promise<boolean> {
+    console.log("5555555555555555");
     return await this.verifyOTPWithExternalProviderSRV({
       userName,
       phoneNumber,

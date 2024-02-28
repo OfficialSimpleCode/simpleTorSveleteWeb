@@ -683,7 +683,7 @@ export default class NotificationsHelper {
   }): Promise<void> {
     const developersFcm = await DeveloperHelper.GI().getDevelopersFcms();
 
-    this.notificationRepo.notifyMultipleUsers({
+    await this.notificationRepo.notifyMultipleUsers({
       fcms: developersFcm,
       payload: new NotificationPayload(),
       title: translate(
@@ -696,6 +696,28 @@ export default class NotificationsHelper {
         translate("newErrorContent", undefined, false)
           .replaceAll("USER", userId)
           .replaceAll("CODE", errorCode),
+    });
+  }
+
+  async notifyDevelopersAboutReport({
+    communication,
+    name,
+  }: {
+    communication: string;
+    name: string;
+  }): Promise<void> {
+    // Get FCMS tokens of developers
+    const developersFcm = await DeveloperHelper.GI().getDevelopersFcms();
+
+    // Notify multiple users (developers) about the report
+    await this.notificationRepo.notifyMultipleUsers({
+      fcms: developersFcm,
+      payload: new NotificationPayload(), // Provide the payload if necessary
+      title: translate("newReport", undefined, false), // Translate the title
+      content: translate("newReportContent", undefined, false).replaceAll(
+        "USER",
+        `${name} - ${communication}`
+      ), // Translate and replace content
     });
   }
 

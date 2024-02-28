@@ -11,7 +11,6 @@
 </script>
 
 <DialogStrucher bind:dialog onlyMiddle={true}>
-  <div id="recaptcha-container" class="absolute"></div>
   <div class="modal-box bg-base-200 pb-10 max-w-[400px]">
     {#if !insideOtp}
       <GetPhoneView
@@ -24,4 +23,5 @@
       <GetOtpView {loginReason} {dialog} {dispatch} />
     {/if}
   </div>
+  <div id="recaptcha-container" class="absolute !z-[10000]"></div>
 </DialogStrucher>

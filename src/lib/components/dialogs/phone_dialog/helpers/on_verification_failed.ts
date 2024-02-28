@@ -14,7 +14,7 @@ export async function onVerificationFailed(
     userId: phoneNumber,
     errorType: ErrorsTypeLog.login,
     exceptions: [e],
-    errorCode: e.message,
+    errorCode: `${e.message} ${phoneNumber}`,
     extras: {
       codeSendTime: codeSentTime ? dateIsoStr(codeSentTime) : "",
       beforeSendTime: beforeSendTime,
@@ -33,7 +33,7 @@ export async function onExternalProviderVerificationFailed(
     userId: phoneNumber,
     errorType: ErrorsTypeLog.login,
     exceptions: [e],
-    errorCode: "Ofirix otp error",
+    errorCode: `Ofirix otp error ${phoneNumber}`,
     extras: {
       codeSendTime: codeSentTime ? dateIsoStr(codeSentTime) : "",
       beforeSendTime: beforeSendTime,

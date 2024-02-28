@@ -148,10 +148,10 @@ export default class DeveloperHelper {
       })
       .then((value) => {
         if (value) {
-          // NotificationsHelper.notifyDevelopersAboutReport({
-          //   name: report.name,
-          //   communication: report.communication,
-          // });
+          NotificationsHelper.GI().notifyDevelopersAboutReport({
+            name: report.name,
+            communication: report.communication,
+          });
         }
         return value;
       });

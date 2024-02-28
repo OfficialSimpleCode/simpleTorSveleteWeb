@@ -111,6 +111,7 @@
   titleTransKey={"newClient"}
   content={translate("doYouWantToBeClient")}
   cancelTranslateKey={"no"}
+  maxWidth="max-w-[300px]"
   saveTranslateKey={"yes"}
   onCancel={onFinish}
   onSave={saveUserOnBusiness}
@@ -183,7 +184,7 @@
             class="font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline"
             >{translate("policy", $_)}</a
           >
-          {translate("and", $_)}
+          {translate("andThe", $_)}
           <a
             href="{base}/terms-of-use"
             target="_blank"

@@ -25,7 +25,7 @@ export function sendSms({ phone }: { phone: string }): void {
   if (VerificationHelper.GI().phoneVerificationWithFirebase) {
     VerificationHelper.GI().sendSmsForFirebaseVerification(
       phone,
-      (verificationId) => onCodeSent(verificationId),
+      onCodeSent,
       onVerificationFailed
     );
   } else {

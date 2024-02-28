@@ -29,7 +29,8 @@ export class VerificationService {
     userId: string;
   }) {
     try {
-      const resp: Record<string, any> = this.makeRequest.performRequst({
+      console.log(phoneToDocId(phoneNumber));
+      const resp: Record<string, any> = await this.makeRequest.performRequst({
         endpoint: VERIFY_OTP_END_POINT,
         onFail: {},
         method: "post",
@@ -42,6 +43,7 @@ export class VerificationService {
           ["VI"]: verificationId,
         },
       });
+      console.log("555555555555555555555555555", resp);
       if (resp.error) {
         AppErrorsHelper.GI().error =
           verificationErrors[resp.error] || Errors.unknown;
@@ -73,7 +75,7 @@ export class VerificationService {
   }) {
     const beforeSendTime = new Date();
     try {
-      const resp: Record<string, any> = this.makeRequest.performRequst({
+      const resp: Record<string, any> = await this.makeRequest.performRequst({
         endpoint: SEND_SMS_END_POINT,
         onFail: {},
         method: "post",
@@ -83,6 +85,7 @@ export class VerificationService {
           ["phoneNumber"]: phoneNumber.replace("-", ""),
         },
       });
+      console.log("4444444444", resp);
       if (resp.error) {
         AppErrorsHelper.GI().error =
           verificationErrors[resp.error] || Errors.unknown;
@@ -121,7 +124,7 @@ export class VerificationService {
     userId: string;
   }) {
     try {
-      const resp: Record<string, any> = this.makeRequest.performRequst({
+      const resp: Record<string, any> = await this.makeRequest.performRequst({
         endpoint: CANCEL_VERIFICATION_END_POINT,
         onFail: {},
         method: "post",
@@ -131,6 +134,8 @@ export class VerificationService {
           ["env"]: envKey.replaceAll("enviroments/", ""),
         },
       });
+
+      console.log("ffffffffff", resp);
       if (resp.error) {
         AppErrorsHelper.GI().error =
           verificationErrors[resp.error] || Errors.unknown;

@@ -194,6 +194,7 @@ export class VerificationHelper {
       endDate: Date
     ) => void
   ): Promise<void> {
+    console.log("tttttttttt");
     await this.verificationRepo.sendSmsWithExternalProvider({
       completePhone,
       onCodeSent,
@@ -206,6 +207,8 @@ export class VerificationHelper {
   }: {
     otp: string;
   }): Promise<boolean> {
+    console.log("ttttttttttttttttttttttttttttttttttttttttttttttttttt");
+
     return await this.verificationRepo.verifyOTPWithExternalProvider({
       verificationId: this.verificationID,
       otp,

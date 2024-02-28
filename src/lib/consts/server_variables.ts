@@ -1,5 +1,5 @@
 /* All the variables related to our server */
-export const SERVER_BASE_URL = "simpletor.officialsimplecode.com"; //'192.168.0.105:8225';   //'192.168.0.104:8225'; //  '192.168.1.10:8225'; //  '172.20.10.10:8225';
+export const SERVER_BASE_URL = "192.168.0.101:8225"; //"simpletor.officialsimplecode.com"; //  //'192.168.0.104:8225'; //  '192.168.1.10:8225'; //  '172.20.10.10:8225';
 export const GET_CHECKOUT_PAGE_END_POINT = "/hyp/get_checkout_page";
 export const GET_PAYMENT_TOKEN_END_POINT = "/hyp/get_payment_token";
 export const SEND_SMS_END_POINT = "/phone_verification/send_sms";

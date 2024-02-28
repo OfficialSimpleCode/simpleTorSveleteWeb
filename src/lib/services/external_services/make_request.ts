@@ -2,7 +2,7 @@ import { logger } from "$lib/consts/application_general";
 import { serverSignature } from "$lib/consts/secrets";
 import { SERVER_BASE_URL } from "$lib/consts/server_variables";
 export default class MakeRequest {
-  private readonly _baseURL: string = `https://${SERVER_BASE_URL}`;
+  private readonly _baseURL: string = `http://${SERVER_BASE_URL}`;
 
   public async performRequst({
     endpoint,
@@ -49,7 +49,6 @@ export default class MakeRequest {
       if (response.status === 200) {
         // request succeeded
         logger.info("request status -- > Success!");
-        console.log(await response.json());
         return await response.json();
       }
     } catch (error) {
@@ -71,12 +70,14 @@ export default class MakeRequest {
   }): Promise<Response> {
     switch (method) {
       case "post":
+        console.log("post", url);
         return await fetch(url, {
           method: "POST",
           body: body,
           headers: headers,
         });
       case "get":
+        console.log("get", url);
         return await fetch(url, { method: "GET", headers: headers });
       default:
         throw new Error(`Unsupported HTTP method: ${method}`);

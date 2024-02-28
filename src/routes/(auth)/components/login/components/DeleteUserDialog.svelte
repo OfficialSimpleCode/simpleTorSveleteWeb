@@ -14,6 +14,7 @@
   titleTransKey={"areYouSure"}
   content={translate("doYouWantToDleteTheUser")}
   cancelTranslateKey="delete"
+  maxWidth="max-w-[400px]"
   onSave={onExit}
   onCancel={finishDeleteUser}
   saveTranslateKey="regret"
