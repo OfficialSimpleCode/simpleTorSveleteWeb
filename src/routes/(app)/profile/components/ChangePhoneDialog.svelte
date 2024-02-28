@@ -1,6 +1,7 @@
 <script lang="ts">
   import CustomPhoneField from "$lib/components/custom_components/CustomPhoneField.svelte";
   import DialogTitel from "$lib/components/custom_components/DialogTitel.svelte";
+  import DialogStrucher from "$lib/components/dialogs/DialogStrucher.svelte";
   import { type TextFieldEvent } from "$lib/consts/text_fields";
   import { translate } from "$lib/utils/translate";
   export let dialog: HTMLDialogElement;
@@ -37,12 +38,8 @@
   }
 </script>
 
-<dialog
-  bind:this={dialog}
-  class="modal modal-middle bg-center"
-  on:close={() => history.back()}
->
-  <div class="modal-box bg-base-200 pb-10">
+<DialogStrucher bind:dialog onlyMiddle={true}>
+  <div class="modal-box bg-base-200 pb-10 max-w-[400px]">
     <DialogTitel {titleTransKey} {dialog} />
     <form on:submit={handlePhoneChange}>
       <div class="flex flex-col gap-5">
@@ -65,8 +62,4 @@
       </div>
     </form>
   </div>
-
-  <form method="dialog" class="modal-backdrop">
-    <button></button>
-  </form>
-</dialog>
+</DialogStrucher>

@@ -28,6 +28,7 @@
 <GeneralDialog
   bind:dialog
   onSave={onLogout}
+  maxWidth="max-w-[400px]"
   saveTranslateKey="yes"
   cancelTranslateKey="no"
   titleTransKey="logout"

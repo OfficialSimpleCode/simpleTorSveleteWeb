@@ -7,6 +7,7 @@
   import { createEventDispatcher } from "svelte";
   import DialogTitel from "../custom_components/DialogTitel.svelte";
   import GeneralIcon from "../custom_components/GeneralIcon.svelte";
+  import DialogStrucher from "./DialogStrucher.svelte";
 
   export let dialog: HTMLDialogElement;
 
@@ -50,20 +51,13 @@
   }
 </script>
 
-<dialog
-  bind:this={dialog}
-  on:close={() => {
-    dialog.close();
-    history.back();
-  }}
-  class="modal modal-bottom sm:modal-middle"
->
+<DialogStrucher bind:dialog>
   <div class="modal-box bg-base-200 pb-10 flex flex-col justify-center gap-6">
     <DialogTitel titleTransKey={"term"} {dialog} />
     <div class="flex flex-col gap-3 items-center h-full">
       <!-- term text -->
       <h3 class="text-sm text-center mx-6 mb-8">
-        {$businessStore.design.term}
+        {$businessStore?.design.term}
       </h3>
 
       <!-- confirm button -->
@@ -85,9 +79,4 @@
       </button>
     </div>
   </div>
-
-  <!-- backdrop close dialog -->
-  <form method="dialog" class="modal-backdrop">
-    <button></button>
-  </form>
-</dialog>
+</DialogStrucher>

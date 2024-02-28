@@ -7,23 +7,14 @@
   } from "$lib/consts/app_external_links";
   import { contactUsAnimation } from "$lib/consts/resources";
   import { translate } from "$lib/utils/translate";
-  import ToastManager from "../ToastManager.svelte";
   import CustomCircleIcon from "../custom_components/CustomCircleIcon.svelte";
   import LottieAnimation from "../custom_components/LottieAnimation.svelte";
+  import DialogStrucher from "./DialogStrucher.svelte";
 
   export let dialog: HTMLDialogElement;
-
-  function openLink(link: string) {
-    window.open(link, "_blank");
-  }
 </script>
 
-<dialog
-  bind:this={dialog}
-  on:close={() => history.back()}
-  class="modal modal-bottom sm:modal-middle"
->
-  <ToastManager />
+<DialogStrucher bind:dialog>
   <div class="modal-box bg-base-200 items-center">
     <div class="flex flex-col gap-3 items-center h-full">
       <!-- title and top buttons -->
@@ -58,8 +49,4 @@
       </h3>
     </div>
   </div>
-  <!-- backdrop close dialog -->
-  <form method="dialog" class="modal-backdrop">
-    <button></button>
-  </form>
-</dialog>
+</DialogStrucher>

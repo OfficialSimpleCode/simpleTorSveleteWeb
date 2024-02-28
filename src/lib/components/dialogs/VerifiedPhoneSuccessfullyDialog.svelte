@@ -4,17 +4,14 @@
   import { _, translate } from "$lib/utils/translate";
   import { authDataStore } from "../../../routes/(auth)/auth_controller";
   import LottieAnimation from "../custom_components/LottieAnimation.svelte";
+  import DialogStrucher from "./DialogStrucher.svelte";
 
   export let dialog: HTMLDialogElement;
 </script>
 
-<dialog
-  bind:this={dialog}
-  on:close={() => history.back()}
-  class="modal modal-middle"
->
+<DialogStrucher bind:dialog onlyMiddle={true}>
   <div
-    class="modal-box flex flex-col gap-4 bg-base-200 items-center text-center"
+    class="modal-box flex flex-col gap-4 bg-base-200 items-center text-center max-w-[300px]"
   >
     <!-- title -->
     <h3 class="font-bold text-lg pb-4">
@@ -48,9 +45,4 @@
       {translate("ok", $_)}
     </button>
   </div>
-
-  <!-- backdrop close dialog -->
-  <form method="dialog" class="modal-backdrop">
-    <button></button>
-  </form>
-</dialog>
+</DialogStrucher>

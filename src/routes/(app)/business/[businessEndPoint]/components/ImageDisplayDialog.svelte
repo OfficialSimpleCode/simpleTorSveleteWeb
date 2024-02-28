@@ -1,6 +1,7 @@
 <script lang="ts">
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
+  import DialogStrucher from "$lib/components/dialogs/DialogStrucher.svelte";
   import { ArrayCommands } from "$lib/consts/db";
   import UserHelper from "$lib/helpers/user/user_helper";
   import { userStore } from "$lib/stores/User";
@@ -51,11 +52,7 @@
   }
 </script>
 
-<dialog
-  bind:this={dialog}
-  class="modal modal-middle"
-  on:close={() => history.back()}
->
+<DialogStrucher bind:dialog onlyMiddle={true}>
   <div
     class="modal-box bg-base-200 p-0 h-[70%] xs:h-[90%] max-h-[700px] sm:w-[520px] overflow-hidden"
   >
@@ -111,8 +108,4 @@
       </div>
     </button>
   </div>
-
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
-</dialog>
+</DialogStrucher>

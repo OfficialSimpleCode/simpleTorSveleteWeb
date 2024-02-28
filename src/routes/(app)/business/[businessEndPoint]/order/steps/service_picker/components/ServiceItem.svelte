@@ -15,7 +15,7 @@
 
 <div class="w-full flex flex-col items-center gap-2">
   <button
-    class="{bookingMakerButton} w-full h-20 sm:h-28 px-4 gap-5 py-2 {isPicked
+    class="{bookingMakerButton} w-full px-4 gap-5 py-10 flex flex-col {isPicked
       ? 'border-solid border-2 border-white'
       : ''}"
     on:click={() => BookingController.onTapService(treatment)}

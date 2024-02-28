@@ -4,15 +4,12 @@
   import DialogTitel from "../custom_components/DialogTitel.svelte";
   import DownloadAppButton from "../custom_components/DownloadAppButton.svelte";
   import LottieAnimation from "../custom_components/LottieAnimation.svelte";
+  import DialogStrucher from "./DialogStrucher.svelte";
   export let explainTranslateKey: string | undefined = undefined;
   export let dialog: HTMLDialogElement;
 </script>
 
-<dialog
-  bind:this={dialog}
-  on:close={() => history.back()}
-  class="modal modal-bottom sm:modal-middle"
->
+<DialogStrucher bind:dialog>
   <div class="modal-box bg-base-200 items-center">
     <!-- title and top buttons -->
     <DialogTitel titleTransKey="downloadTheApp" {dialog} />
@@ -26,8 +23,4 @@
       <DownloadAppButton />
     </div>
   </div>
-  <!-- backdrop close dialog -->
-  <form method="dialog" class="modal-backdrop">
-    <button></button>
-  </form>
-</dialog>
+</DialogStrucher>

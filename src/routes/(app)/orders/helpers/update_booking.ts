@@ -9,7 +9,6 @@ import { ShowToast } from "$lib/stores/ToastManager";
 import { workersStore } from "$lib/stores/Workers";
 import { translate } from "$lib/utils/translate";
 import { get } from "svelte/store";
-import { deleteNotAvaliableWorkerBooking } from "./delete_not_avaliable_booking";
 
 export async function updateBooking({ booking }: { booking: Booking }) {
   const worker = get(workersStore)[booking.workerId];
@@ -41,12 +40,6 @@ export async function updateBooking({ booking }: { booking: Booking }) {
     ShowToast({
       status: "fail",
       text: translate("alreadyPassed", undefined, false),
-    });
-    return;
-  }
-  if (worker == null) {
-    await deleteNotAvaliableWorkerBooking({
-      booking: booking,
     });
     return;
   }

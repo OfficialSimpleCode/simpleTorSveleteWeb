@@ -1,5 +1,6 @@
 <script lang="ts">
   import DialogTitel from "$lib/components/custom_components/DialogTitel.svelte";
+  import DialogStrucher from "$lib/components/dialogs/DialogStrucher.svelte";
   import { Gender } from "$lib/consts/gender";
   import type WorkerModel from "$lib/models/worker/worker_model";
   import { isManager } from "$lib/utils/general_utils";
@@ -10,12 +11,8 @@
   export let worker: WorkerModel;
 </script>
 
-<dialog
-  bind:this={dialog}
-  on:close={() => history.back()}
-  class="modal modal-middle"
->
-  <div class="modal-box bg-base-200 items-center">
+<DialogStrucher bind:dialog onlyMiddle={true}>
+  <div class="modal-box bg-base-200 items-center max-w-[300px]">
     <!-- title and top buttons -->
     <DialogTitel {dialog} />
 
@@ -53,8 +50,4 @@
       </div>
     </div>
   </div>
-  <!-- backdrop close dialog -->
-  <form method="dialog" class="modal-backdrop">
-    <button></button>
-  </form>
-</dialog>
+</DialogStrucher>

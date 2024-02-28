@@ -2,6 +2,7 @@
   import { _, translate } from "$lib/utils/translate";
   import DialogTitel from "../custom_components/DialogTitel.svelte";
   import LottieAnimation from "../custom_components/LottieAnimation.svelte";
+  import DialogStrucher from "./DialogStrucher.svelte";
   export let dialog: HTMLDialogElement;
   export let animation: string = "";
   export let image: string = "";
@@ -12,19 +13,14 @@
   export let onCancel: () => Promise<any> = async () => {};
   export let cancelTranslateKey: string = "cancel";
   export let saveTranslateKey: string = "save";
+  export let maxWidth: string = "";
 
   let loadingCancel: boolean = false;
   let loadingSave: boolean = false;
 </script>
 
-<dialog
-  bind:this={dialog}
-  class="modal modal-middle bg-center"
-  on:close={() => {
-    dialog.close();
-  }}
->
-  <div class="modal-box bg-base-200 pb-10">
+<DialogStrucher bind:dialog onlyMiddle={true}>
+  <div class="modal-box bg-base-200 {maxWidth}">
     <!-- title -->
     <DialogTitel {titleTransKey} {dialog} />
 
@@ -97,8 +93,4 @@
       </button>
     </div>
   </div>
-  <!-- close the dialog -->
-  <form method="dialog" class="modal-backdrop">
-    <button>{translate(cancelTranslateKey, $_)}</button>
-  </form>
-</dialog>
+</DialogStrucher>

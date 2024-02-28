@@ -54,27 +54,24 @@
 
 <GeneralDialog
   bind:dialog={deleteDialog}
+  maxWidth="max-w-[300px]"
   onSave={onFinish}
-  titleTransKey={translate(
-    booking.isMultiRef
-      ? "cancelSigning"
-      : booking.recurrenceRef != null || booking.recurrenceEvent != null
-        ? "recurringBooking"
-        : booking.isPassed
-          ? "deleteBooking2"
-          : "deleteBooking"
-  )}
+  titleTransKey={booking.isMultiRef
+    ? "cancelSigning"
+    : booking.recurrenceRef != null || booking.recurrenceEvent != null
+      ? "recurringBooking"
+      : booking.isPassed
+        ? "deleteBooking2"
+        : "deleteBooking"}
   {content}
-  saveTranslateKey={translate(
-    needConfirmation
-      ? "askForConfirmation"
-      : booking.isMultiRef
-        ? "cancel"
-        : booking.isPassed
-          ? "delete"
-          : "cancel"
-  )}
-  cancelTranslateKey={translate(booking.isPassed ? "cancel" : "exit")}
+  saveTranslateKey={needConfirmation
+    ? "askForConfirmation"
+    : booking.isMultiRef
+      ? "cancel"
+      : booking.isPassed
+        ? "delete"
+        : "cancel"}
+  cancelTranslateKey={booking.isPassed ? "cancel" : "exit"}
 >
   <div slot="extra" class="flex flex-col gap-2">
     {#if needConfirmation}

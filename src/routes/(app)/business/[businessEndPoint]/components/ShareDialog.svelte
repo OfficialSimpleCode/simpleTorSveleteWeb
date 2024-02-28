@@ -11,12 +11,10 @@
     XCircle,
   } from "svelte-hero-icons";
 
+  import { base } from "$app/paths";
   import Avatar from "$lib/components/Avatar.svelte";
+  import DialogStrucher from "$lib/components/dialogs/DialogStrucher.svelte";
   import NavigationDialog from "$lib/components/dialogs/NavigationDialog.svelte";
-  import {
-    BUSINESS_LINK_END_POINT,
-    SERVER_BASE_URL,
-  } from "$lib/consts/server_variables";
   import { _, translate } from "$lib/utils/translate";
   import clipboard from "clipboardy";
   import { QRCodeImage } from "svelte-qrcode-image";
@@ -27,11 +25,9 @@
 
   let navigationDialog: HTMLDialogElement;
   let copied: Boolean = false;
-  let businessLink = $businessStore.dynamicLink;
+  let businessLink = $businessStore?.dynamicLink ?? "";
   if (businessLink === "") {
-    businessLink = `https://${SERVER_BASE_URL}/${BUSINESS_LINK_END_POINT}`
-      .replace("BUISNESS_ID", $businessStore.businessId)
-      .replace("--", "~@~");
+    businessLink = `https://${base}/business/${$businessStore?.url}`;
   }
   function copyToClipboard() {
     clipboard.write(businessLink);
@@ -51,13 +47,7 @@
   <NavigationDialog bind:dialog={navigationDialog} />
 {/if}
 
-<dialog
-  bind:this={dialog}
-  class="modal modal-middle"
-  on:close={() => {
-    history.back();
-  }}
->
+<DialogStrucher bind:dialog onlyMiddle={true}>
   <div class="modal-box bg-base-200 max-h-[570px] sm:max-h-full">
     <div class="flex justify-between items-center mb-[4rem]">
       <button class="hover:opacity-70" on:click={() => dialog.close()}>
@@ -82,7 +72,7 @@
           <Avatar
             small={true}
             ring={false}
-            img={$businessStore.design.shopIconUrl}
+            img={$businessStore?.design.shopIconUrl ?? ""}
           />
           <h3 class="w-full text-center text-lg font-semibold">{name}</h3>
           <button
@@ -120,8 +110,4 @@
       <Icon src={copied ? CheckCircle : Clipboard} size="28px" />
     </button>
   </div>
-
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
-</dialog>
+</DialogStrucher>

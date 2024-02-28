@@ -27,7 +27,7 @@
   const noNeedGenderTrnaslate: string[] = ["whatsapp"];
 
   function openNavigationDialog() {
-    if ($businessStore?.adress ?? "" === "") {
+    if (($businessStore?.adress ?? "") === "") {
       ShowToast({
         text: translate("noAdress", $_),
         status: "fail",

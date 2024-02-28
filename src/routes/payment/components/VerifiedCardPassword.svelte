@@ -1,5 +1,6 @@
 <script lang="ts">
   import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
+  import DialogStrucher from "$lib/components/dialogs/DialogStrucher.svelte";
   import { InputOptions } from "$lib/consts/text_fields";
   import { translate } from "$lib/utils/translate";
   import { createEventDispatcher } from "svelte";
@@ -8,11 +9,7 @@
   const dispatch = createEventDispatcher();
 </script>
 
-<dialog
-  bind:this={dialog}
-  class="modal modal-bottom sm:modal-middle bg-center"
-  on:close={() => history.back()}
->
+<DialogStrucher bind:dialog onlyMiddle={true}>
   <div class="modal-box bg-base-200 pb-10">
     <div class="flex justify-between items-center mb-[1rem]">
       <p />
@@ -44,8 +41,4 @@
       </button>
     </div>
   </div>
-
-  <form method="dialog" class="modal-backdrop">
-    <button></button>
-  </form>
-</dialog>
+</DialogStrucher>
