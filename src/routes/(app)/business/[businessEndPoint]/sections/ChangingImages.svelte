@@ -92,9 +92,9 @@
 
   <!-- small screens -->
   <div class="relative md:hidden block">
-    <div class="aspect-[5/4]">
+    <div class="aspect-[5/4] w-full">
       <img
-        class="aspect-[5/4] object-cover transition-opacity"
+        class="w-full aspect-[5/4] object-cover transition-opacity"
         src={useDefault ? defaultImage : changingImages[currentIndex]}
         alt={"business image"}
         style="animation: 1s ease-out;"
