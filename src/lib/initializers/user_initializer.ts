@@ -177,6 +177,7 @@ export default class UserInitializer {
     oldBusinessId: string,
     newBusinessId: string
   ): Promise<void> {
+    console.log("replaceVisitedBusiness");
     if (
       this.user.lastVisitedBuisnesses.includes(newBusinessId) &&
       this.user.lastVisitedBuisnesses[
@@ -191,7 +192,10 @@ export default class UserInitializer {
       (businessId) => businessId != oldBusinessId
     );
     this.user.lastVisitedBuisnesses.push(newBusinessId);
-
+    console.log(
+      "replaceVisitedBusiness lastVisitedBuisnesses-> ",
+      this.user.lastVisitedBuisnesses
+    );
     await this.userRepo.updateFieldInsideDocAsMapRepo({
       path: usersCollection,
       docId: this.user.id,
@@ -201,6 +205,7 @@ export default class UserInitializer {
   }
 
   async addVisitedBusiness(businessId: string): Promise<void> {
+    console.log("addVisitedBusiness");
     if (this.user.lastVisitedBuisnessesRemoved.includes(businessId)) {
       //remove from lastVisitedBuisnessesRemoved
       this.user.lastVisitedBuisnessesRemoved =
@@ -209,6 +214,11 @@ export default class UserInitializer {
         );
       //add to the lastVisitedBuisnesses
       this.user.lastVisitedBuisnesses.push(businessId);
+
+      console.log(
+        "1addVisitedBusiness lastVisitedBuisnesses-> ",
+        this.user.lastVisitedBuisnesses
+      );
 
       await this.userRepo.updateMultipleFieldsInsideDocAsMapRepo({
         path: usersCollection,
@@ -221,6 +231,11 @@ export default class UserInitializer {
       });
     } else {
       this.user.lastVisitedBuisnesses.push(businessId);
+      console.log(
+        "2addVisitedBusiness lastVisitedBuisnesses-> ",
+        this.user.lastVisitedBuisnesses
+      );
+
       await this.userRepo.updateFieldInsideDocAsMapRepo({
         path: usersCollection,
         docId: this.user.id,
@@ -234,7 +249,7 @@ export default class UserInitializer {
     const businessInfo = BusinessInitializer.GI().business.toBusinessInfo;
 
     if (
-      !!(
+      !(
         this.user.businessesInfo.get(businessInfo.businessId) ??
         BusinessInfo.empty()
       ).isTheSame(businessInfo)
@@ -242,6 +257,8 @@ export default class UserInitializer {
       // No need to update
       return;
     }
+
+    this.updateBusinessInfo(businessId, businessInfo);
   }
 
   async updateBusinessInfo(

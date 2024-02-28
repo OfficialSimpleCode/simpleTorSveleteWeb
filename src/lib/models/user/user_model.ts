@@ -316,17 +316,6 @@ export default class UserModel {
 
     user.revenueCatId = json["revenueCatId"] || "";
     user.lastCleanDate = json["lastCleanDate"];
-    if (json["lastVisitedBuisnesses"] != null) {
-      json["lastVisitedBuisnesses"].forEach((Id: string) =>
-        user.lastVisitedBuisnesses.push(Id)
-      );
-    }
-
-    if (json["lastVisitedBuisnessesRemoved"]) {
-      json["lastVisitedBuisnessesRemoved"].forEach((Id: string) =>
-        user.lastVisitedBuisnessesRemoved.push(Id)
-      );
-    }
 
     user.businessesInfo = new Map();
     if (json["businessesInfo"]) {
@@ -434,19 +423,6 @@ export default class UserModel {
 
     return user;
   }
-
-  // customerDataFromBooking({ booking, delete = false, exclude, initDate }: { booking: Booking, delete?: boolean, exclude?: Date, initDate?: Date }): CustomerData {
-  //   return {
-  //     name: this.name,
-  //     email: this.userPublicData.email,
-  //     gender: this.gender,
-  //     customerUuid: this.id,
-  //     phoneNumber: this.phoneNumber,
-  //     isVerifiedPhone: this.isVerifiedPhone,
-  //     userFirstBookingsDate: this.bookings.firstBookingForBusiness(booking.buisnessId, booking.workerId, { exclude: delete ? booking.bookingDate : exclude, initDate: delete ? initDate : booking.bookingDate }),
-  //     lastBookingsDate: this.bookings.lastBookingForBusiness(booking.buisnessId, booking.workerId, { exclude: delete ? booking.bookingDate : exclude, initDate: delete ? initDate : booking.bookingDate })
-  //   };
-  // }
 
   isSubToWaitingList({
     notificationTopic,
