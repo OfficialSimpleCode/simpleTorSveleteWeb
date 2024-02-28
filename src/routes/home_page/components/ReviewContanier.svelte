@@ -1,5 +1,7 @@
 <script lang="ts">
   import { containerRadius } from "$lib/consts/sizes";
+  import { _, translate } from "$lib/utils/translate";
+
   export let reviewItem: ReviewItem;
 </script>
 
@@ -48,6 +50,6 @@
   <p
     class="text-smtransition-all duration-300 group-hover:opacity-100 opacity-70"
   >
-    {reviewItem.content}
+    {translate(reviewItem.content, $_)}
   </p>
 </div>
