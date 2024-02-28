@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   export let mediaSrc: string; // imageDiv
   export let uuid: string;
-
+  let isLoading = true;
   onMount(() => {
     const dynamicDiv = document.getElementById(uuid);
     const width = dynamicDiv?.offsetWidth;
@@ -17,6 +17,10 @@
       document.getElementById(`${uuid}Images`)?.classList.add(`rounded-[20px]`);
     }
   });
+
+  function changeIsReady() {
+    isLoading = true;
+  }
 </script>
 
 <div
@@ -61,10 +65,18 @@
         controls={false}
         playsinline
         class="object-cover"
+        on:load={changeIsReady}
       >
         <source src={mediaSrc} type="video/mp4" />
         <track kind="captions" /></video
       >
     {/key}
+    <div
+      class="p-10 w-full felx justify-center items-center mx-auto {!isLoading
+        ? 'hidden'
+        : 'block'}"
+    >
+      Loading...
+    </div>
   </div>
 </div>
