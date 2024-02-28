@@ -27,7 +27,7 @@
   const noNeedGenderTrnaslate: string[] = ["whatsapp"];
 
   function openNavigationDialog() {
-    if (!$businessStore.adress) {
+    if ($businessStore?.adress ?? "" === "") {
       ShowToast({
         text: translate("noAdress", $_),
         status: "fail",
@@ -36,11 +36,11 @@
     }
     pushDialog(
       navigationDialog,
-      `${base}/business/${$businessStore.businessId}/navigate`
+      `${base}/business/${$businessStore?.url}/navigate`
     );
   }
   function openTermDialog() {
-    if (!$businessStore.design.term) {
+    if (!$businessStore?.design.term) {
       ShowToast({
         text: translate("noTerms", $_),
         status: "fail",
@@ -61,11 +61,13 @@
     {
       name: "instagram",
       href:
-        $businessStore.instagramAccount !== ""
-          ? `https://www.instagram.com/${$businessStore.instagramAccount}`
+        $businessStore?.instagramAccount ?? "" !== ""
+          ? `https://www.instagram.com/${
+              $businessStore?.instagramAccount ?? ""
+            }`
           : undefined,
       func:
-        $businessStore.instagramAccount === ""
+        $businessStore?.instagramAccount ?? "" === ""
           ? () => error("noInstagram")
           : undefined,
       icon: "mdi:instagram",
@@ -74,12 +76,12 @@
     {
       name: "call",
       href:
-        $businessStore.shopPhone !== ""
-          ? `tel:${$businessStore.shopPhone}`
+        $businessStore?.shopPhone ?? "" !== ""
+          ? `tel:${$businessStore?.shopPhone}`
           : undefined,
       icon: "mdi:phone",
       func:
-        $businessStore.shopPhone === ""
+        $businessStore?.shopPhone ?? "" === ""
           ? () => error("noShopPhoneNumber")
           : undefined,
       errorMsg: "noShopPhoneNumber",
@@ -93,12 +95,12 @@
     {
       name: "whatsapp",
       href:
-        $businessStore.shopPhone !== ""
-          ? `whatsapp://send?phone=${$businessStore.shopPhone}`
+        $businessStore?.shopPhone ?? "" !== ""
+          ? `whatsapp://send?phone=${$businessStore?.shopPhone}`
           : undefined,
       icon: "mdi:whatsapp",
       func:
-        $businessStore.shopPhone === ""
+        $businessStore?.shopPhone ?? "" === ""
           ? () => error("noShopPhoneNumber")
           : undefined,
       errorMsg: "noShopPhoneNumber",
@@ -135,8 +137,10 @@
           icon={socialLink.icon}
           href={socialLink.href}
           size="md"
+          target="_blank"
           handleClick={socialLink.func}
           translateKey={socialLink.name}
+          needGender={!noNeedGenderTrnaslate.includes(socialLink.name)}
         />
       </div>
     {/each}

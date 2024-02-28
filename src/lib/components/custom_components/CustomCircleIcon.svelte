@@ -15,6 +15,8 @@
   export let loading: boolean = false;
   export let active: boolean = true;
   export let marked: boolean = false;
+  export let target: string | undefined = undefined;
+  export let needGender: boolean = true;
 
   $: ngClass = `flex items-center justify-center rounded-full  ${
     marked ? "bg-primary text-primary-content" : ""
@@ -25,7 +27,7 @@
 
 <div class="flex flex-col items-center">
   {#if href}
-    <a {href} class={!active ? "opacity opacity-70" : ""}>
+    <a {href} class={!active ? "opacity opacity-70" : ""} target={target ?? ""}>
       <div class="{ngClass} {cssSizesClasses[size].cssClass}">
         {#if !loading}
           <GeneralIcon {icon} size={cssSizesClasses[size].iconSize} />
@@ -47,7 +49,7 @@
 
   {#if translateKey}
     <div>
-      <h3 class="text-sm pt-1">{translate(translateKey, $_)}</h3>
+      <h3 class="text-sm pt-1">{translate(translateKey, $_, needGender)}</h3>
     </div>
   {/if}
 </div>
