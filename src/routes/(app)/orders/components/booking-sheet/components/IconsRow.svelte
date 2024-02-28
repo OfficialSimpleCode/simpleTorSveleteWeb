@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { page } from "$app/stores";
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import DeleteBookingDialog from "$lib/components/dialogs/DeleteBookingDialog.svelte";
   import NavigationDialog from "$lib/components/dialogs/NavigationDialog.svelte";
@@ -7,16 +6,20 @@
   import Booking from "$lib/models/booking/booking_model";
   import { businessStore } from "$lib/stores/Business";
   import { ShowToast } from "$lib/stores/ToastManager";
+  import { workersStore } from "$lib/stores/Workers";
   import { pushDialog } from "$lib/utils/general_utils";
   import { translate } from "$lib/utils/translate";
   import { deleteBooking } from "../../../helpers/delete_booking";
   import { restoreBooking } from "../../../helpers/restore_booking";
   import { updateBooking } from "../../../helpers/update_booking";
+  import DeleteBookingWithoutWorker from "./DeleteBookingWithoutWorker.svelte";
   export let mainDialog: HTMLDialogElement;
   export let booking: Booking;
   export let downloadAppDialog: HTMLDialogElement | undefined;
 
   let navigationDialog: HTMLDialogElement;
+
+  let deleteBookingWithoutWorkerDialog: HTMLDialogElement;
 
   let deleteDialog: HTMLDialogElement;
   let loadingDelete: boolean = false;
@@ -33,6 +36,10 @@
   function onClickDelete() {
     if (booking.buisnessId != $businessStore?.businessId ?? "") {
       ShowToast({ status: "info", text: translate("needToLoadBusiness") });
+      return;
+    }
+    if ($workersStore[booking.workerId] == null) {
+      pushDialog(deleteBookingWithoutWorkerDialog);
       return;
     }
     if (booking.needCancel) {
@@ -63,6 +70,11 @@
       return;
     }
 
+    if ($workersStore[booking.workerId] == null) {
+      pushDialog(deleteBookingWithoutWorkerDialog);
+      return;
+    }
+
     const resp = await updateBooking({
       booking: booking,
     });
@@ -89,12 +101,13 @@
   }
 </script>
 
-<!-- the page dialogs -->
-{#if $page.state.showModal}
-  <NavigationDialog bind:dialog={navigationDialog} />
-  <DeleteBookingDialog bind:deleteDialog {booking} onDelete={handleDelete} />
-{/if}
+<NavigationDialog bind:dialog={navigationDialog} />
+<DeleteBookingDialog bind:deleteDialog {booking} onDelete={handleDelete} />
 
+<DeleteBookingWithoutWorker
+  bind:dialog={deleteBookingWithoutWorkerDialog}
+  {booking}
+/>
 <div class="flex flex-row gap-4 justify-start w-full">
   <CustomCircleIcon
     icon={booking.needCancel ? "mdi:restore" : "mdi:trash-can-outline"}

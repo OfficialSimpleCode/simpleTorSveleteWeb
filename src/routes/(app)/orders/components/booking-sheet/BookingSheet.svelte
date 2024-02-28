@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import DateString from "$lib/components/DateString.svelte";
+  import DialogStrucher from "$lib/components/dialogs/DialogStrucher.svelte";
   import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
   import { containerRadius } from "$lib/consts/sizes";
   import Booking from "$lib/models/booking/booking_model";
@@ -24,11 +25,7 @@
 {#if $page.state.showModal}
   <DownloadAppDialog bind:dialog={downloadAppDialog} />
 {/if}
-<dialog
-  bind:this={dialog}
-  class="modal modal-bottom sm:modal-middle"
-  on:close={() => history.back()}
->
+<DialogStrucher bind:dialog>
   <div class="modal-box bg-base-200 h-[60%] py-5 px-3 xs:px-5">
     <div class="flex flex-col items-start h-32 gap-4 mb-2">
       <!-- indicators -> past booking, reacurrance .. -->
@@ -71,9 +68,4 @@
       <div class="pb-3 w-full"></div>
     </div>
   </div>
-
-  <!-- making the backdrop clickable and close the model -->
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
-</dialog>
+</DialogStrucher>

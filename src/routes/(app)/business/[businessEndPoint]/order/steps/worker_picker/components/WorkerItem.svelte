@@ -25,7 +25,7 @@
 
 <button
   on:click={onTapWorker}
-  class="{bookingMakerButton} w-full h-20 sm:h-28 px-2 py-2 {isPicked
+  class="{bookingMakerButton} w-full px-2 py-10 flex flex-col {isPicked
     ? 'border-solid border-2 border-white'
     : ''}"
 >
@@ -73,7 +73,7 @@
             pushDialog(aboutDialog);
           }}
         >
-          <p class="xs:text-md text-sm hover:opacity-70 p-4 z-100">
+          <p class="xs:text-md text-sm hover:opacity-70 px-4 py-2 z-100">
             {translate("MoreText", $_)}
           </p>
         </button>

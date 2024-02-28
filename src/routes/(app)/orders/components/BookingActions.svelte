@@ -5,20 +5,31 @@
   import AttentionIndicatorUserBooking from "./AttentionIndicatorUserBooking.svelte";
   import LoadBusinessBookingButton from "./LoadBusinessBookingButton.svelte";
   import ReminderApproveArrivalButton from "./ReminderApproveArrivalButton.svelte";
+  import DeleteBookingWithoutBusinessDialog from "./booking-sheet/components/DeleteBookingWithoutBusinessDialog.svelte";
 
   export let booking: Booking;
   export let bgColor: string = "bg-base-300";
 
   export let forceOpenBookingSheet: boolean;
 
+  let deleteBookingWithoutBusinessDialog: HTMLDialogElement;
+
   const showAttention =
     !booking.isPassed &&
     (booking.status !== BookingStatuses.approved || booking.needCancel);
 </script>
 
+<DeleteBookingWithoutBusinessDialog
+  bind:dialog={deleteBookingWithoutBusinessDialog}
+  {booking}
+/>
 <!-- the business isn't loaded -->
 {#if $businessStore == null || booking.buisnessId !== $businessStore.businessId}
-  <LoadBusinessBookingButton {booking} {bgColor} />
+  <LoadBusinessBookingButton
+    {booking}
+    {bgColor}
+    {deleteBookingWithoutBusinessDialog}
+  />
 {:else if booking.recurrenceEvent == null || forceOpenBookingSheet}
   {#if showAttention}
     <AttentionIndicatorUserBooking {booking} {bgColor} />

@@ -1,17 +1,14 @@
 <script lang="ts">
   import { Update } from "$lib/models/business/update_model";
   import { Icon, XCircle } from "svelte-hero-icons";
+  import DialogStrucher from "./DialogStrucher.svelte";
 
   export let dialog: HTMLDialogElement;
   export let update: Update | undefined;
 </script>
 
-<dialog
-  bind:this={dialog}
-  on:close={() => history.back()}
-  class="modal modal-top max-w-[500px]"
->
-  <div class="modal-box bg-base-200 items-center">
+<DialogStrucher bind:dialog onlyTop={true}>
+  <div class="modal-box bg-base-200 items-center max-w-[500px]">
     <div class="flex flex-col gap-3 items-center h-full">
       <!-- title and top buttons -->
       <div class="flex flex-row justify-between items-center relative">
@@ -34,8 +31,4 @@
       </h3>
     </div>
   </div>
-  <!-- backdrop close dialog -->
-  <form method="dialog" class="modal-backdrop">
-    <button></button>
-  </form>
-</dialog>
+</DialogStrucher>

@@ -15,7 +15,7 @@
   style="direction: ltr;"
 >
   <div>
-    <a href={`${base}/`} class=" text-xl hover:opacity-70">SimpleTor</a>
+    <a href={`${base}/`} class=" text-xl hover:opacity-70">Simple Tor</a>
   </div>
   <div class="flex items-center gap-2">
     <BusinessNavigator />

@@ -6,6 +6,7 @@
   import { _, translate } from "$lib/utils/translate";
   import CustomPhoneField from "../custom_components/CustomPhoneField.svelte";
   import DialogTitel from "../custom_components/DialogTitel.svelte";
+  import DialogStrucher from "./DialogStrucher.svelte";
   export let dialog: HTMLDialogElement;
   export let contentTransKey: string;
   export let onSave: () => Promise<boolean>;
@@ -41,15 +42,14 @@
   }
 </script>
 
-<dialog
-  bind:this={dialog}
+<DialogStrucher
+  bind:dialog
+  onlyMiddle={true}
   on:close={() => {
     value = "";
-    history.back();
   }}
-  class="modal sm:modal-middle"
 >
-  <div class="modal-box flex flex-col bg-base-200">
+  <div class="modal-box flex flex-col bg-base-200 max-w-[400px]">
     <!-- title and top buttons -->
     <DialogTitel {titleTransKey} {dialog} />
 
@@ -98,8 +98,4 @@
       </div>
     </div>
   </div>
-  <!-- backdrop close dialog -->
-  <form method="dialog" class="modal-backdrop">
-    <button></button>
-  </form>
-</dialog>
+</DialogStrucher>

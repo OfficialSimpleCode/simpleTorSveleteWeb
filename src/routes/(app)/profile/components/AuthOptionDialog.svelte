@@ -2,6 +2,7 @@
   import DialogTitel from "$lib/components/custom_components/DialogTitel.svelte";
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import ConfirmActionDialog from "$lib/components/dialogs/ConfirmActionDialog.svelte";
+  import DialogStrucher from "$lib/components/dialogs/DialogStrucher.svelte";
   import {
     AuthProvider,
     authProviderToImage,
@@ -41,14 +42,10 @@
   onSave={deleteProvider}
 />
 
-<dialog
-  bind:this={explainDialog}
-  class="modal modal-middle"
-  on:close={() => {
-    history.back();
-  }}
->
-  <div class="modal-box bg-base-200 pb-10 flex flex-col justify-center gap-6">
+<DialogStrucher bind:dialog={explainDialog} onlyMiddle={true}>
+  <div
+    class="modal-box bg-base-200 pb-10 flex flex-col justify-center gap-6 max-w-[300px]"
+  >
     <DialogTitel titleTransKey={"authProvider"} dialog={explainDialog} />
     <div class="flex flex-col gap-3 items-center h-full">
       <img
@@ -95,8 +92,4 @@
       {/if}
     </div>
   </div>
-
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
-</dialog>
+</DialogStrucher>

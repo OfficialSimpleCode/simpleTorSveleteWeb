@@ -1,6 +1,7 @@
 <script lang="ts">
   import { LoginReason } from "$lib/consts/auth";
   import { createEventDispatcher } from "svelte";
+  import DialogStrucher from "../DialogStrucher.svelte";
   import GetOtpView from "./components/GetOtpView.svelte";
   import GetPhoneView from "./components/GetPhoneView.svelte";
   export let loginReason: LoginReason;
@@ -9,16 +10,9 @@
   const dispatch = createEventDispatcher();
 </script>
 
-<dialog
-  bind:this={dialog}
-  class="modal modal-middle"
-  on:close={() => {
-    insideOtp = false;
-    dialog.close();
-  }}
->
+<DialogStrucher bind:dialog onlyMiddle={true}>
   <div id="recaptcha-container" class="absolute"></div>
-  <div class="modal-box bg-base-200 pb-10">
+  <div class="modal-box bg-base-200 pb-10 max-w-[400px]">
     {#if !insideOtp}
       <GetPhoneView
         {dialog}
@@ -30,8 +24,4 @@
       <GetOtpView {loginReason} {dialog} {dispatch} />
     {/if}
   </div>
-
-  <form method="dialog" class="modal-backdrop">
-    <button></button>
-  </form>
-</dialog>
+</DialogStrucher>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import DialogStrucher from "$lib/components/dialogs/DialogStrucher.svelte";
   import { languages } from "$lib/consts/lang";
   import { containerRadius } from "$lib/consts/sizes";
   import { translate } from "$lib/utils/translate";
@@ -11,13 +12,9 @@
   }
 </script>
 
-<dialog
-  bind:this={dialog}
-  on:close={() => history.back()}
-  class="modal modal-bottom sm:modal-middle"
->
+<DialogStrucher bind:dialog onlyMiddle={true}>
   <div
-    class="modal-box flex flex-col bg-base-200 px-4 py-3 {containerRadius} gap-6 justify-center items-center"
+    class="modal-box flex flex-col bg-base-200 px-4 py-3 {containerRadius} gap-6 justify-center items-center max-w-[300px]"
   >
     <h3>{translate("pickLnaguage")}</h3>
 
@@ -34,9 +31,4 @@
       {/each}
     </div>
   </div>
-
-  <!-- backdrop close dialog -->
-  <form method="dialog" class="modal-backdrop">
-    <button></button>
-  </form>
-</dialog>
+</DialogStrucher>

@@ -117,16 +117,16 @@ export async function handleLogin({
 
   await setUpUser();
 
-  if (dispatch != null) {
-    dispatch("onFinishLogin");
-    return;
-  }
-
   //sign in page
   if (get(isConnectedStore) !== true) {
     //need to change this var to be allowed to get in to the setup page
     VerificationHelper.GI().needToSignUp = true;
     goto(`${base}/login/account-setup`);
+    return;
+  }
+
+  if (dispatch != null) {
+    dispatch("onFinishLogin");
     return;
   }
 

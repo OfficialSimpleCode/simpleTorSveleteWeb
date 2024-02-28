@@ -4,7 +4,7 @@
     bookingMakerStore,
   } from "$lib/controllers/booking_controller";
   import { _ } from "$lib/utils/translate";
-  import TipDialog from "../../components/TipDialog.svelte";
+
   import AddNote from "./components/AddNote.svelte";
   import FinishButton from "./components/FinishButton.svelte";
   import ServicesPreview from "./components/ServicesPreview.svelte";
@@ -12,9 +12,6 @@
   let paymentDialog: HTMLDialogElement;
   let amount: number;
 </script>
-
-<!-- Dialogs -->
-<TipDialog bind:dialog={paymentDialog} bind:amount />
 
 <section class="flex flex-col items-center gap-8 w-[90%] sm:w-[70%]">
   <!-- the worker name indicator -->

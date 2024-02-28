@@ -1,6 +1,7 @@
 <script lang="ts">
   import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
   import DialogTitel from "$lib/components/custom_components/DialogTitel.svelte";
+  import DialogStrucher from "$lib/components/dialogs/DialogStrucher.svelte";
   import { InputOptions, type TextFieldEvent } from "$lib/consts/text_fields";
   import { ErrorsController } from "$lib/controllers/errors_controller";
   import { translate } from "$lib/utils/translate";
@@ -42,14 +43,8 @@
   }
 </script>
 
-<dialog
-  bind:this={dialog}
-  class="modal modal-middle bg-center"
-  on:close={() => {
-    dialog.close();
-  }}
->
-  <div class="modal-box bg-base-200 pb-10">
+<DialogStrucher bind:dialog onlyMiddle={true}>
+  <div class="modal-box bg-base-200 pb-10 max-w-[400px]">
     <DialogTitel {titleTransKey} {dialog} />
     <form on:submit={onUpdateHandler}>
       <div class="flex flex-col gap-5">
@@ -78,8 +73,4 @@
       </div>
     </form>
   </div>
-
-  <form method="dialog" class="modal-backdrop">
-    <button></button>
-  </form>
-</dialog>
+</DialogStrucher>
