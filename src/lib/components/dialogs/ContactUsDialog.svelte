@@ -7,6 +7,7 @@
   } from "$lib/consts/app_external_links";
   import { contactUsAnimation } from "$lib/consts/resources";
   import { translate } from "$lib/utils/translate";
+  import ToastManager from "../ToastManager.svelte";
   import CustomCircleIcon from "../custom_components/CustomCircleIcon.svelte";
   import LottieAnimation from "../custom_components/LottieAnimation.svelte";
 
@@ -22,6 +23,7 @@
   on:close={() => history.back()}
   class="modal modal-bottom sm:modal-middle"
 >
+  <ToastManager />
   <div class="modal-box bg-base-200 items-center">
     <div class="flex flex-col gap-3 items-center h-full">
       <!-- title and top buttons -->
