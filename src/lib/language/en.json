@@ -3128,7 +3128,7 @@
   "shiraReview": "Amazing app I highly recommend to everyone! How much I was looking for such a speaker",
   "omerReview": "Excellent app, crazy pitches down to the smallest details",
   "yahliReview": "Excellent system, recommend it to anyone who has a business and wants to stop the madness from the customers",
-  "privacy": "privacy policy",
+  "privacy": "Privacy policy",
   "privacyDesc": "This privacy protection policy forms part of the terms of use of the Simple Tour website. Definitions appearing in this privacy protection policy are as defined below or in the terms of use.",
   "intro": "Intro",
   "intro1": "For the terms listed below, in these regulations, the meaning that appears next to them shall be:",
@@ -3220,5 +3220,6 @@
   "contactOptions": "contact methods",
   "homePage": "home page.",
   "thatIn": "that are in",
-  "lastUpdte": "Updated at"
+  "lastUpdte": "Updated at",
+  "andThe": "and "
 }
