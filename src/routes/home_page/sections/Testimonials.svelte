@@ -1,5 +1,6 @@
 <script lang="ts">
   import { reviews } from "$lib/consts/home_page_data";
+  import { _, translate } from "$lib/utils/translate";
   import ArrowContainer from "../components/ArrowContainer.svelte";
   import ReviewContanier from "../components/ReviewContanier.svelte";
 
@@ -28,11 +29,13 @@
       <!-- section title -->
       <span
         class="text-sm opacity-70 mb-4 lg:block lg:text-start text-center hidden"
-        >הלקוחות שלנו</span
+        >{translate("ourCustomers", $_)}</span
       >
       <!-- title -->
       <h2 class="text-4xl leading-[3.25rem] mb-8 lg:text-start text-center">
-        50 שניות בממוצע למענה <span class="text-primary">מהתמיכה</span>
+        {translate("supportTime", $_)}<span class="text-primary"
+          >{translate("fromSupport", $_)}</span
+        >
       </h2>
 
       <!-- Slider controls (arrows) -->

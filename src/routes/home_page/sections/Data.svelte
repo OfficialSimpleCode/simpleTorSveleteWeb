@@ -1,4 +1,5 @@
 <script>
+  import { _, translate } from "$lib/utils/translate";
   import DataItem from "../components/DataItem.svelte";
 </script>
 
@@ -14,14 +15,15 @@
         </span> -->
 
       <!-- title -->
-      <h2 class="block w-full text-3xl sm:text-4xl">הניסיון שלנו</h2>
+      <h2 class="block w-full text-3xl sm:text-4xl">
+        {translate("storesStars", $_)}
+      </h2>
 
       <!-- sub title -->
       <p
         class="mx-auto my-4 w-full max-w-xl text-center font-medium leading-relaxed tracking-wide opacity-70"
       >
-        מערכת יציבה שלא תעסיק אותך, הישאר חפשי לעסוק במה שאתה אוהב במקום בלתקן
-        בעיות במערכות שלך
+        {translate("stableSystem", $_)}
       </p>
     </div>
 
@@ -29,10 +31,22 @@
     <div
       class="relative mx-auto max-w-7xl z-10 grid gap-10 pt-14 grid-cols-2 lg:grid-cols-4"
     >
-      <DataItem titleTransKey="1M+" subTitleTransKey="הזמנות שונות" />
-      <DataItem titleTransKey="10K+" subTitleTransKey="חיפושי עסקים" />
-      <DataItem titleTransKey="38" subTitleTransKey="קטגוריות עסקים" />
-      <DataItem titleTransKey="5" subTitleTransKey="כוכבים בחנויות" />
+      <DataItem
+        titleTransKey="1M+"
+        subTitleTransKey={translate("differentBookings", $_)}
+      />
+      <DataItem
+        titleTransKey="10K+"
+        subTitleTransKey={translate("businessesSearch", $_)}
+      />
+      <DataItem
+        titleTransKey="38"
+        subTitleTransKey={translate("categories", $_)}
+      />
+      <DataItem
+        titleTransKey="5"
+        subTitleTransKey={translate("storesStars", $_)}
+      />
     </div>
   </div>
 </section>

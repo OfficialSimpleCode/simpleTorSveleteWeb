@@ -1,4 +1,5 @@
 <script>
+  import { _, translate } from "$lib/utils/translate";
   import HowItWorkStep from "../components/HowItWorkStep.svelte";
 </script>
 
@@ -10,7 +11,7 @@
     <div class="flex flex-col gap-16">
       <div class="flex flex-col gap-2 text-center">
         <!-- title -->
-        <h2 class="mb-2 text-3xl lg:text-4xl">אז איך זה עובד</h2>
+        <h2 class="mb-2 text-3xl lg:text-4xl">{translate("howItWork", $_)}</h2>
 
         <!-- sub title -->
         <!-- <p
@@ -28,19 +29,19 @@
     >
       <HowItWorkStep
         imageSrc="https://lottie.host/f6698e26-fdce-4eb9-bb80-def9a8874750/OL8jB5DdGx.json"
-        titleTransKey="יוצרים חשבון באפליקציה"
+        titleTransKey={translate("createAccount", $_)}
         stepNumber={1}
       />
 
       <HowItWorkStep
         imageSrc="https://lottie.host/daeffa4b-3884-476d-9e08-884b415465ad/uTx14abQ0f.json"
-        titleTransKey="מקימים עסק במערכת"
+        titleTransKey={translate("createNewBusiness", $_)}
         stepNumber={2}
       />
 
       <HowItWorkStep
         imageSrc="https://lottie.host/9becd689-df5d-41c1-8130-50fa0c7d6a76/X9QFVK5d2J.json"
-        titleTransKey="משתפים עם הלקוחות"
+        titleTransKey={translate("shareWithCustomers", $_)}
         stepNumber={3}
         withArrow={false}
       />

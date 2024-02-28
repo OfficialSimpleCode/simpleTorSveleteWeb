@@ -1,6 +1,7 @@
 <script>
   import { containerRadius } from "$lib/consts/sizes";
   import { getDownloadingAppLink } from "$lib/utils/links_utils";
+  import { _, translate } from "$lib/utils/translate";
   import { onMount } from "svelte";
 
   let downloadLink = "";
@@ -14,15 +15,15 @@
   <div
     class="max-w-full mx-5 py-24 bg-base-300 rounded-lg text-center md:px-24 xs:px-10 px-5"
   >
-    <h3 class="md:text-5xl text-3xl">מוכן לקחת את העסק צעד אחד קדימה?</h3>
+    <h3 class="md:text-5xl text-3xl">{translate("readyToGoForwords", $_)}</h3>
     <p class="mt-3 md:text-xl opacity-70">
-      הגיע הזמן לעבוד כמו מקצוען ולהשאיר את כאבי הראש למתחרים
+      {translate("workLikePro", $_)}
     </p>
     <p class="mt-8">
       <a
         href={downloadLink}
         class="btn btn-primary px-6 sm:px-20 text-lg bg-primary {containerRadius} "
-        >התחל עכשיו
+        >{translate("getStarted", $_)}
       </a>
     </p>
   </div>

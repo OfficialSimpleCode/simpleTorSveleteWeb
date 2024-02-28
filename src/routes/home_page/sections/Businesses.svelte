@@ -1,15 +1,18 @@
 <script lang="ts">
   import { businessesData } from "$lib/consts/home_page_data";
+  import { _, translate } from "$lib/utils/translate";
   import BusinessItem from "../components/BusinessItem.svelte";
 </script>
 
 <section class="bg-gradient-to-r from-base-200 py-10 lg:py-28">
   <!-- title and sub-title -->
   <div class="flex flex-col justify-center items-center">
-    <h2 class="text-2xl font-bold text-center sm:text-4xl">הדבר האמיתי</h2>
+    <h2 class="text-2xl font-bold text-center sm:text-4xl">
+      {translate("realThing", $_)}
+    </h2>
     <!-- sub title -->
     <p class="max-w-3xl mx-auto mt-4 text-center opacity-70">
-      לחץ על העסקים השונים וקבל השראה לדף שלך
+      {translate("clickBusinesses", $_)}
     </p>
   </div>
 

@@ -4,6 +4,7 @@
   import createEventMov from "$lib/media/videos/create_event_mov.mp4";
   import orderMov from "$lib/media/videos/order_mov.mp4";
   import workersPanelMov from "$lib/media/videos/workers_panel_mov.mp4";
+  import { _, translate } from "$lib/utils/translate";
   import DataButton from "../components/DataButton.svelte";
   import DeviceMock from "../components/DeviceMock.svelte";
   let imageIndex: number = -1;
@@ -25,12 +26,11 @@
     <div>
       <!-- title -->
       <h2 class="text-2xl font-bold text-center sm:text-4xl">
-        צפה במערכת בפעולה!
+        {translate("watchSystem", $_)}
       </h2>
       <!-- sub title -->
       <p class="max-w-3xl mx-auto mt-4 text-center opacity-70">
-        לחץ על הכפתורים ותראה איך זה יראה על העסק שלך, ואיך הלקוחות שלך ישתמשו
-        במערכת
+        {translate("clickToWatch", $_)}
       </p>
     </div>
 
@@ -47,8 +47,8 @@
           currentIndex={0}
           bg="bg-red-500"
           icon="mdi:sms"
-          titleTransKey="תצוגת יומן"
-          subTitleTransKey="5 אפשרויות תצוגה, גרירות, יומני עובדים, ותצוגת תור מפורטת"
+          titleTransKey={translate("calendarView", $_)}
+          subTitleTransKey={translate("calendarViewExample", $_)}
         />
 
         <DataButton
@@ -57,8 +57,8 @@
           currentIndex={1}
           bg="bg-blue-500"
           icon="mdi:sms"
-          titleTransKey="הזמנת תור"
-          subTitleTransKey="כפתור ברור במרכז המסך, 4 קליקים והתור הוזמן, אין אפשרות להסתבך"
+          titleTransKey={translate("order", $_)}
+          subTitleTransKey={translate("noComples", $_)}
         />
 
         <DataButton
@@ -67,8 +67,8 @@
           currentIndex={2}
           bg="bg-yellow-500"
           icon="mdi:sms"
-          titleTransKey="שליטה על עובדים"
-          subTitleTransKey="פאנל עוצמתי, ניהול הרשאות, דוח הספקים וכניסה לימנים"
+          titleTransKey={translate("workersControl", $_)}
+          subTitleTransKey={translate("workersControlExample", $_)}
         />
 
         <DataButton
@@ -77,8 +77,8 @@
           currentIndex={3}
           bg="bg-indigo-700"
           icon="mdi:sms"
-          titleTransKey="שיבוץ אירוע"
-          subTitleTransKey="סנכרון עם יומני חוץ, תמיכה בקביעת אירועים אישיים כולל התראות אישיות"
+          titleTransKey={translate("placingAnEvent", $_)}
+          subTitleTransKey={translate("placingEventDesc", $_)}
         />
         <!-- <DownloadAppButton /> -->
       </div>

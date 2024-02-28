@@ -1,4 +1,5 @@
 <script>
+  import { _, translate } from "$lib/utils/translate";
   import FeatureItem from "../components/FeatureItem.svelte";
 </script>
 
@@ -18,15 +19,14 @@
 
       <!-- title -->
       <h2 class="block w-full bg-gradient-to-b text-3xl sm:text-4xl">
-        הפיצ'רים המרכזיים שלנו
+        {translate("mainFeatures", $_)}
       </h2>
 
       <!-- sub title -->
       <p
         class="mx-auto my-4 w-full max-w-xl bg-transparent text-center font-medium leading-relaxed tracking-wide opacity-70"
       >
-        ההמערכת כוללת מאות אפשרויות שנותנות לך שליטה מלאה על העסק, בחרנו עבורך
-        את הפיצ'רים שהלקוחות שלנו הכי אוהבים
+        {translate("mainFeaturesDesc", $_)}
       </p>
     </div>
 
@@ -37,43 +37,43 @@
       <FeatureItem
         bg="bg-pink-500"
         icon="mdi:card-account-details-star"
-        titleTransKey="מיתוג אישי"
-        subTitleTransKey="אפשרויות עיצוב ומיתוג עסק נרחבות שיאפשרו לכם בניית דף עסק ייחודי בלי לשבור את הראש"
+        titleTransKey={translate("personalBranding", $_)}
+        subTitleTransKey={translate("personalBrandinDesc", $_)}
       />
 
       <FeatureItem
         bg="bg-green-500"
         icon="mdi:sms"
-        titleTransKey="הודעות ללקוחות"
-        subTitleTransKey="הלקוחות מקבלים הודעות ותזכורות ואפילו אפשר לשלוח הודעות תפוצה"
+        titleTransKey={translate("clientsMessage", $_)}
+        subTitleTransKey={translate("clientsMessagesDesc", $_)}
       />
 
       <FeatureItem
         bg="bg-blue-500"
         icon="mdi:electron-framework"
-        titleTransKey="זמינות מכל מקום"
-        subTitleTransKey="העסקים זמינים גם באתר וגם באפליקציה ואפילו אפשר למצוא אתכם בגוגל"
+        titleTransKey={translate("availabilityEverywhere", $_)}
+        subTitleTransKey={translate("availabilityEverywhereDesc", $_)}
       />
 
       <FeatureItem
         bg="bg-indigo-700"
         icon="mdi:database"
-        titleTransKey="לקוחות"
-        subTitleTransKey="מאגר לקוחות עם מידע מפורט וסימון לקוחות נעדרים ומצטיינים"
+        titleTransKey={translate("clients", $_)}
+        subTitleTransKey={translate("clientsDesc", $_)}
       />
 
       <FeatureItem
         bg="bg-red-500"
         icon="mdi:payment"
-        titleTransKey="סליקות וקבלות"
-        subTitleTransKey="פתרונות סליקת לקוחות כולל הנפקת קבלות כחוק"
+        titleTransKey={translate("cleranceAndrecipts", $_)}
+        subTitleTransKey={translate("cleranceAndreciptsDesc", $_)}
       />
 
       <FeatureItem
         bg="bg-yellow-500"
         icon="mdi:support"
-        titleTransKey="שירות לקוחות"
-        subTitleTransKey="אנו נותנים תמיכה ומענה אנושי 24/7 עם זמן תגובה ממוצע של פחות מ 3 דקות"
+        titleTransKey={translate("support", $_)}
+        subTitleTransKey={translate("supportDesc", $_)}
       />
     </div>
   </div>
