@@ -68,8 +68,12 @@
               ).replaceAll("DATE", dateToDateStr(worker.createdAt))}
         </p>
 
-        <button on:click={() => pushDialog(aboutDialog)}>
-          <p class="xs:text-md text-sm hover:opacity-70">
+        <button
+          on:click|stopPropagation={() => {
+            pushDialog(aboutDialog);
+          }}
+        >
+          <p class="xs:text-md text-sm hover:opacity-70 p-4 z-100">
             {translate("MoreText", $_)}
           </p>
         </button>

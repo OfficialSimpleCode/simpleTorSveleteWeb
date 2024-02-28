@@ -17,6 +17,7 @@
     dialog.close();
   }}
 >
+  <div id="recaptcha-container" class="absolute"></div>
   <div class="modal-box bg-base-200 pb-10">
     {#if !insideOtp}
       <GetPhoneView
@@ -29,6 +30,7 @@
       <GetOtpView {loginReason} {dialog} {dispatch} />
     {/if}
   </div>
+
   <form method="dialog" class="modal-backdrop">
     <button></button>
   </form>

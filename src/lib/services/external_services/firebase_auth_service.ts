@@ -261,13 +261,13 @@ export class FirebaseAuthService extends VerificationService {
     let codeSentTime: Date | undefined;
 
     const html = document.getElementById("recaptcha-container")!;
-    var element = document.createElement("input");
-    //Assign different attributes to the element.
-    element.setAttribute("name", "ddd");
-    element.setAttribute("style", "color:Red");
-    document.body.appendChild(element);
+    // var element = document.createElement("input");
+    // //Assign different attributes to the element.
+    // element.setAttribute("name", "ddd");
+    // element.setAttribute("style", "color:Red");
+    // document.body.appendChild(element);
 
-    const recaptchaVerifier = new RecaptchaVerifier(this._auth, element, {
+    const recaptchaVerifier = new RecaptchaVerifier(this._auth, html, {
       size: "invisible",
       callback: (response: any) => {
         console.log(response);
