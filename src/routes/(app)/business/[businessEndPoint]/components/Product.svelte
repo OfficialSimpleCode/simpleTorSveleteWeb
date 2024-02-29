@@ -16,7 +16,7 @@
 <!-- background settings -->
 
 <div class="flex {felx} flex-col sm:w-full justify-start items-center px-2">
-  <a href={`${base}/business/${$businessStore.url}/product/${productId}`}>
+  <a href={`${base}/business/${$businessStore?.url}/product/${productId}`}>
     <!-- product card -->
     <div
       class="card card-compact {onBackground

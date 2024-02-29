@@ -5,7 +5,7 @@
 </script>
 
 <div class="flex flex-col gap-4 items-center justify-center pt-7">
-  <h3 class="text-xl sm:text-2xl">{translate("noAvailableBookings", $_)}</h3>
+  <h1 class="text-xl sm:text-2xl">{translate("noAvailableBookings", $_)}</h1>
   <div class="w-[70%] flex flex-col items-center">
     <LottieAnimation animationFile={bookingAnimation} size="xl5" />
   </div>

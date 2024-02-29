@@ -1,6 +1,7 @@
 <script lang="ts">
   import { base } from "$app/paths";
   import { businessStore } from "$lib/stores/Business";
+  import { _, translate } from "$lib/utils/translate";
 
   $: ngClass = `flex items-center justify-center rounded-full hover:bg-primary hover:text-primary-content bg-base-200 block shrink-0 transition-all duration-200`;
 </script>
@@ -15,7 +16,13 @@
       </h3>
       <div class="avatar flex justify-center">
         <div class="rounded-full h-[25px] sm:h-[30px] w-[25px] sm:w-[30px]">
-          <img src={$businessStore.design.shopIconUrl} alt="profile" />
+          <img
+            src={$businessStore.design.shopIconUrl}
+            alt={translate("theProfileOfTemplate", $_).replace(
+              "NAME",
+              $businessStore.shopName
+            )}
+          />
         </div>
       </div>
     </div>

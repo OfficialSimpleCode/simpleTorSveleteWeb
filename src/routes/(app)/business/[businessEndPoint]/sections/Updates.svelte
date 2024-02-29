@@ -24,7 +24,7 @@
             <div
               class="flex h-[200px] flex-col justify-center items-center w-full relative px-2"
             >
-              <h1 class="absolute top-1 text-xl">{update.title}</h1>
+              <h2 class="absolute top-1 text-xl">{update.title}</h2>
               <p class="max-w-[500px] bg-green">
                 {update.content}
               </p>

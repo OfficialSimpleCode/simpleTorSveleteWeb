@@ -25,7 +25,11 @@
           on:click={() => chooseLang(language)}
           on:keypress={() => chooseLang(language)}
         >
-          <img class="w-10 rounded" src={language.flag} alt="flag" />
+          <img
+            class="w-10 rounded"
+            src={language.flag}
+            alt={translate("flagOf", $_).replaceAll("COUNTRY", language.name)}
+          />
           <h3 class="text-sm">{$_(language.name)}</h3>
         </button>
       {/each}

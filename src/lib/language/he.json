@@ -3203,5 +3203,15 @@
   "homePage": "דף הבית",
   "thatIn": "שנמצאים ב",
   "lastUpdte": "עודכן בתאריך",
-  "andThe": "ואת "
+  "andThe": "ואת ",
+  "theProfileOfTemplate": "הפרופיל של NAME",
+  "manLiftingImage": "אדם מרים משקולות",
+  "businessWork": "דוגמאת עבודה של העסק",
+  "bannerImage": "תמונת באנר ראשית של העסק",
+  "flagOf": "הדגל של COUNTRY",
+  "deleteIcon": "אייקון של פח",
+  "simpleTorLogo": "הלוגו של Simple Tor",
+  "chipIcon": "אייקון של צ'יפ",
+  "profileImage": "תמונת פרפיל",
+  "simpleTorDesc": "מערכת ניהול עסק מתקדמת, זימוני תורים, ניהול עובדים, תשלומים וקבלות מהטלפון וללא התעסקות מיותרת"
 }

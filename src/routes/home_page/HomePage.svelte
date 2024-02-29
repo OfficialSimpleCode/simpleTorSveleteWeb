@@ -1,6 +1,5 @@
 <script>
   import Navbar from "$lib/components/navbar/Navbar.svelte";
-  import Encryptor from "$lib/services/encryption_service/encryptor";
   import Footer from "../../lib/components/Footer.svelte";
   import Banner from "./sections/Banner.svelte";
   import Businesses from "./sections/Businesses.svelte";
@@ -38,23 +37,20 @@
   // );
   // console.log(" ----------------------------- ");
 
-  const pass = "saadon";
-  console.log(" ----------------------------- ");
-  Encryptor.GI()
-    .encryptBrowser("shilo-,$#@±encryped this code", pass)
-    .then((value) => {
-      console.log("The encrypted value is -> ", value);
-      // decrypt
-      Encryptor.GI()
-        .decryptBrowser(
-          "b2c3ee21dfd491f68c95ebeb04ad1f55:4ea02e6296d39bf717ea0282b2ecb86d:5d8041797eef0cba25c87d0fc6c69cf858378975f53c6fd2bc011e099b9e9e0c",
-          pass
-        )
-        .then((decVal) => {
-          console.log("The decrypted value is -> ", decVal);
-          console.log("---END---");
-        });
-    });
+  // const pass = "saadon";
+  // console.log(" ----------------------------- ");
+  // Encryptor.GI()
+  //   .encryptBrowser("111", pass)
+  //   .then((value) => {
+  //     console.log("The encrypted value is -> ", value);
+  //     // decrypt
+  //     Encryptor.GI()
+  //       .decryptBrowser(value, pass)
+  //       .then((decVal) => {
+  //         console.log("The decrypted value is -> ", decVal);
+  //         console.log("---END---");
+  //       });
+  //   });
 
   // 2609c61633d590627a7f76a39fa98930:b143a3efa772eac5cbf3037e487fb073:9b6683ddbc1fcf6645e0f504922a2f5d
   // 2f3876689b1b96178eda6c290bf5b8b9:c0fc9d131c8ced8a5bdb89dbea6e29b6:093d113f6670ae70f694b5f1aa70424f

@@ -1,6 +1,7 @@
 <script lang="ts">
   import Chip from "$lib/images/chip.png";
   import PaymentCard from "$lib/models/payment_hyp/payment_card";
+  import { _, translate } from "$lib/utils/translate";
   import { createEventDispatcher, type EventDispatcher } from "svelte";
   import GeneralIcon from "./GeneralIcon.svelte";
 
@@ -21,7 +22,7 @@
         <div class="w-[10px]" />
         <h5>{card.bankName}</h5>
       </span>
-      <img src={Chip} alt="" class="chip" />
+      <img src={Chip} alt={translate("chipIcon", $_)} class="chip" />
     </header>
     <div class="card-details">
       <div class="name-number">

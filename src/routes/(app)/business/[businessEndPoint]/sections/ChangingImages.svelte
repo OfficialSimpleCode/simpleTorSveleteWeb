@@ -5,6 +5,7 @@
   import defaultBannerImageLight from "$lib/images/default_photo_light.webp";
   import { businessStore } from "$lib/stores/Business";
   import { computeLuminance } from "$lib/utils/general_utils";
+  import { _, translate } from "$lib/utils/translate";
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
   import IconAndTopButtons from "./IconAndTopButtons.svelte";
@@ -76,7 +77,7 @@
       <img
         class="relative top-0 h-[800px] w-full object-cover hidden md:block transition-opacity"
         src={useDefault ? defaultImage : changingImages[currentIndex]}
-        alt={"business image"}
+        alt={translate("bannerImage", $_)}
         transition:fade={{ delay: 0, duration: 1000 }}
       />
     </div>
@@ -98,7 +99,7 @@
       <img
         class="w-full aspect-[5/4] object-cover transition-opacity"
         src={useDefault ? defaultImage : changingImages[currentIndex]}
-        alt={"business image"}
+        alt={translate("bannerImage", $_)}
         in:fade={{ delay: 0, duration: 1000 }}
       />
     {/key}

@@ -32,22 +32,22 @@
   class="flex flex-col items-center sm:h-[90%] h-[85%] pt-10 justify-between"
 >
   <!-- page title -->
-  <h3 class="text-2xl">{translate("paymentRequest")}</h3>
+  <h1 class="text-2xl">{translate("paymentRequest")}</h1>
 
   <!-- content -->
   <div class="flex flex-col justify-center items-center gap-2">
     <!-- payment title -->
-    <h3 class="text-md">
+    <h2 class="text-md">
       {translate("paymentRequestExplain").replaceAll(
         "NAME",
         $paymentRequestStore.preview?.workerName ?? ""
       )}
-    </h3>
+    </h2>
 
     <!-- payment preview -->
-    <h3 class="text-2xl">
+    <h2 class="text-2xl">
       {$paymentRequestStore.preview?.price.toString()}
-    </h3>
+    </h2>
 
     <!-- pay for the request -->
     <button

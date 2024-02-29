@@ -4,6 +4,6 @@
 </script>
 
 <div class="flex flex-col justify-center items-center">
-  <h1 class="text-5xl">{titleTransKey}</h1>
+  <h2 class="text-5xl">{titleTransKey}</h2>
   <p class="opacity-70">{subTitleTransKey}</p>
 </div>

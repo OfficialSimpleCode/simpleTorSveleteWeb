@@ -14,7 +14,10 @@
     <img
       class="rounded-full object-cover w-10 h-10"
       src={reviewItem.imageUrl}
-      alt="Emily"
+      alt={translate("theProfileOfTemplate", $_).replace(
+        "NAME",
+        reviewItem.name
+      )}
     />
 
     <!-- name and bio -->

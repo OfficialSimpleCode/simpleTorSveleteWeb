@@ -47,11 +47,11 @@
       ? 'bg-base-200'
       : 'bg-base-300'} w-full pb-14 px-2 pt-10 xs:px-16"
   >
-    <h1 class="text-center font-bold text-2xl pb-6">
+    <h2 class="text-center font-bold text-2xl pb-6">
       {$businessStore?.design.storyTitle ?? ""
         ? $businessStore?.design.storyTitle ?? ""
         : translate("myWorks", $_).replaceAll(":", "")}
-    </h1>
+    </h2>
     <div
       class="w-full self-center flex items-center mt-1 justify-center xs:gap-6 gap-4 flex-wrap"
     >
@@ -61,7 +61,7 @@
           <img
             class="object-cover md:h-[530px] md:w-[300px] h-[284px] w-[160px] rounded-xl hover:scale-[1.01]"
             src={imageData.imageUrl}
-            alt="gym"
+            alt={translate("businessWork", $_)}
           />
         </button>
       {/each}

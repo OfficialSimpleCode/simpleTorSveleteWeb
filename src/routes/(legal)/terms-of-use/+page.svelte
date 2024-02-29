@@ -180,7 +180,7 @@
 
       <!-- updated at -->
       <div class="felx felx-col text-center pt-10">
-        <h1>{translate("lastUpdte", $_)}</h1>
+        <h2>{translate("lastUpdte", $_)}</h2>
         <p class="opacity-70">01/4/2023</p>
       </div>
       <p></p>

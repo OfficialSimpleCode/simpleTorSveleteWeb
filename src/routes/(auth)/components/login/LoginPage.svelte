@@ -121,7 +121,7 @@
   <img
     class="flex-[1] object-cover !max-w-[50%] hidden lg:flex"
     src="https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?cs=srgb&dl=action-athlete-barbell-841130.jpg&fm=jpg"
-    alt="simpletor"
+    alt={translate("manLiftingImage", $_)}
   />
   <div class="flex flex-col items-center justify-center w-full pb-20">
     <section

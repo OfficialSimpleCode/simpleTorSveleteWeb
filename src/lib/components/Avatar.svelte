@@ -1,6 +1,7 @@
 <script lang="ts">
   import { themeStore } from "$lib/controllers/theme_controller";
   import { getDefaultLogo } from "$lib/utils/images_utils";
+  import { _, translate } from "$lib/utils/translate";
   export let img: string;
   export let small: Boolean = false;
   export let ring: Boolean = true;
@@ -17,7 +18,7 @@
   >
     <img
       src={img ? img : getDefaultLogo($themeStore?.background)}
-      alt="profile"
+      alt={translate("profileImage", $_)}
     />
   </div>
 </div>
