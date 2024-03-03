@@ -1,5 +1,6 @@
 <script>
   import Navbar from "$lib/components/navbar/Navbar.svelte";
+  import { webLink } from "$lib/consts/app_external_links";
   import Footer from "../../lib/components/Footer.svelte";
   import Banner from "./sections/Banner.svelte";
   import Businesses from "./sections/Businesses.svelte";
@@ -54,8 +55,41 @@
 
   // 2609c61633d590627a7f76a39fa98930:b143a3efa772eac5cbf3037e487fb073:9b6683ddbc1fcf6645e0f504922a2f5d
   // 2f3876689b1b96178eda6c290bf5b8b9:c0fc9d131c8ced8a5bdb89dbea6e29b6:093d113f6670ae70f694b5f1aa70424f
+
+  // scheme.org json
+  let jsonLdScript = `<script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
+        "@type": "SoftwareApplication",
+        "url": "https://simpletor.app/",
+        "author": {
+          "@type": "Person",
+          "name": "SA SIMPLE CODE LTD"
+        },
+        "downloadUrl": ${webLink},
+        
+        "applicationCategory": "BusinessApplication"
+        "softwareVersion": "1.3.9",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "bestRating": "5"
+        },
+        "review": {
+          "@type": "Review",
+          "author": {
+            "@type": "Person",
+            "name": "שקד כהן שי"
+          },
+          "reviewBody": "ניהנתי ממש להשתמש באפליקציה עשתה לי המון סדר וכיף"
+        }
+      }
+      ${"<"}/script>`;
 </script>
 
+<svelte:head>
+  <!-- the scheme.org of the business -->
+  {@html jsonLdScript}
+</svelte:head>
 <main class="w-full h-full bg-base-200">
   <Navbar />
   <Banner />
