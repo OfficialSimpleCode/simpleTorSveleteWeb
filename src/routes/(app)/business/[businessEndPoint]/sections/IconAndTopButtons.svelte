@@ -99,9 +99,9 @@
           ? 'block'
           : 'hidden'} items-center"
       >
-        <h1 class="text-xs xs:text-sm">
+        <p class="text-xs xs:text-sm">
           {$businessStore?.adress ?? ""}
-        </h1>
+        </p>
         <GeneralIcon icon="mdi:map-marker-outline" size={16} />
       </div>
     </button>

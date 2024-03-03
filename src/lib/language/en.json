@@ -3222,5 +3222,15 @@
   "thatIn": "that are in",
   "lastUpdte": "Updated at",
   "andThe": "and ",
-  "onBusiness": "About business"
+  "onBusiness": "About business",
+  "theProfileOfTemplate": "The profile of NAME",
+  "manLiftingImage": "man lifting",
+  "businessWork": "business work example",
+  "bannerImage": "main banner image of the business",
+  "flagOf": "The flag of COUNTRY",
+  "deleteIcon": "can icon",
+  "simpleTorLogo": "Simple Tor logo",
+  "chipIcon": "chip icon",
+  "profileImage": "Profile Image",
+  "simpleTorDesc": "Advanced business management system, appointment calling, employee management, payments and receipts from the phone and no unnecessary fuss"
 }

@@ -41,13 +41,13 @@
       <CircleIcons {booking}></CircleIcons>
       <!-- string date -> business name, worker -->
       <div class="flex flex-col items-start text-start">
-        <h1>
+        <h2>
           {booking.treatmentsToStringNotDetailed +
             ` ${translate("to", $_)} ${booking.businessName}`}
-        </h1>
-        <h1>
+        </h2>
+        <h2>
           {`${translate("with", $_)} ${booking.workerName}`}
-        </h1>
+        </h2>
       </div>
     </div>
     <!-- arrow icon -->

@@ -5,6 +5,7 @@
   import { businessStore } from "$lib/stores/Business";
   import { workersStore } from "$lib/stores/Workers";
   import { imageByGender } from "$lib/utils/images_utils";
+  import { _, translate } from "$lib/utils/translate";
 
   export let booking: Booking;
 
@@ -23,7 +24,10 @@
     <div class="mask mask-squircle w-[70px] h-[70px] rounded-full">
       <img
         src={booking.shopIcon.getShopIconPath(booking.buisnessId)}
-        alt="business profile"
+        alt={translate("theProfileOfTemplate", $_).replace(
+          "NAME",
+          $businessStore?.shopName ?? ""
+        )}
       />
     </div>
   </div>
@@ -33,7 +37,10 @@
       <img
         src={currentWorker?.profileImg ??
           imageByGender(currentWorker?.gender ?? Gender.male)}
-        alt="worker profile"
+        alt={translate("theProfileOfTemplate", $_).replace(
+          "NAME",
+          currentWorker?.name ?? ""
+        )}
       />
     </div>
   </div>

@@ -65,6 +65,7 @@
     "svelte-icons-pack": "^2.1.0",
     "svelte-otp": "^1.0.9",
     "svelte-qrcode-image": "^1.0.0-rc.2",
+    "svelte-sitemap": "^2.6.0",
     "svelte-tel-input": "^3.3.9",
     "tslog": "^4.9.2",
     "uuid": "^3.3.3"

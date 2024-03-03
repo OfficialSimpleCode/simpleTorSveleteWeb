@@ -8,13 +8,13 @@
   class="flex flex-col items-center sm:h-[90%] h-[85%] pt-10 justify-between"
 >
   <!-- page title -->
-  <h3 class="text-2xl">{translate("requestNotFound")}</h3>
+  <h1 class="text-2xl">{translate("requestNotFound")}</h1>
 
   <!-- content -->
   <div class="flex flex-col justify-center items-center">
-    <h3 class="text-md">
+    <h2 class="text-md">
       {translate("requestNotFoundExplain")}
-    </h3>
+    </h2>
     <GeneralIcon icon="material-symbols:error-outline-rounded" size={70} />
   </div>
 

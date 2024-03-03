@@ -56,7 +56,11 @@
     <div class="flex flex-col items-center">
       <!-- image, formfield -->
       <div class="flex flex-col gap-3 items-center h-full">
-        <img class="w-[60px] h-[60px]" src={deleteIcon} alt="delete icon" />
+        <img
+          class="w-[60px] h-[60px]"
+          src={deleteIcon}
+          alt={translate("deleteIcon", $_)}
+        />
         <h3 class="text-sm text-center mx-6">
           {translate(contentTransKey, $_)}
         </h3>

@@ -33,7 +33,6 @@
 <main class=" h-full">
   <div class="md:pt-20 pt-2 flex flex-col gap-8 items-center h-full">
     <!-- title -->
-
     {#if $isConnectedStore === false || $userStore.bookingsToShow != null}
       {#if $isConnectedStore === false || ($userStore?.bookingsToShow ?? []).length === 0}
         <EmptyBookingPage />

@@ -6,10 +6,10 @@
 </script>
 
 <main class="flex flex-col items-center mx-4 mt-0 gap-10">
-  <h3 class="text-xl">{translate("alreadyPaidRequest")}</h3>
-  <h3 class="text-md">
+  <h1 class="text-xl">{translate("alreadyPaidRequest")}</h1>
+  <h2 class="text-md">
     {translate("alreadyPaidRequestExplain")}
-  </h3>
+  </h2>
   <WatchPaymentsButton />
   <GeneralIcon icon="material-symbols:error-outline" size={300} />
   <LogoAndName />

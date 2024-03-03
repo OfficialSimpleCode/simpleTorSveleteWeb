@@ -23,7 +23,10 @@
           <div class="w-20 sm:w-28 rounded-full">
             <img
               src={worker.profileImg || imageByGender(worker.gender)}
-              alt="worker"
+              alt={translate("theProfileOfTemplate", $_).replace(
+                "NAME",
+                worker.name
+              )}
             />
           </div>
         </div>

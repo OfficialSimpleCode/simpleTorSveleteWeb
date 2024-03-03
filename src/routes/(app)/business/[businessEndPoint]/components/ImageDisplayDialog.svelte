@@ -8,6 +8,7 @@
 
   import { workersStore } from "$lib/stores/Workers.js";
   import { length } from "$lib/utils/core_utils";
+  import { _, translate } from "$lib/utils/translate";
   import { Icon, XCircle } from "svelte-hero-icons";
 
   export let dialog: HTMLDialogElement;
@@ -65,7 +66,7 @@
     <img
       class="object-cover h-full w-full rounded-xl"
       src={workersStories[storyId].imageUrl}
-      alt="showcase"
+      alt={translate("businessWork", $_)}
     />
     {#if (document.dir === "rtl" && !isFirst(storyId)) || (document.dir === "ltr" && !isLast(storyId))}
       <button
