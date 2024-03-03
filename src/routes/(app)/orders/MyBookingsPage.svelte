@@ -24,7 +24,6 @@
     $activeBusiness !== false;
 
   function onMakeBooking() {
-    console.log("sssssssssssssssssssssssssssssssssss");
     if ($isConnectedStore === false && $businessStore != null) {
       VerificationHelper.GI().needToMakeBookingAfterLogin = true;
     }

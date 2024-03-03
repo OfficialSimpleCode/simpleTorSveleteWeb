@@ -24,7 +24,7 @@ export function sendMessage({
   }
   const hasEnoughMessages =
     customHsEnoughMessages ||
-    BusinessInitializer.GI().business.businessData.messagesCounter > 1;
+    BusinessInitializer.GI().business.businessData.hasMessages;
   switch (notificationOption) {
     case NotificationOption.OnlyPush:
       if (Object.values(booking.userFcms).length === 0) {
@@ -83,7 +83,7 @@ export function sendMessagePaymentRequest(
   worker: WorkerModel
 ): NotificationType {
   const hasEnoughMessages =
-    BusinessInitializer.GI().business.businessData.messagesCounter > 1;
+    BusinessInitializer.GI().business.businessData.hasMessages;
   switch (worker.notifications.notificationOption) {
     case NotificationOption.OnlyPush:
       if (!user.fcmTokens || Object.keys(user.fcmTokens).length === 0) {
@@ -142,7 +142,7 @@ export function sendMessageForMulti(
   worker: WorkerModel
 ): NotificationType {
   const hasEnoughMessages =
-    BusinessInitializer.GI().business.businessData.messagesCounter > 1;
+    BusinessInitializer.GI().business.businessData.hasMessages;
   switch (worker.notifications.notificationOption) {
     case NotificationOption.OnlyPush:
       if (Object.keys(multiBookingUser.userFcms).length === 0) {

@@ -1,6 +1,5 @@
 <script lang="ts">
   import { pushState } from "$app/navigation";
-  import { page } from "$app/stores";
   import type Booking from "$lib/models/booking/booking_model";
   import BookingActions from "./BookingActions.svelte";
   import BookingDateAndTime from "./BookingDateAndTime.svelte";
@@ -22,9 +21,8 @@
 </script>
 
 <!-- booking shhet and dialog -->
-{#if $page.state.showModal}
-  <BookingSheet bind:dialog={bookingDialog} {booking} {forceOpenBookingSheet} />
-{/if}
+
+<BookingSheet bind:dialog={bookingDialog} {booking} {forceOpenBookingSheet} />
 
 <tr
   on:click={openBookingSheet}

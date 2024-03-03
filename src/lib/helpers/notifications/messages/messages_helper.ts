@@ -9,6 +9,7 @@ import GeneralRepo from "$lib/helpers/general/general_repo";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import type Booking from "$lib/models/booking/booking_model";
+import { BusinessData } from "$lib/models/business/business_data";
 import { Duration } from "$lib/models/core/duration";
 import type MultiBooking from "$lib/models/multi_booking/multi_booking";
 import type MultiBookingUser from "$lib/models/multi_booking/multi_booking_user";
@@ -394,12 +395,46 @@ export default class MessagesHelper {
     if (count === 0) {
       return true;
     }
-    const childPath = DbPathesHelper.GI().getBusinessDataPath(businessId);
-    return await this.generalRepo.incrementNumberChild({
-      childPath: childPath,
-      valueId: "messagesCounter",
-      delta: count,
-      command: NumericCommands.decrement,
+
+    let businessData: BusinessData | undefined = undefined;
+    if (businessId === BusinessInitializer.GI().business.businessId) {
+      // Get the businessData from the loaded business
+      businessData = BusinessInitializer.GI().business.businessData;
+    } else {
+      // Get the businessData from the database
+      const businessDataChild = await this.generalRepo.getChild({
+        childPath: DbPathesHelper.GI().getBusinessDataPath(businessId),
+      });
+      businessData = new BusinessData();
+      businessData.setBusinessData(businessDataChild);
+    }
+
+    let messagesCounterRemoveCount = 0;
+    let messagesCounterConsumableRemoveCount = 0;
+
+    if (businessData.messagesCounter >= count) {
+      // If there is enough in the renewed counter, remove all from there
+      messagesCounterRemoveCount = count;
+    } else {
+      // If there is not enough in the renewed counter, remove all there is and try to remove from the consumable counter
+      messagesCounterRemoveCount = businessData.messagesCounter;
+      const leftToRemove = count - businessData.messagesCounter;
+      if (businessData.messagesCounterConsumable >= leftToRemove) {
+        // If there is enough in the consumable counter, remove all from there
+        messagesCounterConsumableRemoveCount = leftToRemove;
+      } else {
+        // If there is not enough in the consumable counter, remove all there is in
+        messagesCounterConsumableRemoveCount =
+          businessData.messagesCounterConsumable;
+      }
+    }
+
+    return await this.generalRepo.incrementMultipleNumberChild({
+      childPath: DbPathesHelper.GI().getBusinessDataPath(businessId),
+      data: {
+        ["messagesCounter"]: -messagesCounterRemoveCount,
+        ["messagesCounterConsumable"]: -messagesCounterConsumableRemoveCount,
+      },
     });
   }
 

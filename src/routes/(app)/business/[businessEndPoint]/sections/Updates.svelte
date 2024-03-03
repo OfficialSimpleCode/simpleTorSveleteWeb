@@ -1,12 +1,34 @@
 <script lang="ts">
   import Carousel from "$lib/components/carousel/Carousel.svelte";
   import CarouselItem from "$lib/components/carousel/CarouselItem.svelte";
+  import { SubType } from "$lib/consts/purchases";
   import { containerRadius } from "$lib/consts/sizes";
-  import { businessStore } from "$lib/stores/Business";
+  import { Update } from "$lib/models/business/update_model";
+  import { businessStore, businessSubStore } from "$lib/stores/Business";
   import { isNotEmpty, length } from "$lib/utils/core_utils";
   import { _, translate } from "$lib/utils/translate";
+  let businessUpdates: Update[] = [];
 
-  $: businessUpdates = $businessStore?.design.updates ?? {};
+  businessSubStore.subscribe((value) => {
+    const businessDescriptionAsUpdate =
+      $businessStore?.businessDescription != null &&
+      $businessStore?.businessDescription != ""
+        ? new Update(
+            translate("onBusiness"),
+            $businessStore?.businessDescription,
+            "0",
+            "",
+            ""
+          )
+        : undefined;
+    if (value != null && value != SubType.basic) {
+      businessUpdates =
+        Object.values($businessStore?.design.updates ?? {}) ?? [];
+    }
+    if (businessDescriptionAsUpdate != null) {
+      businessUpdates.push(businessDescriptionAsUpdate);
+    }
+  });
 </script>
 
 {#if isNotEmpty(businessUpdates)}

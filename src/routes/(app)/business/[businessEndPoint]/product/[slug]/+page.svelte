@@ -5,9 +5,8 @@
   import { _ } from "svelte-i18n";
   import ProductImg from "./components/ProductImg.svelte";
 
-  let product: ProductModel = $businessStore.design.products.get(
-    $page.params.slug
-  )!;
+  let product: ProductModel =
+    $businessStore?.design.products[$page.params.slug]!;
 </script>
 
 <main class="h-full w-full">

@@ -6,6 +6,7 @@ import BookingController, {
 import { ErrorsController } from "$lib/controllers/errors_controller";
 import BookingHelper from "$lib/helpers/booking/booking_helper";
 import BusinessInitializer from "$lib/initializers/business_initializer";
+import { businessStore } from "$lib/stores/Business";
 import { get } from "svelte/store";
 
 export async function updateBooking() {
@@ -13,13 +14,13 @@ export async function updateBooking() {
   if (newWorker === undefined) {
     return;
   }
-  const oldWorkerId = BookingController.bookingToUpdate!.workerId;
+  const oldWorkerId = get(bookingMakerStore).oldBooking!.workerId;
   const oldWorker = BusinessInitializer.GI().workers[oldWorkerId];
 
   const booking = BookingController.bookingFromValues;
 
   const result = await BookingHelper.GI().updateBooking({
-    oldBooking: BookingController.bookingToUpdate!,
+    oldBooking: get(bookingMakerStore).oldBooking!,
     newBooking: booking,
     oldWorker: oldWorker,
     newWorker: newWorker,
@@ -27,7 +28,11 @@ export async function updateBooking() {
   });
   if (result) {
     //jump to my bookings page after succedded with the order
-    goto(`${base}/appointments`);
+    if (get(businessStore) != null) {
+      goto(`${base}/business/${get(businessStore)!.url}/orders`);
+    } else {
+      goto(`${base}/orders`);
+    }
   } else {
     ErrorsController.displayError();
   }
