@@ -1,6 +1,13 @@
 type businessSiteMap = {
   title: string;
   slug: string;
-  updatedAt: string;
+  lastmod: string;
+  priority: string;
   visible?: boolean;
+};
+
+type pagesSiteMap = {
+  path: string;
+  priority: string;
+  changefreq: string;
 };

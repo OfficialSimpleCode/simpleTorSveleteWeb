@@ -13,9 +13,17 @@
   import { _, translate } from "$lib/utils/translate";
   import { onMount } from "svelte";
 
+  import Analytics from "$lib/components/analytics.svelte";
   import "../app.css";
   let screenHeight: number;
-
+  const keywords: string[] = [
+    "ניהול תורים",
+    "ניהול עסק",
+    "קביעת תורים",
+    "זימון",
+    "תור",
+    "עסק",
+  ];
   onMount(() => {
     RemoteConfigHelper.GI().init();
     console.log("wwwwwwwwwwwwwwwwwwwwwwww");
@@ -70,6 +78,8 @@
       rel="canonical"
       href={`${$page.url.origin}${$page.url.pathname}`.replace("www.", "")}
     />
+    <!-- site keywords -->
+    <meta name="keywords" content={keywords.join(" ,")} />
 
     <!-- Open Graphes data (for sharin a link) -->
     <!-- title -->
@@ -84,6 +94,9 @@
   {/if}
   <!--  -->
 </svelte:head>
+
+<!-- google analytics -->
+<Analytics />
 
 <ToastManager />
 <div class="w-full h-ful">

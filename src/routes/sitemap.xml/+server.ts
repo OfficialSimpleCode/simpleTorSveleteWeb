@@ -1,6 +1,11 @@
 import GeneralRepo from "$lib/helpers/general/general_repo";
 
-const pages: string[] = ["privacy", "terms-of-use", "orders", "profile"]; //list of pages as a string ex. ["about", "blog", "contact"]
+const pages: pagesSiteMap[] = [
+  { path: "privacy", priority: "0.3", changefreq: "monthly" },
+  { path: "terms-of-use", priority: "0.3", changefreq: "monthly" },
+  { path: "orders", priority: "0.1", changefreq: "daily" },
+  { path: "profile", priority: "0.2", changefreq: "monthly" },
+]; //list of pages as a string ex. ["about", "blog", "contact"]
 
 const site: string = "https://simpletor.app";
 
@@ -39,7 +44,7 @@ async function getBusinessesFromDB(): Promise<businessSiteMap[]> {
 
 const sitemap = (
   businesses: businessSiteMap[],
-  pages: string[]
+  pages: pagesSiteMap[]
 ) => `<?xml version="1.0" encoding="UTF-8" ?>
 <urlset
   xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"
@@ -52,15 +57,15 @@ const sitemap = (
   <url>
     <loc>${site}</loc>
     <changefreq>daily</changefreq>
-    <priority>0.7</priority>
+    <priority>1.0</priority>
   </url>
   ${pages
     .map(
       (page) => `
   <url>
-    <loc>${site}/${page}</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
+    <loc>${site}/${page.path}</loc>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
   </url>
   `
     )
@@ -73,8 +78,8 @@ const sitemap = (
   <url>
     <loc>${site}/business/${business.slug}</loc>
     <changefreq>weekly</changefreq>
-    <lastmod>${business.updatedAt}</lastmod>
-    <priority>0.3</priority>
+    <lastmod>${business.lastmod}</lastmod>
+    <priority>${business.priority}</priority>
   </url>
   `
     )

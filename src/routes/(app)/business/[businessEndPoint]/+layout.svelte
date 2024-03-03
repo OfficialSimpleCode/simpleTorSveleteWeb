@@ -7,6 +7,7 @@
   import { _, translate } from "$lib/utils/translate";
 
   import { page } from "$app/stores";
+  import Analytics from "$lib/components/analytics.svelte";
   import { themeStore } from "$lib/controllers/theme_controller.js";
   import BusinessInitializer from "$lib/initializers/business_initializer.js";
   import { onMount } from "svelte";
@@ -65,7 +66,7 @@
   <!-- the url for search to display for this site -->
   <link
     rel="canonical"
-    href={`${$page.url.origin}/business/${$businessStore?.urlEndPoint}`}
+    href={`${$page.url.origin}/business/${$businessStore?.url}`}
   />
 
   <!-- Open Graphes data (for sharin a link) -->
@@ -92,5 +93,8 @@
   <!-- image in the center of the link -->
   <meta property="og:image" content={$businessStore?.design.shopIconUrl} />
 </svelte:head>
+
+<!-- google analytics -->
+<Analytics />
 
 <slot />

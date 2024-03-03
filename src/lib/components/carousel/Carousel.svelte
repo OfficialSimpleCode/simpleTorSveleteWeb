@@ -71,7 +71,7 @@
   </button>
   <div
     bind:this={carousel}
-    class="carousel items-center"
+    class="carousel items-center w-full"
     class:carousel-vertical={vertical}
   >
     <slot />

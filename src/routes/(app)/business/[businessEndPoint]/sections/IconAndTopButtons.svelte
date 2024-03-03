@@ -20,10 +20,25 @@
   import ShareDialog from "../components/ShareDialog.svelte";
 
   export let shrinkedDisplay: boolean = false;
+  export let onImages: boolean;
 
   let shareDialog: HTMLDialogElement;
   let navigationDialog: HTMLDialogElement;
   let iconStr: string = "mdi:ios-share";
+  let smallView: boolean = true;
+
+  onMount(() => {
+    smallView = window.innerWidth < 768;
+    const handleResize = () => {
+      smallView = window.innerWidth < 768;
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  });
 
   // open choose navigation option dialog
   function openNavigationDialog() {
@@ -86,10 +101,15 @@
         />
       </div>
     </div>
-
-    <h1 class="md:text-4xl xs:text-3xl text-2xl pt-2 max-w-64">
-      {$businessStore?.shopName ?? ""}
-    </h1>
+    {#if (smallView && !onImages) || (!smallView && onImages)}
+      <h1 class="md:text-4xl xs:text-3xl text-2xl pt-2 max-w-64">
+        {$businessStore?.shopName ?? ""}
+      </h1>
+    {:else}
+      <h2 class="md:text-4xl xs:text-3xl text-2xl pt-2 max-w-64">
+        {$businessStore?.shopName ?? ""}
+      </h2>
+    {/if}
     <button
       class="flex items-center gap-1 link opacity-70 link-hover"
       on:click={openNavigationDialog}
