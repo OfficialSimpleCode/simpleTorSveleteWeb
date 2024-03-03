@@ -1,4 +1,6 @@
-import GeneralRepo from "$lib/helpers/general/general_repo";
+import { firebaseConfig } from "$lib/consts/firebase_config";
+import { getApp, getApps, initializeApp } from "firebase/app";
+import { collection, doc, getDoc, getFirestore } from "firebase/firestore";
 
 const pages: pagesSiteMap[] = [
   { path: "privacy", priority: "0.3", changefreq: "monthly" },
@@ -21,11 +23,11 @@ export async function GET({ url }: { url: string }) {
 
 async function getBusinessesFromDB(): Promise<businessSiteMap[]> {
   let businessesList: businessSiteMap[] = [];
-  const repo = new GeneralRepo();
-  const resp = await repo.getDocRepo({
+  // const repo = new GeneralRepo();
+
+  const resp = await getDbDoc({
     path: "WebData",
     docId: "businessesSiteMap",
-    insideEnviroments: false,
   });
   console.log("resp -> ", resp);
   // error occured
@@ -40,6 +42,20 @@ async function getBusinessesFromDB(): Promise<businessSiteMap[]> {
     }
   );
   return businessesList;
+}
+
+async function getDbDoc({ docId, path }: { docId: string; path: string }) {
+  try {
+    // init the firebase
+    const firebaseApp =
+      getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+    // get the doc
+    const collectionRef = collection(getFirestore(), path);
+    const docRef = doc(collectionRef, docId);
+    return await getDoc(docRef);
+  } catch (e) {
+    throw e;
+  }
 }
 
 const sitemap = (
