@@ -1,6 +1,5 @@
 <script lang="ts">
   import { pushState } from "$app/navigation";
-  import { page } from "$app/stores";
   import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
   import type Booking from "$lib/models/booking/booking_model";
   import { _, translate } from "$lib/utils/translate";
@@ -24,9 +23,7 @@
 </script>
 
 <!-- booking shhet and dialog -->
-{#if $page.state.showModal}
-  <BookingSheet bind:dialog={bookingDialog} {booking} {forceOpenBookingSheet} />
-{/if}
+<BookingSheet bind:dialog={bookingDialog} {booking} {forceOpenBookingSheet} />
 
 <button
   on:click={openBookingSheet}

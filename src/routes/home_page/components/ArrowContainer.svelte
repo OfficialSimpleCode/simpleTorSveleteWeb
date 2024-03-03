@@ -11,8 +11,8 @@
 >
   <svg
     class="h-6 w-6 text-primary group-hover:text-white {isBackwords
-      ? 'rotate-180'
-      : 'rotate-0'}"
+      ? 'rotate-0 rtl:rotate-180'
+      : 'rotate-180 rtl:rotate-0'}"
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

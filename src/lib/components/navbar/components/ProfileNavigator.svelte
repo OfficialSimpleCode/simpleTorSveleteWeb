@@ -10,7 +10,11 @@
 </script>
 
 {#if $isConnectedStore == null}
-  <CustomCircleIcon icon="" loading={true} bgColor="bg-base-200" />
+  <CustomCircleIcon
+    icon="iconamoon:profile-fill"
+    active={false}
+    bgColor="bg-base-200"
+  />
 {:else}
   <CustomCircleIcon
     icon={$isConnectedStore ? "iconamoon:profile-fill" : "ic:baseline-login"}

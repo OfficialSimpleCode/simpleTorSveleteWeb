@@ -84,11 +84,6 @@ export default class BookingController {
       ),
     };
     const currentBusiness = get(businessStore);
-    console.log(
-      currentBusiness != null,
-      length(currentBusiness?.workersIds ?? {}),
-      !BookingController.bookingToUpdate
-    );
 
     Object.entries(BookingController.bookingToUpdate?.treatments ?? {}).forEach(
       ([index, treatment]) => {

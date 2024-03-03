@@ -1,3 +1,4 @@
+import type ScheduleMessage from "$lib/models/notifications/schedule_message";
 import MessagesService from "$lib/services/external_services/message_service";
 import { dateIsoStr } from "$lib/utils/times_utils";
 

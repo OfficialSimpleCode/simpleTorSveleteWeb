@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { page } from "$app/stores";
   import DateString from "$lib/components/DateString.svelte";
   import DialogStrucher from "$lib/components/dialogs/DialogStrucher.svelte";
   import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
@@ -22,9 +21,8 @@
 </script>
 
 <!-- booking shhet and dialog -->
-{#if $page.state.showModal}
-  <DownloadAppDialog bind:dialog={downloadAppDialog} />
-{/if}
+<DownloadAppDialog bind:dialog={downloadAppDialog} />
+
 <DialogStrucher bind:dialog>
   <div class="modal-box bg-base-200 max-h-[80%] py-5 px-3 xs:px-5">
     <div class="flex flex-col items-start gap-4 mb-2">

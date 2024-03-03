@@ -67,7 +67,7 @@
   class="shrink-0 bg-base-300 hover:bg-base-300 w-full rounded-lg"
   on:click={() => {
     const maker = $bookingMakerStore;
-    maker.currentStep = 2;
+    maker.currentStep = 1;
     bookingMakerStore.set(maker);
   }}
 >
