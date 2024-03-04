@@ -1,12 +1,10 @@
-import { goto } from "$app/navigation";
-import { base } from "$app/paths";
 import BookingController, {
   bookingMakerStore,
 } from "$lib/controllers/booking_controller";
 import { ErrorsController } from "$lib/controllers/errors_controller";
+import { openOrdersPage } from "$lib/controllers/page_controller";
 import BookingHelper from "$lib/helpers/booking/booking_helper";
 import BusinessInitializer from "$lib/initializers/business_initializer";
-import { businessStore } from "$lib/stores/Business";
 import { get } from "svelte/store";
 
 export async function updateBooking() {
@@ -28,12 +26,14 @@ export async function updateBooking() {
     newClientNote: bookingMakerData.note,
   });
   if (result) {
+    //update the finish prperty
+    bookingMakerStore.update((value) => {
+      value.finish = true;
+      return value;
+    });
+
     //jump to my bookings page after succedded with the order
-    if (get(businessStore) != null) {
-      goto(`${base}/business/${get(businessStore)!.url}/orders`);
-    } else {
-      goto(`${base}/orders`);
-    }
+    openOrdersPage();
   } else {
     ErrorsController.displayError();
   }

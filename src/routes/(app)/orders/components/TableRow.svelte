@@ -37,7 +37,7 @@
   </td>
 
   <td class="text-lg">
-    {booking.treatmentsToStringDetailed}+enkc jkr vjk r vcij r irk
+    {booking.treatmentsToStringDetailed}
   </td>
 
   <td class="min-w-[145px]">

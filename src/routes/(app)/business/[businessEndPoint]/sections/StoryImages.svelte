@@ -10,6 +10,7 @@
 
   let workersStories: Record<string, StoryImageData> = {};
   let selectedStoryId: string = "";
+
   workersStore.subscribe((workers) => {
     workersStories = {};
     Object.values(workers).forEach((worker) => {

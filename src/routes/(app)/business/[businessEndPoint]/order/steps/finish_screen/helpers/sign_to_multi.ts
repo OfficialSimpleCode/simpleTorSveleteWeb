@@ -1,9 +1,8 @@
-import { goto } from "$app/navigation";
-import { base } from "$app/paths";
 import BookingController, {
   bookingMakerStore,
 } from "$lib/controllers/booking_controller";
 import { ErrorsController } from "$lib/controllers/errors_controller";
+import { openOrdersPage } from "$lib/controllers/page_controller";
 import MultiBookingHelper from "$lib/helpers/multi_booking/multi_booking_helper";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
@@ -74,8 +73,13 @@ export async function signToMulti({
   }
 
   if (result) {
+    //update the finish prperty
+    bookingMakerStore.update((value) => {
+      value.finish = true;
+      return value;
+    });
     //jump to my bookings page after succedded with the order
-    goto(`${base}/appointments`);
+    openOrdersPage();
   }
 }
 

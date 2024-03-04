@@ -9,8 +9,6 @@
   import FinishButton from "./components/FinishButton.svelte";
   import ServicesPreview from "./components/ServicesPreview.svelte";
   export let verificationDialog: HTMLDialogElement;
-  let paymentDialog: HTMLDialogElement;
-  let amount: number;
 </script>
 
 <section class="flex flex-col items-center gap-8 w-[90%] sm:w-[70%]">

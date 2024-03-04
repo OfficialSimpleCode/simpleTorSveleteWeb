@@ -14,14 +14,17 @@
 
   import AttentionText from "$lib/components/custom_components/AttentionText.svelte";
   import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
+  import GeneralDialog from "$lib/components/dialogs/GeneralDialog.svelte";
   import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
   import { maxButtonSize } from "$lib/consts/sizes";
+  import { pushDialog } from "$lib/utils/general_utils";
   import { getPublicCustomer } from "../helpers/get_public_user";
   import { handleApproveTerm } from "../helpers/handle_approving_term";
   import { onFinishNavigator } from "../helpers/on_finish_navigator";
   export let verificationDialog: HTMLDialogElement;
   let termDialog: HTMLDialogElement;
   let downloadAppDialog: HTMLDialogElement;
+  let needVerificationForReminderDialog: HTMLDialogElement;
   let isLoading: boolean = false;
 
   const publicCustomer: PublicCustomer = getPublicCustomer();
@@ -58,7 +61,15 @@
       return;
     }
     if (get(bookingMakerStore).showVerificationAlert) {
-      await handleVerification(verificationDialog);
+      console.log("ddddddddddddddd", BookingController.worker?.mustVerifyPhone);
+      console.log(BookingController.worker);
+      if (BookingController.worker?.mustVerifyPhone != true) {
+        pushDialog(needVerificationForReminderDialog);
+      } else {
+        await handleVerification(verificationDialog);
+      }
+
+      return;
     } else {
       await addBooking();
     }
@@ -101,6 +112,19 @@
   explainTranslateKey={"paymentOnBookingAreNotAvailableOnWeb"}
 />
 
+<GeneralDialog
+  bind:dialog={needVerificationForReminderDialog}
+  titleTransKey={"weNeedPhoneVerification"}
+  content={translate("phoneVerificationExplain")}
+  onCancel={addBooking}
+  onSave={async () => {
+    handleVerification(verificationDialog);
+    needVerificationForReminderDialog.close();
+  }}
+  maxWidth="max-w-[400px]"
+  saveTranslateKey={"verify"}
+  cancelTranslateKey={"skip"}
+/>
 <!-- xs:px-10 px-3 -->
 <div class="flex flex-col items-center justify-center gap-3 w-full">
   {#if needOnHold}

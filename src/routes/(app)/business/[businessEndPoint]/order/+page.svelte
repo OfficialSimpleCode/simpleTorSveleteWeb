@@ -26,6 +26,7 @@
 
   beforeNavigate(({ cancel }) => {
     if (
+      !$bookingMakerStore.finish &&
       !confirm(
         translate(
           $bookingMakerStore.isUpdate

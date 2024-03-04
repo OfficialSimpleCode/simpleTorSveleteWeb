@@ -235,9 +235,9 @@ export default class WorkerModel {
   }
   /// Get workerJson and update the current worker fields
   setFromWorkerDoc(workerJson: Record<string, any>): void {
-    this.daysToAllowBookings = workerJson["daysToAllowBookings"] || 7;
-    this.profileImg = workerJson["profileImg"] || "";
-    this.about = workerJson["about"] || "";
+    this.daysToAllowBookings = workerJson["daysToAllowBookings"] ?? 7;
+    this.profileImg = workerJson["profileImg"] ?? "";
+    this.about = workerJson["about"] ?? "";
     if (workerJson["lastCleanDate"] instanceof Timestamp) {
       this.lastCleanDate = workerJson["lastCleanDate"].toDate();
     } else if (typeof workerJson["lastCleanDate"] === "string") {
@@ -251,33 +251,33 @@ export default class WorkerModel {
 
     if (workerJson["windowSpaces"]) {
       this.windowSpaces =
-        windowSpacesFromStr[workerJson["windowSpaces"]] ||
+        windowSpacesFromStr[workerJson["windowSpaces"]] ??
         WindowSpaces.shortestTreatment;
     }
 
     this.isCustomersNeedRecurrence =
-      workerJson["isCustomersNeedRecurrence"] || false;
+      workerJson["isCustomersNeedRecurrence"] ?? false;
 
     this.showWaitingListWhenThereIsChoises =
       workerJson["showWaitingListWhenThereIsChoises"] ?? true;
-    this.customWindowMinute = workerJson["customWindowMinute"] || 30;
+    this.customWindowMinute = workerJson["customWindowMinute"] ?? 30;
     this.closeScheduleOnHolidays =
-      workerJson["closeScheduleOnHolidays"] || false;
-    this.weekendDays = workerJson["weekendDays"] || [5, 6];
-    this.mustVerifyPhone = workerJson["mustVerifyPhone"] || true;
-    this.showVacations = workerJson["showVacations"] || true;
-    this.gender = genderFromStr[workerJson["gender"]] || Gender.anonymous;
+      workerJson["closeScheduleOnHolidays"] ?? false;
+    this.weekendDays = workerJson["weekendDays"] ?? [5, 6];
+    this.mustVerifyPhone = workerJson["mustVerifyPhone"] ?? true;
+    this.showVacations = workerJson["showVacations"] ?? true;
+    this.gender = genderFromStr[workerJson["gender"]] ?? Gender.anonymous;
 
-    this.allowAppNotification = workerJson["allowAppNotification"] || true;
-    this.name = workerJson["name"] || "";
-    this.maxTreatments = workerJson["maxTreatments"] || 3;
+    this.allowAppNotification = workerJson["allowAppNotification"] ?? true;
+    this.name = workerJson["name"] ?? "";
+    this.maxTreatments = workerJson["maxTreatments"] ?? 3;
 
-    this.phone = workerJson["phone"] || "";
-    this.hasRecurrenceEvents = workerJson["hasRecurrenceEvents"] || false;
-    this.id = workerJson["id"] || workerJson["phone"] || "";
+    this.phone = workerJson["phone"] ?? "";
+    this.hasRecurrenceEvents = workerJson["hasRecurrenceEvents"] ?? false;
+    this.id = workerJson["id"] ?? workerJson["phone"] ?? "";
     this.minutesBeforeBookingToConfirm =
-      workerJson["minutesBeforeBookingToConfirm"] || 1440;
-    this.maxFutureBookings = workerJson["maxFutureBookings"] || 4;
+      workerJson["minutesBeforeBookingToConfirm"] ?? 1440;
+    this.maxFutureBookings = workerJson["maxFutureBookings"] ?? 4;
 
     this.treatmentsSubjects = new Map();
 
