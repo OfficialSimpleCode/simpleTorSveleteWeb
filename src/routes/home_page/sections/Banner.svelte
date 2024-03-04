@@ -13,19 +13,20 @@
       <h1
         class="max-w-2xl mb-4 text-3xl font-extrabold tracking-tight leading-none md:text-4xl xl:text-5xl"
       >
-        מיקסום היעילות בעסק, תן לנו לנהל לך את התורים
+        הלקוחות קובעים תורים בקליק
       </h1>
 
       <!-- sub title -->
       <p
         class="max-w-2xl mb-6 font-light lg:mb-8 md:text-lg lg:text-xl opacity-70"
       >
-        מערכת סימפל תור מנהלת עבורך את העסק והתורים
+        יומן חכם המאפשר לכל בעל עסק לנהל את העסק שלו בצורה נוחה ופשוטה מהמכשיר
+        הסלולארי
       </p>
 
       <!-- download app button -->
 
-      <div class=" justify-center lg:justify-start w-full">
+      <div class="flex justify-center lg:justify-start w-full">
         <DownloadAppButton />
         <!-- <div class="">
           

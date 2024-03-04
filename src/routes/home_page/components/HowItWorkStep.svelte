@@ -37,32 +37,21 @@
     <div class="flex flex-col justify-center items-center gap-10 w-full">
       <!-- step image -->
       <div class="lg:col-span-5 lg:flex px-10 py-5">
-        <!-- <img src={imageSrc} alt="mockup" /> -->
-        <!-- <DeviceMock mediaSrc={imageSrc} uuid={`HowItWorks-${stepNumber}`} /> -->
+        <!-- step animation -->
         <LottieAnimation loop animationFile={imageSrc} size="xl3" />
       </div>
 
       <div class="flex flex-row justify-center items-center gap-3">
-        <!-- number and circle -->
-        <!-- <div
-        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full {colors[
-          stepNumber - 1
-        ]} border-2 border-solid border-primary"
-      >
-        <span class="text-base font-bold leading-7">{stepNumber}</span>
-      </div> -->
-
-        <!-- step title and sub title -->
+        <!-- step text -->
         <div
           class="flex flex-col justify-center items-centermax-w-[320px] {colors[
             stepNumber - 1
           ]} "
         >
           <!-- title -->
-          <h3 class="text-lg font-bold">
+          <p class="text-lg font-bold">
             {titleTransKey}
-          </h3>
-          <!-- sub title -->
+          </p>
         </div>
       </div>
     </div>

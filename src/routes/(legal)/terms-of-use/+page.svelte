@@ -11,13 +11,18 @@
   }
 </script>
 
-<head>
+<svelte:head>
+  <title>Simple Tor | terms of use</title>
   <meta name="description" content="Simple tor app's terms of use" />
   <link rel="icon" href={appIcon} type="image/webp" />
   <meta name="author" content="SA SIMPLE CODE LTD" />
+
+  <!-- Open graphes links -->
   <meta property="og:title" content="Simple Tor | terms of use" />
-  <title>Simple Tor | terms of use</title>
-</head>
+  <meta property="og:description" content="Simple tor app's terms of use" />
+  <!-- The prefered link for this page -->
+  <link rel="canonical" href="https://simpletor.app/terms-of-use" />
+</svelte:head>
 
 <ContactUsDialog bind:dialog={contactUsDialog} />
 

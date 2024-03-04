@@ -6,7 +6,7 @@
 
 <section class="bg-gradient-to-r from-base-200 py-10 lg:py-28">
   <!-- title and sub-title -->
-  <div class="flex flex-col justify-center items-center">
+  <div class="flex flex-col justify-center items-center mx-4">
     <h2 class="text-2xl font-bold text-center sm:text-4xl">
       {translate("realThing", $_)}
     </h2>

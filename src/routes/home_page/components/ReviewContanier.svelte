@@ -22,7 +22,7 @@
 
     <!-- name and bio -->
     <div class="grid">
-      <h5 class="transition-all duration-500">{reviewItem.name}</h5>
+      <p class="transition-all duration-500">{reviewItem.name}</p>
       <span class="text-sm leading-6 opacity-70">{reviewItem.bio}</span>
     </div>
   </div>

@@ -73,11 +73,7 @@
     <meta name="description" content={translate("simpleTorDesc", $_)} />
     <!-- icon im the window -->
     <link rel="icon" href="/AppIcon.png" />
-    <!-- the url for search to display for this site -->
-    <link
-      rel="canonical"
-      href={`${$page.url.origin}${$page.url.pathname}`.replace("www.", "")}
-    />
+
     <!-- site keywords -->
     <meta name="keywords" content={keywords.join(" ,")} />
 
@@ -91,6 +87,9 @@
     <meta property="og:description" content={translate("simpleTorDesc", $_)} />
     <!-- image in the center of the link -->
     <meta property="og:image" content="/AppIcon.png" />
+
+    <!-- icon for iphones that saves the web -->
+    <link rel="apple-touch-icon" href="/AppIcon.png" />
   {/if}
   <!--  -->
 </svelte:head>

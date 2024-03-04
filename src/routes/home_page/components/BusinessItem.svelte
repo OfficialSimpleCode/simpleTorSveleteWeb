@@ -24,7 +24,7 @@
     class="flex flex-col justify-center items-center backdrop-blur-2xl mx-auto px-3 my-2 {containerRadius}"
   >
     <!-- title -->
-    <h3 class="my-1 text-white">{businessData.name}</h3>
+    <p class="my-1 text-white">{businessData.name}</p>
   </div>
 
   <!-- sub title

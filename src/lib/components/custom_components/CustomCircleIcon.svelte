@@ -49,7 +49,7 @@
 
   {#if translateKey}
     <div>
-      <h3 class="text-sm pt-1">{translate(translateKey, $_, needGender)}</h3>
+      <p class="text-sm pt-1">{translate(translateKey, $_, needGender)}</p>
     </div>
   {/if}
 </div>

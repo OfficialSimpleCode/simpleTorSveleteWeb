@@ -30,7 +30,7 @@
             src={language.flag}
             alt={translate("flagOf", $_).replaceAll("COUNTRY", language.name)}
           />
-          <h3 class="text-sm">{$_(language.name)}</h3>
+          <p class="text-sm">{$_(language.name)}</p>
         </button>
       {/each}
     </div>

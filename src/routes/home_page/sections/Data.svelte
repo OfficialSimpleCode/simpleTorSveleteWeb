@@ -16,7 +16,7 @@
 
       <!-- title -->
       <h2 class="block w-full text-3xl sm:text-4xl">
-        {translate("storesStars", $_)}
+        {translate("ourData", $_)}
       </h2>
 
       <!-- sub title -->

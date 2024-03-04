@@ -34,9 +34,7 @@
       <a target="_blank" href={downloadLink} class="link link-hover"
         >{translate("queueSystem", $_)}</a
       >
-      <button class="link link-hover"
-        >{translate("systemsDevelopment", $_)}</button
-      >
+      <p class="link link-hover">{translate("systemsDevelopment", $_)}</p>
       <button class="link link-hover" on:click={openContactUs}
         >{translate("ContactUs", $_)}</button
       >
