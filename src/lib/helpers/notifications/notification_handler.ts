@@ -3,6 +3,8 @@ import {
   BookingStatuses,
   NotificationType,
 } from "$lib/consts/booking";
+import { recurrenceScheduleNotificationUpdateRangeDays } from "$lib/consts/limitation";
+import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
 import Booking from "$lib/models/booking/booking_model";
 import { Duration } from "$lib/models/core/duration";
@@ -18,6 +20,7 @@ import { isNotEmpty } from "$lib/utils/core_utils";
 import { addDuration, subDuration } from "$lib/utils/duration_utils";
 import { sendMessagePaymentRequest } from "$lib/utils/notifications_utils";
 import { dateToDateStr, setToMidNight } from "$lib/utils/times_utils";
+import BookingHelper from "../booking/booking_helper";
 import MessagesHelper from "./messages/messages_helper";
 import NotificationsHelper from "./notifications/notification_helper";
 
@@ -957,5 +960,131 @@ export default class NotificationHandler {
     // Now you can handle the logic to delete notifications and messages based on the collected data
 
     return true; // Return true if the operation is successful
+  }
+
+  async makeMessageReminderToAllBookings(
+    bookingsToRemind: Record<string, Booking>
+  ): Promise<void> {
+    const bookingsToScheduleByBusinesses: Record<
+      string,
+      Record<string, Booking>
+    > = {};
+    const bookings: Record<string, Booking> = {};
+    const futures: Promise<void>[] = [];
+    const businessesMessageCounter: Record<string, number> = {};
+
+    // Sort all bookings by business and recurrence
+    for (const booking of Object.values(bookingsToRemind)) {
+      if (!booking.recurrenceEvent) {
+        bookingsToScheduleByBusinesses[booking.buisnessId] ??= {};
+        bookingsToScheduleByBusinesses[booking.buisnessId]![booking.bookingId] =
+          booking;
+      }
+    }
+
+    for (const [businessId, bookingsByBusiness] of Object.entries(
+      bookingsToScheduleByBusinesses
+    )) {
+      futures.push(
+        (async () => {
+          // Check the business data
+          const businessData = await BusinessInitializer.GI().getBuinessData(
+            businessId
+          );
+          businessesMessageCounter[businessId] = businessData.totalMessages;
+
+          // Add the business bookings that need to be scheduled
+          const numBookings = Math.min(
+            businessData.totalMessages,
+            Object.keys(bookingsByBusiness).length
+          );
+          for (let i = 0; i < numBookings; i++) {
+            const booking =
+              bookingsByBusiness[Object.keys(bookingsByBusiness)[i]];
+            bookings[booking.buisnessId] = booking;
+          }
+
+          businessesMessageCounter[businessId] -= numBookings;
+        })()
+      );
+    }
+
+    await Promise.all(futures);
+
+    // Make all regular bookings
+    await MessagesHelper.GI().scheduleMessageToMultipleBookings(bookings);
+
+    for (const booking of Object.values(bookings)) {
+      BookingHelper.GI().updateNotificationType(
+        booking,
+        NotificationType.message
+      );
+    }
+  }
+
+  async makeMessageReminderToAllRecurrenceBookings(
+    bookingsToRemind: Record<string, Booking>
+  ): Promise<void> {
+    const bookingsToScheduleByBusinesses: Record<
+      string,
+      Record<string, Booking>
+    > = {};
+    const recurrenceBookings: Record<string, Booking> = {};
+    const futures: Promise<void>[] = [];
+    const businessesMessageCounter: Record<string, number> = {};
+
+    // Sort all bookings by business and recurrence
+    for (const booking of Object.values(bookingsToRemind)) {
+      if (booking.recurrenceEvent) {
+        bookingsToScheduleByBusinesses[booking.buisnessId] ??= {};
+        bookingsToScheduleByBusinesses[booking.buisnessId]![booking.bookingId] =
+          booking;
+      }
+    }
+
+    for (const [businessId, bookings] of Object.entries(
+      bookingsToScheduleByBusinesses
+    )) {
+      futures.push(
+        (async () => {
+          if (!businessesMessageCounter[businessId]) {
+            // Check the business data
+            const businessData = await BusinessInitializer.GI().getBuinessData(
+              businessId
+            );
+            businessesMessageCounter[businessId] = businessData.totalMessages;
+          }
+
+          // Add the business bookings that need to be scheduled
+          for (const [bookingId, booking] of Object.entries(bookings)) {
+            // Estimate how much the recurrence will remove from the counter
+            const accureances = Math.min(
+              booking.recurrenceEvent!.accurances ?? 9999,
+              recurrenceScheduleNotificationUpdateRangeDays
+            );
+
+            if (accureances < businessesMessageCounter[businessId]) {
+              recurrenceBookings[bookingId] = booking;
+              businessesMessageCounter[businessId] -= accureances;
+            }
+          }
+        })()
+      );
+    }
+
+    await Promise.all(futures);
+
+    // Make all recurrence bookings
+    for (const booking of Object.values(recurrenceBookings)) {
+      await NotificationHandler.GI().makeNotificationForRecurrenceBooking({
+        booking,
+        forceType: NotificationType.message,
+      });
+
+      BookingHelper.GI().updateNotificationType(
+        booking,
+        NotificationType.message
+      );
+    }
   }
 }

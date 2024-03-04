@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { pushState } from "$app/navigation";
   import type Booking from "$lib/models/booking/booking_model";
+  import { pushDialog } from "$lib/utils/general_utils";
   import BookingActions from "./BookingActions.svelte";
   import BookingDateAndTime from "./BookingDateAndTime.svelte";
   import BookingPriceAndDuration from "./BookingPriceAndDuration.svelte";
@@ -13,10 +13,7 @@
   let bookingDialog: HTMLDialogElement;
 
   function openBookingSheet() {
-    pushState("", {
-      showModal: true,
-    });
-    setTimeout(() => bookingDialog.showModal(), 100);
+    pushDialog(bookingDialog);
   }
 </script>
 
@@ -28,22 +25,27 @@
   on:click={openBookingSheet}
   class="group bg-base-200 hover:bg-base-300 hover:bg-opacity-20 cursor-pointer border border-base-300"
 >
-  <td class="flex flex-row justify-start items-center">
-    <CircleIcons {booking}></CircleIcons>
-    <h1 class="text-xl text-nowrap">{booking.businessName}</h1>
+  <td>
+    <div class="flex flex-row justify-center items-center">
+      <CircleIcons {booking} />
+      <p class="text-lg">{booking.businessName}</p>
+    </div>
   </td>
 
-  <td class="text-xl">
+  <td class="text-lg">
     {booking.workerName}
+  </td>
+
+  <td class="text-lg">
+    {booking.treatmentsToStringDetailed}+enkc jkr vjk r vcij r irk
   </td>
 
   <td class="min-w-[145px]">
     <!-- svelte-ignore missing-declaration -->
-    <BookingPriceAndDuration {booking} isRow={false}></BookingPriceAndDuration>
+    <BookingPriceAndDuration {booking} isRow={false} />
   </td>
-
   <td>
-    <BookingDateAndTime {booking}></BookingDateAndTime>
+    <BookingDateAndTime {booking} />
   </td>
 
   <td class="text-nowrap">

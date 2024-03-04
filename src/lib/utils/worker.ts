@@ -5,3 +5,11 @@ export function isManager(id: string): boolean {
     ? GeneralData.currentBusinesssId.startsWith(id.substring(1))
     : GeneralData.currentBusinesssId.startsWith(id);
 }
+
+export function getManagerIdFromBusinessId(businessId: string): string {
+  const managerId = businessId.split("--")[0];
+  if (managerId.length < 30) {
+    return "+" + managerId;
+  }
+  return managerId;
+}

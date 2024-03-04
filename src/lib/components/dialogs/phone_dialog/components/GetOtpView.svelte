@@ -14,7 +14,7 @@
   export let dialog: HTMLDialogElement;
   export let loginReason: LoginReason;
   export let dispatch: EventDispatcher<any>;
-  let otp: string = "";
+  export let otp: string = "";
   let loading: boolean = false;
 
   async function onContinue() {
@@ -23,12 +23,16 @@
     }
     loading = true;
     try {
-      await handleLogin({
+      const resp = await handleLogin({
         provider: AuthProvider.Phone,
         loginReason: loginReason,
         otp,
         dispatch,
       });
+      if (resp != null) {
+        console.log("ssssssssss");
+        otp = "";
+      }
     } finally {
       loading = false;
     }
@@ -68,6 +72,7 @@
     on:valueChange={onChanged}
     type={InputOptions.number}
     isActive={!loading}
+    value={otp}
     isOTP={true}
   />
 

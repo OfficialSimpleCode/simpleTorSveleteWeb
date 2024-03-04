@@ -248,3 +248,8 @@ export function parseVersionToInt(version: string): number {
   });
   return versionNum;
 }
+
+export function phoneToPhoneHint(phone: string): string {
+  const indexOfHiphen = phone.indexOf("-");
+  return phone.substring(indexOfHiphen + 1, phone.length);
+}

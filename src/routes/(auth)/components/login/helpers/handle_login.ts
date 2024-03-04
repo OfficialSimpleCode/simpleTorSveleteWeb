@@ -108,7 +108,7 @@ export async function handleLogin({
     } else {
       ErrorsController.displayError();
     }
-    return;
+    return resp;
   }
 
   await setUpUser();

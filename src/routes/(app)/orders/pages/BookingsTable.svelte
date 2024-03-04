@@ -13,6 +13,7 @@
     <tr>
       <th>{translate("business", $_)}</th>
       <th>{translate("worker", $_)}</th>
+      <th>{translate("treatments", $_)}</th>
       <th>{translate("details", $_)}</th>
       <th>{translate("dateAndTime", $_)}</th>
       <th>{translate("status", $_)}</th>

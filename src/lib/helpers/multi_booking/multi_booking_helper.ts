@@ -15,6 +15,7 @@ import TicketInfo from "$lib/models/payment_hyp/payment_request/ticket_info";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { needToHoldOn } from "$lib/utils/booking_utils";
 import { dateToDateStr, setToMidNight } from "$lib/utils/times_utils";
+import { getManagerIdFromBusinessId } from "$lib/utils/worker";
 import DbPathesHelper from "../db_paths_helper";
 import NotificationHandler from "../notifications/notification_handler";
 import PaymentRequestHelper from "../payment_request/payment_request_helper";
@@ -349,25 +350,77 @@ export default class MultiBookingHelper {
         docId: dateToDateStr(multiBooking.bookingDate),
       });
     }
+
+    //update also in the manager - manager can access worjer bookings
+    //so need to iupdate it on the manager too
+    const managerId = getManagerIdFromBusinessId(multiBooking.buisnessId);
+    //no need to update the manager it is the worker we update before
+    if (
+      UserInitializer.GI().user.id != managerId &&
+      managerId != multiBooking.workerId
+    ) {
+      if (multiBooking.bookingDate < setToMidNight(new Date())) {
+        UserInitializer.GI().addLocalDocToDelete({
+          userId: managerId,
+          path: DbPathesHelper.GI().workerLocalBookingsPath(
+            multiBooking.workerId,
+            multiBooking.buisnessId
+          ), //get worker path
+          docId: dateToDateStr(multiBooking.bookingDate),
+        });
+      }
+    }
   }
 
   async saveMultiBookingLocaly({
     multiBooking,
-    worker,
+
     recurrenceMultiBooking,
   }: {
     multiBooking: MultiBooking;
-    worker: WorkerModel;
     recurrenceMultiBooking?: MultiBooking;
-    saveFuture?: boolean;
   }): Promise<void> {
+    // PAST multi booking
+
+    // Update in the worker
+    await this.addMultiBookingToUserLocalData({
+      multiBooking,
+      userToUpdate: multiBooking.workerId,
+      recurrenceMultiBooking,
+    });
+
+    // Update also in the manager - manager can access worker bookings
+    // So need to update it on the manager too
+    const managerId = getManagerIdFromBusinessId(multiBooking.buisnessId);
+    // No need to update the manager, it is the worker we update before
+    if (managerId !== multiBooking.workerId) {
+      await this.addMultiBookingToUserLocalData({
+        multiBooking,
+        userToUpdate: managerId,
+        recurrenceMultiBooking,
+      });
+    }
+  }
+
+  async addMultiBookingToUserLocalData({
+    multiBooking,
+    userToUpdate,
+    recurrenceMultiBooking,
+  }: {
+    multiBooking: MultiBooking;
+    userToUpdate: string;
+    recurrenceMultiBooking?: MultiBooking;
+  }): Promise<void> {
+    // Add the days to delete the bookings data to the user
+    // The data that is currently in the user phone is not updated
+    // Need to update it when the user enters the app
     if (multiBooking.bookingDate < setToMidNight(new Date())) {
       UserInitializer.GI().addLocalDocToDelete({
-        userId: worker.id,
+        userId: userToUpdate,
         path: DbPathesHelper.GI().workerLocalBookingsPath(
           multiBooking.workerId,
           multiBooking.buisnessId
-        ),
+        ), // Get the worker booking path
         docId: dateToDateStr(multiBooking.bookingDate),
       });
     }
@@ -379,11 +432,11 @@ export default class MultiBookingHelper {
         dateToDateStr(multiBooking.bookingDate)
       );
       UserInitializer.GI().addLocalDocToDelete({
-        userId: worker.id,
+        userId: userToUpdate,
         path: DbPathesHelper.GI().workerLocalBookingsPath(
-          recurrenceMultiBooking.workerId,
+          multiBooking.workerId,
           recurrenceMultiBooking.buisnessId
-        ),
+        ), // Get the worker booking path
         docId: dateToDateStr(recurrenceMultiBooking.bookingDate),
       });
     }

@@ -78,16 +78,16 @@
 
       <!-- name price and time -->
       <div class="flex flex-col items-start justify-between gap-2">
-        <h3 class="font-semibold text-lg xs:text-2xl">
+        <h3 class="font-semibold text-lg xs:text-xl">
           {treatmentAmount === 1
             ? Object.values($bookingMakerStore.services)[0].name
             : `${treatmentAmount} ${translate("treatments")}`}
         </h3>
-        <div class="flex flex-row gap-[6px] opacity-70">
+        <div class="flex flex-row gap-[6px] opacity-70 text-nowrap truncate">
           <!-- price indicator -->
-          <div>
+          <div class="flex flex-row gap-[4px]">
             {#if priceText != ""}
-              <h3>{priceText}</h3>
+              <p>{priceText}</p>
             {/if}
             {#if priceText != translate("notKnown")}
               {new Price({
@@ -97,18 +97,19 @@
             {/if}
           </div>
           |
-          <div>
+          <!-- time indicator -->
+          <div class="flex flex-row gap-[4px]">
             {#if timeText != ""}
-              <h3>{timeText}</h3>
+              <p>{timeText}</p>
             {/if}
             {#if timeText != translate("notKnown")}
               <div class="flex flex-row gap-2">
-                <h3>
+                <p>
                   {printDuration(new Duration({ minutes: totalMinutes }))}
-                </h3>
-                <h3>
+                </p>
+                <p>
                   {translate("hours")}
-                </h3>
+                </p>
               </div>
             {/if}
           </div>
@@ -116,16 +117,17 @@
             |
           {/if}
 
+          <!-- participants indicator -->
           {#if length($bookingMakerStore.services) === 1 && Object.values($bookingMakerStore.services)[0].isMulti && Object.values($bookingMakerStore.services)[0].showParticipants}
             {#if Object.values($bookingMakerStore.services)[0].participants === 1}
-              <h3>{translate("oneParticipant")}</h3>
+              <p>{translate("oneParticipant")}</p>
             {:else}
-              <h3>
+              <p>
                 {Object.values(
                   $bookingMakerStore.services
                 )[0].participants.toString()}
                 {translate("participants")}
-              </h3>
+              </p>
             {/if}
           {/if}
         </div>

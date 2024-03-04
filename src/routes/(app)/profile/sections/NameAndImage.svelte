@@ -8,7 +8,7 @@
 
 <section class="flex flex-col items-center">
   <Avatar small={true} ring={false} img={imageByGender($userStore.gender)} />
-  <h1 class="text-xl mt-5">{$userStore.name}</h1>
+  <h1 class="text-xl mt-3">{$userStore.name}</h1>
   <h5 class="text-sm text-gray-500">
     {translate("since")}: {dateToDateStr($userStore.createdAt)}
   </h5>

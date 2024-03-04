@@ -1485,7 +1485,7 @@
   "recurrenceBookingExceptionDateAddedUserChange": "The recurring booking that started on STARTDATE has been updated by the customer and will not apply on EXCEPTIONDATE",
   "clientsCantSee": "Clients will not be able to see this comment",
   "onDays": "on days",
-  "onDay": "on day",
+  "onDay": "On",
   "accordingToWeekDays": "By the days of the week",
   "chooseTheWeekDays": "choose week days",
   "recurringEvent": "Recurring event",
@@ -3232,5 +3232,7 @@
   "simpleTorLogo": "Simple Tor logo",
   "chipIcon": "chip icon",
   "profileImage": "Profile Image",
-  "simpleTorDesc": "Advanced business management system, appointment calling, employee management, payments and receipts from the phone and no unnecessary fuss"
+  "simpleTorDesc": "Advanced business management system, appointment calling, employee management, payments and receipts from the phone and no unnecessary fuss",
+  "theBookingDataWillBeDeletedAreSure": "Are you sure you are running out? The booking data you have set so far will not be saved",
+  "theUpdateBookingDataWillBeDeletedAreSure": "Are you sure you are running out? The booking update will stop and the data will not be saved"
 }

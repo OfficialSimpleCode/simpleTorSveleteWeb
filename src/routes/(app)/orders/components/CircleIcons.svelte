@@ -19,7 +19,7 @@
   }
 </script>
 
-<div class="flex flex-row">
+<div class="flex flex-row justify-center">
   <div class="avatar">
     <div class="mask mask-squircle w-[70px] h-[70px] rounded-full">
       <img

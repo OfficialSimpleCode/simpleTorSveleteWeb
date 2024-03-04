@@ -9,11 +9,12 @@
   export let imageAlt: string = "";
   export let titleTransKey: string;
   export let content: string;
-  export let onSave: () => Promise<any>;
+  export let onSave: () => Promise<any> = async () => {};
   export let onCancel: () => Promise<any> = async () => {};
   export let cancelTranslateKey: string = "cancel";
   export let saveTranslateKey: string = "save";
   export let maxWidth: string = "";
+  export let showCancel: boolean = true;
 
   let loadingCancel: boolean = false;
   let loadingSave: boolean = false;
@@ -43,29 +44,31 @@
 
     <!-- button actions buttons -->
     <div class="modal-action w-full flex px-2 gap-2 pt-2">
-      <button
-        class="btn btn-sm btn-outline flex-[1]"
-        on:click={async () => {
-          if (loadingCancel) {
-            return;
-          }
-          try {
-            loadingCancel = true;
-            const resp = await onCancel();
-            if (resp !== false) {
-              dialog.close();
+      {#if showCancel}
+        <button
+          class="btn btn-sm btn-outline flex-[1]"
+          on:click={async () => {
+            if (loadingCancel) {
+              return;
             }
-          } finally {
-            loadingCancel = false;
-          }
-        }}
-      >
-        {#if loadingCancel}
-          <div class="loading loading-spinner" />
-        {:else}
-          {translate(cancelTranslateKey, $_)}
-        {/if}
-      </button>
+            try {
+              loadingCancel = true;
+              const resp = await onCancel();
+              if (resp !== false) {
+                dialog.close();
+              }
+            } finally {
+              loadingCancel = false;
+            }
+          }}
+        >
+          {#if loadingCancel}
+            <div class="loading loading-spinner" />
+          {:else}
+            {translate(cancelTranslateKey, $_)}
+          {/if}
+        </button>
+      {/if}
       <button
         class="btn btn-sm btn-primary flex-[1] {loadingSave
           ? 'opacity-70'
