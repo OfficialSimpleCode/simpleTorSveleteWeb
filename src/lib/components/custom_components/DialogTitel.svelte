@@ -15,6 +15,6 @@
   >
     <Icon src={XCircle} size="24px" />
   </button>
-  <h3 class="font-bold text-me">{title ?? translate(titleTransKey)}</h3>
+  <h3 class="font-bold text-md">{title ?? translate(titleTransKey)}</h3>
   <div class="w-[24px]" />
 </div>

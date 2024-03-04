@@ -29,7 +29,10 @@
 
   const publicCustomer: PublicCustomer = getPublicCustomer();
 
-  console.log(publicCustomer);
+  console.log(
+    BookingController.worker.mustVerifyPhone,
+    $bookingMakerStore.showVerificationAlert
+  );
 
   const worker = BookingController.worker;
 
@@ -60,7 +63,7 @@
     if (!handleApproveTerm(termDialog)) {
       return;
     }
-    if (get(bookingMakerStore).showVerificationAlert) {
+    if ($bookingMakerStore.showVerificationAlert) {
       console.log("ddddddddddddddd", BookingController.worker?.mustVerifyPhone);
       console.log(BookingController.worker);
       if (BookingController.worker?.mustVerifyPhone != true) {
@@ -118,8 +121,8 @@
   content={translate("phoneVerificationExplain")}
   onCancel={addBooking}
   onSave={async () => {
-    handleVerification(verificationDialog);
     needVerificationForReminderDialog.close();
+    await handleVerification(verificationDialog);
   }}
   maxWidth="max-w-[400px]"
   saveTranslateKey={"verify"}

@@ -447,11 +447,17 @@ export function showPhoneVerificationAlert(worker: WorkerModel): boolean {
   const tempBooking = new Booking({});
   tempBooking.userFcms = UserInitializer.GI().user.fcmsTokens;
   tempBooking.isVerifiedPhone = true;
-
+  console.log(
+    "rrrrrrrrrrrrrrr",
+    sendMessage({ booking: tempBooking, worker: worker }) ==
+      NotificationType.message,
+    worker.mustVerifyPhone,
+    !UserInitializer.GI().user.userPublicData.isVerifiedPhone
+  );
   return (
-    (sendMessage({ booking: tempBooking, worker: worker }) ==
-      NotificationType.message ||
-      worker.mustVerifyPhone) &&
+    // (sendMessage({ booking: tempBooking, worker: worker }) ==
+    //   NotificationType.message ||
+    //   worker.mustVerifyPhone) &&
     !UserInitializer.GI().user.userPublicData.isVerifiedPhone
   );
 }

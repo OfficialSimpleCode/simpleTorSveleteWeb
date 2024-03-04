@@ -36,7 +36,7 @@
 
     <!-- content -->
 
-    <p class="text-center">
+    <p class="text-center text-sm">
       {content}
     </p>
 
