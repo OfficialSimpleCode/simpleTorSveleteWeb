@@ -48,6 +48,7 @@ interface BookingMaker {
   timePickerObjects: Record<string, TimePickerObj[]>;
   timePickerDisplayDates: Date[];
   numberOfShownDays: number;
+  finish: boolean;
 }
 export const bookingMakerStore = writable<BookingMaker>();
 
@@ -75,6 +76,7 @@ export default class BookingController {
       currentStep: 0,
       isMultiEvent: false,
       timePickerObjects: {},
+      finish: false,
 
       numberOfShownDays:
         get(screenSizeStore).width > maxWidthToShow5Days ? 7 : 5,

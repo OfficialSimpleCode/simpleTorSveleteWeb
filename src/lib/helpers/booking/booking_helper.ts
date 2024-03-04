@@ -1,5 +1,10 @@
 import { logger } from "$lib/consts/application_general";
-import { BookingReminderType, BookingStatuses } from "$lib/consts/booking";
+import {
+  BookingReminderType,
+  BookingStatuses,
+  NotificationType,
+  notificationTypeToStr,
+} from "$lib/consts/booking";
 import { NumericCommands } from "$lib/consts/db";
 import { EventFilterType } from "$lib/consts/worker_schedule";
 import { ErrorsController } from "$lib/controllers/errors_controller";
@@ -16,6 +21,7 @@ import { needToHoldOn } from "$lib/utils/booking_utils";
 import { isEmpty } from "$lib/utils/core_utils";
 import { setToMidNight } from "$lib/utils/dates_utils";
 import { dateToDateStr } from "$lib/utils/times_utils";
+import { getManagerIdFromBusinessId } from "$lib/utils/worker";
 
 import AppErrorsHelper from "../app_errors";
 import DbPathesHelper from "../db_paths_helper";
@@ -509,7 +515,7 @@ export default class BookingHelper {
         // Save the new recurrence booking with the new exception dates
         this.saveBookingLocaly({
           booking: newBooking || booking,
-          worker,
+
           recurrenceBooking: newBooking ? booking : undefined,
         });
       }
@@ -613,7 +619,6 @@ export default class BookingHelper {
 
   _addBookingLocally({
     booking,
-    worker,
 
     needPayInAdvance = false,
   }: {
@@ -629,7 +634,7 @@ export default class BookingHelper {
 
     // the worker orders from his schedule or from the regular order
     if (booking.buisnessId === GeneralData.currentBusinesssId) {
-      this.saveBookingLocaly({ booking, worker });
+      this.saveBookingLocaly({ booking });
     }
   }
 
@@ -681,23 +686,57 @@ export default class BookingHelper {
 
   async saveBookingLocaly({
     booking,
-    worker,
+
     recurrenceBooking,
   }: {
     booking: Booking;
-    worker: WorkerModel;
-    recurrenceBooking?: Booking | undefined;
-  }) {
-    // Add the days to delete the bookings data to the worker
-    // The data that is currently in the worker phone is not updated
-    // Need to update it when the worker enters the app
-    if (booking.bookingDate < setToMidNight(new Date())) {
+
+    recurrenceBooking?: Booking;
+  }): Promise<void> {
+    // PAST booking
+    // update in the worker
+    this.addBookingToUserLocalData({
+      booking: booking,
+      userToUpdate: booking.workerId,
+      recurrenceBooking: recurrenceBooking,
+    });
+
+    // update also in the manager - manager can access worker bookings
+    // so need to update it on the manager too
+    const managerId = getManagerIdFromBusinessId(booking.buisnessId);
+    // no need to update the manager if it is the same as the worker we updated before
+    if (managerId !== booking.workerId) {
+      this.addBookingToUserLocalData({
+        booking: booking,
+        userToUpdate: managerId,
+        recurrenceBooking: recurrenceBooking,
+      });
+    }
+  }
+
+  async addBookingToUserLocalData({
+    booking,
+    userToUpdate,
+    recurrenceBooking,
+  }: {
+    booking: Booking;
+    userToUpdate: string;
+    recurrenceBooking?: Booking;
+  }): Promise<void> {
+    // Add the days to delete the bookings data to the user
+    // The data that is currently in the user's phone is not updated
+    // Need to update it when the user enters the app
+
+    // No need to save multi booking ref on the worker - multi bookings
+    // On workers have different obj - can't save booking obj
+
+    if (booking.isPassed) {
       UserInitializer.GI().addLocalDocToDelete({
-        userId: worker.id,
+        userId: userToUpdate,
         path: DbPathesHelper.GI().workerLocalBookingsPath(
           booking.workerId,
           booking.buisnessId
-        ),
+        ), // Get the worker path
         docId: dateToDateStr(booking.bookingDate),
       });
     }
@@ -709,15 +748,31 @@ export default class BookingHelper {
       recurrenceBooking.recurrenceEvent.exceptionDates.add(
         dateToDateStr(booking.bookingDate)
       );
+
       UserInitializer.GI().addLocalDocToDelete({
-        userId: worker.id,
+        userId: userToUpdate,
         path: DbPathesHelper.GI().workerLocalBookingsPath(
           recurrenceBooking.workerId,
           recurrenceBooking.buisnessId
-        ),
+        ), // Get the worker path
         docId: dateToDateStr(recurrenceBooking.bookingDate),
       });
     }
+  }
+
+  async updateNotificationType(
+    booking: Booking,
+    notificationType: NotificationType
+  ): Promise<boolean> {
+    booking.notificationType = notificationType;
+    const resp = await this.bookingRepo.updateFieldsInBooking({
+      booking: booking,
+      data: { notificationType: notificationTypeToStr[notificationType] },
+    });
+    if (resp) {
+      await this.saveBookingLocaly({ booking: booking });
+    }
+    return resp;
   }
 
   removeBookingLocally({
@@ -739,6 +794,26 @@ export default class BookingHelper {
         ),
         docId: dateToDateStr(booking.bookingDate),
       });
+    }
+
+    //update also in the manager - manager can access worjer bookings
+    //so need to iupdate it on the manager too
+    const managerId = getManagerIdFromBusinessId(booking.buisnessId);
+    //no need to update the manager it is the worker we update before
+    if (
+      UserInitializer.GI().user.id != managerId &&
+      managerId != booking.workerId
+    ) {
+      if (booking.isPassed) {
+        UserInitializer.GI().addLocalDocToDelete({
+          userId: managerId,
+          path: DbPathesHelper.GI().workerLocalBookingsPath(
+            booking.workerId,
+            booking.buisnessId
+          ), //get worker path
+          docId: dateToDateStr(booking.bookingDate),
+        });
+      }
     }
   }
 }

@@ -48,10 +48,10 @@ export async function deleteTreatment(
     oldWorker: worker,
     oldBookingDateForReccurence: booking.recurrenceChildDate,
   });
-  if (resp) {
-    return history.back();
-  } else {
+  if (!resp) {
     ErrorsController.displayError();
   }
+  return resp;
+
   //TODO handle split treatment
 }

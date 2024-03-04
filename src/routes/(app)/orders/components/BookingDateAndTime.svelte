@@ -6,7 +6,7 @@
     dateToTimeStr,
     partOfDay,
   } from "$lib/utils/times_utils";
-  import { translate, _ } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
 
   export let booking: Booking;
 </script>
@@ -14,7 +14,9 @@
 <!-- date and time of the booking -->
 <div class="flex flex-col text-start max-w-[70%] text-nowrap">
   <div class="flex flex-row gap-1">
-    <p>{getDayString(booking.currentDisplayDate, translate("onDay", $_) + " ")}</p>
+    <p>
+      {getDayString(booking.currentDisplayDate, translate("onDay", $_) + " ")}
+    </p>
     <p dir="ltr">
       {"(" +
         dateToStrAccoridngToFormat(booking.currentDisplayDate, "dd/MM/yy") +

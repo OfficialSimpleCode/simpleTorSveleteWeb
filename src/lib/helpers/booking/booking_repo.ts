@@ -30,6 +30,7 @@ import {
   dateToDayStr,
   dateToMonthStr,
   dateToTimeStr,
+  dateToUtc,
   setTo1970,
 } from "$lib/utils/times_utils";
 import { Timestamp, increment, type Transaction } from "firebase/firestore";
@@ -147,8 +148,9 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       booking.bookingWorkTimes.forEach((duration, time) => {
         if (needPayInAdvance) {
           timesData[`duringPaymentBookingsTime.${strBookingDate}.${time}`] = [
-            //TODO utc
-            Timestamp.fromDate(addDuration(new Date(), payemntProcessDuration)),
+            Timestamp.fromDate(
+              addDuration(dateToUtc(new Date()), payemntProcessDuration)
+            ),
             duration,
           ];
         } else {

@@ -3,6 +3,7 @@
   import { ErrorsController } from "$lib/controllers/errors_controller";
   import deleteIcon from "$lib/images/delete.webp";
   import { userStore } from "$lib/stores/User";
+  import { phoneToPhoneHint } from "$lib/utils/string_utils";
   import { _, translate } from "$lib/utils/translate";
   import CustomPhoneField from "../custom_components/CustomPhoneField.svelte";
   import DialogTitel from "../custom_components/DialogTitel.svelte";
@@ -68,7 +69,7 @@
         <CustomPhoneField
           on:phoneChange={handlePhoneChange}
           bind:value
-          hint={$userStore.phoneNumber}
+          hint={phoneToPhoneHint($userStore.userPublicData.phoneNumber)}
           titleTransKey="enterPhone"
         />
       </div>

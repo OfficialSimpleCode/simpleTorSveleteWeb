@@ -39,6 +39,11 @@ export async function addBooking({
   }
 
   if (result != null) {
+    //update the finish prperty
+    bookingMakerStore.update((value) => {
+      value.finish = true;
+      return value;
+    });
     //jump to my bookings page after succedded with the order
     openOrdersPage();
   } else {

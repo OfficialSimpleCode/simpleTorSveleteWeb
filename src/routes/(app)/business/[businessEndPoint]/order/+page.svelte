@@ -4,6 +4,7 @@
 
   import { LoginReason } from "$lib/consts/auth";
 
+  import { beforeNavigate } from "$app/navigation";
   import BookingController, {
     bookingMakerStore,
   } from "$lib/controllers/booking_controller";
@@ -21,6 +22,22 @@
 
   onDestroy(() => {
     BusinessInitializer.GI().cancelAllWorkersRegularListenings();
+  });
+
+  beforeNavigate(({ cancel }) => {
+    if (
+      !$bookingMakerStore.finish &&
+      !confirm(
+        translate(
+          $bookingMakerStore.isUpdate
+            ? "theUpdateBookingDataWillBeDeletedAreSure"
+            : "theBookingDataWillBeDeletedAreSure",
+          $_
+        )
+      )
+    ) {
+      cancel();
+    }
   });
 </script>
 

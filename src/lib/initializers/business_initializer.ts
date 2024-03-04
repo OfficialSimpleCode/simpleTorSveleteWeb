@@ -546,4 +546,18 @@ export default class BusinessInitializer {
       `Get new workerData for the current worker updateReccurenceEvents --> ${workerId}`
     );
   }
+
+  async getBuinessData(businessId: string): Promise<BusinessData> {
+    if (businessId === this.business.businessId) {
+      return this.business.businessData;
+    }
+    // Get the businessData from the database
+    const businessDataChild = await this.generalRepo.getChild({
+      childPath: DbPathesHelper.GI().getBusinessDataPath(businessId),
+    });
+
+    const businessData = new BusinessData();
+    businessData.setBusinessData(businessDataChild);
+    return businessData;
+  }
 }

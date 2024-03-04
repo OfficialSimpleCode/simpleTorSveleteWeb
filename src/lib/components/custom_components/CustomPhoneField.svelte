@@ -115,6 +115,7 @@
       bind:valid
       bind:detailedValue
       name="phoneFormField"
+      options={{ autoPlaceholder: false }}
       placeholder={hint}
       disabled={!isActive}
       on:input={updatePhoneNumber}

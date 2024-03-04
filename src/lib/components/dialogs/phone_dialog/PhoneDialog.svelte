@@ -4,13 +4,22 @@
   import DialogStrucher from "../DialogStrucher.svelte";
   import GetOtpView from "./components/GetOtpView.svelte";
   import GetPhoneView from "./components/GetPhoneView.svelte";
+  import RecaptchaDialog from "./components/RecaptchaDialog.svelte";
   export let loginReason: LoginReason;
   export let dialog: HTMLDialogElement;
   export let insideOtp: boolean = false;
+  let recaptchaDialog: HTMLDialogElement;
+
   const dispatch = createEventDispatcher();
+  let otp: string = "";
+  function onClose() {
+    otp = "";
+  }
 </script>
 
-<DialogStrucher bind:dialog onlyMiddle={true}>
+<RecaptchaDialog bind:recaptchaDialog />
+
+<DialogStrucher bind:dialog onlyMiddle={true} on:close={onClose}>
   <div class="modal-box bg-base-200 pb-10 max-w-[400px]">
     {#if !insideOtp}
       <GetPhoneView
@@ -20,8 +29,7 @@
         }}
       />
     {:else}
-      <GetOtpView {loginReason} {dialog} {dispatch} />
+      <GetOtpView {loginReason} {dialog} bind:otp {dispatch} />
     {/if}
   </div>
-  <div id="recaptcha-container" class="absolute !z-[10000]"></div>
 </DialogStrucher>

@@ -3046,7 +3046,6 @@
   "company": "חברה",
   "notVerified": "לא מאומת",
   "termConfirmed": "תקנון מאושר",
-  "paymentOnBookingAreNotAvailibleOnWeb": "הזמנה זו מצריכה תשלום מראש - תשלומים דרך האתר יצאו בקרוב",
   "theBusinessWillOpenDierctlyInApp": "משתמש שיסרוק את הברקוד יועבר מיד לעסק באפלקיציה אם אין למשתמש את האפליקציה הוא יועבר לאתר העסק",
   "verificationCanceling": "ביטול אימות",
   "cancelVerificationExplain": "האם אתה בטוח שאתה רוצה לבטל את אימות מספר הפלאפון?",
@@ -3221,5 +3220,9 @@
   "chipIcon": "אייקון של צ'יפ",
   "profileImage": "תמונת פרפיל",
   "simpleTorDesc": "מערכת ניהול עסק מתקדמת, זימוני תורים, ניהול עובדים, תשלומים וקבלות מהטלפון וללא התעסקות מיותרת",
-  "ourData": "הנתונים שלנו"
+  "ourData": "הנתונים שלנו",
+  "theCodeSentSuccessfully": "הקוד נשלח בהצלחה",
+  "theBookingDataWillBeDeletedAreSure": "האם אתה בטוח שאתה רןצה לצאת? נתוני ההזמנה שקבעת עד עכשיו לא ישמרו",
+  "theUpdateBookingDataWillBeDeletedAreSure": "האם אתה בטוח שאתה רןצה לצאת? תהליך עדכון ההזמנה יפסק והנתונים לא ישמרו",
+  "paymentOnBookingAreNotAvailableOnWeb": "הזמנה זו מחייבת תשלום מראש - תשלומים דרך האתר יצאו בקרוב"
 }

@@ -745,7 +745,9 @@ export default class UserHelper {
         await this.handleScheduleMessgesPhoneChange(phone);
         await this.handleExistBookingsPhoneChange(phone);
       } else {
-        await this.makeReminderToAllBookingsWithoutRemminder(isVerified);
+        await this.makeReminderToAllBookingsWithoutReminderAfterVerification(
+          isVerified
+        );
       }
 
       // update locally
@@ -840,8 +842,62 @@ export default class UserHelper {
     }
   }
 
-  async makeReminderToAllBookingsWithoutRemminder(isVerified: boolean) {
-    //TODO
+  ///after the user verified his phone we put new messages reminders to all
+  ///of his bookings that has no reminders
+  async makeReminderToAllBookingsWithoutReminderAfterVerification(
+    isVerified: boolean
+  ): Promise<void> {
+    // If the phone is not verified, reminders cannot be scheduled.
+    if (!isVerified) {
+      return;
+    }
+
+    // For the avoidance of doubt: there is no need to load all bookings of the
+    // user. The future bookings and recurrence bookings are all we need
+    // and they are loaded initially with the user.
+
+    const recurrenceBookings: Record<string, Booking> = {};
+    const bookings: Record<string, Booking> = {};
+
+    // Sort all bookings by business and recurrence
+    Object.entries(UserInitializer.GI().user.bookings.all).forEach(
+      ([bookingId, booking]) => {
+        if (booking.isPassed) {
+          return;
+        }
+
+        // Schedule only for bookings that have no reminders
+        if (booking.notificationType !== NotificationType.none) {
+          return;
+        }
+
+        if (booking.recurrenceEvent == null) {
+          bookings[bookingId] = booking;
+        } else {
+          recurrenceBookings[bookingId] = booking;
+        }
+      }
+    );
+
+    const futures: Promise<void>[] = [];
+
+    // Make messages for all regular bookings
+    if (Object.keys(bookings).length > 0) {
+      futures.push(
+        NotificationHandler.GI().makeMessageReminderToAllBookings(bookings)
+      );
+    }
+
+    // Make messages for all recurrence bookings
+    if (Object.keys(recurrenceBookings).length > 0) {
+      futures.push(
+        NotificationHandler.GI().makeMessageReminderToAllRecurrenceBookings(
+          recurrenceBookings
+        )
+      );
+    }
+
+    await Promise.all(futures);
   }
 
   ///update the user phone in all the related bookings

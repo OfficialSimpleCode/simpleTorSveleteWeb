@@ -396,18 +396,8 @@ export default class MessagesHelper {
       return true;
     }
 
-    let businessData: BusinessData | undefined = undefined;
-    if (businessId === BusinessInitializer.GI().business.businessId) {
-      // Get the businessData from the loaded business
-      businessData = BusinessInitializer.GI().business.businessData;
-    } else {
-      // Get the businessData from the database
-      const businessDataChild = await this.generalRepo.getChild({
-        childPath: DbPathesHelper.GI().getBusinessDataPath(businessId),
-      });
-      businessData = new BusinessData();
-      businessData.setBusinessData(businessDataChild);
-    }
+    let businessData: BusinessData =
+      await BusinessInitializer.GI().getBuinessData(businessId);
 
     let messagesCounterRemoveCount = 0;
     let messagesCounterConsumableRemoveCount = 0;

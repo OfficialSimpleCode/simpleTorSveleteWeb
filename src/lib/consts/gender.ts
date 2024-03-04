@@ -1,5 +1,6 @@
-import ManProfile from "$lib/images/man_profile.webp";
-import WomanProfile from "$lib/images/woman_profile.webp";
+import ManProfile from "$lib/images/man_profile.png";
+import OtherProfile from "$lib/images/other_profile.png";
+import WomanProfile from "$lib/images/woman_profile.png";
 
 export enum Gender {
   male,
@@ -89,7 +90,7 @@ export const genderToStr: { [key in Gender]: string } = {
 export const genderToImage: { [key in Gender]: string } = {
   [Gender.male]: ManProfile,
   [Gender.female]: WomanProfile,
-  [Gender.anonymous]: ManProfile,
+  [Gender.anonymous]: OtherProfile,
 };
 
 export const genderFromStr: { [key: string]: Gender } = {
