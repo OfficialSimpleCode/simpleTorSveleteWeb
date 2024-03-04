@@ -5,13 +5,18 @@
   import Disclosure from "./sections/Disclosure.svelte";
 </script>
 
-<head>
+<svelte:head>
+  <title>Simple Tor | privacy policy</title>
   <meta name="description" content="Simple tor app's privacy policy" />
   <link rel="icon" href={appIcon} type="image/webp" />
   <meta name="author" content="SA SIMPLE CODE LTD" />
+
+  <!-- Open graphes links -->
   <meta property="og:title" content="Simple Tor | privacy policy" />
-  <title>Simple Tor | privacy policy</title>
-</head>
+  <meta property="og:description" content="Simple tor app's privacy policy" />
+  <!-- The prefered link for this page -->
+  <link rel="canonical" href="https://simpletor.app/privacy" />
+</svelte:head>
 
 <body class="bg-base-100 items-center">
   <div class="flex flex-col items-center pb-10">

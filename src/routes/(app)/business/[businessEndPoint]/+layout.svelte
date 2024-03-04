@@ -92,6 +92,9 @@
   />
   <!-- image in the center of the link -->
   <meta property="og:image" content={$businessStore?.design.shopIconUrl} />
+
+  <!-- icon for iphones that saves the web -->
+  <link rel="apple-touch-icon" href={$businessStore?.design.shopIconUrl} />
 </svelte:head>
 
 <!-- google analytics -->

@@ -2,11 +2,13 @@
   import Navbar from "$lib/components/navbar/Navbar.svelte";
   import { webLink } from "$lib/consts/app_external_links";
   import Footer from "../../lib/components/Footer.svelte";
+  import Articles from "./sections/Articles.svelte";
   import Banner from "./sections/Banner.svelte";
   import Businesses from "./sections/Businesses.svelte";
   import Data from "./sections/Data.svelte";
   import Download from "./sections/Download.svelte";
   import Examples from "./sections/Examples.svelte";
+  import Faq from "./sections/Faq.svelte";
   import Features from "./sections/Features.svelte";
   import HowItWorks from "./sections/HowItWorks.svelte";
   import Testimonials from "./sections/Testimonials.svelte";
@@ -89,6 +91,9 @@
 <svelte:head>
   <!-- the scheme.org of the business -->
   {@html jsonLdScript}
+
+  <!-- the url for search to display for this site -->
+  <link rel="canonical" href="https://simpletor.app" />
 </svelte:head>
 <main class="w-full h-full bg-base-200">
   <Navbar />
@@ -98,7 +103,9 @@
   <Examples />
   <Download />
   <Businesses />
+  <Articles />
   <Data />
   <Testimonials />
+  <Faq />
   <Footer generatedPage={false} />
 </main>

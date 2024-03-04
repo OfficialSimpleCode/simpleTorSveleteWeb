@@ -5,6 +5,7 @@
   export let bg: string;
   export let titleTransKey: string;
   export let subTitleTransKey: string;
+  export let secondSubTitleTransKey: string;
 </script>
 
 <!-- "background-image: linear-gradient(rgb(80, 70, 229) 0%, rgb(43, 49, 203) 100%); border-color: rgb(93, 79, 240);" -->
@@ -24,7 +25,13 @@
   <h3 class="mt-3 sm:text-xl text-lg">{titleTransKey}</h3>
 
   <!-- sub title -->
-  <p class="my-4 opacity-70">
+  <p class="my-4 opacity-70 text-start">
     {subTitleTransKey}
+  </p>
+  <div
+    class="h-[0.5px] w-[70%] bg-base-content mx-auto my-5 opacity-50 rounded-full"
+  ></div>
+  <p class="my-4 opacity-70 text-start">
+    {secondSubTitleTransKey}
   </p>
 </div>

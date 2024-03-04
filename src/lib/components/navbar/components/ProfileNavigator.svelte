@@ -26,7 +26,7 @@
       ><section class="bg-base-300 {containerRadius} ">
         <div class="flex flex-row gap-2 py-3 px-5 items-center justify-center">
           <div class="flex flex-col items-end">
-            <h3 class="text-sm text-base-content">{$userStore.name}</h3>
+            <h4 class="text-sm text-base-content">{$userStore.name}</h4>
             <p class="text-xs opacity-70 text-base-content">
               {formatedPhone($userStore.phoneNumber)}
             </p>

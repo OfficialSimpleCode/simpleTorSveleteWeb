@@ -10,13 +10,6 @@
   >
     <!-- top text -->
     <div class="relative mx-auto max-w-5xl text-center">
-      <!-- preview text -->
-      <!-- <span
-        class="text-gray-400 my-3 flex items-center justify-center font-medium uppercase tracking-wider"
-      >
-        למה דווקא אנחנו
-      </span> -->
-
       <!-- title -->
       <h2 class="block w-full bg-gradient-to-b text-3xl sm:text-4xl">
         {translate("mainFeatures", $_)}
@@ -24,7 +17,7 @@
 
       <!-- sub title -->
       <p
-        class="mx-auto my-4 w-full max-w-xl bg-transparent text-center font-medium leading-relaxed tracking-wide opacity-70"
+        class="mx-auto my-4 w-full max-w-xl bg-transparent text-center opacity-70"
       >
         {translate("mainFeaturesDesc", $_)}
       </p>
@@ -39,6 +32,7 @@
         icon="mdi:card-account-details-star"
         titleTransKey={translate("personalBranding", $_)}
         subTitleTransKey={translate("personalBrandinDesc", $_)}
+        secondSubTitleTransKey={translate("personalBrandinDesc2", $_)}
       />
 
       <FeatureItem
@@ -46,6 +40,7 @@
         icon="mdi:sms"
         titleTransKey={translate("clientsMessage", $_)}
         subTitleTransKey={translate("clientsMessagesDesc", $_)}
+        secondSubTitleTransKey={translate("clientsMessagesDesc2", $_)}
       />
 
       <FeatureItem
@@ -53,6 +48,7 @@
         icon="mdi:electron-framework"
         titleTransKey={translate("availabilityEverywhere", $_)}
         subTitleTransKey={translate("availabilityEverywhereDesc", $_)}
+        secondSubTitleTransKey={translate("availabilityEverywhereDesc2", $_)}
       />
 
       <FeatureItem
@@ -60,6 +56,7 @@
         icon="mdi:database"
         titleTransKey={translate("clients", $_)}
         subTitleTransKey={translate("clientsDesc", $_)}
+        secondSubTitleTransKey={translate("clientsDesc2", $_)}
       />
 
       <FeatureItem
@@ -67,6 +64,7 @@
         icon="mdi:payment"
         titleTransKey={translate("cleranceAndrecipts", $_)}
         subTitleTransKey={translate("cleranceAndreciptsDesc", $_)}
+        secondSubTitleTransKey={translate("cleranceAndreciptsDesc2", $_)}
       />
 
       <FeatureItem
@@ -74,6 +72,7 @@
         icon="mdi:support"
         titleTransKey={translate("support", $_)}
         subTitleTransKey={translate("supportDesc", $_)}
+        secondSubTitleTransKey={translate("supportDesc2", $_)}
       />
     </div>
   </div>
