@@ -4,16 +4,36 @@
 </script>
 
 <!-- image -->
-<div class="indicator w-full flex items-center justify-center">
+<div class="indicator w-full flex flex-col items-center justify-center">
   <img
-    class=" xs:rounded-xl md:max-h-[600px]"
+    class="md:rounded-xl md:max-h-[600px] aspect-[1/1] object-cover"
     src={product.imageUrl}
     alt={product.name}
   />
+
   <!-- price badge -->
-  <span
-    class="top-7 left-14 indicator-item inline-flex items-center rounded-md px-3 py-1 text-sm xs:text-md font-medium ring-1 ring-inset ring-primary backdrop-blur-md"
+  <div
+    class="relative flex flex-col justify-between items-center w-[90%] -top-20 rounded-md px-3 py-1 backdrop-blur-md"
   >
-    {product.price}
-  </span>
+    <h1 class="text-xl lg:text-2xl w-full">
+      {product.name}
+    </h1>
+    <p class="rounded-md px-3 py-1 text-sm xs:text-md w-full text-end">
+      {product.price}
+    </p>
+  </div>
+  <!-- <div
+    class="relative flex flex-row justify-between items-center w-[90%] -top-10 h-0"
+  >
+    <h1
+      class="text-xl lg:text-2xl rounded-md px-3 py-1 ring-1 ring-inset ring-primary backdrop-blur-md"
+    >
+      {product.name}
+    </h1>
+    <p
+      class="rounded-md px-3 py-1 text-sm xs:text-md ring-1 ring-inset ring-primary backdrop-blur-md"
+    >
+      {product.price}
+    </p>
+  </div> -->
 </div>
