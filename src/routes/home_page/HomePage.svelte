@@ -68,7 +68,9 @@
           "@type": "Person",
           "name": "SA SIMPLE CODE LTD"
         },
-        "downloadUrl": "${webLink}",    
+        "name": "Simple Tor",
+        "downloadUrl": "${webLink}",
+        "image": "/AppIcon.png",    
         "applicationCategory": "BusinessApplication",
         "softwareVersion": "1.3.9",
         "aggregateRating": {
@@ -77,6 +79,10 @@
         },
         "review": {
           "@type": "Review",
+          "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5"
+          },
           "author": {
             "@type": "Person",
             "name": "שקד כהן שי"
