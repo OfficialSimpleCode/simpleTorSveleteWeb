@@ -23,7 +23,7 @@
   let isEmpty = true;
   $: worker =
     $workersStore[$bookingMakerStore.workerId ?? ""] ?? new WorkerModel({});
-  $: worker.treatmentsSubjects.forEach((subject, index) => {
+  $: Object.entries(worker.treatmentsSubjects).forEach(([index, subject]) => {
     isEmpty = isEmpty && subject.treatments.size === 0;
   });
 </script>
@@ -59,7 +59,7 @@
       <!-- list of treatments -->
       <ul class="h-full w-full flex flex-col items-center justify-center gap-7">
         <!-- subjects with list of services under each subject  -->
-        {#each worker.treatmentsSubjects as [__, subject]}
+        {#each Object.entries(worker.treatmentsSubjects) as [__, subject]}
           <!-- subject title -->
           <div class="items-start w-full xs:text-3xl text-2xl">
             {subject.name}
