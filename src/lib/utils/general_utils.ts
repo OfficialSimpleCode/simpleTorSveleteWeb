@@ -126,7 +126,7 @@ export function pushDialog(
   pushState(herf ?? "", {
     showModal: true,
   });
-  setTimeout(() => dialog!.showModal(), 100);
+  setTimeout(() => dialog!.showModal(), 0);
 }
 
 export function setIntersecation(set1: Set<any>, set2: Set<any>) {

@@ -1,8 +1,14 @@
-<script>
+<script lang="ts">
+  import ContactUsDialog from "$lib/components/dialogs/ContactUsDialog.svelte";
   import appIcon from "$lib/images/default_icon_dark.webp";
+  import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
   import TitleAndBody from "../components/TitleAndBody.svelte";
   import Disclosure from "./sections/Disclosure.svelte";
+  let contactUsDialog: HTMLDialogElement;
+  function openContactUs() {
+    pushDialog(contactUsDialog);
+  }
 </script>
 
 <svelte:head>
@@ -17,6 +23,8 @@
   <!-- The prefered link for this page -->
   <link rel="canonical" href="https://simpletor.app/privacy" />
 </svelte:head>
+
+<ContactUsDialog bind:dialog={contactUsDialog} />
 
 <body class="bg-base-100 items-center">
   <div class="flex flex-col items-center pb-10">
@@ -43,7 +51,18 @@
       <TitleAndBody title="aboutPrivacy" content={["aboutText"]} />
 
       <!-- contact -->
-      <TitleAndBody title="contact" content={["contactText"]} />
+      <TitleAndBody title="contact">
+        <p>
+          {translate("contactText1", $_)}
+          <button
+            class="font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline"
+            on:click={openContactUs}
+          >
+            {translate("contacting", $_)}
+          </button>
+          {translate("contactText2", $_)}
+        </p>
+      </TitleAndBody>
 
       <!-- contact -->
       <TitleAndBody title="personalData" content={["personalDataText"]} />
