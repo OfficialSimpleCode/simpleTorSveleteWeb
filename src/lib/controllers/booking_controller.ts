@@ -163,7 +163,7 @@ export default class BookingController {
     });
 
     // Update the current picked services with the new worker data
-    workerObj.treatmentsSubjects.forEach((subject, key) => {
+    Object.entries(workerObj.treatmentsSubjects).forEach(([key, subject]) => {
       subject.treatments.forEach((service, _) => {
         if (bookingMaker.services.hasOwnProperty(service.id)) {
           const count = bookingMaker.services[service.id].count;

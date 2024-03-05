@@ -90,8 +90,8 @@ export default class WorkerModel {
     ["saturday", []],
   ]);
   isCustomersNeedRecurrence: boolean = false;
-  specificRangeChanges: Map<string, ShiftChangeRange> = new Map();
-  treatmentsSubjects: Map<string, TreatmentSubject> = new Map();
+  specificRangeChanges: Record<string, ShiftChangeRange> = {};
+  treatmentsSubjects: Record<string, TreatmentSubject> = {};
   //----------------------------------from public worker json-------------------------------
   workerPublicData: WorkerPublicData = new WorkerPublicData();
 
@@ -219,11 +219,11 @@ export default class WorkerModel {
   }
 
   hasTreatemnt(treatmentId: string): boolean {
-    for (const [index, subject] of this.treatmentsSubjects) {
+    Object.entries(this.treatmentsSubjects).forEach(([_, subject]) => {
       if (subject.containTreatment(treatmentId)) {
         return true;
       }
-    }
+    });
     return false;
   }
   get useWhatsApp(): boolean {
@@ -279,7 +279,7 @@ export default class WorkerModel {
       workerJson["minutesBeforeBookingToConfirm"] ?? 1440;
     this.maxFutureBookings = workerJson["maxFutureBookings"] ?? 4;
 
-    this.treatmentsSubjects = new Map();
+    this.treatmentsSubjects = {};
 
     this.shortBookingTime = 999;
     if (workerJson["treatmentsSubjects"]) {
@@ -293,7 +293,7 @@ export default class WorkerModel {
           pointerShortBookingTime: pointerShortBookingTime,
           pointerLognestBookingTime: pointerLognestBookingTime,
         });
-        this.treatmentsSubjects.set(index, subject);
+        this.treatmentsSubjects[index] = subject;
       });
       this.shortBookingTime = pointerShortBookingTime[0];
       this.longestBookingTime = pointerLognestBookingTime[0];
@@ -326,16 +326,13 @@ export default class WorkerModel {
           index += 1;
         }
       );
-      this.treatmentsSubjects = new Map([
-        [
-          "0",
-          new TreatmentSubject({
-            name: translate("general"),
-            treatments: treatments,
-            index: "0",
-          }),
-        ],
-      ]);
+      this.treatmentsSubjects = {
+        "0": new TreatmentSubject({
+          name: translate("general"),
+          treatments: treatments,
+          index: "0",
+        }),
+      };
     }
 
     this.onHoldMinutes = workerJson["onHoldMinutes"] || 0;
@@ -420,7 +417,7 @@ export default class WorkerModel {
       }
     }
 
-    this.specificRangeChanges = new Map();
+    this.specificRangeChanges = {};
     if (workerJson["specificRangeChanges"]) {
       Object.entries<Record<string, any>>(
         workerJson["specificRangeChanges"]
@@ -428,7 +425,7 @@ export default class WorkerModel {
         const shiftRange = ShiftChangeRange.fromJson(val, key);
         // the specific range dosen't over
         if (shiftRange.end >= setToMidNight(new Date())) {
-          this.specificRangeChanges.set(key, shiftRange);
+          this.specificRangeChanges[key] = shiftRange;
         }
       });
     }
