@@ -1,6 +1,5 @@
 <script lang="ts">
   import ContactUsDialog from "$lib/components/dialogs/ContactUsDialog.svelte";
-  import appIcon from "$lib/images/default_icon_dark.webp";
   import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
   import TitleAndBody from "../components/TitleAndBody.svelte";
@@ -14,9 +13,6 @@
 <svelte:head>
   <title>Simple Tor | privacy policy</title>
   <meta name="description" content="Simple tor app's privacy policy" />
-  <link rel="icon" href={appIcon} type="image/webp" />
-  <meta name="author" content="SA SIMPLE CODE LTD" />
-
   <!-- Open graphes links -->
   <meta property="og:title" content="Simple Tor | privacy policy" />
   <meta property="og:description" content="Simple tor app's privacy policy" />

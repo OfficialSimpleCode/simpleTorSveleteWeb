@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
+  import { page } from "$app/stores";
   import CustomPhoneField from "$lib/components/custom_components/CustomPhoneField.svelte";
   import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
   import GeneralDialog from "$lib/components/dialogs/GeneralDialog.svelte";
@@ -105,6 +106,29 @@
     fullName = event.detail.value;
   }
 </script>
+
+<svelte:head>
+  <!-- business title -->
+  <title
+    >Simple Tor | ניהול תורים | מערכת לניהול תורים | {translate(
+      "signUp",
+      $_
+    )}</title
+  >
+
+  <!-- the url for search to display for this site -->
+  <link rel="canonical" href={`${$page.url.origin}/login/account-setup`} />
+
+  <!-- Open Graphes links -->
+  <!-- title  -->
+  <meta
+    property="og:title"
+    content="Simple Tor | ניהול תורים | מערכת לניהול תורים | {translate(
+      'signUp',
+      $_
+    )}"
+  />
+</svelte:head>
 
 <GeneralDialog
   bind:dialog={saveMeUsUserDialog}

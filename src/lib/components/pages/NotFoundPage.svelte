@@ -4,6 +4,12 @@
   import LottieAnimation from "../custom_components/LottieAnimation.svelte";
 </script>
 
+<svelte:head>
+  <!-- Title -->
+  <title>{translate("notFoundPage", $_)}</title>
+  <!-- icon im the window -->
+  <link rel="icon" href="/AppIcon.png" />
+</svelte:head>
 <div class="flex flex-col gap-3 items-center pt-14">
   <LottieAnimation
     animationFile={notFoundPageAnimation}

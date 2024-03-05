@@ -10,6 +10,15 @@
   });
 </script>
 
+<svelte:head>
+  <!-- icon -->
+  <link rel="icon" href="/AppIcon.png" />
+  <!-- icon for iphones that saves the web -->
+  <link rel="apple-touch-icon" href="/AppIcon.png" />
+  <!-- autor -->
+  <meta name="author" content="SA SIMPLE CODE LTD" />
+</svelte:head>
+
 <div class="h-full w-full">
   <Navbar />
   <slot />

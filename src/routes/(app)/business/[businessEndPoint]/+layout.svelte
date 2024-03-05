@@ -6,7 +6,6 @@
   import { businessStore } from "$lib/stores/Business";
   import { _, translate } from "$lib/utils/translate";
 
-  import { page } from "$app/stores";
   import Analytics from "$lib/components/analytics.svelte";
   import { themeStore } from "$lib/controllers/theme_controller.js";
   import BusinessInitializer from "$lib/initializers/business_initializer.js";
@@ -63,22 +62,7 @@
   <!-- author -The business owner write the content  -->
   <meta name="author" content={$businessStore?.ownersName} />
 
-  <!-- the url for search to display for this site -->
-  <link
-    rel="canonical"
-    href={`${$page.url.origin}/business/${$businessStore?.url}`}
-  />
-
   <!-- Open Graphes data (for sharin a link) -->
-  <!-- title  -->
-  <meta
-    property="og:title"
-    content="{$businessStore?.shopName ?? ''} | {translate(
-      businessTypeToStr[$businessStore?.businesseType ?? BusinessesTypes.Other],
-      $_
-    )}"
-  />
-
   <!-- description -->
   <meta
     property="og:description"

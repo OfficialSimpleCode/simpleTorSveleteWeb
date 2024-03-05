@@ -5,6 +5,13 @@
   import LottieAnimation from "../custom_components/LottieAnimation.svelte";
 </script>
 
+<svelte:head>
+  <!-- Title -->
+  <title>{translate("error", $_)}</title>
+  <!-- icon im the window -->
+  <link rel="icon" href="/AppIcon.png" />
+</svelte:head>
+
 <div class="flex flex-col gap-4 items-center pt-14">
   <LottieAnimation
     animationFile={generalErrorAnimation}

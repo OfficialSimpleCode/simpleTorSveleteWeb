@@ -7,6 +7,7 @@
   import { storyImagesRatioX, storyImagesRatioY } from "$lib/consts/sizes";
   import { initialTheme } from "$lib/controllers/theme_controller";
   import RemoteConfigHelper from "$lib/helpers/remote_config_helper";
+  import opIcon from "$lib/images/openGraphIcon.png";
   import { handleLocaleChanges } from "$lib/language/loader";
   import { appStateStore } from "$lib/stores/AppState";
   import { screenSizeStore } from "$lib/stores/sizes";
@@ -67,8 +68,7 @@
 </script>
 
 <svelte:head>
-  {#if !$page.url.pathname.includes("/business")}
-    <title>Simple Tor | ניהול תורים | מערכת לניהול תורים</title>
+  {#if !$page.url.pathname.includes("/business") && !$page.url.pathname.includes("/privacy") && !$page.url.pathname.includes("/terms-of-use")}
     <!-- descruption about the page -->
     <meta name="description" content={translate("simpleTorDesc", $_)} />
     <!-- icon im the window -->
@@ -78,15 +78,10 @@
     <meta name="keywords" content={keywords.join(" ,")} />
 
     <!-- Open Graphes data (for sharin a link) -->
-    <!-- title -->
-    <meta
-      property="og:title"
-      content="Simple Tor | ניהול תורים | מערכת לניהול תורים"
-    />
     <!-- description -->
     <meta property="og:description" content={translate("simpleTorDesc", $_)} />
     <!-- image in the center of the link -->
-    <meta property="og:image" content="/AppIcon.png" />
+    <meta property="og:image" content={opIcon} />
 
     <!-- icon for iphones that saves the web -->
     <link rel="apple-touch-icon" href="/AppIcon.png" />
