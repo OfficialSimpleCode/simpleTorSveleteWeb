@@ -66,10 +66,9 @@
         "url": "https://simpletor.app/",
         "author": {
           "@type": "Person",
-          "name": "SA SIMPLE CODE LTD",
+          "name": "SA SIMPLE CODE LTD"
         },
-        "downloadUrl": "${webLink}",
-        
+        "downloadUrl": "${webLink}",    
         "applicationCategory": "BusinessApplication",
         "softwareVersion": "1.3.9",
         "aggregateRating": {
