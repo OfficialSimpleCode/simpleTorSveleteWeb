@@ -44,7 +44,7 @@
 
 <DialogStrucher bind:dialog={explainDialog} onlyMiddle={true}>
   <div
-    class="modal-box bg-base-200 pb-10 flex flex-col justify-center gap-6 max-w-[300px]"
+    class="modal-box bg-base-200 pb-10 flex flex-col justify-center gap-6 max-w-[400px]"
   >
     <DialogTitel titleTransKey={"authProvider"} dialog={explainDialog} />
     <div class="flex flex-col gap-3 items-center h-full">
@@ -69,7 +69,7 @@
     </div>
     <div class="flex flex-col gap-2">
       <button
-        class=" bg-red-600 btn min-w-10 {lastProvider || oldUser
+        class=" bg-red-600 btn btn-sm min-w-[80px] {lastProvider || oldUser
           ? 'opacity-50'
           : ''}"
         on:click={onDelete}
@@ -80,15 +80,15 @@
         </div>
       </button>
       {#if lastProvider}
-        <h3 class="text-center text-sm opacity-70">
+        <p class="text-center text-xs opacity-70">
           {translate("cantDeleteLastProviderDeleteUser")}
-        </h3>
+        </p>
       {/if}
 
       {#if oldUser}
-        <h3 class="text-center text-sm opacity-70">
+        <p class="text-center text-xs opacity-70">
           {translate("oldUserExplain")}
-        </h3>
+        </p>
       {/if}
     </div>
   </div>

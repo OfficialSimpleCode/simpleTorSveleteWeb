@@ -61,7 +61,7 @@
         </div>
 
         <button
-          class="btn btn-primary {loading ? 'opacity-70' : ''}"
+          class="btn btn-primary btn-sm {loading ? 'opacity-70' : ''}"
           on:click={onUpdateHandler}
         >
           {#if loading}

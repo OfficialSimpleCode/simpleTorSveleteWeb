@@ -49,8 +49,8 @@
       <ProductImage {product} />
 
       <Description {product} />
-      <BackButton />
     </div>
+    <BackButton />
   </div>
 {:else}
   <NotFoundPage />

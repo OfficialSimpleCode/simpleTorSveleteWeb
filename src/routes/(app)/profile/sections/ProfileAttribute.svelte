@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { pushState } from "$app/navigation";
   import { base } from "$app/paths";
   import { page } from "$app/stores";
   import SettingContainer from "$lib/components/SettingContainer.svelte";
@@ -9,6 +8,7 @@
   import UserHelper from "$lib/helpers/user/user_helper";
   import UserInitializer from "$lib/initializers/user_initializer";
   import { userStore } from "$lib/stores/User";
+  import { pushDialog } from "$lib/utils/general_utils";
   import { formatedPhone } from "$lib/utils/string_utils";
   import { translate } from "$lib/utils/translate";
   import { emailValidation, nameValidation } from "$lib/utils/validation_utils";
@@ -22,24 +22,15 @@
   let copiedUserId: boolean = false;
 
   function openEmailDialog() {
-    pushState(`${base}/profile/email`, {
-      showModal: true,
-    });
-    setTimeout(() => emailDialog.showModal(), 200);
+    pushDialog(emailDialog, `${base}/profile/email`);
   }
 
   function openNameDialog() {
-    pushState(`${base}/profile/name`, {
-      showModal: true,
-    });
-    setTimeout(() => nameDialog.showModal(), 200);
+    pushDialog(nameDialog, `${base}/profile/name`);
   }
 
   function openPhoneDialog() {
-    pushState(`${base}/profile/phone`, {
-      showModal: true,
-    });
-    setTimeout(() => phoneDialog.showModal(), 200);
+    pushDialog(phoneDialog, `${base}/profile/phone`);
   }
 
   function copyToUserIdClipboard() {
