@@ -26,6 +26,6 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t simpletorweb:latest .
-          docker tag simpletorweb:latest 339713099835.dkr.ecr.il-central-1.amazonaws.com/simpletor-svelte-app:latest
+          docker build -t simpletor-svelte-app:latest .
+          docker tag simpletor-svelte-app:latest 339713099835.dkr.ecr.il-central-1.amazonaws.com/simpletor-svelte-app:latest
           docker push 339713099835.dkr.ecr.il-central-1.amazonaws.com/simpletor-svelte-app:latest
