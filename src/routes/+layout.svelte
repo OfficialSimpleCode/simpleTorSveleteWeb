@@ -7,7 +7,6 @@
   import { storyImagesRatioX, storyImagesRatioY } from "$lib/consts/sizes";
   import { initialTheme } from "$lib/controllers/theme_controller";
   import RemoteConfigHelper from "$lib/helpers/remote_config_helper";
-  import opIcon from "$lib/images/openGraphIcon.png";
   import { handleLocaleChanges } from "$lib/language/loader";
   import { appStateStore } from "$lib/stores/AppState";
   import { screenSizeStore } from "$lib/stores/sizes";
@@ -81,7 +80,7 @@
     <!-- description -->
     <meta property="og:description" content={translate("simpleTorDesc", $_)} />
     <!-- image in the center of the link -->
-    <meta property="og:image" content={opIcon} />
+    <meta property="og:image" content="./openGraphIcon.png" />
 
     <!-- icon for iphones that saves the web -->
     <link rel="apple-touch-icon" href="/AppIcon.png" />

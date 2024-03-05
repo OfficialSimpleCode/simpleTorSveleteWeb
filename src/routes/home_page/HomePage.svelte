@@ -73,7 +73,9 @@
         "softwareVersion": "1.3.9",
         "aggregateRating": {
           "@type": "AggregateRating",
-          "bestRating": "5"
+          "bestRating": "5",
+          "ratingValue": "5",
+          "ratingCount": "30"
         },
         "review": {
           "@type": "Review",
