@@ -1,6 +1,7 @@
 <script>
   import Navbar from "$lib/components/navbar/Navbar.svelte";
   import { webLink } from "$lib/consts/app_external_links";
+  import { _, translate } from "$lib/utils/translate";
   import Footer from "../../lib/components/Footer.svelte";
   import Articles from "./sections/Articles.svelte";
   import Banner from "./sections/Banner.svelte";
@@ -65,8 +66,12 @@
         "@type": "SoftwareApplication",
         "url": "https://simpletor.app/",
         "author": {
-          "@type": "Person",
+          "@type": "Company",
           "name": "SA SIMPLE CODE LTD"
+        },
+        "publisher": {
+        "@type": "Company",
+        "name": "SA SIMPLE CODE LTD"
         },
         "name": "Simple Tor",
         "downloadUrl": "${webLink}",
@@ -77,7 +82,7 @@
           "@type": "AggregateRating",
           "bestRating": "5"
         },
-        "review": {
+        "review": [{
           "@type": "Review",
           "reviewRating": {
           "@type": "Rating",
@@ -87,8 +92,80 @@
             "@type": "Person",
             "name": "שקד כהן שי"
           },
-          "reviewBody": "ניהנתי ממש להשתמש באפליקציה עשתה לי המון סדר וכיף"
-        }
+          "reviewBody": "${translate("shakedReview", $_)}"
+        },
+        {
+          "@type": "Review",
+          "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "Merav750"
+          },
+          "reviewBody": "${translate("meravReview", $_)}"
+        },
+        {
+          "@type": "Review",
+          "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "Sagi Zarum"
+          },
+          "reviewBody": "${translate("saguiReview", $_)}"
+        },
+        {
+          "@type": "Review",
+          "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "Amit mormy"
+          },
+          "reviewBody": "${translate("amitReview", $_)}"
+        },
+        {
+          "@type": "Review",
+          "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "דניאל מרה"
+          },
+          "reviewBody": "${translate("danielReview", $_)}"
+        },
+        {
+          "@type": "Review",
+          "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "Shilo"
+          },
+          "reviewBody": "${translate("shiloReview", $_)}"
+        },
+        {
+          "@type": "Review",
+          "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "ShiraSa123"
+          },
+          "reviewBody": "${translate("shiraReview", $_)}"
+        }]
       }
       ${"<"}/script>`;
 </script>
