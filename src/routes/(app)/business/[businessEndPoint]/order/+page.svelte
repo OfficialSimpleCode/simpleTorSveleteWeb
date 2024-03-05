@@ -5,6 +5,11 @@
   import { LoginReason } from "$lib/consts/auth";
 
   import { beforeNavigate } from "$app/navigation";
+  import { page } from "$app/stores";
+  import {
+    BusinessesTypes,
+    businessTypeToStr,
+  } from "$lib/consts/business_types";
   import BookingController, {
     bookingMakerStore,
   } from "$lib/controllers/booking_controller";
@@ -48,6 +53,32 @@
   insideOtp={true}
   bind:dialog={verificationDialog}
 />
+
+<svelte:head>
+  <!-- business title -->
+  <title>
+    {$businessStore?.shopName} | {translate(
+      businessTypeToStr[$businessStore?.businesseType ?? BusinessesTypes.Other],
+      $_
+    )} | {translate("order", $_)}
+  </title>
+
+  <!-- the url for search to display for this site -->
+  <link
+    rel="canonical"
+    href={`${$page.url.origin}/business/${$businessStore?.url}/order`}
+  />
+
+  <!-- Open Graphes links -->
+  <!-- title  -->
+  <meta
+    property="og:title"
+    content="{$businessStore?.shopName} | {translate(
+      businessTypeToStr[$businessStore?.businesseType ?? BusinessesTypes.Other],
+      $_
+    )} | {translate('order', $_)}"
+  />
+</svelte:head>
 
 <main class="h-full w-full flex flex-col items-center gap-2 bg-base-100">
   <!-- stepper -->

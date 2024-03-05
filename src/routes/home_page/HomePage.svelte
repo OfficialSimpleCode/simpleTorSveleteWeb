@@ -68,7 +68,7 @@
           "@type": "Person",
           "name": "SA SIMPLE CODE LTD"
         },
-        "downloadUrl": ${webLink},
+        "downloadUrl": "${webLink}",
         
         "applicationCategory": "BusinessApplication"
         "softwareVersion": "1.3.9",
@@ -89,11 +89,21 @@
 </script>
 
 <svelte:head>
-  <!-- the scheme.org of the business -->
-  {@html jsonLdScript}
+  <!-- Page title -->
+  <title>Simple Tor | ניהול תורים | מערכת לניהול תורים</title>
 
   <!-- the url for search to display for this site -->
   <link rel="canonical" href="https://simpletor.app" />
+
+  <!-- Open Graphes data (for sharin a link) -->
+  <!-- title -->
+  <meta
+    property="og:title"
+    content="Simple Tor | ניהול תורים | מערכת לניהול תורים"
+  />
+
+  <!-- the scheme.org of the business -->
+  {@html jsonLdScript}
 </svelte:head>
 <main class="w-full h-full bg-base-200">
   <Navbar />
