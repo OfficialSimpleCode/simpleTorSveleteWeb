@@ -1,7 +1,9 @@
-<script>
+<script lang="ts">
   import Navbar from "$lib/components/navbar/Navbar.svelte";
   import { webLink } from "$lib/consts/app_external_links";
+  import { downloadAppBanner } from "$lib/controllers/screens_controller";
   import { _, translate } from "$lib/utils/translate";
+  import { onMount } from "svelte";
   import Footer from "../../lib/components/Footer.svelte";
   import Articles from "./sections/Articles.svelte";
   import Banner from "./sections/Banner.svelte";
@@ -170,6 +172,29 @@
         }]
       }
       ${"<"}/script>`;
+
+  let targetElement: HTMLElement;
+
+  function handleIntersection(entries: IntersectionObserverEntry[]) {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        //inside the view port
+        downloadAppBanner.set(true);
+      } else {
+        //outside the view port
+        downloadAppBanner.set(false);
+      }
+    });
+  }
+
+  onMount(() => {
+    const observer = new IntersectionObserver(handleIntersection);
+    observer.observe(targetElement);
+
+    return () => {
+      observer.unobserve(targetElement);
+    };
+  });
 </script>
 
 <svelte:head>
@@ -197,9 +222,12 @@
   <Examples />
   <Download />
   <Businesses />
-  <Articles />
-  <Data />
-  <Testimonials />
-  <Faq />
-  <Footer generatedPage={false} />
+  <!-- in this section pop the download app message -->
+  <div id="popDownloadApp" bind:this={targetElement}>
+    <Articles />
+    <Data />
+    <Testimonials />
+    <Faq />
+    <Footer generatedPage={false} />
+  </div>
 </main>

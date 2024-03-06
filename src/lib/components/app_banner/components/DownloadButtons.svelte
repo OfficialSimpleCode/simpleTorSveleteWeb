@@ -1,5 +1,8 @@
 <script>
-  import { downloadAppBanner } from "$lib/controllers/screens_controller";
+  import {
+    ScreenController,
+    downloadAppBanner,
+  } from "$lib/controllers/screens_controller";
   import { businessStore } from "$lib/stores/Business";
   import { getDownloadingAppLink } from "$lib/utils/links_utils";
   import { _, translate } from "$lib/utils/translate";
@@ -11,17 +14,23 @@
     downloadLink = getDownloadingAppLink($businessStore?.dynamicLink ?? "");
   });
   function closeBanner() {
+    ScreenController.pressExistBanner = true;
     downloadAppBanner.set(false);
   }
 </script>
 
-<div class="flex flex-row justify-center sm:justify-start sm:w-full gap-2">
+<div class="flex flex-row justify-center sm:justify-start sm:w-full gap-3">
   <a
-    class="btn btn-primary btn-md rounded-[2rem] w-[70%]"
+    class="btn btn-primary btn-md rounded-[2rem] w-[70%] sm:w-auto"
     href={downloadLink}
     target="_blank"
   >
-    {translate("downloadSimpleTorApp", $_)}
+    <span class="flex sm:hidden">
+      {translate("downloadSimpleTorApp", $_)}
+    </span>
+    <span class="hidden sm:flex">
+      {translate("downloadNow", $_)}
+    </span>
   </a>
 
   <button

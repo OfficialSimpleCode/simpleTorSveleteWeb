@@ -15,7 +15,6 @@
 
   import Analytics from "$lib/components/analytics.svelte";
   import DownloadAppBanner from "$lib/components/app_banner/DownloadAppBanner.svelte";
-  import { downloadAppBanner } from "$lib/controllers/screens_controller";
   import "../app.css";
   let screenHeight: number;
   const keywords: string[] = [
@@ -59,7 +58,6 @@
     });
   });
 
-  setTimeout(() => downloadAppBanner.set(true), 1000);
   $: storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
   $: storyImagesWidth = Math.floor(
     storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)

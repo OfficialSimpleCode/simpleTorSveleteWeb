@@ -1,7 +1,11 @@
 <script>
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
-  import { downloadAppBanner } from "$lib/controllers/screens_controller";
+  import {
+    ScreenController,
+    downloadAppBanner,
+  } from "$lib/controllers/screens_controller";
   function closeBanner() {
+    ScreenController.pressExistBanner = true;
     downloadAppBanner.set(false);
   }
 </script>

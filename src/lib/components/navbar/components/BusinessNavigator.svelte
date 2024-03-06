@@ -23,7 +23,7 @@
   <a
     on:click={onClick}
     on:load={onLoad}
-    href={loading ? undefined : `${base}/business/${$businessStore.url}`}
+    href={`${base}/business/${$businessStore.url}`}
   >
     <div
       class="{ngClass} flex flex-row h-[34px] sm:h-[40px] px-2 gap-1 max-w-[100px] xs:max-w-[150px] sm:max-w-[190px]"

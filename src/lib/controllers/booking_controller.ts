@@ -64,7 +64,7 @@ export default class BookingController {
       showVerificationAlert: false,
       services: {},
       oldBooking: BookingController.bookingToUpdate,
-      note: "",
+      note: BookingController.bookingToUpdate?.note ?? "",
       date: BookingController.bookingToUpdate?.bookingDate,
       isUpdate: BookingController.bookingToUpdate != null,
       currentPaymentType: PaymentTypes.payment,

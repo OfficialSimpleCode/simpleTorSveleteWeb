@@ -23,6 +23,7 @@
 
   let deleteDialog: HTMLDialogElement;
   let loadingDelete: boolean = false;
+  let loadingUpdate: boolean = false;
 
   // open choose navigation option dialog
   function openNavigationDialog() {
@@ -66,7 +67,7 @@
       ShowToast({ status: "info", text: translate("needToLoadBusiness") });
       return;
     }
-    if (loadingDelete) {
+    if (loadingDelete || loadingUpdate) {
       return;
     }
 
@@ -75,9 +76,14 @@
       return;
     }
 
-    const resp = await updateBooking({
-      booking: booking,
-    });
+    loadingUpdate = true;
+    try {
+      await updateBooking({
+        booking: booking,
+      });
+    } finally {
+      loadingUpdate = false;
+    }
   }
 
   async function handleDelete(deleteOption: DeleteOption): Promise<boolean> {
@@ -119,6 +125,7 @@
     active={!booking.isMultiRef}
     icon="mdi:edit-outline"
     translateKey="edit"
+    loading={loadingUpdate}
     handleClick={onUpdate}
   />
   <CustomCircleIcon

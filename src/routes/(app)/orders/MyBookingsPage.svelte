@@ -57,7 +57,7 @@
 
         <!-- list of booking in small screens -->
         <div
-          class="flex flex-col md:hidden max-w-[95%] sm:max-w-[80%] w-full gap-3"
+          class="flex flex-col md:hidden max-w-[95%] sm:max-w-[80%] w-full gap-3 pt-10"
         >
           <BookingList forceOpenBookingSheet={true} />
         </div>
