@@ -14,11 +14,20 @@
   let explainDialog: HTMLDialogElement;
 
   let pickedProvider: AuthProvider;
+  let loading: boolean = false;
   let pickedDate: Date = new Date(0);
 
   async function onAdd() {
+    if (loading) {
+      return;
+    }
     VerificationHelper.GI().setupLoggin();
-    goto(`${base}/link-source`);
+    loading = true;
+    try {
+      await goto(`${base}/link-source`);
+    } finally {
+      loading = false;
+    }
   }
 
   function onClick(authProvider: AuthProvider, date: Date) {
@@ -57,6 +66,10 @@
   {/each}
 
   <button class="bg-base-300 btn btn-ghost" on:click={onAdd}>
-    <GeneralIcon icon="gravity-ui:plus" />
+    {#if loading}
+      <div class="loading loading-spinner" />
+    {:else}
+      <GeneralIcon icon="gravity-ui:plus" />
+    {/if}
   </button>
 </section>

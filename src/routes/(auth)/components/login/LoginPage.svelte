@@ -85,17 +85,17 @@
       loading = false;
     }
   }
-  function onFinishLogin() {
-    loading = false;
+  async function onFinishLogin() {
     if (VerificationHelper.GI().needToMakeBookingAfterLogin) {
-      goto(`${base}/business/${$businessStore?.url ?? ""}/order`);
+      await goto(`${base}/business/${$businessStore?.url ?? ""}/order`);
     } else {
       if ($businessStore != null) {
-        goto(`${base}/business/${$businessStore?.url ?? ""}`);
+        await goto(`${base}/business/${$businessStore?.url ?? ""}`);
       } else {
-        goto(`${base}/`);
+        await goto(`${base}/`);
       }
     }
+    loading = false;
   }
 
   function openPhoneDialog() {

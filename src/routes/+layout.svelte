@@ -14,6 +14,7 @@
   import { onMount } from "svelte";
 
   import Analytics from "$lib/components/analytics.svelte";
+  import DownloadAppBanner from "$lib/components/app_banner/DownloadAppBanner.svelte";
   import "../app.css";
   let screenHeight: number;
   const keywords: string[] = [
@@ -26,6 +27,7 @@
   ];
   onMount(() => {
     RemoteConfigHelper.GI().init();
+
     console.log("wwwwwwwwwwwwwwwwwwwwwwww");
     initialTheme(localStorage, document);
     handleLocaleChanges(localStorage, document);
@@ -92,6 +94,7 @@
 <Analytics />
 
 <ToastManager />
+<DownloadAppBanner />
 <div class="w-full h-ful">
   {#if $appStateStore === LoadingStatuses.maintenanceMode}
     <Maintanance />

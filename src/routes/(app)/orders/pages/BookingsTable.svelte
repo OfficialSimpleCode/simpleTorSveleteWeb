@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type Booking from "$lib/models/booking/booking_model";
-
+  import { userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
   import TableRow from "../components/TableRow.svelte";
 
-  export let bookings: Booking[];
   export let forceOpenBookingSheet: boolean;
+
+  $: bookings = $userStore.bookingsToShow ?? [];
 </script>
 
 <table class="table">

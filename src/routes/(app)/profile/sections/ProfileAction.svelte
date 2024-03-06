@@ -8,14 +8,24 @@
   import LogoutDialog from "../components/LogoutDialog.svelte";
   let loadingLogout: boolean = false;
   let logoutDialog: HTMLDialogElement;
+  let loadingDelete: boolean = false;
 
   function onClickLogout() {
     pushDialog(logoutDialog);
   }
 
   async function onDeleteUser() {
+    if (loadingDelete) {
+      return;
+    }
     VerificationHelper.GI().setupLoggin();
-    goto(`${base}/delete-user`);
+
+    loadingDelete = true;
+    try {
+      await goto(`${base}/delete-user`);
+    } finally {
+      loadingDelete = false;
+    }
   }
 </script>
 
@@ -38,6 +48,7 @@
     <div class="h-[0.2px] w-full bg-gray-500 opacity-20" />
     <SettingsItem
       icon="ph:trash-bold"
+      loading={loadingDelete}
       onTap={onDeleteUser}
       name={"deleteUser"}
     />

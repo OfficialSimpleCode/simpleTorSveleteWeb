@@ -3242,5 +3242,11 @@
   "simpleTorDesc": "Advanced business management system, appointment calling, employee management, payments and receipts from the phone and no unnecessary fuss",
   "ourData": "Our data",
   "theBookingDataWillBeDeletedAreSure": "Are you sure you are running out? The booking data you have set so far will not be saved",
-  "theUpdateBookingDataWillBeDeletedAreSure": "Are you sure you are running out? The booking update will stop and the data will not be saved"
+  "theUpdateBookingDataWillBeDeletedAreSure": "Are you sure you are running out? The booking update will stop and the data will not be saved",
+  "stillNoApp": "Still don't have the app?",
+  "noThanks": "No, thanks",
+  "downloadSimpleTorApp": "Download Simple Tor",
+  "downloadNow": "Download Now",
+  "downloadNowText": "Download now and enjoy booking appointments simply",
+  "forDownload": "Download app"
 }

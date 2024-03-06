@@ -27,4 +27,4 @@ export const appFacebook = "https://www.facebook.com/SimpleTor?mibextid=LQQJ4d";
 
 export const appInstagram = "https://www.instagram.com/simpletor.official";
 
-export const cuntactPhone = "0504040624";
+export const cuntactPhone = "+972-504040624";

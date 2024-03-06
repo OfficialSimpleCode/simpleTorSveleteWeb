@@ -7,6 +7,7 @@
   import { _, translate } from "$lib/utils/translate";
 
   import Analytics from "$lib/components/analytics.svelte";
+  import { ScreenController } from "$lib/controllers/screens_controller.js";
   import { themeStore } from "$lib/controllers/theme_controller.js";
   import BusinessInitializer from "$lib/initializers/business_initializer.js";
   import { onMount } from "svelte";
@@ -24,6 +25,7 @@
       const theme = $businessStore?.design.pickedTheme;
       theme.onBusiness = true;
       $themeStore = theme;
+      ScreenController.popDownloadAppBanner();
     }
   });
 </script>

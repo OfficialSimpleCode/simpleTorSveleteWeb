@@ -84,12 +84,14 @@
         </div>
         <!-- <QrCode value="https://github.com/" /> -->
         <div class="flex justify-center pb-6 mt-10">
-          <QRCodeImage
-            text={businessLink}
-            displayType="canvas"
-            displayStyle="border-style: dotted;"
-            width={220}
-          />
+          <div class=" p-[6px] bg-white rounded-[1rem]">
+            <QRCodeImage
+              text={businessLink}
+              displayType="canvas"
+              displayStyle="border-style: dotted;"
+              width={220}
+            />
+          </div>
         </div>
       </div>
     </div>

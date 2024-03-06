@@ -219,11 +219,12 @@ export default class WorkerModel {
   }
 
   hasTreatemnt(treatmentId: string): boolean {
-    Object.entries(this.treatmentsSubjects).forEach(([_, subject]) => {
+    for (const [index, subject] of Object.entries(this.treatmentsSubjects)) {
       if (subject.containTreatment(treatmentId)) {
+        console.log("Eeeeeeeeeeeeeeeeeeeee");
         return true;
       }
-    });
+    }
     return false;
   }
   get useWhatsApp(): boolean {

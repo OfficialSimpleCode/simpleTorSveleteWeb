@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { base } from "$app/paths";
-
   // Assets
 
   import BrightnessNavigator from "./components/BrightnessNavigator.svelte";
   import BusinessNavigator from "./components/BusinessNavigator.svelte";
   import LanguageNavigator from "./components/LanguageNavigator.svelte";
+  import MainPageNavigator from "./components/MainPageNavigator.svelte";
   import OrdersNavigator from "./components/OrdersNavigator.svelte";
   import ProfileNavigator from "./components/ProfileNavigator.svelte";
 </script>
@@ -15,7 +14,7 @@
   style="direction: ltr;"
 >
   <div>
-    <a href={`${base}/`} class=" text-xl hover:opacity-70">Simple Tor</a>
+    <MainPageNavigator />
   </div>
   <div class="flex items-center gap-2">
     <BusinessNavigator />

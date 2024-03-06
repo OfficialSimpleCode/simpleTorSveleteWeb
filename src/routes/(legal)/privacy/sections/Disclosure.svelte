@@ -6,7 +6,7 @@
     the Limited Use requirements. To learn more
   </p>
   <a
-    class="link opacity-70"
+    class="font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline"
     target="_blank"
     href="https://developers.google.com/terms/api-services-user-data-policy"
     >Google API Services User Data Policy</a

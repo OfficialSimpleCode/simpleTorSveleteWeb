@@ -73,17 +73,22 @@
         : "cancel"}
   cancelTranslateKey={booking.isPassed ? "cancel" : "exit"}
 >
-  <div slot="extra" class="flex flex-col gap-2">
-    {#if needConfirmation}
-      <AttentionText
-        onSurface={true}
-        text={worker?.deleteNeerDedlineBookingMessage != null &&
-        worker?.deleteNeerDedlineBookingMessage != ""
-          ? worker?.deleteNeerDedlineBookingMessage
-          : translate("needConfirmationToDelete")}
-      />{/if}
-    {#if attentionText != null}
-      <AttentionText onSurface={true} text={attentionText} />
-    {/if}
+  <div
+    slot="extra"
+    class="flex flex-col gap-2 pt-4 w-full justify-center items-center"
+  >
+    <div class="max-w-[300px]">
+      {#if needConfirmation}
+        <AttentionText
+          onSurface={true}
+          text={worker?.deleteNeerDedlineBookingMessage != null &&
+          worker?.deleteNeerDedlineBookingMessage != ""
+            ? worker?.deleteNeerDedlineBookingMessage
+            : translate("needConfirmationToDelete")}
+        />{/if}
+      {#if attentionText != null}
+        <AttentionText onSurface={true} text={attentionText} />
+      {/if}
+    </div>
   </div>
 </GeneralDialog>

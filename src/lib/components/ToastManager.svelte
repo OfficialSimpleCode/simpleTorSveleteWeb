@@ -8,7 +8,7 @@
 
 <div
   id="toast"
-  class=" fixed bottom-8 w-full z-50 flex items-center justify-center"
+  class="fixed bottom-8 w-full z-50 flex items-center justify-center"
 >
   <div class="min-w-[250px]">
     {#if toast !== null}
