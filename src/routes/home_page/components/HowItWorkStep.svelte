@@ -13,9 +13,9 @@
 
   let colors: string[] = ["text-blue-200", "text-pink-200", "text-green-200"];
 
-  function habdleClick() {
+  async function habdleClick() {
     if (stepNumber < 3 && window.innerWidth < 1024) {
-      goto(`#HowItWorkStep-${stepNumber + 1}`);
+      await goto(`#HowItWorkStep-${stepNumber + 1}`);
     }
   }
   themeStore.subscribe((value) => {

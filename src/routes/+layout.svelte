@@ -13,7 +13,9 @@
   import { _, translate } from "$lib/utils/translate";
   import { onMount } from "svelte";
 
+  import DownloadAppBanner from "$lib/components/DownloadAppBanner.svelte";
   import Analytics from "$lib/components/analytics.svelte";
+  import { downloadAppBanner } from "$lib/controllers/screens_controller";
   import "../app.css";
   let screenHeight: number;
   const keywords: string[] = [
@@ -26,6 +28,7 @@
   ];
   onMount(() => {
     RemoteConfigHelper.GI().init();
+
     console.log("wwwwwwwwwwwwwwwwwwwwwwww");
     initialTheme(localStorage, document);
     handleLocaleChanges(localStorage, document);
@@ -56,6 +59,7 @@
     });
   });
 
+  downloadAppBanner.set(true);
   $: storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
   $: storyImagesWidth = Math.floor(
     storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
@@ -92,6 +96,7 @@
 <Analytics />
 
 <ToastManager />
+<DownloadAppBanner />
 <div class="w-full h-ful">
   {#if $appStateStore === LoadingStatuses.maintenanceMode}
     <Maintanance />

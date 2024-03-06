@@ -79,7 +79,7 @@ export async function signToMulti({
       return value;
     });
     //jump to my bookings page after succedded with the order
-    openOrdersPage();
+    await openOrdersPage();
   }
 }
 

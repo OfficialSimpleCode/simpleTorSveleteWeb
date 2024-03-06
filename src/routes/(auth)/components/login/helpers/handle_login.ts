@@ -74,7 +74,7 @@ export async function handleLogin({
     const resp = await addProvider(provider);
     if (resp != null) {
       //go to profile that we can see the new added provider
-      goto(`${base}/profile`);
+      await goto(`${base}/profile`);
     }
     return;
   }
@@ -117,7 +117,7 @@ export async function handleLogin({
   if (get(isConnectedStore) !== true) {
     //need to change this var to be allowed to get in to the setup page
     VerificationHelper.GI().needToSignUp = true;
-    goto(`${base}/login/account-setup`);
+    await goto(`${base}/login/account-setup`);
     return;
   }
 
@@ -132,14 +132,14 @@ export async function handleLogin({
   }
 
   //go to the main page or to the loaded business if exist
-  comeBack();
+  await comeBack();
 }
 
-function comeBack() {
+async function comeBack() {
   if (get(businessStore) != null) {
-    goto(`${base}/business/${get(businessStore)?.url ?? ""}`);
+    await goto(`${base}/business/${get(businessStore)?.url ?? ""}`);
   } else {
-    goto(`${base}/`);
+    await goto(`${base}/`);
   }
 }
 
@@ -149,7 +149,7 @@ export async function finishDeleteUser() {
   if (resp) {
     //after delete user need to go to business if loaded if not
     //go to the app page
-    comeBack();
+    await comeBack();
   } else {
     ErrorsController.displayError();
   }
