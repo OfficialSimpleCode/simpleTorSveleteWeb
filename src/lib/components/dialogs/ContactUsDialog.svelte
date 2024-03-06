@@ -23,7 +23,9 @@
         <CustomCircleIcon
           icon="mdi:whatsapp"
           size="md"
-          href={`whatsapp://send?phone=${cuntactPhone}`}
+          href={`whatsapp://send?phone=${cuntactPhone
+            .replaceAll("+", "")
+            .replaceAll("-", "")}`}
         />
         <CustomCircleIcon icon="mdi:instagram" href={appInstagram} size="md" />
         <CustomCircleIcon icon="ph:globe" size="md" href={simpleTorHomePage} />

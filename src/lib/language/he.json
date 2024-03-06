@@ -3227,5 +3227,10 @@
   "theCodeSentSuccessfully": "הקוד נשלח בהצלחה",
   "theBookingDataWillBeDeletedAreSure": "האם אתה בטוח שאתה רןצה לצאת? נתוני ההזמנה שקבעת עד עכשיו לא ישמרו",
   "theUpdateBookingDataWillBeDeletedAreSure": "האם אתה בטוח שאתה רןצה לצאת? תהליך עדכון ההזמנה יפסק והנתונים לא ישמרו",
-  "paymentOnBookingAreNotAvailableOnWeb": "הזמנה זו מחייבת תשלום מראש - תשלומים דרך האתר יצאו בקרוב"
+  "paymentOnBookingAreNotAvailableOnWeb": "הזמנה זו מחייבת תשלום מראש - תשלומים דרך האתר יצאו בקרוב",
+  "stillNoApp": "עדיין אין לך את האפליקציה?",
+  "noThanks": "לא, תודה",
+  "downloadSimpleTorApp": "הורד את Simple Tor",
+  "downloadNowText": "הורד עכשיו ותהנה מהזמנת תורים בפשטות",
+  "forDownload": "להורדת האפליקציה"
 }

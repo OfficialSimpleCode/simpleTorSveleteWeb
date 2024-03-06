@@ -341,18 +341,12 @@ export default class UserInitializer {
         try {
           if (dataJson.exists()) {
             this.user.setUserPublicData(dataJson.data()!);
-            console.log("eeeeeeeeeeeeeeee");
-            console.log(this.user.userPublicData.bookingsDocsToLoad);
+
             await this.loadBookingsDocs(
               this.user.userPublicData.bookingsDocsToLoad
             );
 
             this.user.bookingsToShow = sortMyBookings(this.user);
-
-            // // update server to relevant fcm for notifications
-            // _transaferInvoiceIfNeeded();
-            // transaferBookingsIfNeeded(this.user);
-            // _deleteDocsFromLocal();
 
             logger.info("Getting new user data from database");
             this.user.userPublicData.reminders = {};
@@ -361,29 +355,9 @@ export default class UserInitializer {
               this.user.userPublicData.reminders = await checkForReminders();
             }
 
-            // if (
-            //   this.user.userPublicData.reminders != null &&
-            //   this.user.userPublicData.reminders.isEmpty &&
-            //   BusinessUIController().showReminderNavigator.value
-            // ) {
-            //   BusinessUIController().showReminderNavigator.value = false;
-            //   BusinessUIController().showReminderNavigator.notifyListeners();
-            // }
-
-            // if (
-            //   this.user.userPublicData.reminders != null &&
-            //   this.user.userPublicData.reminders.isNotEmpty &&
-            //   !BusinessUIController().showReminderNavigator.value
-            // ) {
-            //   BusinessUIController().showReminderNavigator.value = true;
-            //   BusinessUIController().showReminderNavigator.notifyListeners();
-            // }
-
+            console.log("dfdddddddddddddddddeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+            console.log("rrrrrrrrrrrrrr", this.user.bookingsToShow);
             userStore.set(this.user);
-
-            // if (this.userListinerAllowUpdate) {
-            //   UiManager.updateUi({ context: GeneralData.generalContext });
-            // }
           }
         } catch (error) {
           console.error(`Error in startPublicDataListening: ${error}`);

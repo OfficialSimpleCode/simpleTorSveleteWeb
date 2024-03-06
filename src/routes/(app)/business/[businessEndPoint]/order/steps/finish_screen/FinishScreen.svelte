@@ -11,7 +11,9 @@
   export let verificationDialog: HTMLDialogElement;
 </script>
 
-<section class="flex flex-col items-center gap-8 w-[90%] sm:w-[70%]">
+<section
+  class="flex flex-col items-center gap-8 w-[90%] lg:w-[50%] md:w-[60%] sm:w-[80%]"
+>
   <!-- the worker name indicator -->
   <h1 class="text-3xl text-center">
     {$_($bookingMakerStore.isUpdate ? "updateBooking" : "bookAnOrder")}

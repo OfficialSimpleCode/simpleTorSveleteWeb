@@ -11,12 +11,30 @@
   export let productId: string;
 
   const felx: string = index % 2 === 0 ? "sm:flex-row" : "sm:flex-row-reverse";
+
+  let loading: boolean = false;
+
+  function onClick() {
+    setTimeout(() => (loading = true), 50);
+  }
+  function onLoad() {
+    loading = false;
+  }
 </script>
 
-<!-- background settings -->
-
-<div class="flex {felx} flex-col sm:w-full justify-start items-center px-2">
-  <a href={`${base}/business/${$businessStore?.url}/product/${productId}`}>
+<div
+  class=" flex {felx} flex-col sm:w-full justify-start items-center px-2 {loading
+    ? 'opacity-60'
+    : ''}"
+>
+  <a
+    class="relative"
+    on:click={onClick}
+    on:load={onLoad}
+    href={loading
+      ? undefined
+      : `${base}/business/${$businessStore?.url}/product/${productId}`}
+  >
     <!-- product card -->
     <div
       class="card card-compact {onBackground
@@ -50,6 +68,9 @@
         </div> -->
       </div>
     </div>
+    {#if loading}
+      <div class="absolute top-2 left-2 loading loading-spinner" />
+    {/if}
   </a>
 
   <!-- in wide screens display the description beside the card -->

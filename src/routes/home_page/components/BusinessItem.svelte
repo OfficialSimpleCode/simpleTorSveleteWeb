@@ -3,13 +3,24 @@
   import Avatar from "$lib/components/Avatar.svelte";
   import { containerRadius } from "$lib/consts/sizes";
   export let businessData: BusinessShortItem;
+  let loading: boolean = false;
+  function onClick() {
+    setTimeout(() => (loading = true), 50);
+  }
+  function onLoad() {
+    loading = false;
+  }
 </script>
 
 <!-- business container -->
 <a
-  href="{base}/business/{businessData.queryName}"
-  class="
-  flex flex-col justify-center {containerRadius} aspect-[5/4] bg-base-200 text-center shadow m-1 hover:scale-105 transform transition-transform duration-300"
+  on:click={onClick}
+  on:load={onLoad}
+  href={loading ? undefined : `${base}/business/${businessData.queryName}`}
+  class=" relative
+  flex flex-col justify-center {containerRadius} aspect-[5/4] bg-base-200 text-center shadow m-1 hover:scale-105 transform transition-transform duration-300 {loading
+    ? 'opacity-60'
+    : ''}"
   style="background-image: url({businessData.bannerImage}); background-size: cover; background-position: center;"
 >
   <!-- cover image (the chnging images) -->
@@ -31,4 +42,7 @@
   <p class="my-4 mb-0 font-normal leading-relaxed tracking-wide opacity-70">
     {subTitleTransKey}
   </p> -->
+  {#if loading}
+    <div class="absolute top-2 left-3 loading loading-spinner"></div>
+  {/if}
 </a>

@@ -3,7 +3,6 @@
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { SubType } from "$lib/consts/purchases";
   import { maxButtonSize } from "$lib/consts/sizes";
-  import { themeStore } from "$lib/controllers/theme_controller";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import {
     activeBusiness,
@@ -15,18 +14,32 @@
   import BookingList from "./pages/BookingList.svelte";
   import BookingsTable from "./pages/BookingsTable.svelte";
   import EmptyBookingPage from "./pages/EmptyBookingPage.svelte";
-
+  let loadingBookingButton: boolean = false;
   $: showMakeBookingButton =
     $businessStore != null &&
+    $isConnectedStore != null &&
+    $isConnectedStore === true &&
     $businessSubStore != null &&
     $businessSubStore !== SubType.landingPage &&
     !$businessStore.isLandingPageMode &&
     $activeBusiness !== false;
 
   function onMakeBooking() {
+    if (loadingBookingButton || $isConnectedStore == null) {
+      return;
+    }
+    setTimeout(() => (loadingBookingButton = true), 50);
     if ($isConnectedStore === false && $businessStore != null) {
       VerificationHelper.GI().needToMakeBookingAfterLogin = true;
     }
+  }
+
+  function onLogin() {
+    setTimeout(() => (loadingBookingButton = true), 50);
+  }
+
+  function onFinishLoad() {
+    loadingBookingButton = false;
   }
 </script>
 
@@ -39,20 +52,14 @@
       {:else}
         <!-- table object in widge screens -->
         <div class="overflow-x-auto w-full hidden md:block min-h-[400px] mx-10">
-          <BookingsTable
-            bookings={$userStore.bookingsToShow ?? []}
-            forceOpenBookingSheet={true}
-          />
+          <BookingsTable forceOpenBookingSheet={true} />
         </div>
 
         <!-- list of booking in small screens -->
         <div
           class="flex flex-col md:hidden max-w-[95%] sm:max-w-[80%] w-full gap-3"
         >
-          <BookingList
-            bookings={$userStore.bookingsToShow ?? []}
-            forceOpenBookingSheet={true}
-          />
+          <BookingList forceOpenBookingSheet={true} />
         </div>
       {/if}
     {:else}
@@ -64,20 +71,20 @@
           <a
             class="btn w-full btn-primary {maxButtonSize}"
             on:click={onMakeBooking}
-            href={$isConnectedStore === true
-              ? `${base}/business/${$businessStore?.url ?? ""}/order`
-              : `${base}/login`}
+            on:load={onFinishLoad}
+            href={loadingBookingButton
+              ? undefined
+              : $isConnectedStore === true
+                ? `${base}/business/${$businessStore?.url ?? ""}/order`
+                : `${base}/login`}
           >
-            {#if $activeBusiness === true}
+            {#if $activeBusiness === true && !loadingBookingButton}
               <div class="flex flex-row gap-1 items-center">
                 <GeneralIcon icon="material-symbols:add-circle" size={22} />
                 {translate("newBooking", $_)}
               </div>
             {:else}
-              <div
-                class="loading loading-spinner {$themeStore?.onPrimary ??
-                  'bg-white'}"
-              />
+              <div class="loading loading-spinner bg-primary-content" />
             {/if}
           </a>
         </div>
@@ -85,13 +92,17 @@
         <div class="pb-4 w-[90%] flex flex-row items-center justify-center">
           <a
             class="btn w-full btn-primary {maxButtonSize}"
-            on:click={onMakeBooking}
-            href={`${base}/login`}
-          >
-            <div class="flex flex-row gap-1 items-center">
-              <GeneralIcon icon="ic:baseline-login" size={22} />
-              {translate("loginToSeeBookings", $_)}
-            </div>
+            on:click={onLogin}
+            on:load={onFinishLoad}
+            href={loadingBookingButton ? undefined : `${base}/login`}
+            >{#if loadingBookingButton}
+              <div class="loading loading-spinner bg-primary-content" />
+            {:else}
+              <div class="flex flex-row gap-1 items-center">
+                <GeneralIcon icon="ic:baseline-login" size={22} />
+                {translate("loginToSeeBookings", $_)}
+              </div>
+            {/if}
           </a>
         </div>
       {/if}

@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { pushState } from "$app/navigation";
-  import { base } from "$app/paths";
   import Avatar from "$lib/components/Avatar.svelte";
   import NavigationDialog from "$lib/components/dialogs/NavigationDialog.svelte";
   import {
@@ -10,12 +8,14 @@
   } from "$lib/stores/Business";
   import { _, translate } from "$lib/utils/translate";
 
+  import { base } from "$app/paths";
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { isAppleUser } from "$lib/consts/platform";
   import { subsLevels } from "$lib/consts/purchases";
   import { containerRadius } from "$lib/consts/sizes";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { isConnectedStore } from "$lib/stores/User";
+  import { pushDialog } from "$lib/utils/general_utils";
   import { onMount } from "svelte";
   import ShareDialog from "../components/ShareDialog.svelte";
 
@@ -26,6 +26,8 @@
   let navigationDialog: HTMLDialogElement;
   let iconStr: string = "mdi:ios-share";
   let smallView: boolean = true;
+
+  let loadingBookingButton: boolean = false;
 
   onMount(() => {
     smallView = window.innerWidth < 768;
@@ -42,24 +44,27 @@
 
   // open choose navigation option dialog
   function openNavigationDialog() {
-    pushState("", {
-      showModal: true,
-    });
-    setTimeout(() => navigationDialog.showModal(), 100);
+    pushDialog(navigationDialog);
   }
 
   // open the bsuiness share screen
   function openShareDialog() {
-    pushState("", {
-      showModal: true,
-    });
-    setTimeout(() => shareDialog.showModal(), 100);
+    pushDialog(shareDialog);
   }
 
   function onMakeBooking() {
+    if (loadingBookingButton || $isConnectedStore == null) {
+      return;
+    }
+    loadingBookingButton = true;
+
     if ($isConnectedStore === false && $businessStore != null) {
       VerificationHelper.GI().needToMakeBookingAfterLogin = true;
     }
+  }
+
+  function onFinishLoad() {
+    loadingBookingButton = false;
   }
 
   // After the ui is loaded
@@ -135,13 +140,19 @@
       <div class="flex xs:gap-5 gap-3 items-center">
         <a
           on:click={onMakeBooking}
-          class="btn btn-primary xs:px-10 px-6 md:px-20"
+          on:load={onFinishLoad}
           href={$isConnectedStore
             ? `${base}/business/${$businessStore?.url ?? ""}/order`
             : `${base}/login`}
+          class="btn btn-primary xs:px-10 px-6 md:px-20"
         >
-          {translate("setBooking", $_)}
+          {#if $isConnectedStore == null || loadingBookingButton}
+            <div class="loading loading-spinner" />
+          {:else}
+            {translate("setBooking", $_)}
+          {/if}
         </a>
+
         <button class="btn btn-primary" on:click={openShareDialog}>
           <!-- <Icon src={isAppleUser() ? Trash : Share} size="26px" /> -->
           <GeneralIcon icon={iconStr} />
