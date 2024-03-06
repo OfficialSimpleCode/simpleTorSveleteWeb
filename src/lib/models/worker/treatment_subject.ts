@@ -81,10 +81,13 @@ export default class TreatmentSubject {
 
   containTreatment(treatmentId: string): boolean {
     for (const [index, treatment] of this.treatments) {
+      console.log(treatment.id, treatmentId);
       if (treatment.id === treatmentId) {
+        console.log("ddddddddddddddddddddd");
         return true;
       }
     }
+    console.log("ddddddddddddddddddddd");
     return false;
   }
 

@@ -20,6 +20,7 @@
     });
     setTimeout(() => bookingDialog.showModal(), 100);
   }
+  console.log("dddddddddddddddddddddddddddddddddddddddddddddddd");
 </script>
 
 <!-- booking shhet and dialog -->

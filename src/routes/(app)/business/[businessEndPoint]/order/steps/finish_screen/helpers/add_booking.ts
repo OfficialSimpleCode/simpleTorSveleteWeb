@@ -45,7 +45,7 @@ export async function addBooking({
       return value;
     });
     //jump to my bookings page after succedded with the order
-    openOrdersPage();
+    await openOrdersPage();
   } else {
     ErrorsController.displayError();
   }

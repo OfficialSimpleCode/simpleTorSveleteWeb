@@ -1,13 +1,10 @@
 <script lang="ts">
-  import { page } from "$app/stores";
-
   import { businessStore } from "$lib/stores/Business";
   import { ShowToast } from "$lib/stores/ToastManager";
 
   import NavigationDialog from "$lib/components/dialogs/NavigationDialog.svelte";
 
   // Assets
-  import { base } from "$app/paths";
 
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import { pushDialog } from "$lib/utils/general_utils";
@@ -34,10 +31,7 @@
       });
       return;
     }
-    pushDialog(
-      navigationDialog,
-      `${base}/business/${$businessStore?.url}/navigate`
-    );
+    pushDialog(navigationDialog);
   }
   function openTermDialog() {
     if (!$businessStore?.design.term) {
@@ -47,7 +41,7 @@
       });
       return;
     }
-    pushDialog(termDialog, `${base}/business/${$businessStore.url}/term`);
+    pushDialog(termDialog);
   }
 
   //define the icon link and hrefs
@@ -96,7 +90,9 @@
       name: "whatsapp",
       href:
         $businessStore?.shopPhone ?? "" !== ""
-          ? `whatsapp://send?phone=${$businessStore?.shopPhone}`
+          ? `whatsapp://send?phone=${$businessStore?.shopPhone
+              .replaceAll("+", "")
+              .replaceAll("-", "")}`
           : undefined,
       icon: "mdi:whatsapp",
       func:
@@ -116,9 +112,7 @@
   }
 </script>
 
-{#if $page.state.showModal}
-  <NavigationDialog bind:dialog={navigationDialog} />
-{/if}
+<NavigationDialog bind:dialog={navigationDialog} />
 
 <section class="flex justify-center relative md:top-2.5 top-[-32px]">
   <!-- Social Links -->

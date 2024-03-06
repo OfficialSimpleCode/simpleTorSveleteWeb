@@ -14,9 +14,12 @@
 
   let deleteBookingWithoutBusinessDialog: HTMLDialogElement;
 
-  const showAttention =
+  $: showAttention =
     !booking.isPassed &&
     (booking.status !== BookingStatuses.approved || booking.needCancel);
+
+  console.log("eeeeeeeeeeeeeeee");
+  console.log(booking);
 </script>
 
 <DeleteBookingWithoutBusinessDialog

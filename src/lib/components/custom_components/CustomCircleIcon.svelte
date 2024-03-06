@@ -1,6 +1,7 @@
 <script lang="ts">
   import { cssSizesClasses } from "$lib/consts/css_classes";
   import { _, translate } from "$lib/utils/translate";
+  import { createEventDispatcher } from "svelte";
   import GeneralIcon from "./GeneralIcon.svelte";
 
   export let icon: string;
@@ -18,6 +19,8 @@
   export let target: string | undefined = undefined;
   export let needGender: boolean = true;
 
+  const dispatch = createEventDispatcher();
+
   $: ngClass = `flex items-center justify-center rounded-full  ${
     marked ? "bg-primary text-primary-content" : ""
   }  ${
@@ -27,7 +30,13 @@
 
 <div class="flex flex-col items-center">
   {#if href}
-    <a {href} class={!active ? "opacity opacity-70" : ""} target={target ?? ""}>
+    <a
+      on:click={() => dispatch("click")}
+      on:load={() => dispatch("load")}
+      {href}
+      class={!active ? "opacity opacity-70" : ""}
+      target={target ?? ""}
+    >
       <div class="{ngClass} {cssSizesClasses[size].cssClass}">
         {#if !loading}
           <GeneralIcon {icon} size={cssSizesClasses[size].iconSize} />

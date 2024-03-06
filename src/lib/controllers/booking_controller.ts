@@ -64,7 +64,7 @@ export default class BookingController {
       showVerificationAlert: false,
       services: {},
       oldBooking: BookingController.bookingToUpdate,
-      note: "",
+      note: BookingController.bookingToUpdate?.note ?? "",
       date: BookingController.bookingToUpdate?.bookingDate,
       isUpdate: BookingController.bookingToUpdate != null,
       currentPaymentType: PaymentTypes.payment,
@@ -153,23 +153,25 @@ export default class BookingController {
     }
 
     logger.debug("Getting new data for the worker");
-
+    console.log(workerObj);
     // If treatments had changed
     const servicesCopy = { ...bookingMaker.services };
     Object.keys(servicesCopy).forEach((serviceId) => {
       if (!workerObj.hasTreatemnt(serviceId)) {
+        console.log("55555555555555555555555555555");
+        console.log("tttttttttttttt", serviceId);
         delete bookingMaker.services[serviceId];
       }
     });
 
     // Update the current picked services with the new worker data
     Object.entries(workerObj.treatmentsSubjects).forEach(([key, subject]) => {
-      subject.treatments.forEach((service, _) => {
-        if (bookingMaker.services.hasOwnProperty(service.id)) {
-          const count = bookingMaker.services[service.id].count;
-          const tempService = Treatment.fromTreatment(service);
+      subject.treatments.forEach((treatment, _) => {
+        if (bookingMaker.services[treatment.id] != null) {
+          const count = bookingMaker.services[treatment.id].count;
+          const tempService = Treatment.fromTreatment(treatment);
           tempService.count = count;
-          bookingMaker.services[service.id] = tempService;
+          bookingMaker.services[treatment.id] = tempService;
         }
       });
     });
@@ -180,7 +182,9 @@ export default class BookingController {
       bookingMaker.showVerificationAlert =
         showPhoneVerificationAlert(currentWorker);
     }
-
+    console.log(
+      "33333333333333333333333333333333333333333333333333333333333333333333333333333333"
+    );
     bookingMakerStore.set(bookingMaker);
     //only if there picked worker and picked service  need to update the schedule
     if (
@@ -279,6 +283,9 @@ export default class BookingController {
         this.removeService(bookingMaker, treatment);
       } else {
         bookingMaker.currentStep += 1;
+        console.log(
+          "2222222222222222222222222222222222222222222222222222222222222222"
+        );
         bookingMakerStore.set(bookingMaker);
       }
     }
@@ -314,6 +321,7 @@ export default class BookingController {
     BusinessInitializer.GI().startTimesListening(worker, treatment.isMulti);
     bookingMaker.isMultiEvent = true;
     bookingMaker.currentStep += 1;
+    console.log("222222211111111111111111111111111111111111111111111111111111");
     bookingMakerStore.set(bookingMaker);
   }
 
@@ -396,6 +404,9 @@ export default class BookingController {
     }
     bookingMaker.services[treatment.id] = treatment;
     bookingMaker.isMultiEvent = false;
+    console.log(
+      "4444444444444444444444444444444444444444444444444444444444444444444444"
+    );
     bookingMakerStore.set(bookingMaker);
   }
 
@@ -408,6 +419,9 @@ export default class BookingController {
       this.removeService(bookingMaker, treatment);
     } else {
       bookingMaker.services[treatment.id].count -= 1;
+      console.log(
+        "4444444444444444555555555555555555555555555555555555555555555555555555"
+      );
       bookingMakerStore.set(bookingMaker);
     }
   }
@@ -438,26 +452,23 @@ export default class BookingController {
       return;
     }
     bookingMaker.services[treatment.id].count += 1;
-
+    console.log("6666666666666666666666666666666666666666666666666666666666");
     bookingMakerStore.set(bookingMaker);
   }
 }
 
 export function showPhoneVerificationAlert(worker: WorkerModel): boolean {
+  //prepare custom booking for the sendMessage func need to be with
+  //isVerifiedPhone = true - we dont care now if the user is verified
+  //only cared about what the worker want
   const tempBooking = new Booking({});
   tempBooking.userFcms = UserInitializer.GI().user.fcmsTokens;
   tempBooking.isVerifiedPhone = true;
-  console.log(
-    "rrrrrrrrrrrrrrr",
-    sendMessage({ booking: tempBooking, worker: worker }) ==
-      NotificationType.message,
-    worker.mustVerifyPhone,
-    !UserInitializer.GI().user.userPublicData.isVerifiedPhone
-  );
+
   return (
-    // (sendMessage({ booking: tempBooking, worker: worker }) ==
-    //   NotificationType.message ||
-    //   worker.mustVerifyPhone) &&
+    (sendMessage({ booking: tempBooking, worker: worker }) ==
+      NotificationType.message ||
+      worker.mustVerifyPhone) &&
     !UserInitializer.GI().user.userPublicData.isVerifiedPhone
   );
 }

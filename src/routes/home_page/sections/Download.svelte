@@ -1,11 +1,13 @@
-<script>
+<script lang="ts">
   import { containerRadius } from "$lib/consts/sizes";
   import { getDownloadingAppLink } from "$lib/utils/links_utils";
   import { _, translate } from "$lib/utils/translate";
   import { onMount } from "svelte";
 
   let downloadLink = "";
+
   // After the ui is loaded
+
   onMount(() => {
     downloadLink = getDownloadingAppLink();
   });

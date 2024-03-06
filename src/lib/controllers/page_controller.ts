@@ -3,10 +3,10 @@ import { base } from "$app/paths";
 import { businessStore } from "$lib/stores/Business";
 import { get } from "svelte/store";
 
-export function openOrdersPage() {
+export async function openOrdersPage() {
   if (get(businessStore) != null) {
-    goto(`${base}/business/${get(businessStore)?.url ?? ""}/orders`);
+    await goto(`${base}/business/${get(businessStore)?.url ?? ""}/orders`);
   } else {
-    goto(`${base}/orders`);
+    await goto(`${base}/orders`);
   }
 }

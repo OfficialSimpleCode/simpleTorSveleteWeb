@@ -66,9 +66,10 @@
 <button
   class="shrink-0 bg-base-300 hover:bg-base-300 w-full rounded-lg"
   on:click={() => {
-    const maker = $bookingMakerStore;
-    maker.currentStep = 1;
-    bookingMakerStore.set(maker);
+    bookingMakerStore.update((value) => {
+      value.currentStep = 1;
+      return value;
+    });
   }}
 >
   <div class=" flex flex-row items-center justify-between py-3 sm:py-4 px-5">

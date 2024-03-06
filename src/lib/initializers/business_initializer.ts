@@ -469,27 +469,27 @@ export default class BusinessInitializer {
 
   updateWorkerPublicData(
     bookingsDocListenerJson: DocumentSnapshot<DocumentData, DocumentData>,
-    workerPhone: string
+    workerId: string
   ): void {
-    if (this.workers[workerPhone] === undefined) {
+    if (this.workers[workerId] == null) {
       return;
     }
 
     if (
       !bookingsDocListenerJson.exists() ||
-      bookingsDocListenerJson.data() === undefined
+      bookingsDocListenerJson.data() == null
     ) {
       return;
     }
 
-    this.workers[workerPhone]!.workerPublicData.setWorkerPublicData(
+    this.workers[workerId]!.workerPublicData.setWorkerPublicData(
       bookingsDocListenerJson.data()!
     );
 
-    BookingController.updateWorkerData(this.workers[workerPhone]!);
+    BookingController.updateWorkerData(this.workers[workerId]!);
 
     logger.debug(
-      `Get new workerData for the current worker updateWorkerPublicData--> ${workerPhone}`
+      `Get new workerData for the current worker updateWorkerPublicData--> ${workerId}`
     );
   }
 
@@ -525,14 +525,11 @@ export default class BusinessInitializer {
     multiEventsTimesJson: DocumentSnapshot<DocumentData, DocumentData>,
     workerId: string
   ): void {
-    if (this.workers[workerId] === undefined) {
+    if (this.workers[workerId] == null) {
       return;
     }
 
-    if (
-      !multiEventsTimesJson.exists() ||
-      multiEventsTimesJson.data() === undefined
-    ) {
+    if (!multiEventsTimesJson.exists() || multiEventsTimesJson.data() == null) {
       return;
     }
 

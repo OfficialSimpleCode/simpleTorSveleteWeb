@@ -53,11 +53,11 @@
 </script>
 
 <ul
-  class="flex flex-row gap-1 min-h-24 w-[90%] sm:w-[60%] mt-1 items-center justify-center"
+  class="flex flex-row gap-[4px] w-[90%] lg:w-[50%] md:w-[60%] sm:w-[80%] min-h-24 mt-1 items-center justify-center"
 >
   <!-- worker step -->
   <button
-    class="btn bg-base-300 sm:w-[190px] xs:w-[135px] w-[108px] rounded-lg px-2 hover:text-base-content {$bookingMakerStore.currentStep ===
+    class="flex-1 btn bg-base-300 rounded-lg px-2 hover:text-base-content {$bookingMakerStore.currentStep ===
     0
       ? 'text-primary-content'
       : ''}"
@@ -76,7 +76,7 @@
   </button>
   <!-- service step -->
   <button
-    class="btn bg-base-300 sm:w-[150px] xs:w-[135px] w-[108px] rounded-lg px-2 hover:text-base-content {$bookingMakerStore.currentStep ===
+    class="flex-1 btn bg-base-300 rounded-lg px-2 hover:text-base-content {$bookingMakerStore.currentStep ===
     1
       ? 'text-primary-content'
       : ''}"
@@ -92,7 +92,7 @@
 
   <!-- time step -->
   <button
-    class="btn bg-base-300 sm:w-[150px] xs:w-[135px] w-[108px] rounded-lg px-2 hover:text-base-content {$bookingMakerStore.currentStep ===
+    class=" flex-1 btn bg-base-300 rounded-lg px-2 hover:text-base-content {$bookingMakerStore.currentStep ===
     2
       ? 'text-primary-content'
       : ''}"

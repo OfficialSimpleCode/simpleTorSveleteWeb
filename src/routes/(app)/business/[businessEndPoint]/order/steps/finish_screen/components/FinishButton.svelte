@@ -29,11 +29,6 @@
 
   const publicCustomer: PublicCustomer = getPublicCustomer();
 
-  console.log(
-    BookingController.worker.mustVerifyPhone,
-    $bookingMakerStore.showVerificationAlert
-  );
-
   const worker = BookingController.worker;
 
   const needOnHold = needToHoldOn(

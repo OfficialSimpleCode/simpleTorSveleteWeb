@@ -13,9 +13,9 @@
 
     if (resp) {
       if ($businessStore != null) {
-        goto(`${base}/business/${$businessStore.url}`);
+        await goto(`${base}/business/${$businessStore.url}`);
       } else {
-        goto(`${base}/`);
+        await goto(`${base}/`);
       }
     } else {
       ErrorsController.displayError();

@@ -13,7 +13,7 @@
       ? 'bg-base-300'
       : 'bg-base-200'}"
   >
-    <GeneralIcon icon="icon-park-outline:attention" />
-    <h3 class="text-center text-sm opacity-70">{text}</h3>
+    <GeneralIcon icon="icon-park-outline:attention" size={22} />
+    <h3 class="text-center text-xs opacity-70">{text}</h3>
   </div>
 </section>

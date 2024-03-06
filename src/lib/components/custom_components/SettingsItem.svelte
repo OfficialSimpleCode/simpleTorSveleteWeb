@@ -6,6 +6,7 @@
   export let onTap: () => void;
 
   export let icon: string;
+  export let loading: boolean = false;
   export let name: string;
 </script>
 
@@ -19,6 +20,10 @@
   </div>
   <div class="flex items-center text-gray-500">
     <slot name="trailing" />
-    <CustomArrow />
+    {#if loading}
+      <div class="loading loading-spinner" />
+    {:else}
+      <CustomArrow />
+    {/if}
   </div>
 </button>

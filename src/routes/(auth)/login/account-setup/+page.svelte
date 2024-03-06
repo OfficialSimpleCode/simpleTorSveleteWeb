@@ -48,7 +48,6 @@
   }
 
   async function setupAccount() {
-    console.log(validEmail, validPhone, validName, processing);
     if (!validEmail || !validPhone || !validName || processing) {
       return;
     }
@@ -67,7 +66,7 @@
         if ($businessStore != null) {
           pushDialog(saveMeUsUserDialog);
         } else {
-          onFinish();
+          await onFinish();
         }
       }
     } finally {
@@ -78,9 +77,9 @@
 
   async function onFinish() {
     if ($businessStore != null) {
-      goto(`${base}/business/${$businessStore.url}`);
+      await goto(`${base}/business/${$businessStore.url}`);
     } else {
-      goto(`${base}/`);
+      await goto(`${base}/`);
     }
   }
 

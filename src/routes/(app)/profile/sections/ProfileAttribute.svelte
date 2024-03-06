@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { base } from "$app/paths";
-  import { page } from "$app/stores";
   import SettingContainer from "$lib/components/SettingContainer.svelte";
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import SettingsItem from "$lib/components/custom_components/SettingsItem.svelte";
@@ -22,15 +20,15 @@
   let copiedUserId: boolean = false;
 
   function openEmailDialog() {
-    pushDialog(emailDialog, `${base}/profile/email`);
+    pushDialog(emailDialog);
   }
 
   function openNameDialog() {
-    pushDialog(nameDialog, `${base}/profile/name`);
+    pushDialog(nameDialog);
   }
 
   function openPhoneDialog() {
-    pushDialog(phoneDialog, `${base}/profile/phone`);
+    pushDialog(phoneDialog);
   }
 
   function copyToUserIdClipboard() {
@@ -53,31 +51,31 @@
 </script>
 
 <!-- Dialog -->
-{#if $page.state.showModal}
-  <ChangeAtrributeDialog
-    explain={translate("nameExplain")}
-    titleTransKey={"name"}
-    initialValue={UserInitializer.GI().user.userPublicData.name}
-    validationFunc={nameValidation}
-    onUpdate={onUpdateName}
-    bind:dialog={nameDialog}
-  />
-  <ChangeAtrributeDialog
-    explain={translate("emailUpdateExplain")}
-    titleTransKey={"email"}
-    initialValue={UserInitializer.GI().user.userPublicData.email}
-    validationFunc={emailValidation}
-    onUpdate={onUpdateEmail}
-    bind:dialog={emailDialog}
-  />
-  <ChangePhoneDialog
-    explain={translate("phoneUpdateExplain")}
-    titleTransKey={"phoneNumber"}
-    initialValue={UserInitializer.GI().user.userPublicData.phoneNumber}
-    onUpdate={onUpdatePhone}
-    bind:dialog={phoneDialog}
-  />
-{/if}
+
+<ChangeAtrributeDialog
+  explain={translate("nameExplain")}
+  titleTransKey={"name"}
+  initialValue={UserInitializer.GI().user.userPublicData.name}
+  validationFunc={nameValidation}
+  onUpdate={onUpdateName}
+  bind:dialog={nameDialog}
+/>
+<ChangeAtrributeDialog
+  explain={translate("emailUpdateExplain")}
+  titleTransKey={"email"}
+  initialValue={UserInitializer.GI().user.userPublicData.email}
+  validationFunc={emailValidation}
+  onUpdate={onUpdateEmail}
+  bind:dialog={emailDialog}
+/>
+<ChangePhoneDialog
+  explain={translate("phoneUpdateExplain")}
+  titleTransKey={"phoneNumber"}
+  initialValue={UserInitializer.GI().user.userPublicData.phoneNumber}
+  onUpdate={onUpdatePhone}
+  bind:dialog={phoneDialog}
+/>
+
 <SettingContainer>
   <div slot="children" class="flex flex-col join join-vertical">
     <SettingsItem icon="wpf:name" onTap={openNameDialog} name={"name"}>

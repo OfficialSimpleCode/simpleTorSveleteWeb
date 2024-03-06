@@ -1,9 +1,10 @@
 <script lang="ts">
-  import type Booking from "$lib/models/booking/booking_model";
+  import { userStore } from "$lib/stores/User";
   import OrderCard from "../components/OrderCard.svelte";
 
-  export let bookings: Booking[];
   export let forceOpenBookingSheet: boolean;
+
+  $: bookings = $userStore.bookingsToShow ?? [];
 </script>
 
 {#each bookings as booking}
