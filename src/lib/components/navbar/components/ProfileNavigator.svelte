@@ -21,48 +21,53 @@
   }
 </script>
 
-{#if $isConnectedStore == null}
-  <CustomCircleIcon
-    icon="iconamoon:profile-fill"
-    active={false}
-    bgColor="bg-base-200"
-  />
-{:else}
-  <CustomCircleIcon
-    icon={loading
-      ? ""
-      : $isConnectedStore
-        ? "iconamoon:profile-fill"
-        : "ic:baseline-login"}
-    href={loading
-      ? undefined
-      : $isConnectedStore
-        ? `${base}/profile`
-        : `${base}/login`}
-    {loading}
-    on:click={onClick}
-    on:load={onLoad}
-    bgColor="bg-base-200"
-  />
-  {#if $isConnectedStore}
-    <Tooltip
-      ><section class="bg-base-300 {containerRadius} z-50">
-        <div class="flex flex-row gap-2 py-3 px-5 items-center justify-center">
-          <div class="flex flex-col items-end">
-            <h4 class="text-sm text-base-content">{$userStore.name}</h4>
-            <p class="text-xs opacity-70 text-base-content">
-              {formatedPhone($userStore.phoneNumber)}
-            </p>
+<!-- prevent from the tool tip overiden by other elements -->
+<div class="z-50">
+  {#if $isConnectedStore == null}
+    <CustomCircleIcon
+      icon="iconamoon:profile-fill"
+      active={false}
+      bgColor="bg-base-200"
+    />
+  {:else}
+    <CustomCircleIcon
+      icon={loading
+        ? ""
+        : $isConnectedStore
+          ? "iconamoon:profile-fill"
+          : "ic:baseline-login"}
+      href={loading
+        ? undefined
+        : $isConnectedStore
+          ? `${base}/profile`
+          : `${base}/login`}
+      {loading}
+      on:click={onClick}
+      on:load={onLoad}
+      bgColor="bg-base-200"
+    />
+    {#if $isConnectedStore}
+      <Tooltip
+        ><section class="bg-base-300 {containerRadius}">
+          <div
+            class="flex flex-row gap-2 py-3 px-5 items-center justify-center"
+          >
+            <div class="flex flex-col items-end">
+              <h4 class="text-sm text-base-content">{$userStore.name}</h4>
+              <p class="text-xs opacity-70 text-base-content">
+                {formatedPhone($userStore.phoneNumber)}
+              </p>
+            </div>
+            <div class="pb-3">
+              <Avatar
+                extraSmall={true}
+                ring={false}
+                img={imageByGender($userStore.gender)}
+              />
+            </div>
           </div>
-          <div class="pb-3">
-            <Avatar
-              extraSmall={true}
-              ring={false}
-              img={imageByGender($userStore.gender)}
-            />
-          </div>
-        </div>
-      </section></Tooltip
-    >
+        </section></Tooltip
+      >
+    {/if}
   {/if}
-{/if}
+</div>

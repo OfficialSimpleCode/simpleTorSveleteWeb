@@ -7,6 +7,7 @@
   import VerifiedPhoneSuccessfullyDialog from "$lib/components/dialogs/VerifiedPhoneSuccessfullyDialog.svelte";
   import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
   import { AuthProvider, LoginReason } from "$lib/consts/auth";
+  import { containerRadius } from "$lib/consts/sizes";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { userStore } from "$lib/stores/User";
   import { pushDialog } from "$lib/utils/general_utils";
@@ -15,6 +16,7 @@
   let verificationDialog: HTMLDialogElement;
   let makeSureRemoveVerification: HTMLDialogElement;
   let verificationSuccessfully: HTMLDialogElement;
+  export let shimmerEffect: boolean = false;
   async function onClickVerified() {
     if ($userStore.userPublicData.isVerifiedPhone) {
       pushDialog(makeSureRemoveVerification);
@@ -62,6 +64,7 @@
 <VerifiedPhoneSuccessfullyDialog bind:dialog={verificationSuccessfully} />
 
 <SettingContainer
+  {shimmerEffect}
   explainText={translate(
     $userStore.userPublicData.isVerifiedPhone
       ? "yourPhoneVerifiviedWithOneTime"
@@ -70,15 +73,27 @@
 >
   <div slot="children">
     <SettingsItem
+      {shimmerEffect}
       icon="material-symbols:verified"
+      shimmerNameLength="w-[60%]"
       onTap={onClickVerified}
       name={"phoneVerification"}
     >
-      <h3 slot="trailing">
-        {translate(
-          $userStore.userPublicData.isVerifiedPhone ? "verified" : "notVerified"
-        )}
-      </h3></SettingsItem
-    >
+      <div slot="trailing" class="flex w-full justify-end">
+        {#if shimmerEffect}
+          <div
+            class="h-[11px] w-full min-w-[50px] max-w-[190px] {containerRadius} bg-base-300"
+          />
+        {:else}
+          <p class="text-end opacity-60">
+            {translate(
+              $userStore.userPublicData.isVerifiedPhone
+                ? "verified"
+                : "notVerified"
+            )}
+          </p>
+        {/if}
+      </div>
+    </SettingsItem>
   </div>
 </SettingContainer>

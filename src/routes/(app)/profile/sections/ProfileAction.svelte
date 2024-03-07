@@ -6,6 +6,7 @@
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { pushDialog } from "$lib/utils/general_utils";
   import LogoutDialog from "../components/LogoutDialog.svelte";
+  export let shimmerEffect: boolean = false;
   let loadingLogout: boolean = false;
   let logoutDialog: HTMLDialogElement;
   let loadingDelete: boolean = false;
@@ -31,10 +32,12 @@
 
 <LogoutDialog bind:dialog={logoutDialog} />
 
-<SettingContainer>
+<SettingContainer {shimmerEffect}>
   <div slot="children" class="flex flex-col join join-vertical">
     <SettingsItem
+      {shimmerEffect}
       icon="material-symbols:logout"
+      shimmerNameLength="w-[30%]"
       onTap={onClickLogout}
       name={"logout"}
     >
@@ -47,6 +50,8 @@
 
     <div class="h-[0.2px] w-full bg-gray-500 opacity-20" />
     <SettingsItem
+      {shimmerEffect}
+      shimmerNameLength="w-[45%]"
       icon="ph:trash-bold"
       loading={loadingDelete}
       onTap={onDeleteUser}

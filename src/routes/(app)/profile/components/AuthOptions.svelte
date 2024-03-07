@@ -11,6 +11,9 @@
   import { userStore } from "$lib/stores/User";
   import { pushDialog } from "$lib/utils/general_utils";
   import AuthOptionDialog from "./AuthOptionDialog.svelte";
+
+  export let shimmerEffect: boolean = false;
+
   let explainDialog: HTMLDialogElement;
 
   let pickedProvider: AuthProvider;
@@ -18,6 +21,9 @@
   let pickedDate: Date = new Date(0);
 
   async function onAdd() {
+    if (shimmerEffect) {
+      return;
+    }
     if (loading) {
       return;
     }
@@ -31,6 +37,9 @@
   }
 
   function onClick(authProvider: AuthProvider, date: Date) {
+    if (shimmerEffect) {
+      return;
+    }
     pickedProvider = authProvider;
     pickedDate = date;
     pushDialog(
@@ -52,24 +61,35 @@
 <section
   class="relative rounded-lg bg-base-200 p-5 flex items-center justify-center gap-1 w-[90%]"
 >
-  {#each $userStore.authProviders as [authProvider, date]}
-    <button
-      class="bg-base-300 btn btn-ghost"
-      on:click={() => onClick(authProvider, date)}
-    >
-      <img
-        src={authProviderToImage[authProvider]}
-        alt={authProviderToStr[authProvider]}
-        class="w-[30px]"
-      />
+  {#if shimmerEffect}
+    <button class="bg-base-300 btn btn-ghost animate-pulse">
+      <div class="w-[30px]" />
     </button>
-  {/each}
+  {:else}
+    {#each $userStore.authProviders as [authProvider, date]}
+      <button
+        class="bg-base-300 btn btn-ghost w-[20px]"
+        on:click={() => onClick(authProvider, date)}
+      >
+        <img
+          src={authProviderToImage[authProvider]}
+          alt={authProviderToStr[authProvider]}
+          class="w-[20px]"
+        />
+      </button>
+    {/each}
+  {/if}
 
-  <button class="bg-base-300 btn btn-ghost" on:click={onAdd}>
+  <button
+    class="bg-base-300 btn btn-ghost {shimmerEffect ? 'animate-pulse' : ''} "
+    on:click={onAdd}
+  >
     {#if loading}
       <div class="loading loading-spinner" />
     {:else}
-      <GeneralIcon icon="gravity-ui:plus" />
+      <div class="opacity-30">
+        <GeneralIcon icon="gravity-ui:plus" />
+      </div>
     {/if}
   </button>
 </section>

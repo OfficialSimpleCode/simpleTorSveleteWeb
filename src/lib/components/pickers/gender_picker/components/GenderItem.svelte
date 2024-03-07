@@ -5,14 +5,21 @@
   export let gender: Gender;
   export let pickedGender: Gender;
   export let handleClick: (gender: Gender) => void;
+  export let shimmerEffect: boolean = false;
 </script>
 
-<div class="flex flex-col items-center justify-center gap-1 icon">
+<div
+  class="flex flex-col items-center justify-center gap-1 icon {shimmerEffect
+    ? 'animate-pulse'
+    : ''}"
+>
   <button
     on:click={() => handleClick(gender)}
     class="flex items-center justify-center rounded-full
        hover:bg-primary
-       shrink-0 transition-all duration-200 w-[50px] h-[50px] sm:h-[65px] sm:w-[65px]"
+       shrink-0 transition-all duration-200 w-[50px] h-[50px] sm:h-[65px] sm:w-[65px] {shimmerEffect
+      ? 'opacity-20'
+      : ''}"
   >
     <img
       class="object-scale-down rounded-lg p-1"
@@ -21,10 +28,14 @@
     />
   </button>
   <div
-    class="{pickedGender === gender ? 'bg-primary' : ''} {containerRadius} px-2"
+    class="{pickedGender === gender && !shimmerEffect
+      ? 'bg-primary'
+      : ''} {containerRadius} px-2"
   >
     <p
-      class="xs:text-md text-sm capitalize {pickedGender === gender
+      class="xs:text-md text-sm capitalize {shimmerEffect
+        ? 'opacity-30'
+        : ''} {pickedGender === gender && !shimmerEffect
         ? 'text-primary-content'
         : ''} "
     >

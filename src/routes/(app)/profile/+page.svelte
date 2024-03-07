@@ -33,6 +33,7 @@
       ErrorsController.displayError();
     }
   }
+  $: shimmerEffect = $isConnectedStore == null;
 </script>
 
 <svelte:head>
@@ -58,26 +59,27 @@
   />
 </svelte:head>
 
-{#if $isConnectedStore === undefined}
-  <div class="flex flex-col items-center justify-center h-full mb-[50px] w-50">
-    <div class="loading loading-spinner"></div>
-  </div>
-{:else if $isConnectedStore === false}
+{#if $isConnectedStore === false}
+  <!-- jump to login page on the script -->
   <div />
 {:else}
   <div
     class="flex flex-col justify-start items-center gap-6 max-w-[800px] mx-auto pb-5"
   >
-    <NameAndImage />
+    <NameAndImage {shimmerEffect} />
 
-    <ProfileAttribute />
+    <ProfileAttribute {shimmerEffect} />
 
-    <ProfileVerification />
+    <ProfileVerification {shimmerEffect} />
 
-    <GenderPicker onChanged={updateGender} pickedGender={$userStore.gender} />
+    <GenderPicker
+      onChanged={updateGender}
+      pickedGender={$userStore.gender}
+      {shimmerEffect}
+    />
 
-    <AuthOptions />
+    <AuthOptions {shimmerEffect} />
 
-    <ProfileAction />
+    <ProfileAction {shimmerEffect} />
   </div>
 {/if}
