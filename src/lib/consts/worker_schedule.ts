@@ -75,14 +75,13 @@ export const sceduleColors = [
 ];
 
 export const weekDays = [
-  "",
+  "sunday",
   "monday",
   "tuesday",
   "wednesday",
   "thursday",
   "friday",
   "saturday",
-  "sunday",
 ];
 
 export enum EventTyps {

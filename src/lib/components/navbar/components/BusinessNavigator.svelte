@@ -1,18 +1,11 @@
 <script lang="ts">
   import { base } from "$app/paths";
-  import { page } from "$app/stores";
   import { businessStore } from "$lib/stores/Business";
   import { _, translate } from "$lib/utils/translate";
 
   $: ngClass = `flex items-center justify-center rounded-full hover:bg-primary hover:text-primary-content bg-base-200 block shrink-0 transition-all duration-200`;
   let loading: boolean = false;
-  function onClick() {
-    console.log($page.url.pathname);
-    if ($page.url.pathname.includes(`/business/${$businessStore?.url}`)) {
-      return;
-    }
-    setTimeout(() => (loading = true), 50);
-  }
+  function onClick() {}
 
   function onLoad() {
     loading = false;

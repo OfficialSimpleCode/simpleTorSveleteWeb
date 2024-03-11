@@ -258,11 +258,6 @@ export class FirebaseAuthService extends VerificationService {
     let codeSentTime: Date | undefined;
 
     const html = document.getElementById("recaptcha-container")!;
-    // var element = document.createElement("input");
-    // //Assign different attributes to the element.
-    // element.setAttribute("name", "ddd");
-    // element.setAttribute("style", "color:Red");
-    // document.body.appendChild(element);
 
     const recaptchaVerifier = new RecaptchaVerifier(this._auth, html, {
       size: "invisible",
@@ -275,12 +270,12 @@ export class FirebaseAuthService extends VerificationService {
       .then((confirmationResult) => {
         onCodeSent(confirmationResult.verificationId);
       })
+
       .catch((e) => {
         if (e instanceof FirebaseError) {
-          console.error(`Error: ${e}`);
           logger.error(`it was an error the error is --> ${e}`);
-
           const newCode = e.code.replace("auth/", "");
+          onFailed(completePhone, e, codeSentTime, beforeSendTime);
           logger.error(newCode);
           AppErrorsHelper.GI().details = newCode;
           AppErrorsHelper.GI().error =
@@ -294,12 +289,15 @@ export class FirebaseAuthService extends VerificationService {
   }
 
   get userIdSRV(): string {
+    console.log("ssssssssssssssssssssssssssssssssssssssssssss");
     if (this._auth.currentUser != null) {
       const name = this._auth.currentUser.displayName;
 
       if (name !== null && name.includes("&&") && name.includes("+")) {
+        console.log(this.userPhoneSRV);
         return this.userPhoneSRV;
       } else {
+        console.log(this._auth.currentUser.uid);
         return this._auth.currentUser.uid;
       }
     }
@@ -381,9 +379,9 @@ export class FirebaseAuthService extends VerificationService {
   async logoutSRV(): Promise<boolean> {
     try {
       await this._auth.signOut();
+
       return !this.isLoggedInSRV;
     } catch (e) {
-      //AppErrorsHelper.addError({ error: Errors.logout, details: e.toString() });
       return false;
     }
   }

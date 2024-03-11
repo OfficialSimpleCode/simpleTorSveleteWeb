@@ -100,6 +100,7 @@ export default class UserInitializer {
       this.startPublicDataListening();
       userStore.set(this.user);
       isConnectedStore.set(true);
+      this.userDoc = undefined;
 
       //actions that need to do if the user enter to business
       this.actionsOnBusiness();

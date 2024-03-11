@@ -18,6 +18,7 @@
 <GeneralDialog
   bind:dialog
   onSave={deleteFromUser}
+  needTitleGender={false}
   maxWidth="max-w-[300px]"
   titleTransKey={"deletedWorker"}
   content={translate("theBookingHasNoWorker").replaceAll(

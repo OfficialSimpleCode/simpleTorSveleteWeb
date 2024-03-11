@@ -119,14 +119,9 @@
 <DeleteUserDialog bind:dialog={deleteUserDialog} bind:loadingLogin={loading} />
 
 <main class="flex w-full h-full">
-  <img
-    class="flex-[1] object-cover !max-w-[50%] hidden lg:flex"
-    src="https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?cs=srgb&dl=action-athlete-barbell-841130.jpg&fm=jpg"
-    alt={translate("manLiftingImage", $_)}
-  />
   <div class="flex flex-col items-center justify-center w-full pb-20">
     <section
-      class="bg-base-200 py-7 px-5 rounded-md flex flex-col items-center gap-3 w-[93%] xs:w-[80%] md:w-[50%] lg:w-[60%]"
+      class="bg-base-200 py-7 px-5 rounded-md flex flex-col items-center gap-3 w-[93%] md:w-[50%] lg:w-[40%] max-w-[500px]"
     >
       <!-- login title -->
       <LoginTitle {loginReason} />
@@ -164,7 +159,7 @@
 
       <!-- End Button -->
       <button
-        class="btn btn-md sm:text-xl btn-primary w-[80%] {loading
+        class="btn btn-md sm:text-md btn-primary w-[80%] {loading
           ? 'opacity-55'
           : ''} {maxButtonSize} hover:outline"
         on:click={() => handleClick(AuthProvider.Phone)}

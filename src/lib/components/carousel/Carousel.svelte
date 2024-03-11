@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { ChevronLeft, ChevronRight, Icon } from "svelte-hero-icons";
+  import CustomArrow from "../custom_components/CustomArrow.svelte";
 
   export let autoScroll: boolean = false;
   export let interval: number = 20000; // in milliseconds
@@ -67,7 +67,7 @@
     : 'justify-center'} items-center"
 >
   <button class="px-1 py-1 {showArrows ? 'block' : 'hidden'}" on:click={Next}>
-    <Icon src={ChevronRight} size="24px" />
+    <CustomArrow left={true} />
   </button>
   <div
     bind:this={carousel}
@@ -77,6 +77,6 @@
     <slot />
   </div>
   <button class="px-1 py-1 {showArrows ? 'block' : 'hidden'}" on:click={Back}>
-    <Icon src={ChevronLeft} size="24px" />
+    <CustomArrow />
   </button>
 </div>

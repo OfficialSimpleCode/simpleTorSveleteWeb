@@ -7,9 +7,10 @@ import { translate } from "$lib/utils/translate";
 import { Duration } from "../core/duration";
 import Booking from "./booking_model";
 
-export default class BookingTextTemplate extends Booking {
+export default class BookingTextTemplate {
+  booking: Booking;
   constructor(booking: Booking) {
-    super(booking);
+    this.booking = booking;
   }
 
   reminderTemplateByType(type: BookingReminderType): string {
@@ -25,48 +26,56 @@ export default class BookingTextTemplate extends Booking {
 
   reminderTemplate(): string {
     const sendMessageTime = subDuration(
-      this.bookingDate,
+      this.booking.bookingDate,
       new Duration({
-        minutes: this.remindersTypes.get(BookingReminderType.regular) ?? 0,
+        minutes:
+          this.booking.remindersTypes.get(BookingReminderType.regular) ?? 0,
       })
     );
     return translate("alertBookingTemplate", undefined, false)
       .replace(
         "ADRESS",
-        this.showAdressAlert && this.adress !== ""
-          ? translate("atAdrees").replace("ADRESS", this.adress) + " "
+        this.booking.showAdressAlert && this.booking.adress !== ""
+          ? translate("atAdrees").replace("ADRESS", this.booking.adress) + " "
           : ""
       )
       .replace(
         "PHONE",
-        this.showPhoneAlert
+        this.booking.showPhoneAlert
           ? " " +
               translate("toDetails").replace(
                 "PHONE",
-                formatedPhone(this.workerPhone)
+                formatedPhone(this.booking.workerPhone)
               )
           : ""
       )
-      .replace("DATE", getFormatedTime(this.bookingDate, sendMessageTime))
-      .replace("WORKERNAME", this.workerName)
-      .replace("TREATMENTNAME", this.treatmentsToStringNotDetailed)
-      .replace("BUSINESSNAME", this.businessName)
-      .replace("NAME", this.customerName);
+      .replace(
+        "DATE",
+        getFormatedTime(this.booking.bookingDate, sendMessageTime)
+      )
+      .replace("WORKERNAME", this.booking.workerName)
+      .replace("TREATMENTNAME", this.booking.treatmentsToStringNotDetailed)
+      .replace("BUSINESSNAME", this.booking.businessName)
+      .replace("NAME", this.booking.customerName);
   }
 
   confirmArrivalReminderTemplate(): string {
     const sendMessageTime = subDuration(
-      this.bookingDate,
+      this.booking.bookingDate,
       new Duration({
         minutes:
-          this.remindersTypes.get(BookingReminderType.confirmArrival) ?? 0,
+          this.booking.remindersTypes.get(BookingReminderType.confirmArrival) ??
+          0,
       })
     );
     return translate("confirmArrivalReminderTemplate", undefined, false)
-      .replace("DATE", getFormatedTime(this.bookingDate, sendMessageTime))
-      .replace("WORKERNAME", this.workerName)
-      .replace("TREATMENTNAME", this.treatmentsToStringNotDetailed)
-      .replace("BUSINESSNAME", this.businessName)
-      .replace("NAME", this.customerName);
+      .replace(
+        "DATE",
+        getFormatedTime(this.booking.bookingDate, sendMessageTime)
+      )
+      .replace("WORKERNAME", this.booking.workerName)
+      .replace("TREATMENTNAME", this.booking.treatmentsToStringNotDetailed)
+      .replace("BUSINESSNAME", this.booking.businessName)
+      .replace("NAME", this.booking.customerName);
   }
 }

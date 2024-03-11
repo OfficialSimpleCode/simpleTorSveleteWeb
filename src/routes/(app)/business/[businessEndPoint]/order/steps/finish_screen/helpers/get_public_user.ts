@@ -7,7 +7,6 @@ import Encryptor from "$lib/services/encryption_service/encryptor";
 export function getPublicCustomer(): PublicCustomer {
   let publicCustomer: PublicCustomer | undefined;
 
-  console.log(BookingController.worker.publicCustomers.publicCustomersData);
   //check in the public customer obj
   publicCustomer = (BookingController.worker?.publicCustomers
     .publicCustomersData ?? {})[

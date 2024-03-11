@@ -1,5 +1,3 @@
-import { containerRadius } from "./sizes";
-
 export const cssSizesClasses = {
   xs: {
     iconSize: 19,
@@ -47,4 +45,4 @@ export const cssSizesClasses = {
 
 export const scheuleItemWidthClass = "items-center  p-[2px] w-full";
 
-export const bookingMakerButton = `btn btn-primary  hover:text-primary-content hover:outline ${containerRadius}`;
+export const bookingMakerButton = `btn btn-primary  hover:text-primary-content hover:outline rounded-[0.3rem]`;

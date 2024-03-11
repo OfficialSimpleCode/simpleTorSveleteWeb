@@ -25,7 +25,7 @@
 <div
   class="flex flex-col flex-1 gap-1 border-y-[1px] {isActive
     ? ''
-    : 'opacity-50'} rounded-[6px] items-center justify-center py-[6px] {scheuleItemWidthClass} "
+    : 'opacity-50'} rounded-[2px] items-center justify-center py-[6px] {scheuleItemWidthClass} "
 >
   <div
     class="rounded-full {isToday

@@ -7,16 +7,10 @@
 
   export let booking: Booking;
 
-  const displayDebt: boolean =
+  $: displayDebt =
     booking.debts.size !== 0 &&
     booking.totalDebtAmount !== 0 &&
     Array.from(booking.debts.values())[0].showUser;
-
-  console.log(
-    booking.debts.size !== 0,
-    booking.totalDebtAmount,
-    Array.from(booking.debts.values())[0]
-  );
 </script>
 
 {#if displayDebt}
@@ -25,9 +19,9 @@
   >
     <CustomCircleIcon
       icon="mdi:dollar"
+      onHoverColor={"bg-base-100"}
       translateKey=""
-      bgColor="bg-base-100  "
-      circlePadding={2}
+      bgColor="bg-base-100"
     />
     <p>{translate("debtOnBooking", $_)}</p>
     <p>

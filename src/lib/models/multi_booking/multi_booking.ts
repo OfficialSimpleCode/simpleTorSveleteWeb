@@ -253,7 +253,6 @@ export default class MultiBooking extends ScheduleItem {
     return new ScheduleMessage({
       messageId: multiBookingUser.reminderId(type),
       destNumber: multiBookingUser.customerPhone,
-
       body: new MultiBookingTextTemplate(this).reminderTemplateByType(
         multiBookingUser,
         type
@@ -441,21 +440,20 @@ export default class MultiBooking extends ScheduleItem {
   }
   messageRemindersOnUser(multiBookingUser: MultiBookingUser): string[] {
     const reminders: string[] = [];
+    console.log("111111111111");
     if (multiBookingUser.cancelDate != null) {
       return [];
     }
-    if (multiBookingUser.userFcms.size === 0) {
-      return [];
-    }
-    if (multiBookingUser.notificationType !== NotificationType.message) {
-      return [];
-    }
-
+    console.log("dddddddddddd");
     multiBookingUser.remindersTypes.forEach((minutes, type) => {
       if (minutes <= 0) {
         return;
       }
+      console.log("2222222222222222222");
+
       const dateToNotify = dateToRemindMultiBooking(this, minutes);
+      console.log("dateToNotify", dateToNotify);
+      console.log("dateToUtc(new Date())", dateToUtc(new Date()));
       if (dateToNotify >= dateToUtc(new Date())) {
         reminders.push(multiBookingUser.reminderId(type));
       }

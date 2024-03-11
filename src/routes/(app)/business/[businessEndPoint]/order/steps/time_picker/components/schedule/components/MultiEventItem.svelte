@@ -21,17 +21,19 @@
 
 <button
   {id}
-  class="flex flex-col {bookingMakerButton} {scheuleItemWidthClass} {isPicked
+  class="{bookingMakerButton} {scheuleItemWidthClass} {isPicked
     ? 'bg-base-200 text-base-content'
     : 'bg-primary'} {isPicked ? 'outline outline-1' : ''} "
   on:click={() => onTimeItemClick(timeObj)}
 >
-  <h3 class="text-xs sm:text-sm text-center">
-    {timeObj.displayDate != null ? dateToTimeStr(timeObj.displayDate) : ""}
-  </h3>
-  {#if timeObj.showParticipants}
+  <div class="flex flex-col">
     <h3 class="text-xs sm:text-sm text-center">
-      {`${timeObj.currentParticipants}/${timeObj.maxParticipants}`}
+      {timeObj.displayDate != null ? dateToTimeStr(timeObj.displayDate) : ""}
     </h3>
-  {/if}
+    {#if timeObj.showParticipants}
+      <h3 class="text-xs sm:text-sm text-center">
+        {`${timeObj.currentParticipants}/${timeObj.maxParticipants}`}
+      </h3>
+    {/if}
+  </div>
 </button>

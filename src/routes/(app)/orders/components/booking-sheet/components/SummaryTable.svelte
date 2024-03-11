@@ -1,6 +1,8 @@
 <script lang="ts">
   import type Booking from "$lib/models/booking/booking_model";
+  import { Duration } from "$lib/models/core/duration";
   import { length } from "$lib/utils/core_utils";
+  import { durationToString } from "$lib/utils/string_utils";
   import { _, translate } from "$lib/utils/translate";
   import TableItem from "./TableItem.svelte";
 
@@ -13,7 +15,7 @@
   ></TableItem>
   <TableItem
     fieldTranslateKey="duration"
-    value={booking.totalMinutes.toString()}
+    value={durationToString(new Duration({ minutes: booking.totalMinutes }))}
   ></TableItem>
   <TableItem
     fieldTranslateKey="treatments"

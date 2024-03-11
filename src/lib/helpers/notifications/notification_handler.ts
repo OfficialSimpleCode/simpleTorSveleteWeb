@@ -17,7 +17,7 @@ import type PaymentRequestUser from "$lib/models/payment_hyp/payment_request/pay
 import BreakModel from "$lib/models/schedule/break_model";
 import type WorkerModel from "$lib/models/worker/worker_model";
 import { isNotEmpty } from "$lib/utils/core_utils";
-import { addDuration, subDuration } from "$lib/utils/duration_utils";
+import { addDuration } from "$lib/utils/duration_utils";
 import { sendMessagePaymentRequest } from "$lib/utils/notifications_utils";
 import { dateToDateStr, setToMidNight } from "$lib/utils/times_utils";
 import BookingHelper from "../booking/booking_helper";
@@ -47,15 +47,18 @@ export default class NotificationHandler {
   }): Promise<void> {
     // Notify the worker that the user ordered a booking for him
     await NotificationsHelper.GI().notifyWorkerAboutOrder(worker, booking);
-
+    console.log("ddddddddddddd");
     if (booking.status === BookingStatuses.approved) {
+      console.log(booking.notificationType);
       // Make scheduled notifications/messages
       if (booking.notificationType === NotificationType.message) {
+        console.log("1111111111111111111");
         // Make the scheduled notification and save the message ID in the booking
         MessagesHelper.GI().scheduleMessageToMultipleBookings({
           [booking.bookingId]: booking,
         });
       } else if (booking.notificationType === NotificationType.push) {
+        console.log("333333333333333333");
         // Make a scheduled push notification
         NotificationsHelper.GI().makeScheduleBookingNotification({ booking });
       }
@@ -66,7 +69,6 @@ export default class NotificationHandler {
     booking,
     worker,
     isChildOfReccurence = false,
-
     fromDeleteWorker = false,
   }: {
     booking: Booking;
@@ -75,21 +77,16 @@ export default class NotificationHandler {
     notifyWorker?: boolean;
     fromDeleteWorker?: boolean;
   }): Promise<void> {
-    console.log("ddddddddddddddddd");
-    if (booking.recurrenceEvent === undefined) {
+    if (booking.recurrenceEvent == null) {
       if (booking.status === BookingStatuses.approved) {
-        if (
-          booking.notificationType === NotificationType.message &&
-          subDuration(booking.bookingDate, new Duration({ hours: 1 })) >
-            new Date()
-        ) {
+        if (booking.notificationType === NotificationType.message) {
           // No need to delete the notification because the message
           // is not scheduled for this date
           if (
-            !isChildOfReccurence ||
             booking.recurrenceNotificationsLastDate == null ||
             booking.bookingDate <= booking.recurrenceNotificationsLastDate
           ) {
+            //if the booking is recurrence child need to change his id
             if (booking.recurrenceRef != null) {
               booking.bookingId = `${booking.recurrenceRef}--${dateToDateStr(
                 booking.bookingDate
@@ -109,11 +106,11 @@ export default class NotificationHandler {
         }
       }
     }
-    console.log("ddddddddddddddddd");
+
     if (worker == null) {
       return;
     }
-    console.log("ddddddddddddddddd");
+
     // No need to notify on passed bookings
     if (!booking.isPassed) {
       // Notify the worker if the user deletes the booking
@@ -122,7 +119,7 @@ export default class NotificationHandler {
         worker
       );
     }
-    console.log("ddddddddddddddddd");
+
     // Notify the waiting list if the deleted booking opens new possible times
     NotificationsHelper.GI().notifyWaitingListTopic(
       booking.notificationTopic,
@@ -522,8 +519,6 @@ export default class NotificationHandler {
     workerAction: boolean;
   }): Promise<void> {
     // Collect all the data from the customers
-    const usersToNotify: Set<UserNotification> = new Set();
-    const numbersToMessage: Set<string> = new Set();
     const scheduleWithNotifications: Record<string, MultiBookingUser> = {};
     const scheduleWithMessages: Record<string, MultiBookingUser> = {};
 
@@ -535,28 +530,13 @@ export default class NotificationHandler {
         ) {
           return;
         }
-        if (multiBookingUser.notificationType === NotificationType.message) {
-          // No need to notify to oneself
-          if (UserInitializer.GI().user.id !== multiBookingUser.customerId) {
-            numbersToMessage.add(multiBookingUser.customerPhone);
-          }
-          if (multiBookingUser.status === BookingStatuses.approved) {
+        if (multiBookingUser.status === BookingStatuses.approved) {
+          if (multiBookingUser.notificationType === NotificationType.message) {
             scheduleWithMessages[multiBookingUser.userBookingId] =
               multiBookingUser;
-          }
-        } else if (
-          multiBookingUser.notificationType === NotificationType.push
-        ) {
-          // No need to notify to oneself
-          if (UserInitializer.GI().user.id !== multiBookingUser.customerId) {
-            usersToNotify.add(
-              multiBooking.toUserNotification(
-                EnterAction.openUserBooking,
-                multiBookingUser
-              )
-            );
-          }
-          if (multiBookingUser.status === BookingStatuses.approved) {
+          } else if (
+            multiBookingUser.notificationType === NotificationType.push
+          ) {
             scheduleWithNotifications[multiBookingUser.userBookingId] =
               multiBookingUser;
           }
@@ -574,6 +554,8 @@ export default class NotificationHandler {
       );
     }
 
+    console.log("scheduleWithNotifications", scheduleWithNotifications);
+    console.log("scheduleWithMessages", scheduleWithMessages);
     //----------------------------- Remove schedule notifications -------------------
     if (isNotEmpty(scheduleWithNotifications)) {
       NotificationsHelper.GI().deleteAllScheduleMultiBookingNotifications({

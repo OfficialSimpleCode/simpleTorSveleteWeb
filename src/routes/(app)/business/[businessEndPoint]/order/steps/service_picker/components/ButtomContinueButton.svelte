@@ -6,10 +6,8 @@
 </script>
 
 {#if Object.keys($bookingMakerStore.services).length > 0 && $bookingMakerStore.pickMultipleServices}
-  <div class="flex flex-col items-center gap-4 w-full">
-    <button
-      class="btn btn-primary max-w-[90%] sm:max-w-sm w-full"
-      on:click={continueFunc}
+  <div class="flex flex-col items-center max-w-[360px] w-[300px] pt-10">
+    <button class="btn btn-primary sm:max-w-sm w-full" on:click={continueFunc}
       >{translate("continue", $_)}
     </button>
   </div>

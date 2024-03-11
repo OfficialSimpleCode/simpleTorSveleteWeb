@@ -27,12 +27,23 @@
             .replaceAll("+", "")
             .replaceAll("-", "")}`}
         />
-        <CustomCircleIcon icon="mdi:instagram" href={appInstagram} size="md" />
-        <CustomCircleIcon icon="ph:globe" size="md" href={simpleTorHomePage} />
+        <CustomCircleIcon
+          icon="mdi:instagram"
+          href={appInstagram}
+          size="md"
+          target="_blank"
+        />
+        <CustomCircleIcon
+          icon="ph:globe"
+          size="md"
+          href={simpleTorHomePage}
+          target="_blank"
+        />
 
         <CustomCircleIcon
           icon="iconoir:message"
           size="md"
+          target="_blank"
           href={simpleCodeWebUrl}
         />
       </div>

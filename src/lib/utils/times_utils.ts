@@ -253,7 +253,7 @@ export function isoToDate(dateStr: string): Date {
 }
 
 export function dateToUtc(date: Date) {
-  return new Date(new Date().toISOString());
+  return new Date(date.toISOString());
 }
 
 // export function testDateFunctions() {

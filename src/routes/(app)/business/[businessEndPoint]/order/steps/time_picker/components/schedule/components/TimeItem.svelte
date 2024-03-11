@@ -21,7 +21,7 @@
 
 <button
   {id}
-  class="{bookingMakerButton}  flex flex-row {isPicked
+  class="{bookingMakerButton} btn-sm flex flex-row {isPicked
     ? 'bg-base-200 text-base-content'
     : 'bg-primary'}  {scheuleItemWidthClass} {isPicked
     ? 'outline outline-1'

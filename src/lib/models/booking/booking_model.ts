@@ -55,7 +55,7 @@ import BookingNotificationPayload from "../notifications/booking_notification_pa
 import BusinessPayloadData from "../notifications/business_data_payload";
 import FutureNotification from "../notifications/future_notification";
 import NotificationTopic from "../notifications/notification_topic";
-import type ScheduleMessage from "../notifications/schedule_message";
+import ScheduleMessage from "../notifications/schedule_message";
 import BookingReferencePaymentObj from "../payment_hyp/booking_reference";
 import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
 import Event from "../schedule/calendar_event";
@@ -67,6 +67,7 @@ import WorkerModel from "../worker/worker_model";
 import BookingHistoryItem from "./booking_history";
 import BookingInvoiceData from "./booking_invoice_data";
 import BookingPaymentRequestData from "./booking_payment_request";
+import BookingTextTemplate from "./booking_text_template";
 import BookingTransactionModel, { PaymentTypes } from "./booking_transaction";
 const { v4 } = pkg;
 
@@ -168,7 +169,7 @@ export default class Booking extends ScheduleItem {
     newBooking.bookingId = booking.bookingId;
     newBooking.workerGender = booking.workerGender;
     newBooking.shopIcon = booking.shopIcon;
-
+    newBooking.workerId = booking.workerId;
     newBooking.recurrenceTimeId = booking.recurrenceTimeId;
     newBooking.note = booking.note;
     newBooking.workerRemindersTypes = new Map(booking.workerRemindersTypes);
@@ -402,7 +403,7 @@ export default class Booking extends ScheduleItem {
       newBooking.buisnessId = json["buisnessId"] || "";
       if (json["notificationType"] != null) {
         newBooking.notificationType =
-          notificationTypeFromStr[json["notificationType"]] ||
+          notificationTypeFromStr[json["notificationType"]] ??
           NotificationType.push;
       } else {
         if (json["withMessage"] || false) {
@@ -693,19 +694,6 @@ export default class Booking extends ScheduleItem {
       totalEventMinutes: this.totalMinutes,
       fcms: { ...this.userFcms },
     });
-  }
-
-  utcDeltaMinutes(): number {
-    const utcTime: Date = new Date();
-    const utc: Date = new Date(
-      utcTime.getUTCFullYear(),
-      utcTime.getUTCMonth(),
-      utcTime.getUTCDate(),
-      utcTime.getUTCHours(),
-      utcTime.getUTCMinutes()
-    );
-
-    return Math.floor((Date.now() - utc.getTime()) / (60 * 1000));
   }
 
   get remindersOnBooking(): Record<string, Record<string, any>> {
@@ -1206,6 +1194,13 @@ export default class Booking extends ScheduleItem {
     if (timeToSend < new Date()) {
       return undefined;
     }
+
+    return new ScheduleMessage({
+      messageId: this.reminderId(type),
+      destNumber: this.customerPhone,
+      body: new BookingTextTemplate(this).reminderTemplateByType(type),
+      timeToSend: timeToSend,
+    });
   }
 
   get toBookingNotificationPayload(): BookingNotificationPayload {
@@ -1280,7 +1275,7 @@ export default class Booking extends ScheduleItem {
     const reminders: string[] = [];
 
     if (
-      this.cancelDate !== null ||
+      this.cancelDate != null ||
       this.notificationType === NotificationType.push
     ) {
       return reminders;
@@ -1293,7 +1288,7 @@ export default class Booking extends ScheduleItem {
 
       const dateToNotify = dateToRemindBooking(this, minutes);
 
-      if (dateToNotify.toUTCString() >= new Date().toUTCString()) {
+      if (dateToNotify >= dateToUtc(new Date())) {
         reminders.push(this.reminderId(type));
       }
     }

@@ -40,7 +40,6 @@
   const phoneVerified: boolean =
     VerificationHelper.GI().currentAuthProvider === AuthProvider.Phone &&
     VerificationHelper.GI().submitedPhone != "";
-
   let validPhone: boolean =
     userData?.phoneNumber != "" && userData?.phoneNumber != null;
   let validName: boolean = nameValidation(fullName) == null;
@@ -140,14 +139,9 @@
 />
 
 <main class="flex w-full h-full">
-  <img
-    class="flex-[1] object-cover !max-w-[50%] hidden lg:flex"
-    src="https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?cs=srgb&dl=action-athlete-barbell-841130.jpg&fm=jpg"
-    alt={translate("manLiftingImage", $_)}
-  />
   <div class="flex flex-col items-center justify-center w-full pb-20">
     <section
-      class="bg-base-200 py-7 px-5 rounded-md flex flex-col items-center gap-3 w-[93%] xs:w-[80%] md:w-[50%] lg:w-[80%]"
+      class="bg-base-200 py-7 px-5 rounded-md flex flex-col items-center gap-3 w-[93%] md:w-[50%] lg:w-[40%] max-w-[500px]"
     >
       <!-- login title -->
       <SetupTitle />
@@ -186,7 +180,7 @@
           {/if}
         </div>
 
-        <div class="max-w-[500px] flex flex-col items-center">
+        <div class=" flex flex-col items-center w-full">
           <GenderPicker background={"bg-base-100"} />
         </div>
         <div class="divider divider-vertical px-3" />

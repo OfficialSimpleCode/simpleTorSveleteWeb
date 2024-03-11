@@ -79,15 +79,14 @@ export class BusinessData {
 
   setBusinessData(snapshot: DataSnapshot): void {
     this.messagesCounter =
-      parseInt(snapshot.val().messagesCounter.toString()) || 0;
+      parseInt((snapshot.val().messagesCounter ?? 0).toString()) || 0;
     this.paymentRequestCounter =
-      parseInt(snapshot.val().paymentRequestCounter.toString()) || 0;
-
+      parseInt((snapshot.val().paymentRequestCounter ?? 0).toString()) || 0;
     this.messagesCounterConsumable =
       parseInt((snapshot.val().messagesCounterConsumable ?? 0).toString()) || 0;
     this.paymentRequestsCounterConsumable =
       parseInt(
-        snapshot.val().paymentRequestsCounterConsumable ?? (0).toString()
+        (snapshot.val().paymentRequestsCounterConsumable ?? 0).toString()
       ) || 0;
   }
 

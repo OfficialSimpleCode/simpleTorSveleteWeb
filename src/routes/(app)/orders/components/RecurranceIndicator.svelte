@@ -1,16 +1,18 @@
 <script lang="ts">
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
+  import DownloadAppDialog from "$lib/components/dialogs/DownloadAppDialog.svelte";
   import type Booking from "$lib/models/booking/booking_model";
   import RecurrenceEvent, {
     RecurrenceEventEnd,
   } from "$lib/models/schedule/recurrence_event";
+  import { pushDialog } from "$lib/utils/general_utils";
 
   import { _, translate } from "$lib/utils/translate";
 
   export let booking: Booking;
   export let showRecurranceLink: boolean = false;
   export let absolute: boolean = false;
-
+  let downloadAppDialog: HTMLDialogElement;
   const recurrenceEvent: RecurrenceEvent | undefined =
     booking.recurrenceEvent ?? booking.recurrenceEventRefInfo;
 
@@ -22,9 +24,13 @@
     recurrenceInfo!.exceptionDates = new Set();
     recurrenceInfo!.endOption = RecurrenceEventEnd.endless;
   }
+  function onWatchRecurrenceBooking() {
+    pushDialog(downloadAppDialog);
+  }
 </script>
 
 {#if recurrenceInfo != null}
+  <DownloadAppDialog bind:dialog={downloadAppDialog} />
   <!-- recurrance indicator -->
   <div
     class="{absolute
@@ -45,9 +51,12 @@
       </div>
 
       <!-- click to see all -->
-      <p class="text-primary {showRecurranceLink ? '' : 'hidden'}">
+      <button
+        class="text-primary {showRecurranceLink ? '' : 'hidden'}"
+        on:click={onWatchRecurrenceBooking}
+      >
         {translate("watchAllRecurrence")}
-      </p>
+      </button>
     </div>
   </div>
 {/if}

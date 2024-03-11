@@ -30,7 +30,7 @@ import {
 } from "$lib/utils/booking_maker";
 import { isNotEmpty, length } from "$lib/utils/core_utils";
 import { get, writable } from "svelte/store";
-interface BookingMaker {
+export interface BookingMaker {
   workerId?: string;
   showVerificationAlert: boolean;
   services: Record<string, Treatment>;

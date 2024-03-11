@@ -121,10 +121,6 @@ export function loadBookingMakerTimeData(): void {
 
   Object.entries(daysTimes).forEach(([visibleDateStr, timeList]) => {
     const visibleDate = dateStrToDate(visibleDateStr);
-    console.log("3333333333333333333333333333333333333333333");
-    console.log(visibleDateStr);
-    console.log("dddddddddddddddddddddddddddddddddddddddddddddd");
-    console.log(worker!.recurrence.vacationsEvents);
 
     bookingMaker.timePickerObjects[visibleDateStr] = [];
 
@@ -185,12 +181,9 @@ export function loadBookingMakerTimeData(): void {
       }
     });
     // add the waiting list option
-
     if (
       (timeList.length === 0 || worker!.showWaitingListWhenThereIsChoises) &&
-      !worker!.waitingListExceptionDays.has(
-        weekDays[visibleDate.getDay() + 1]
-      ) &&
+      !worker!.waitingListExceptionDays.has(weekDays[visibleDate.getDay()]) &&
       bookingMaker.isMultiEvent != true
     ) {
       const newTimePickerObj = new TimePickerObj({

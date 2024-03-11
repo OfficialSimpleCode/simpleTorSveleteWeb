@@ -2,7 +2,7 @@ import { logger } from "$lib/consts/application_general";
 import { serverSignature } from "$lib/consts/secrets";
 import { SERVER_BASE_URL } from "$lib/consts/server_variables";
 export default class MakeRequest {
-  private readonly _baseURL: string = `http://${SERVER_BASE_URL}`;
+  private readonly _baseURL: string = `https://${SERVER_BASE_URL}`;
 
   public async performRequst({
     endpoint,

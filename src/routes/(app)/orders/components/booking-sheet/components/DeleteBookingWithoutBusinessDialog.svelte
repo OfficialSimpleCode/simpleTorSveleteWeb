@@ -19,6 +19,7 @@
   bind:dialog
   onSave={deleteFromUser}
   maxWidth="max-w-[300px]"
+  needTitleGender={false}
   titleTransKey={"deletedBusiness"}
   content={translate("theBookingHasNoBusiness").replaceAll(
     "BUSINESSNAME",

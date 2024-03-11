@@ -4,10 +4,13 @@
   import { Duration } from "$lib/models/core/duration";
   import { workersStore } from "$lib/stores/Workers";
   import { addDuration } from "$lib/utils/duration_utils";
-  import { translate } from "$lib/utils/translate";
+
+  import deleteIcon from "$lib/images/delete.webp";
+  import { _, translate } from "$lib/utils/translate";
   import AttentionText from "../custom_components/AttentionText.svelte";
   import GeneralDialog from "./GeneralDialog.svelte";
   export let deleteDialog: HTMLDialogElement;
+
   export let booking: Booking;
   export let onDelete: (deleteOption: DeleteOption) => Promise<boolean>;
   const worker = $workersStore[booking.workerId];
@@ -56,6 +59,7 @@
   bind:dialog={deleteDialog}
   maxWidth="max-w-[300px]"
   onSave={onFinish}
+  image={deleteIcon}
   titleTransKey={booking.isMultiRef
     ? "cancelSigning"
     : booking.recurrenceRef != null || booking.recurrenceEvent != null
@@ -88,6 +92,12 @@
         />{/if}
       {#if attentionText != null}
         <AttentionText onSurface={true} text={attentionText} />
+      {/if}
+      {#if booking.recurrenceRef != null || booking.recurrenceEvent != null}
+        <AttentionText
+          onSurface={true}
+          text={translate("recurrenceDeleteExplainUser", $_, false)}
+        />
       {/if}
     </div>
   </div>

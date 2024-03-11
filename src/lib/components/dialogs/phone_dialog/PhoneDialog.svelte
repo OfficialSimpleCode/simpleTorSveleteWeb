@@ -33,5 +33,8 @@
       <GetOtpView {loginReason} {dialog} bind:otp {dispatch} />
     {/if}
   </div>
-  <div id="recaptcha-container" class="absolute !z-[10000]"></div>
+  <div
+    id="recaptcha-container"
+    class="absolute bottom-1 left-1 !z-[10000]"
+  ></div>
 </DialogStrucher>

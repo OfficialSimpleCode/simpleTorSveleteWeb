@@ -20,7 +20,7 @@
 </script>
 
 <section
-  class="relative rounded-lg {background} xs:p-3 p-2 flex items-center justify-center gap-10 w-[90%] {containerRadius}"
+  class="relative rounded-lg {background} xs:p-3 p-2 flex items-center justify-center gap-10 w-full {containerRadius}"
 >
   <div class="absolute top-1 w-full p-1 {shimmerEffect ? 'hidden' : ''}">
     <InfoCircle message={translate("genderInfo", $_, false)} />

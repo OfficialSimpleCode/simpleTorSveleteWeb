@@ -28,7 +28,7 @@
   <td>
     <div class="flex flex-row justify-center items-center">
       <CircleIcons {booking} />
-      <p class="text-lg">{booking.businessName}</p>
+      <p class="text-lg w-full">{booking.businessName}</p>
     </div>
   </td>
 

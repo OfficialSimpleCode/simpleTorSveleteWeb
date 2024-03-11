@@ -40,26 +40,25 @@ export default class MessagesHelper {
     if (Object.keys(bookings).length === 0) {
       return true;
     }
+
+    console.log("2222222222222222222222222222222222");
     const messages: ScheduleMessage[] = [];
-    const businessToDecrease: Map<string, number> = new Map();
+    const businessToDecrease: Record<string, number> = {};
     Object.entries(bookings).forEach(([bookingId, booking]) => {
       // seconds from now to the time that need to notify
       const reminders = booking.remindersToScheduleMessages;
       messages.push(...reminders);
-      if (!businessToDecrease.has(booking.buisnessId)) {
-        businessToDecrease.set(booking.buisnessId, 0);
-      }
-      businessToDecrease.set(
-        booking.buisnessId,
-        businessToDecrease.get(booking.buisnessId)! + reminders.length
-      );
+      businessToDecrease[booking.buisnessId] ??= 0;
+      businessToDecrease[booking.buisnessId] =
+        businessToDecrease[booking.buisnessId]! + reminders.length;
     });
+    console.log(messages);
     // no possibility to Non-valid data
     return await this.sendMultipleScheduleAccordingToPlatfrom({
       messages: messages,
     }).then((value) => {
       if (value) {
-        businessToDecrease.forEach((value, businessId) => {
+        Object.entries(businessToDecrease).forEach(([businessId, value]) => {
           this.decreaseMessageCounter(businessId, value);
         });
       }
@@ -122,29 +121,37 @@ export default class MessagesHelper {
   async cancelScheduleMessageToMultipleBookings(
     bookings: Record<string, Booking>
   ): Promise<boolean> {
+    console.log("cccccccccccccccccccccccccccccccccccccccccccccccc");
     if (Object.keys(bookings).length === 0) {
       return true;
     }
+    console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
     const messages: Record<string, string> = {};
-    const businessToDecrease: Map<string, number> = new Map();
+    const businessToIncrease: Record<string, number> = {};
     Object.entries(bookings).forEach(([_, booking]) => {
       const reminders = booking.messageRemindersOnBooking;
+      console.log(reminders);
       reminders.forEach((reminderId) => {
         messages[reminderId] = removePhoneNumberPrefix(booking.customerPhone);
       });
-      if (!businessToDecrease.has(booking.buisnessId)) {
-        businessToDecrease.set(booking.buisnessId, 0);
-      }
-      businessToDecrease.set(
-        booking.buisnessId,
-        businessToDecrease.get(booking.buisnessId)! + reminders.length
-      );
+      businessToIncrease[booking.buisnessId] ??= 0;
+      businessToIncrease[booking.buisnessId] =
+        businessToIncrease[booking.buisnessId]! + reminders.length;
     });
+    console.log(messages);
+    console.log("ddddddddddddddddddddddddddddddddddddddddddddddd");
     if (isEmpty(messages)) {
       return true;
     }
     return await this._cancelMultipleScheduleAccordingToPlatfrom({
       messages: messages,
+    }).then((value) => {
+      if (value) {
+        Object.entries(businessToIncrease).forEach(([businessId, value]) => {
+          this.increaseMessageCounter(businessId, value);
+        });
+      }
+      return value;
     });
   }
 
@@ -161,23 +168,26 @@ export default class MessagesHelper {
     const messages: ScheduleMessage[] = [];
     const businessToDecrease: Record<string, number> = {};
     const existNumbers: Set<string> = new Set();
-
+    console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
     Object.entries(multiBookingUsers).forEach(([_, multiBookingUser]) => {
       if (existNumbers.has(multiBookingUser.customerPhone)) {
         return;
       }
+      console.log("222222222222");
       const reminders =
         multiBooking.remindersToScheduleMessages(multiBookingUser);
-
+      console.log(reminders);
       messages.push(...reminders);
       if (reminders.length > 0) {
         existNumbers.add(multiBookingUser.customerPhone);
       }
 
       businessToDecrease[multiBooking.buisnessId] ??= 0;
-      businessToDecrease[multiBooking.buisnessId] += reminders.length;
+      businessToDecrease[multiBooking.buisnessId] =
+        businessToDecrease[multiBooking.buisnessId] + reminders.length;
+      console.log("777777777777777777777777777777777");
     });
-
+    console.log(messages);
     // no possibility to Non-valid data
     const value = await this.sendMultipleScheduleAccordingToPlatfrom({
       messages,
@@ -200,8 +210,9 @@ export default class MessagesHelper {
     if (Object.entries(multiBookingUsers).length === 0) {
       return true;
     }
+    console.log("dddddddddddddddddddddddddddddddddddddddddddd");
     const messages: Record<string, string> = {};
-    const businessToDecrease: Record<string, number> = {};
+    const businessToIncrease: Record<string, number> = {};
     const existNumbers: Set<string> = new Set();
     Object.entries(multiBookingUsers).forEach(
       ([bookingId, multiBookingUser]) => {
@@ -209,7 +220,7 @@ export default class MessagesHelper {
           return;
         }
         const reminders = multiBooking.messageRemindersOnUser(multiBookingUser);
-
+        console.log("reminders", reminders);
         reminders.forEach((reminderId) => {
           messages[reminderId] = removePhoneNumberPrefix(
             multiBookingUser.customerPhone
@@ -220,17 +231,18 @@ export default class MessagesHelper {
           existNumbers.add(multiBookingUser.customerPhone);
         }
 
-        businessToDecrease[multiBooking.buisnessId] ??= 0;
-        businessToDecrease[multiBooking.buisnessId] += reminders.length;
+        businessToIncrease[multiBooking.buisnessId] ??= 0;
+        businessToIncrease[multiBooking.buisnessId] =
+          businessToIncrease[multiBooking.buisnessId] + reminders.length;
       }
     );
-
+    console.log("messages", messages);
     const result = await this._cancelMultipleScheduleAccordingToPlatfrom({
       messages,
     });
 
     if (result) {
-      Object.entries(businessToDecrease).forEach(([businessId, value]) => {
+      Object.entries(businessToIncrease).forEach(([businessId, value]) => {
         this.increaseMessageCounter(businessId, value);
       });
     }

@@ -84,10 +84,10 @@ export function minutesToJumpOverForbbiden(
   timeSegments: Map<string, TimeSegment>,
   forbiddenTimes: Date[]
 ): number {
+  const segments: TimeSegment[] = Array.from(timeSegments.values());
+
   let minutesToJump: number = 0; // 0 represents allowed time
   let segmentIndex: number = 0;
-
-  const segments: TimeSegment[] = Array.from(timeSegments.values());
 
   forbiddenTimesPointers.forEach((pointer) => {
     const startSegment: Date = segments[segmentIndex].start;
@@ -138,8 +138,8 @@ export function minutesToJumpOverForbbidenReverse(
   timeSegments: Map<string, TimeSegment>,
   forbiddenTimes: Date[]
 ): number {
+  const segments: TimeSegment[] = Array.from(timeSegments.values());
   let minutesToJump: number = 0; // 0 represents allowed time
-  const segments: TimeSegment[] = Object.values(timeSegments);
   let segmentIndex: number = segments.length - 1;
 
   forbiddenTimesPointers.forEach((pointer) => {

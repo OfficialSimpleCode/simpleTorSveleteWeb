@@ -86,7 +86,7 @@
   });
 </script>
 
-<div class="form-control">
+<div class="form-control w-full">
   <!-- title -->
   {#if titleTransKey != null}
     <label class="label" for="phone-number">
@@ -96,7 +96,7 @@
     </label>
   {/if}
   <!-- phone field -->
-  <div dir="ltr" class="flex flex-row gap-2 xs:text-lg">
+  <div dir="ltr" class="flex flex-row gap-2 xs:text-md w-full">
     <!-- selct for the prefix (by country) -->
     <select
       class="country-select rounded-md input input-bordered w-[40%]"

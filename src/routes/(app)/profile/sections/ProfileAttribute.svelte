@@ -92,13 +92,13 @@
   let activePhone: boolean = true;
   let notActivePhoneReason: string | undefined;
 
-  // $: if (
-  //   addDuration($userStore.lastTimeUpdatePhone, new Duration({ days: 1 })) >
-  //   new Date()
-  // ) {
-  //   activePhone = false;
-  //   notActivePhoneReason = translate("cantUpdatePhonelTooShortTimeBetween", $_);
-  // }
+  $: if (
+    addDuration($userStore.lastTimeUpdatePhone, new Duration({ days: 1 })) >
+    new Date()
+  ) {
+    activePhone = false;
+    notActivePhoneReason = translate("cantUpdatePhonelTooShortTimeBetween", $_);
+  }
 
   $: if (
     $isConnectedStore != null &&

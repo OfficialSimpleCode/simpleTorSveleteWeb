@@ -24,7 +24,7 @@
 </script>
 
 <div
-  class="flex flex-col gap-[4px] w-full {isActive
+  class="flex flex-col gap-[5px] w-full {isActive
     ? ''
     : 'opacity-50'} {scheuleItemWidthClass}"
 >

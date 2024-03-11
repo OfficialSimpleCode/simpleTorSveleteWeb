@@ -75,5 +75,5 @@
   </div>
 
   <!-- buttom continue button -->
-  <ButtomContinueButton continueFunc={continueNextStep}></ButtomContinueButton>
+  <ButtomContinueButton continueFunc={continueNextStep} />
 </section>

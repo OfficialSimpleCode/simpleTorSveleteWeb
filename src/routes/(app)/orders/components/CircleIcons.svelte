@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Gender } from "$lib/consts/gender";
+  import type { Gender } from "$lib/consts/gender";
   import Booking from "$lib/models/booking/booking_model";
   import WorkerModel from "$lib/models/worker/worker_model";
   import { businessStore } from "$lib/stores/Business";
@@ -10,12 +10,17 @@
   export let booking: Booking;
 
   let currentWorker: WorkerModel | undefined;
-
-  if (
+  let workerGender: Gender = booking.workerGender;
+  let workerProfile: string = "";
+  $: if (
     $businessStore != null &&
     booking.buisnessId === $businessStore.businessId
   ) {
-    currentWorker = $workersStore[booking.workerId]!;
+    currentWorker = $workersStore[booking.workerId];
+    if (currentWorker != null) {
+      workerProfile = currentWorker.profileImg;
+      workerGender = currentWorker.gender;
+    }
   }
 </script>
 
@@ -33,10 +38,11 @@
   </div>
 
   <div class="avatar relative top-[42px] end-[26px]">
-    <div class="mask mask-squircle w-[30px] h-[30px] rounded-full">
+    <div
+      class="mask mask-squircle w-[30px] h-[30px] rounded-full border-[1px] border-opacity-70"
+    >
       <img
-        src={currentWorker?.profileImg ??
-          imageByGender(currentWorker?.gender ?? Gender.male)}
+        src={workerProfile != "" ? workerProfile : imageByGender(workerGender)}
         alt={translate("theProfileOfTemplate", $_).replace(
           "NAME",
           currentWorker?.name ?? ""

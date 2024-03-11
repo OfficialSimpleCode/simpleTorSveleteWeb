@@ -12,8 +12,7 @@ export const iosPhoneDownloadLink =
 
 export const simpleCodeWebUrl =
   "https://officialsimplecode.github.io/SimpleCodeWeb/";
-export const simpleTorHomePage =
-  "https://officialsimplecode.github.io/SimpleTorHomePage/";
+export const simpleTorHomePage = "https://simpletor.app";
 export const iosLink = "itms-apps://itunes.apple.com/app/id6444347892";
 export const androidLink =
   "market://details?id=com.simpletor.management_system_app";

@@ -2,6 +2,7 @@
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import GeneralDialog from "$lib/components/dialogs/GeneralDialog.svelte";
+  import deleteIcon from "$lib/images/delete.webp";
   import type Booking from "$lib/models/booking/booking_model";
   import { Duration } from "$lib/models/core/duration";
   import type Treatment from "$lib/models/general/treatment_model";
@@ -35,6 +36,8 @@
 
 <GeneralDialog
   bind:dialog={deleteTreatmentDialog}
+  image={deleteIcon}
+  saveTranslateKey={"delete"}
   maxWidth="max-w-[400px]"
   titleTransKey={"treatmentDeletion"}
   content={translate("deleteTreatment", $_).replaceAll(

@@ -1,4 +1,4 @@
-import { monthDifference } from "$lib/utils/dates_utils";
+import { monthDifference, utcDeltaMinutes } from "$lib/utils/dates_utils";
 import { addDuration, diffDuration } from "$lib/utils/duration_utils";
 import { setEquals } from "$lib/utils/general_utils";
 import { durationToString } from "$lib/utils/string_utils";
@@ -6,6 +6,7 @@ import {
   dateIsoStr,
   dateStrToDate,
   dateToDateStr,
+  dateToUtc,
   getStartOfWeek,
   setToMidNight,
 } from "$lib/utils/times_utils";
@@ -586,12 +587,11 @@ export default class RecurrenceEvent {
   }
 
   addRangeBetween(date: Date): Date {
-    //TODO UTC
     //we need to convert to utc to avoid day light saving time
-    // const utcDate = addDuration(
-    //   dateToUtc(date),
-    //   new Duration({ minutes: date.getTimezoneOffset() })
-    // );
+    const utcDate = addDuration(
+      dateToUtc(date),
+      new Duration({ minutes: utcDeltaMinutes(date) })
+    );
 
     if (this.freqRecurrence === FreqRecurrence.months) {
       return addMonths(date, this.interval);

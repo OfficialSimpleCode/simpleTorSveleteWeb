@@ -18,6 +18,10 @@
 
   export let forceOpenBookingSheet: boolean;
   let downloadAppDialog: HTMLDialogElement;
+  console.log(
+    "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
+    booking.notificationType
+  );
 </script>
 
 <!-- booking shhet and dialog -->

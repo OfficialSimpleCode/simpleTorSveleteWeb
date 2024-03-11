@@ -65,12 +65,13 @@
     <ProfileAttribute {shimmerEffect} />
 
     <ProfileVerification {shimmerEffect} />
-
-    <GenderPicker
-      onChanged={updateGender}
-      pickedGender={$userStore.gender}
-      {shimmerEffect}
-    />
+    <div class="w-[90%]">
+      <GenderPicker
+        onChanged={updateGender}
+        pickedGender={$userStore.gender}
+        {shimmerEffect}
+      />
+    </div>
 
     <AuthOptions {shimmerEffect} />
 

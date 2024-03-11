@@ -20,7 +20,9 @@
   import { pushDialog } from "$lib/utils/general_utils";
   import { getPublicCustomer } from "../helpers/get_public_user";
   import { handleApproveTerm } from "../helpers/handle_approving_term";
+  import { hasTooManyTickets } from "../helpers/has_too_many_tickets";
   import { onFinishNavigator } from "../helpers/on_finish_navigator";
+
   export let verificationDialog: HTMLDialogElement;
   let termDialog: HTMLDialogElement;
   let downloadAppDialog: HTMLDialogElement;
@@ -30,6 +32,8 @@
   const publicCustomer: PublicCustomer = getPublicCustomer();
 
   const worker = BookingController.worker;
+
+  $: overflowTickets = hasTooManyTickets($bookingMakerStore);
 
   const needOnHold = needToHoldOn(
     get(bookingMakerStore).date ?? new Date(0),
@@ -42,10 +46,11 @@
     }
 
     isLoading = true;
-
+    console.log(publicCustomer);
     try {
       await onFinishNavigator({
         downloadAppDialog,
+        publicCustomer,
       });
     } finally {
       isLoading = false;
@@ -55,12 +60,13 @@
     if (publicCustomer.blocked) {
       return;
     }
+    if (overflowTickets) {
+      return;
+    }
     if (!handleApproveTerm(termDialog)) {
       return;
     }
     if ($bookingMakerStore.showVerificationAlert) {
-      console.log("ddddddddddddddd", BookingController.worker?.mustVerifyPhone);
-      console.log(BookingController.worker);
       if (BookingController.worker?.mustVerifyPhone != true) {
         pushDialog(needVerificationForReminderDialog);
       } else {
@@ -140,22 +146,28 @@
     {#if isLoading}
       <div class="loading loading-spinner" />
     {:else}
-      {publicCustomer.blocked
-        ? translate("blockUser", $_, false)
-        : translate(
-            needOnHold
-              ? "askForConfirmation"
-              : $bookingMakerStore.isUpdate
-                ? "update"
-                : "order2",
-            $_
-          )}
-    {/if}
-
-    {#if publicCustomer.blocked}
-      <h3 class="opacity-70">
-        {translate("blockedUserCantOrder", $_)}
-      </h3>
+      {overflowTickets
+        ? translate("toManyTickets")
+        : publicCustomer.blocked
+          ? translate("blockUser", $_, false)
+          : translate(
+              needOnHold
+                ? "askForConfirmation"
+                : $bookingMakerStore.isUpdate
+                  ? "update"
+                  : "order2",
+              $_
+            )}
     {/if}
   </button>
+  {#if publicCustomer.blocked}
+    <h3 class="opacity-70">
+      {translate("blockedUserCantOrder", $_)}
+    </h3>
+  {/if}
+  {#if overflowTickets}
+    <p class="opacity-70 text-xs">
+      {translate("toManyTicketsExplain")}
+    </p>
+  {/if}
 </div>

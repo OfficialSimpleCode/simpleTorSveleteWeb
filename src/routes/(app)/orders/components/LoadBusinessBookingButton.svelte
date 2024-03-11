@@ -1,27 +1,31 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import { base } from "$app/paths";
   import Booking from "$lib/models/booking/booking_model";
-  import { businessStore } from "$lib/stores/Business";
-  import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
   import ActionsContainer from "./ActionsContainer.svelte";
 
   export let bgColor: string = "bg-base-300";
   export let booking: Booking;
   export let deleteBookingWithoutBusinessDialog: HTMLDialogElement;
+  let loading: boolean = false;
+
   async function loadBusiness() {
-    await goto(`${base}/business/${booking.buisnessId}/orders`);
-    if ($businessStore == null) {
-      console.log("dddddddddddddd");
-      setTimeout(() => pushDialog(deleteBookingWithoutBusinessDialog), 2000);
+    if (loading) {
+      return;
     }
+    loading = true;
+  }
+  async function onLoad() {
+    loading = false;
   }
 </script>
 
 <ActionsContainer
   text={translate("loadBuisness", $_)}
   icon="mdi:reload"
+  href={`${base}/business/${booking.buisnessId}/orders`}
+  {onLoad}
+  {loading}
   onClick={loadBusiness}
   active={true}
   {bgColor}

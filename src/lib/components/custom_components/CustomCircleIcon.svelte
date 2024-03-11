@@ -11,6 +11,7 @@
 
   export let size: "xs" | "sm" | "md" | "lg" = "sm";
   export let bgColor: string = "bg-base-300";
+  export let onHoverColor: string = "bg-primary";
   export let href: string | undefined = undefined;
 
   export let loading: boolean = false;
@@ -24,7 +25,7 @@
   $: ngClass = `flex items-center justify-center rounded-full  ${
     marked ? "bg-primary text-primary-content" : ""
   }  ${
-    active ? "hover:bg-primary hover:text-primary-content" : "opacity-60"
+    active ? `hover:${onHoverColor} hover:text-primary-content` : "opacity-60"
   } ${bgColor}  block shrink-0 transition-all duration-200`;
 </script>
 

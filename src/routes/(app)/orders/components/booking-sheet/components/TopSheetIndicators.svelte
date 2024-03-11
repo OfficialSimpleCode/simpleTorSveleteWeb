@@ -22,6 +22,5 @@
     </div>
   {/if}
 
-  <RecurranceIndicator {booking} showRecurranceLink={true} absolute={false}
-  ></RecurranceIndicator>
+  <RecurranceIndicator {booking} showRecurranceLink={true} absolute={false} />
 </div>

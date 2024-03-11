@@ -97,10 +97,10 @@ export const notificationTypeToStr: { [key in NotificationType]: string } = {
 
 // Map for string to NotificationType
 export const notificationTypeFromStr: { [key: string]: NotificationType } = {
-  message: NotificationType.message,
-  push: NotificationType.push,
-  whatsapp: NotificationType.whatsapp,
-  none: NotificationType.none,
+  ["message"]: NotificationType.message,
+  ["push"]: NotificationType.push,
+  ["whatsapp"]: NotificationType.whatsapp,
+  ["none"]: NotificationType.none,
 };
 
 // Constants
