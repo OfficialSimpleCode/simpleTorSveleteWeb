@@ -29,19 +29,19 @@
     >
       <HowItWorkStep
         imageSrc="https://lottie.host/f6698e26-fdce-4eb9-bb80-def9a8874750/OL8jB5DdGx.json"
-        titleTransKey={translate("createAccount", $_)}
+        titleTransKey={translate("createAccount", $_, false)}
         stepNumber={1}
       />
 
       <HowItWorkStep
         imageSrc="https://lottie.host/daeffa4b-3884-476d-9e08-884b415465ad/uTx14abQ0f.json"
-        titleTransKey={translate("createNewBusiness", $_)}
+        titleTransKey={translate("createNewBusiness", $_, false)}
         stepNumber={2}
       />
 
       <HowItWorkStep
         imageSrc="https://lottie.host/9becd689-df5d-41c1-8130-50fa0c7d6a76/X9QFVK5d2J.json"
-        titleTransKey={translate("shareWithCustomers", $_)}
+        titleTransKey={translate("shareWithCustomers", $_, false)}
         stepNumber={3}
         withArrow={false}
       />

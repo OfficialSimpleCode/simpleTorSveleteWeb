@@ -1,15 +1,21 @@
 <script lang="ts">
   import SettingContainer from "$lib/components/SettingContainer.svelte";
+  import AttentionText from "$lib/components/custom_components/AttentionText.svelte";
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import SettingsItem from "$lib/components/custom_components/SettingsItem.svelte";
   import VerifiedIcon from "$lib/components/custom_components/VerifiedIcon.svelte";
+  import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
+  import { sendSms } from "$lib/components/dialogs/phone_dialog/helpers/send_sms";
+  import { LoginReason } from "$lib/consts/auth";
   import { containerRadius } from "$lib/consts/sizes";
   import UserHelper from "$lib/helpers/user/user_helper";
-  import UserInitializer from "$lib/initializers/user_initializer";
-  import { userStore } from "$lib/stores/User";
+  import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
+  import { Duration } from "$lib/models/core/duration";
+  import { isConnectedStore, userStore } from "$lib/stores/User";
+  import { addDuration } from "$lib/utils/duration_utils";
   import { pushDialog } from "$lib/utils/general_utils";
   import { formatedPhone } from "$lib/utils/string_utils";
-  import { translate } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import { emailValidation, nameValidation } from "$lib/utils/validation_utils";
   import clipboard from "clipboardy";
   import ChangeAtrributeDialog from "../components/ChangeAtrributeDialog.svelte";
@@ -19,7 +25,10 @@
   let emailDialog: HTMLDialogElement;
   let nameDialog: HTMLDialogElement;
   let phoneDialog: HTMLDialogElement;
+  let verificationDialog: HTMLDialogElement;
+
   let copiedUserId: boolean = false;
+  $: initialPhone = $userStore.userPublicData.phoneNumber;
 
   function openEmailDialog() {
     if (shimmerEffect) {
@@ -39,6 +48,7 @@
     if (shimmerEffect) {
       return;
     }
+    initialPhone = $userStore.userPublicData.phoneNumber;
     pushDialog(phoneDialog);
   }
 
@@ -60,36 +70,90 @@
   }
 
   async function onUpdatePhone(phone: string) {
+    if ($userStore.isVerifiedPhone) {
+      console.log(phone);
+      sendSms(phone);
+      pushDialog(verificationDialog);
+      return true;
+    }
     return (await UserHelper.GI().updatePhone(phone, false)) != null;
+  }
+
+  let activeEmail: boolean = true;
+  let notActiveEmailReason: string | undefined;
+  $: if (
+    addDuration($userStore.lastTimeUpdateEmail, new Duration({ days: 1 })) >
+    new Date()
+  ) {
+    activeEmail = false;
+    notActiveEmailReason = translate("cantUpdateEmailTooShortTimeBetween", $_);
+  }
+
+  let activePhone: boolean = true;
+  let notActivePhoneReason: string | undefined;
+
+  // $: if (
+  //   addDuration($userStore.lastTimeUpdatePhone, new Duration({ days: 1 })) >
+  //   new Date()
+  // ) {
+  //   activePhone = false;
+  //   notActivePhoneReason = translate("cantUpdatePhonelTooShortTimeBetween", $_);
+  // }
+
+  $: if (
+    $isConnectedStore != null &&
+    VerificationHelper.GI().userData?.displayName?.includes("&&")
+  ) {
+    activePhone = false;
+    notActivePhoneReason = translate("oldUserExplainUpdate", $_);
   }
 </script>
 
-<!-- Dialog -->
+<PhoneDialog
+  loginReason={LoginReason.phoneUpdate}
+  insideOtp={true}
+  on:onUpdatePhone={() => {
+    //remove the otp dialog
+    verificationDialog.close();
+  }}
+  bind:dialog={verificationDialog}
+/>
 
 <ChangeAtrributeDialog
-  explain={translate("nameExplain")}
+  explain={translate("nameExplain", $_)}
   titleTransKey={"name"}
-  initialValue={UserInitializer.GI().user.userPublicData.name}
+  initialValue={$userStore.userPublicData.name}
   validationFunc={nameValidation}
   onUpdate={onUpdateName}
   bind:dialog={nameDialog}
 />
 <ChangeAtrributeDialog
-  explain={translate("emailUpdateExplain")}
+  explain={translate("emailUpdateExplain", $_)}
   titleTransKey={"email"}
-  initialValue={UserInitializer.GI().user.userPublicData.email}
+  active={activeEmail}
+  notActiveReason={notActiveEmailReason}
+  initialValue={$userStore.userPublicData.email}
   validationFunc={emailValidation}
   onUpdate={onUpdateEmail}
   bind:dialog={emailDialog}
 />
-<ChangePhoneDialog
-  explain={translate("phoneUpdateExplain")}
-  titleTransKey={"phoneNumber"}
-  initialValue={UserInitializer.GI().user.userPublicData.phoneNumber}
-  onUpdate={onUpdatePhone}
-  bind:dialog={phoneDialog}
-/>
 
+<!-- for the phone update when the user store updated-->
+{#if $userStore.userPublicData.phoneNumber != ""}
+  <ChangePhoneDialog
+    active={activePhone}
+    notActiveReason={notActivePhoneReason}
+    explain={translate("phoneUpdateExplain", $_)}
+    titleTransKey={"phoneNumber"}
+    initialValue={initialPhone}
+    onUpdate={onUpdatePhone}
+    bind:dialog={phoneDialog}
+  >
+    {#if $userStore.isVerifiedPhone && activePhone}
+      <AttentionText text={translate("noticePhoneVerified")} />
+    {/if}
+  </ChangePhoneDialog>
+{/if}
 <SettingContainer {shimmerEffect}>
   <div slot="children" class="flex flex-col join join-vertical">
     <SettingsItem
@@ -185,10 +249,10 @@
             class="h-[11px] w-full min-w-[50px] max-w-[350px] {containerRadius} bg-base-300"
           />
         {:else}
-          <div class="opacity-60 flex flex-row">
+          <div class="opacity-60 flex flex-row items-center gap-1">
             <p class="overflow-hidden truncate max-w-[130px] xs:max-w-[190px]">
               {#if copiedUserId}
-                {translate("Copied")}
+                {translate("Copied", $_)}
               {:else}
                 {$userStore.id}
               {/if}
@@ -197,7 +261,7 @@
             {#if copiedUserId}
               <GeneralIcon
                 icon="material-symbols:check-circle-outline"
-                size={22}
+                size={20}
               />
             {/if}
           </div>

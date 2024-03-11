@@ -194,7 +194,6 @@ export class VerificationHelper {
       endDate: Date
     ) => void
   ): Promise<void> {
-    console.log("tttttttttt");
     await this.verificationRepo.sendSmsWithExternalProvider({
       completePhone,
       onCodeSent,

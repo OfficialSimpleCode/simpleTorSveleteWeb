@@ -9,16 +9,23 @@
     authProviderToStr,
   } from "$lib/consts/auth";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
+  import { isConnectedStore } from "$lib/stores/User";
   import { pushDialog } from "$lib/utils/general_utils";
   import { dateToDateStr } from "$lib/utils/times_utils";
-  import { translate } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
 
   export let explainDialog: HTMLDialogElement;
   export let authProvider: AuthProvider;
   export let date: Date;
   let makeSureDeleteialog: HTMLDialogElement;
-  const oldUser = VerificationHelper.GI().userData?.displayName?.includes("&&");
-  const lastProvider = VerificationHelper.GI().existsLoginProviders.size == 1;
+  $: oldUser =
+    $isConnectedStore != null
+      ? VerificationHelper.GI().userData?.displayName?.includes("&&")
+      : true;
+  $: lastProvider =
+    $isConnectedStore != null
+      ? VerificationHelper.GI().existsLoginProviders.size <= 1
+      : true;
   function onDelete() {
     if (lastProvider) {
       return;
@@ -54,40 +61,42 @@
         class="image-center w-[50px]"
       />
       <h3 class="text-center font-bold text-sm">
-        {translate("verifBy")
+        {translate("verifBy", $_)
           .replaceAll(
             "PROVIDER",
-            translate(authProviderToStr[authProvider] ?? "")
+            translate(authProviderToStr[authProvider] ?? "", $_)
           )
           .replaceAll(
             "DATE",
             date == new Date(0)
-              ? translate("notAvailable")
+              ? translate("notAvailable", $_)
               : dateToDateStr(date)
           )}
       </h3>
     </div>
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2 w-full items-center">
       <button
-        class=" bg-red-600 btn btn-sm min-w-[80px] {lastProvider || oldUser
+        class=" bg-red-600 btn btn-sm {lastProvider || oldUser
           ? 'opacity-50'
           : ''}"
         on:click={onDelete}
       >
-        <div class="flex flex-row gap-1 min-w-10 justify-center items-center">
+        <div
+          class="flex flex-row gap-1 min-w-10 justify-center px-7 items-center text-white"
+        >
           <GeneralIcon icon="mdi:trash" size={20} />
-          {translate("delete")}
+          {translate("delete", $_)}
         </div>
       </button>
       {#if lastProvider}
         <p class="text-center text-xs opacity-70">
-          {translate("cantDeleteLastProviderDeleteUser")}
+          {translate("cantDeleteLastProviderDeleteUser", $_)}
         </p>
       {/if}
 
       {#if oldUser}
         <p class="text-center text-xs opacity-70">
-          {translate("oldUserExplain")}
+          {translate("oldUserExplain", $_)}
         </p>
       {/if}
     </div>

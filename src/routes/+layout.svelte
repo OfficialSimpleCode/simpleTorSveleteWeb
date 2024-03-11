@@ -25,6 +25,7 @@
     "תור",
     "עסק",
   ];
+  let userAgent: string = "";
   onMount(() => {
     RemoteConfigHelper.GI().init();
 
@@ -37,6 +38,8 @@
       width: window.innerWidth,
       height: window.innerHeight,
     });
+
+    userAgent = window.navigator.userAgent.toLowerCase();
 
     // Update screenWidth on window resize
     window.addEventListener("resize", () => {

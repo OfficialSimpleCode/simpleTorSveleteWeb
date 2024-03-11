@@ -18,9 +18,10 @@
 <svelte:head>
   <!-- business title -->
   <title
-    >Simple Tor | ניהול תורים | מערכת לניהול תורים | {translate(
-      "payments",
-      $_
+    >{translate("simpleTorWebTitle", $_, false)} | {translate(
+      "paymentRequest",
+      $_,
+      false
     )}</title
   >
 
@@ -36,9 +37,10 @@
   <!-- title  -->
   <meta
     property="og:title"
-    content="Simple Tor | ניהול תורים | מערכת לניהול תורים | {translate(
-      'payments',
-      $_
+    content="{translate('simpleTorWebTitle', $_, false)} | {translate(
+      'paymentRequest',
+      $_,
+      false
     )}"
   />
 </svelte:head>

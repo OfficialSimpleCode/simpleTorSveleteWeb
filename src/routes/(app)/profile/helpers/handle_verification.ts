@@ -11,7 +11,7 @@ export async function handleVerification(
   if (get(userStore).userPublicData.isVerifiedPhone) {
     return;
   }
-  sendSms({ phone: get(userStore).userPublicData.phoneNumber });
+  sendSms(get(userStore).userPublicData.phoneNumber);
 
   pushDialog(verificationDialog, href);
 }

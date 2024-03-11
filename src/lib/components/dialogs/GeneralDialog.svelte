@@ -1,5 +1,6 @@
 <script lang="ts">
   import { _, translate } from "$lib/utils/translate";
+  import { createEventDispatcher } from "svelte";
   import DialogTitel from "../custom_components/DialogTitel.svelte";
   import LottieAnimation from "../custom_components/LottieAnimation.svelte";
   import DialogStrucher from "./DialogStrucher.svelte";
@@ -15,12 +16,16 @@
   export let saveTranslateKey: string = "save";
   export let maxWidth: string = "";
   export let showCancel: boolean = true;
-
+  const dispatch = createEventDispatcher();
   let loadingCancel: boolean = false;
   let loadingSave: boolean = false;
 </script>
 
-<DialogStrucher bind:dialog onlyMiddle={true}>
+<DialogStrucher
+  bind:dialog
+  onlyMiddle={true}
+  on:close={() => dispatch("close")}
+>
   <div class="modal-box bg-base-200 {maxWidth}">
     <!-- title -->
     <DialogTitel {titleTransKey} {dialog} />

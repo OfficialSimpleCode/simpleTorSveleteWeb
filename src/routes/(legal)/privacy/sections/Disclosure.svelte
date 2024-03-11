@@ -1,9 +1,11 @@
+<script>
+  import { _, translate } from "$lib/utils/translate";
+</script>
+
 <div class="text-center pb-4">
-  <p class="text-xl">Disclosure</p>
+  <p class="text-xl">{translate("googleDisclosureTitle", $_, false)}</p>
   <p class="opacity-70">
-    Simple Tor's use and transfer of information received from the Google
-    Calendar API comply with the Google API Services User Data Policy, including
-    the Limited Use requirements. To learn more
+    {translate("googleDisclosure", $_, false)}
   </p>
   <a
     class="font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline"

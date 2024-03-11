@@ -14,7 +14,6 @@ import UserInitializer from "$lib/initializers/user_initializer";
 import PhoneDataResult from "$lib/models/resps/phone_data_result";
 import { businessStore } from "$lib/stores/Business";
 import { isConnectedStore } from "$lib/stores/User";
-import { pushDialog } from "$lib/utils/general_utils";
 import type { EventDispatcher } from "svelte";
 import { get } from "svelte/store";
 import { authDataStore } from "../../../auth_controller";
@@ -24,15 +23,12 @@ export async function handleLogin({
   otp = "",
   loginReason,
   dispatch = undefined,
-  dialog = undefined,
-  deleteUserDialog = undefined,
+  phoneDialog = undefined,
 }: {
   provider: AuthProvider;
   loginReason: LoginReason;
   otp?: string;
-
-  dialog?: HTMLDialogElement;
-  deleteUserDialog?: HTMLDialogElement;
+  phoneDialog?: HTMLDialogElement;
   dispatch?: EventDispatcher<any>;
 }): Promise<PhoneDataResult | undefined> {
   if (get(isConnectedStore) == null) {
@@ -60,19 +56,29 @@ export async function handleLogin({
   }
 
   if (loginReason === LoginReason.deleteUser) {
-    if (deleteUserDialog != null) {
-      pushDialog(deleteUserDialog);
+    existPhoneDialog(provider, phoneDialog);
+    if (dispatch != null) {
+      dispatch("onDeleteUser");
     }
     return;
   }
 
   if (loginReason === LoginReason.phoneUpdate) {
-    return await updatePhone({});
+    const resp = await updatePhone({});
+    if (resp != null) {
+      existPhoneDialog(provider, phoneDialog);
+      if (dispatch != null) {
+        dispatch("onUpdatePhone");
+      }
+    } else {
+      ErrorsController.displayError();
+    }
   }
 
   if (loginReason === LoginReason.linkProvider) {
     const resp = await addProvider(provider);
     if (resp != null) {
+      existPhoneDialog(provider, phoneDialog);
       //go to profile that we can see the new added provider
       await goto(`${base}/profile`);
     }
@@ -83,6 +89,13 @@ export async function handleLogin({
 
     if (VerificationHelper.GI().phoneVerificationWithFirebase) {
       resp = await addProvider(provider);
+      if (resp != null) {
+        //update the auth store for the new phone data result
+        authDataStore.update((val) => {
+          val.phoneData = resp!;
+          return val;
+        });
+      }
     } else {
       const userClaims = await VerificationHelper.GI().userClaims();
       const isUserPhone =
@@ -97,11 +110,7 @@ export async function handleLogin({
     }
 
     if (resp != null) {
-      //update the auth store for the new phone data result
-      authDataStore.update((val) => {
-        val.phoneData = resp!;
-        return val;
-      });
+      existPhoneDialog(provider, phoneDialog);
       if (dispatch != null) {
         dispatch("onVerifyPhone");
       }
@@ -115,6 +124,7 @@ export async function handleLogin({
 
   //sign in page
   if (get(isConnectedStore) !== true) {
+    existPhoneDialog(provider, phoneDialog);
     //need to change this var to be allowed to get in to the setup page
     VerificationHelper.GI().needToSignUp = true;
     await goto(`${base}/login/account-setup`);
@@ -126,13 +136,20 @@ export async function handleLogin({
     return;
   }
 
-  //need to exit from the phone dialog also
-  if (provider == AuthProvider.Phone && dialog != null) {
-    dialog.close();
-  }
+  existPhoneDialog(provider, phoneDialog);
 
   //go to the main page or to the loaded business if exist
   await comeBack();
+}
+
+function existPhoneDialog(
+  provider: AuthProvider,
+  phoneDialog: HTMLDialogElement | undefined
+) {
+  //need to exit from the phone dialog also
+  if (provider == AuthProvider.Phone && phoneDialog != null) {
+    phoneDialog.close();
+  }
 }
 
 async function comeBack() {
@@ -168,6 +185,11 @@ async function updatePhone({
   if (phoneDataResp == null) {
     return undefined;
   }
+  //update the auth store for the new phone data result
+  authDataStore.update((val) => {
+    val.phoneData = phoneDataResp!;
+    return val;
+  });
 
   return phoneDataResp;
 }

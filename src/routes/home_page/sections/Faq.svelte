@@ -1,12 +1,15 @@
 <script>
   import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
+  import { _, translate } from "$lib/utils/translate";
   import FaqItem from "../components/FaqItem.svelte";
 </script>
 
 <section class="bg-base-100">
   <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
     <div class="flex flex-row justify-between items-center pb-6">
-      <h2 class="text-2xl font-bold text-center sm:text-4xl">שאלות נפוצות</h2>
+      <h2 class="text-2xl font-bold text-center sm:text-4xl">
+        {translate("faq", $_, false)}
+      </h2>
       <div class="hidden sm:block">
         <DownloadAppButton />
       </div>
@@ -16,46 +19,46 @@
     >
       <div>
         <FaqItem
-          questionTransKey={"האם חובה להוריד את האפליקציה?"}
-          answerTransKey={"הלקוחות שלך אינם צריכים להוריד את האפליקציה על מנת להזמין אליך תורים, הם יכולים תמיד להיכנס ללינק שלך שיקשר אותם לאתר שמערכת ניהול התורים בונה עבורך והם יוכלו להזמין משם בקליק"}
+          questionTransKey={translate("faq1", $_, false)}
+          answerTransKey={translate("faq2", $_, false)}
         />
         <FaqItem
-          questionTransKey={"האם ניתן להגדיר כמה סוגי שירותים שונים?"}
-          answerTransKey={"בוודאי! אתה מגדיר נושא (למשל - תספורות) במערכת ניהול התורים, ותחתיו אתה יכול להגדיר מספר שירותים (למשל - תספורת גבר, תספורת + זקן) ואפילו לקבוע את סדר התצוגה שלהם ללקוחות. אין הגבלה על מספר השירותים או הנושאים"}
+          questionTransKey={translate("faq3", $_, false)}
+          answerTransKey={translate("faq4", $_, false)}
         />
         <FaqItem
-          questionTransKey={"ניתן לבקש משהו ספציפי?"}
-          answerTransKey={"יש לנו צוות שלם המיועד רק לבקשות לקוחות, המערכת מתעדכנת בתדירות חודשית ובכל עדכון כזה אנו כוללים בקשות שלקוחות ביקשו מאיתנו, המערכת בנוי בצורה מאוד דינאמית ואפשר להתאים הכל לצרכים שלך"}
+          questionTransKey={translate("faq5", $_, false)}
+          answerTransKey={translate("faq6", $_, false)}
         />
         <FaqItem
-          questionTransKey={"הלקוחות חייבים לקבוע בעצמם?"}
-          answerTransKey={"לא, באפשרותך לקבוע להם בצורה פשוטה מהיומן האישי שלך ואתה יכול גם להגדיר שהלקוחות לא יכולים לקבוע תורים בעצמם כלל"}
+          questionTransKey={translate("faq7", $_, false)}
+          answerTransKey={translate("faq8", $_, false)}
         />
         <FaqItem
-          questionTransKey={"למי המערכת מתאימה?"}
-          answerTransKey={"מערכת Simple Tor לניהול התורים מתאימה לכל סוגי נותני השירות או מקבלי הלקוחות שצריכים לקבוע ולנהל תורים או פגישות. יש לנו עסקים מכל הסוגים למשל - מניקוריסטיות, בונות ציפרנים, ספרים, קוסמטיקאיות, מאמני כושר, די ג'אים, שפים פרטיים, ליצנים, עו״ד, מקעקעים, רופאים, מנהלי חשבונות ועוד עשרות סוגי עסקים שאי אפשר למנות כאן את כולם "}
+          questionTransKey={translate("faq9", $_, false)}
+          answerTransKey={translate("faq10", $_, false)}
         />
       </div>
       <div>
         <FaqItem
-          questionTransKey={"צריך לשים אשראי?"}
-          answerTransKey={"לא, למעשה אנחנו כלל לא דורשים אשראי, מרגע יצירת העסק מתחילים 30 ימי ניסיון בחינם שלאחריהם נדרשת קניית מינוי, את הקניה מבצעים כמו רכישה באפליקציה על ידי Apple Pay או Google Pay ואין צורך להעביר אלינו את האשראי שלך"}
+          questionTransKey={translate("faq11", $_, false)}
+          answerTransKey={translate("faq12", $_, false)}
         />
         <FaqItem
-          questionTransKey={"יש רשימות המתנה?"}
-          answerTransKey={"בטח! המערכת מאפשרת לך להגדיר רשימות המתנה כאשר התורים נתפסו או בכללי בסוף כל יום על מנת שתמיד יהיו לך לקוחות למלא חורים. ברגע שתור מתפנה או שתפתח עוד זמני עבודה כלל הרשומים יקבלו התראה לקבוע תור"}
+          questionTransKey={translate("faq13", $_, false)}
+          answerTransKey={translate("faq14", $_, false)}
         />
         <FaqItem
-          questionTransKey={"האם אני יכול לגשת ליומני עובדים?"}
-          answerTransKey={"מערכת Simple Tor לניהול התורים מעניקה לך פאנל עוצמתי לשליטה וניהול העובדים, אתה יכול להיכנס לחשבון שלהם מהמכשיר שלך ולשנות להם הכל. בנוסף באפשרותך להעניק או להוריד להם הרשאות לדברים מסויימים כמו קביעת חופשות, העלאת תמונות וכדומה"}
+          questionTransKey={translate("faq15", $_, false)}
+          answerTransKey={translate("faq16", $_, false)}
         />
         <FaqItem
-          questionTransKey={"יש סנכרון עם יומנים אחרים?"}
-          answerTransKey={"מערכת Simple Tor מאפשרת סינכרון מלא עם יומן גוגל ובנוסף סנכרון עם יומן המכשיר. תוכל לצפות באירועים שיש לך בגוגל ולהוסיף את האירועים מהיומן שלך ליומן המכשיר"}
+          questionTransKey={translate("faq17", $_, false)}
+          answerTransKey={translate("faq18", $_, false)}
         />
         <FaqItem
-          questionTransKey={"האם ההסטוריה שלי נשמרת?"}
-          answerTransKey={"כלל ההסטוריה שלך נשמרת עבורך בשרתים שלנו על מנת לספק לך דוחות ולשפר את העסק שלך, באפשרותך בקליק אחד לכבות את שמירת ההסטוריה וכל ההסטוריה תימחק ולא תישמר עוד."}
+          questionTransKey={translate("faq19", $_, false)}
+          answerTransKey={translate("faq20", $_, false)}
         />
       </div>
     </div>

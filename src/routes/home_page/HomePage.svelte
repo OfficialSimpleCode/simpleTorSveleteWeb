@@ -199,17 +199,14 @@
 
 <svelte:head>
   <!-- Page title -->
-  <title>Simple Tor | ניהול תורים | מערכת לניהול תורים</title>
+  <title>{translate("simpleTorWebTitle", $_)}</title>
 
   <!-- the url for search to display for this site -->
   <link rel="canonical" href="https://simpletor.app" />
 
   <!-- Open Graphes data (for sharin a link) -->
   <!-- title -->
-  <meta
-    property="og:title"
-    content="Simple Tor | ניהול תורים | מערכת לניהול תורים"
-  />
+  <meta property="og:title" content={translate("simpleTorWebTitle", $_)} />
 
   <!-- the scheme.org of the business -->
   {@html jsonLdScript}

@@ -9,7 +9,7 @@
 </script>
 
 <svelte:head>
-  <!-- <title>Simple Tor | ניהול תורים | מערכת לניהול תורים</title>
+  <!-- <title>{translate("simpleTorWebTitle", $_)}</title>
   <meta name="description" content="SimpleTor Web Application" /> -->
   <!-- <link rel="icon" href="/AppIcon.png" /> -->
 </svelte:head>

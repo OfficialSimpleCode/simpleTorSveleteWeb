@@ -21,7 +21,10 @@
     <div class="grid grid-cols-2 gap-3">
       {#each languages as language, i}
         <button
-          class="flex flex-col hover:bg-primary bg-base-300 hover:text-primary-content items-center gap-2 p-3 px-8 {containerRadius}"
+          class="flex flex-col hover:bg-primary bg-base-300 hover:text-primary-content items-center gap-2 p-3 px-8 {containerRadius} {$locale ==
+          language.locale
+            ? 'bg-primary text-primary-content'
+            : 'bg-base-300'}"
           on:click={() => chooseLang(language)}
           on:keypress={() => chooseLang(language)}
         >

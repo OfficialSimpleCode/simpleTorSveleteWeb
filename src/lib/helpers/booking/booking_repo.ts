@@ -1053,7 +1053,6 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
   async updateFieldsInBooking({
     booking,
     data,
-
     eventValue,
     updateUser = true,
     changeInEvents = false,
@@ -1063,7 +1062,6 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
   }: {
     booking: Booking;
     data: Record<string, any>; // ex: {"needCancel":true,"wasWaiting":true}
-
     eventValue?: any;
     updateUser?: boolean;
     changeInEvents?: boolean;
@@ -1097,7 +1095,10 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           bookingsEventsData[`${bookingDay}.${time}.${eventFieldName}`] =
             eventValue;
         });
-
+        console.log(
+          `${path}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsEventsCollection}`
+        );
+        console.log(bookingsEventsData);
         // Put the booking event in the doc and create one if it doesn't exist
         this.transactionUpdateMultipleFieldsAsMap({
           transaction,
@@ -1107,6 +1108,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         });
       }
 
+      //update the worker booking
       const dataForWorker: Record<string, any> = {};
       Object.entries(data).forEach(([fieldName, value]) => {
         dataForWorker[
@@ -1117,6 +1119,10 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
             : `${booking.bookingId}.${fieldName}`
         ] = value;
       });
+      console.log(
+        `${path}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`
+      );
+      console.log(dataForWorker);
 
       this.transactionUpdateMultipleFieldsAsMap({
         transaction,
@@ -1124,22 +1130,26 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         docId: dateToDateStr(booking.bookingDate),
         data: dataForWorker,
       });
-      const dataForUser: Record<string, any> = {};
-      Object.entries(data).forEach(([fieldName, value]) => {
-        dataForUser[`${booking.bookingId}.${fieldName}`] = value;
-      });
 
-      this.updateUserBooking({
-        transaction: transaction,
-        booking,
-        data: dataForUser,
-      });
+      //update the user booking
+      if (updateUser) {
+        const dataForUser: Record<string, any> = {};
+        Object.entries(data).forEach(([fieldName, value]) => {
+          dataForUser[`${booking.bookingId}.${fieldName}`] = value;
+        });
+
+        this.updateUserBooking({
+          transaction: transaction,
+          booking,
+          data: dataForUser,
+        });
+      }
 
       return true;
     };
 
     return await this.runTransaction(transacionCommands).then(async (value) => {
-      if (value && updateUser) {
+      if (value) {
         if (counterType != null) {
           // Increment the eventsCounters
           await this.realTimeEventsCounterHandler({
@@ -1342,7 +1352,9 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     let path = DbPathesHelper.GI().userBookingsPathByBooking(booking);
 
     if (transaction != undefined) {
+      console.log(data);
       if (isSetMerge) {
+        console.log("isSetMerge", path, docId);
         this.transactionSetAsMap({
           transaction: transaction,
           path: path,
@@ -1350,6 +1362,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           data: data,
         });
       } else {
+        console.log("eeeeeeee", path, docId);
         this.transactionUpdateMultipleFieldsAsMap({
           transaction: transaction,
           path: path,
@@ -1357,7 +1370,8 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           data: data,
         });
       }
-
+      console.log(`${usersCollection}/${booking.customerId}/${dataCollection}`);
+      console.log(previewData);
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
         path: `${usersCollection}/${booking.customerId}/${dataCollection}`,

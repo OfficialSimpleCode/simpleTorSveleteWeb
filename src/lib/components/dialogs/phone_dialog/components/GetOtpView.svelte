@@ -3,7 +3,7 @@
   import { AuthProvider, LoginReason } from "$lib/consts/auth";
 
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
-  import { translate } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import type { EventDispatcher } from "svelte";
 
   import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
@@ -26,11 +26,11 @@
       const resp = await handleLogin({
         provider: AuthProvider.Phone,
         loginReason: loginReason,
+        phoneDialog: dialog,
         otp,
         dispatch,
       });
       if (resp != null) {
-        console.log("ssssssssss");
         otp = "";
       }
     } finally {
@@ -49,7 +49,7 @@
     VerificationHelper.GI().phoneVerificationWithFirebase =
       !VerificationHelper.GI().phoneVerificationWithFirebase;
     otp = "";
-    sendSms({ phone: VerificationHelper.GI().submitedPhone });
+    sendSms(VerificationHelper.GI().submitedPhone);
   }
 </script>
 
@@ -63,9 +63,9 @@
   <GeneralIcon icon="mdi:lock" size={40} />
   <div class="flex flex-col gap-[1px] items-center">
     <h3 class="text-me text-center">
-      {translate("beforeStartWeNeewToConfirmPhone")}
+      {translate("beforeStartWeNeewToConfirmPhone", $_)}
     </h3>
-    <h3 class="text-xs text-center opacity-70">{translate("pressOpt")}</h3>
+    <h3 class="text-xs text-center opacity-70">{translate("pressOpt", $_)}</h3>
   </div>
 
   <CustomTextFormField
@@ -82,7 +82,7 @@
       on:click={tryOtherProvider}
     >
       <h3 class="text-sm text-primary">
-        {translate("notRecivingAnyMessage")}
+        {translate("notRecivingAnyMessage", $_)}
       </h3>
     </button>
   {/if}

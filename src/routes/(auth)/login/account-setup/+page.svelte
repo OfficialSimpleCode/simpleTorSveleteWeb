@@ -4,6 +4,7 @@
   import { page } from "$app/stores";
   import CustomPhoneField from "$lib/components/custom_components/CustomPhoneField.svelte";
   import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
+  import VerifiedIcon from "$lib/components/custom_components/VerifiedIcon.svelte";
   import GeneralDialog from "$lib/components/dialogs/GeneralDialog.svelte";
   import GenderPicker from "$lib/components/pickers/gender_picker/GenderPicker.svelte";
   import { AuthProvider } from "$lib/consts/auth";
@@ -18,6 +19,7 @@
   import UserHelper from "$lib/helpers/user/user_helper";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { businessStore } from "$lib/stores/Business";
+  import { ShowToast } from "$lib/stores/ToastManager";
   import { workersStore } from "$lib/stores/Workers";
   import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
@@ -32,9 +34,12 @@
   let fullName: string = userData?.displayName ?? "";
 
   let email: string = userData?.email ?? "";
-  let phoneNumber: string = userData?.phoneNumber ?? "";
+  let phoneNumber: string = VerificationHelper.GI().submitedPhone;
   let pickedGender: Gender = Gender.anonymous;
   let verifiedEmail: boolean = false;
+  const phoneVerified: boolean =
+    VerificationHelper.GI().currentAuthProvider === AuthProvider.Phone &&
+    VerificationHelper.GI().submitedPhone != "";
 
   let validPhone: boolean =
     userData?.phoneNumber != "" && userData?.phoneNumber != null;
@@ -49,6 +54,7 @@
 
   async function setupAccount() {
     if (!validEmail || !validPhone || !validName || processing) {
+      ShowToast({ text: translate("somethingWrong"), status: "fail" });
       return;
     }
     processing = true;
@@ -108,11 +114,7 @@
 
 <svelte:head>
   <!-- business title -->
-  <title
-    >Simple Tor | ניהול תורים | מערכת לניהול תורים | {translate(
-      "signUp",
-      $_
-    )}</title
+  <title>{translate("simpleTorWebTitle", $_)} | {translate("signUp", $_)}</title
   >
 
   <!-- the url for search to display for this site -->
@@ -122,10 +124,7 @@
   <!-- title  -->
   <meta
     property="og:title"
-    content="Simple Tor | ניהול תורים | מערכת לניהול תורים | {translate(
-      'signUp',
-      $_
-    )}"
+    content="{translate('simpleTorWebTitle', $_)} | {translate('signUp', $_)}"
   />
 </svelte:head>
 
@@ -175,10 +174,18 @@
           isRequired={true}
           on:valueChange={handleEmailChange}
         />
-        <CustomPhoneField
-          on:phoneChange={handlePhoneChange}
-          value={phoneNumber}
-        />
+        <div class="flex flex-row justify-center w-full gap-5">
+          <CustomPhoneField
+            on:phoneChange={handlePhoneChange}
+            value={phoneNumber}
+            isActive={!phoneVerified}
+          />
+
+          {#if phoneVerified}
+            <div class="flex items-center pb-3"><VerifiedIcon size={22} /></div>
+          {/if}
+        </div>
+
         <div class="max-w-[500px] flex flex-col items-center">
           <GenderPicker background={"bg-base-100"} />
         </div>

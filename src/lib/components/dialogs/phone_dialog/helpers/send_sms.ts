@@ -7,7 +7,7 @@ import {
   onVerificationFailed,
 } from "./on_verification_failed";
 
-export function sendSms({ phone }: { phone: string }): void {
+export function sendSms(phone: string): void {
   if (phone === "") {
     return;
   }

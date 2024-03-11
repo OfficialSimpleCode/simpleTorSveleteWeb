@@ -3,9 +3,4 @@
   export let recaptchaDialog: HTMLDialogElement;
 </script>
 
-<DialogStrucher bind:dialog={recaptchaDialog}
-  ><div
-    id="recaptcha-container"
-    class="absolute !z-[10000]"
-  ></div></DialogStrucher
->
+<DialogStrucher bind:dialog={recaptchaDialog}></DialogStrucher>

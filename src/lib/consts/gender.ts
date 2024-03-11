@@ -79,6 +79,10 @@ export const maleToFemaleMap: MaleToFemaleMap = {
   ["לנווטי"]: "לנווט",
   ["תקבל"]: "תקבלי",
   ["אשריאי"]: "אשראי",
+  ["מבטלי"]: "מבטל",
+  ["כתוצאיה"]: "כתוצאה",
+  ["לעדכני"]: "לעדכן",
+  ["תצטרך"]: "תצטרכי",
 };
 
 export const genderToStr: { [key in Gender]: string } = {

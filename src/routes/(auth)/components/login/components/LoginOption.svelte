@@ -14,7 +14,6 @@
   export let authProvider: AuthProvider;
   export let loading: boolean;
   export let loginReason: LoginReason;
-  export let deleteUserDialog: HTMLDialogElement;
   export let isActive: boolean;
   const dispatch = createEventDispatcher();
 
@@ -66,7 +65,6 @@
         provider: authProvider,
         loginReason: loginReason,
         dispatch: dispatch,
-        deleteUserDialog: deleteUserDialog,
       });
     } finally {
       loading = false;

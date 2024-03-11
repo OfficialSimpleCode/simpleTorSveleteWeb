@@ -396,7 +396,7 @@ export default class UserModel {
     if (json["authProviders"]) {
       Object.entries<string>(json["authProviders"]).forEach(
         ([provider, date]) => {
-          if (authProviderFromStr[provider] != undefined) {
+          if (authProviderFromStr[provider] != null) {
             const authProvider = authProviderFromStr[provider];
             user.authProviders.set(authProvider, isoToDate(date));
           }

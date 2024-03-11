@@ -11,11 +11,27 @@
 </script>
 
 <svelte:head>
-  <title>Simple Tor | privacy policy</title>
+  <title
+    >{translate("simpleTorWebTitle", $_, false)} | {translate(
+      "privacy",
+      $_,
+      false
+    )}</title
+  >
   <meta name="description" content="Simple tor app's privacy policy" />
   <!-- Open graphes links -->
-  <meta property="og:title" content="Simple Tor | privacy policy" />
-  <meta property="og:description" content="Simple tor app's privacy policy" />
+  <meta
+    property="og:title"
+    content="{translate('simpleTorWebTitle', $_, false)} | {translate(
+      'privacy',
+      $_,
+      false
+    )}"
+  />
+  <meta
+    property="og:description"
+    content={translate("privacyPolicyExplain", $_, false)}
+  />
   <!-- The prefered link for this page -->
   <link rel="canonical" href="https://simpletor.app/privacy" />
 </svelte:head>
@@ -49,14 +65,14 @@
       <!-- contact -->
       <TitleAndBody title="contact">
         <p>
-          {translate("contactText1", $_)}
+          {translate("contactText1", $_, false)}
           <button
             class="font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline"
             on:click={openContactUs}
           >
-            {translate("contacting", $_)}
+            {translate("contacting", $_, false)}
           </button>
-          {translate("contactText2", $_)}
+          {translate("contactText2", $_, false)}
         </p>
       </TitleAndBody>
 
@@ -65,26 +81,26 @@
 
       <!-- How do we use the data -->
       <TitleAndBody title="dataUsage">
-        <p>{translate("dataUsage1", $_)}</p>
+        <p>{translate("dataUsage1", $_, false)}</p>
         <ul class="list-disc px-8 py-1 space-y-2">
           <li>
-            {translate("dataUsage2", $_)}
+            {translate("dataUsage2", $_, false)}
           </li>
           <li>
-            {translate("dataUsage3", $_)}
+            {translate("dataUsage3", $_, false)}
           </li>
           <li>
-            {translate("dataUsage4", $_)}
+            {translate("dataUsage4", $_, false)}
           </li>
 
-          <li>{translate("dataUsage5", $_)}</li>
-          <li>{translate("dataUsage6", $_)}</li>
+          <li>{translate("dataUsage5", $_, false)}</li>
+          <li>{translate("dataUsage6", $_, false)}</li>
           <li>
-            {translate("dataUsage7", $_)}
+            {translate("dataUsage7", $_, false)}
           </li>
         </ul>
         <p>
-          {translate("dataUsage8", $_)}
+          {translate("dataUsage8", $_, false)}
         </p></TitleAndBody
       >
 
@@ -105,6 +121,11 @@
         title="changesToPrivacy"
         content={["changesToPrivacyText"]}
       />
+      <!-- updated at -->
+      <div class="felx felx-col text-center pt-10">
+        <h2>{translate("lastUpdte", $_, false)}</h2>
+        <p class="opacity-70">01/4/2023</p>
+      </div>
     </section>
   </div>
 </body>

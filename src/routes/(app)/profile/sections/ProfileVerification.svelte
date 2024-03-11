@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { pushState } from "$app/navigation";
   import { base } from "$app/paths";
   import SettingContainer from "$lib/components/SettingContainer.svelte";
   import SettingsItem from "$lib/components/custom_components/SettingsItem.svelte";
@@ -11,7 +10,7 @@
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { userStore } from "$lib/stores/User";
   import { pushDialog } from "$lib/utils/general_utils";
-  import { translate } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import { handleVerification } from "../helpers/handle_verification";
   let verificationDialog: HTMLDialogElement;
   let makeSureRemoveVerification: HTMLDialogElement;
@@ -44,10 +43,7 @@
     //remove the otp dialog
     verificationDialog.close();
     //push the successfully verified dialog
-    pushState("", {
-      showModal: true,
-    });
-    setTimeout(() => verificationSuccessfully.showModal(), 200);
+    pushDialog(verificationSuccessfully);
   }}
   bind:dialog={verificationDialog}
 />
@@ -68,7 +64,8 @@
   explainText={translate(
     $userStore.userPublicData.isVerifiedPhone
       ? "yourPhoneVerifiviedWithOneTime"
-      : "forFullExprinceInApp"
+      : "forFullExprinceInApp",
+    $_
   )}
 >
   <div slot="children">
@@ -89,7 +86,8 @@
             {translate(
               $userStore.userPublicData.isVerifiedPhone
                 ? "verified"
-                : "notVerified"
+                : "notVerified",
+              $_
             )}
           </p>
         {/if}

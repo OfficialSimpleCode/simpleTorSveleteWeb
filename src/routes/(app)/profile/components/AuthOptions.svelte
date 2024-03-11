@@ -42,10 +42,7 @@
     }
     pickedProvider = authProvider;
     pickedDate = date;
-    pushDialog(
-      explainDialog,
-      `${base}/profile/auth-${authProviderToStr[authProvider]}`
-    );
+    pushDialog(explainDialog);
   }
 </script>
 
@@ -63,18 +60,18 @@
 >
   {#if shimmerEffect}
     <button class="bg-base-300 btn btn-ghost animate-pulse">
-      <div class="w-[30px]" />
+      <div class="w-[20px]" />
     </button>
   {:else}
     {#each $userStore.authProviders as [authProvider, date]}
       <button
-        class="bg-base-300 btn btn-ghost w-[20px]"
+        class="bg-base-300 btn btn-ghost"
         on:click={() => onClick(authProvider, date)}
       >
         <img
           src={authProviderToImage[authProvider]}
           alt={authProviderToStr[authProvider]}
-          class="w-[20px]"
+          class="w-[30px]"
         />
       </button>
     {/each}
@@ -87,9 +84,7 @@
     {#if loading}
       <div class="loading loading-spinner" />
     {:else}
-      <div class="opacity-30">
-        <GeneralIcon icon="gravity-ui:plus" />
-      </div>
+      <GeneralIcon icon="gravity-ui:plus" />
     {/if}
   </button>
 </section>

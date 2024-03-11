@@ -21,7 +21,6 @@
   import DeleteUserDialog from "./components/DeleteUserDialog.svelte";
   import LoginOption from "./components/LoginOption.svelte";
   import LoginTitle from "./components/LoginTitle.svelte";
-  import { handleLogin } from "./helpers/handle_login";
 
   export let loginReason: LoginReason = LoginReason.login;
   let deleteUserDialog: HTMLDialogElement;
@@ -69,21 +68,12 @@
     if (loading || !validPhone) {
       return;
     }
-    loading = true;
-    if (AuthProvider.Phone === authProvider) {
-      sendSms({ phone: phoneNumber });
-      openPhoneDialog();
+    if (AuthProvider.Phone !== authProvider) {
       return;
     }
-
-    try {
-      await handleLogin({
-        provider: authProvider,
-        loginReason: loginReason,
-      });
-    } finally {
-      loading = false;
-    }
+    loading = true;
+    sendSms(phoneNumber);
+    openPhoneDialog();
   }
   async function onFinishLogin() {
     if (VerificationHelper.GI().needToMakeBookingAfterLogin) {
@@ -101,9 +91,18 @@
   function openPhoneDialog() {
     pushDialog(phoneDialog);
   }
+
   function handlePhoneChange(event: CustomEvent<PhonePickerEvent>): void {
     validPhone = event.detail.isValid;
     phoneNumber = event.detail.value ?? "";
+  }
+
+  function onDeleteUser() {
+    pushDialog(deleteUserDialog);
+  }
+
+  function onCloseDialog() {
+    loading = false;
   }
 </script>
 
@@ -114,8 +113,10 @@
   bind:dialog={phoneDialog}
   insideOtp={true}
   on:onFinishLogin={onFinishLogin}
+  on:onDeleteUser={onDeleteUser}
+  on:close={onCloseDialog}
 />
-<DeleteUserDialog bind:dialog={deleteUserDialog} />
+<DeleteUserDialog bind:dialog={deleteUserDialog} bind:loadingLogin={loading} />
 
 <main class="flex w-full h-full">
   <img
@@ -139,7 +140,7 @@
             <LoginOption
               {authProvider}
               bind:loading
-              bind:deleteUserDialog
+              on:onDeleteUser={onDeleteUser}
               on:onFinishLogin={onFinishLogin}
               {loginReason}
               isActive={isActive[authProvider] ?? false}
@@ -171,7 +172,14 @@
         {#if loading}
           <div class="loading loading-spinner" />
         {:else}
-          {translate("login", $_)}
+          {translate(
+            loginReason === LoginReason.linkProvider
+              ? "addAuthProvider"
+              : loginReason === LoginReason.deleteUser
+                ? "deleteUser"
+                : "login",
+            $_
+          )}
         {/if}
       </button>
     </section>

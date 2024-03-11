@@ -2,7 +2,7 @@
   import CustomPhoneField from "$lib/components/custom_components/CustomPhoneField.svelte";
   import DialogTitel from "$lib/components/custom_components/DialogTitel.svelte";
   import type { PhonePickerEvent } from "$lib/consts/text_fields";
-  import { translate } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import { createEventDispatcher } from "svelte";
   import { sendSms } from "../helpers/send_sms";
   const dispatch = createEventDispatcher();
@@ -18,7 +18,7 @@
       return;
     }
 
-    sendSms({ phone: phoneNumber });
+    sendSms(phoneNumber);
     dispatch("navigateOtp");
   }
   function handlePhoneChange(event: CustomEvent<PhonePickerEvent>): void {
@@ -39,6 +39,6 @@
     class="btn btn-primary {validPhone ? '' : 'opacity-50'}"
     on:click={onContinue}
   >
-    {translate("verify")}
+    {translate("verify", $_)}
   </button>
 </div>

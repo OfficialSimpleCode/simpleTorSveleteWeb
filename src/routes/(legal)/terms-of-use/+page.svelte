@@ -11,11 +11,27 @@
 </script>
 
 <svelte:head>
-  <title>Simple Tor | terms of use</title>
+  <title
+    >{translate("simpleTorWebTitle", $_, false)} | {translate(
+      "termsOfUse",
+      $_,
+      false
+    )}</title
+  >
   <meta name="description" content="Simple tor app's terms of use" />
   <!-- Open graphes links -->
-  <meta property="og:title" content="Simple Tor | terms of use" />
-  <meta property="og:description" content="Simple tor app's terms of use" />
+  <meta
+    property="og:title"
+    content="{translate('simpleTorWebTitle', $_, false)} | {translate(
+      'termsOfUse',
+      $_,
+      false
+    )}"
+  />
+  <meta
+    property="og:description"
+    content={translate("termOfUseExplain", $_, false)}
+  />
   <!-- The prefered link for this page -->
   <link rel="canonical" href="https://simpletor.app/terms-of-use" />
 </svelte:head>
@@ -137,51 +153,51 @@
       <TitleAndBody title="miscellaneousInstructions" contentAsUl={true}>
         <ul class="space-y-4">
           <p class="py-1">
-            {translate("miscellaneousInstructionsText1", $_)}
+            {translate("miscellaneousInstructionsText1", $_, false)}
           </p>
           <p class="py-1">
-            {translate("miscellaneousInstructionsText2", $_)}
+            {translate("miscellaneousInstructionsText2", $_, false)}
           </p>
           <p class="py-1">
-            {translate("miscellaneousInstructionsText3", $_)}
+            {translate("miscellaneousInstructionsText3", $_, false)}
           </p>
           <p class="py-1">
-            {translate("miscellaneousInstructionsText4", $_)}
+            {translate("miscellaneousInstructionsText4", $_, false)}
           </p>
           <p class="py-1">
-            {translate("miscellaneousInstructionsText5", $_)}
+            {translate("miscellaneousInstructionsText5", $_, false)}
           </p>
           <p class="py-1">
-            {translate("miscellaneousInstructionsText6", $_)}
+            {translate("miscellaneousInstructionsText6", $_, false)}
           </p>
           <p class="py-1">
-            {translate("miscellaneousInstructionsText7", $_)}
+            {translate("miscellaneousInstructionsText7", $_, false)}
             <button
               on:click={openContactUs}
               class="font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline"
-              >{translate("contactOptions", $_)}</button
+              >{translate("contactOptions", $_, false)}</button
             >
-            {translate("thatIn", $_)}
+            {translate("thatIn", $_, false)}
             <a
               href={`${base}/`}
               class="font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline"
               target="_blank"
             >
-              {translate("homePage", $_)}
+              {translate("homePage", $_, false)}
             </a>
           </p>
           <p class="py-1">
-            {translate("miscellaneousInstructionsText8", $_)}
+            {translate("miscellaneousInstructionsText8", $_, false)}
           </p>
           <p class="py-1">
-            {translate("miscellaneousInstructionsText9", $_)}
+            {translate("miscellaneousInstructionsText9", $_, false)}
           </p>
         </ul>
       </TitleAndBody>
 
       <!-- updated at -->
       <div class="felx felx-col text-center pt-10">
-        <h2>{translate("lastUpdte", $_)}</h2>
+        <h2>{translate("lastUpdte", $_, false)}</h2>
         <p class="opacity-70">01/4/2023</p>
       </div>
       <p></p>

@@ -1,5 +1,6 @@
 <script>
   import { containerRadius } from "$lib/consts/sizes";
+  import { _, translate } from "$lib/utils/translate";
 </script>
 
 <section
@@ -9,85 +10,64 @@
     class="relative px-4 sm:px-10 md:px-10 py-10 lg:py-20 max-w-screen-lg mx-auto"
   >
     <h2 class="text-2xl font-bold text-center sm:text-4xl pb-10">
-      לנהל את התורים בעסק ללא הפסקה
+      {translate("articleTitle1", $_, false)}
     </h2>
-    <h3 class="pb-3 text-xl">ניהול תורים שעובד</h3>
+    <h3 class="pb-3 text-xl">{translate("articleTitle2", $_, false)}</h3>
     <div
       class="flex flex-col gap-8 opacity-70 bg-base-200 {containerRadius} p-6"
     >
       <p>
-        בתור בעל עסק שמעניק שירות ללקוחות אתה כבר יודע כמה חשוב לנהל את היומן
-        שלך בצורה מסודרת ונוחה לעבודה. ואתה גם יודע שהמשימה הזאת לרוב דורשת ממך
-        המון משאבים כמו זמן כאבי ראש וכסף.
+        {translate("articleContent1", $_, false)}
       </p>
       <p>
-        ניהול התורים היא משימה שכמעט כל עסק צריך להתמודד איתה, מתן האפשרות
-        ללקוחות לקבוע תורים, לעדכן אותם או לבטל במידת הצורך. כל אירוע כזה דורש
-        שיח עם נותני השירותים ובדיקה של זמני העבודה שלהם. ההתנהלות הזו במרבית
-        הפעמים קורית בצורה שאינה יעילה לעסק ושדורשת הוצאה כלכלית גדולה. ועם זאת
-        גורמת לטרחה מצד הלקוח ומצד העסק
+        {translate("articleContent2", $_, false)}
       </p>
 
       <p>
-        אם הלקוחות בעסק הינם לקוחות קבועים והם רגילים לקבוע תורים, אז הם יתקשרו
-        או ישלחו לך הודעה דבר שידרוש ממך תשומת לב והשקעה, אם הלקוחות הינם חדשים,
-        התהליך הזה יגרום להם להרבה קשיים בדרך אל הזמנת התור, דבר שבסיכוי גדול
-        יוביל לכך שלא יקבעו תור
+        {translate("articleContent3", $_, false)}
       </p>
 
       <p>
-        בנוסף, במרבית הפעמים, התנהלות פיזית מול לקוח עלולה להוביל לתדמית שלילית
-        לעסק כיוון שיכול לקחת זמן עד ששיחת הלקוח תיענה, יכולות להיווצר אי הבנות
-        בשיחה, הלקוח יכול להגיב בצורה שלילית למחסור בתורים או לזמנים לא נוחים.
-        דבר זה עלול להוביל לתדמית עסק שלילית למרות העבודה והמסירות שאתה משקיע
-        בעסק שלך
+        {translate("articleContent4", $_, false)}
       </p>
     </div>
     <div class="grid pt-8 md:gap-16 md:grid-cols-2 gap-10">
       <div>
-        <h3 class="pb-3 text-xl">נוחות המערכת</h3>
+        <h3 class="pb-3 text-xl">{translate("articleTitle3", $_, false)}</h3>
 
         <div
           class="flex flex-col gap-4 opacity-70 bg-base-200 {containerRadius} p-6"
         >
           <p>
-            אנו יודעים שאחד הדברים החשובים לך ביותר הוא שהלקוחות לא יסתבכו,
-            שיהיה להם קל.
+            {translate("articleContent5", $_, false)}
           </p>
           <p>
-            מערכת זימון התורים עוצבה בצורה נוחה ופשוטה לשימוש שלא תשאיר ללקוחות
-            שלך מקום להסתבך.
+            {translate("articleContent6", $_, false)}
           </p>
           <p>
-            מרגע הכניסה לעמוד העסק בכמה קליקים בודדים הלקוח יבצע הזמנת תור ויצפה
-            פרטי התור, ואתה מנגד תקבל על כך התראה ותוכל לראות זאת בימן שלך
+            {translate("articleContent7", $_, false)}
           </p>
         </div>
       </div>
       <div>
-        <h3 class="pb-3 text-xl">גמישות המערכת</h3>
+        <h3 class="pb-3 text-xl">{translate("articleTitle4", $_, false)}</h3>
         <div
           class="flex flex-col gap-4 opacity-70 bg-base-200 {containerRadius} p-6"
         >
           <p>
-            אנחנו מבינים שלכל עסק יש דרישות משל עצמו וצרכים שמתאימים לתחום שלו.
-            מערכת זימון התורים נבתנה על בסיס ההבנה הזו.
+            {translate("articleContent8", $_, false)}
           </p>
 
           <p>
-            מערכת Simple Tor בנויה בצורה דינאמית הנותנת לך ארגז כלים רחב שמאפשר
-            לך להשיג את הדברים שהעסק שלך צריך
+            {translate("articleContent9", $_, false)}
           </p>
 
           <p>
-            אם עדיין חסר לך משהו אנחנו מעמידים לרשותך צוות פיתוח שיתאים את
-            המערכת במיוחד לצרכים שלך ויוסיף לך את מה שחסר
+            {translate("articleContent10", $_, false)}
           </p>
 
           <p>
-            יש לנו מגוון רחב של עסקים המשתמשים במערכת כגון - בונות ציפרנים,
-            מניקוריסטיות, מקעקעים, ספרים, קוסמטיקאיות, די ג'אים, שפים פרטיים,
-            ליצנים, עו״ד, מאמני כושר, רופאים, מנהלי חשבונות ועוד.
+            {translate("articleContent11", $_, false)}
           </p>
         </div>
       </div>

@@ -7,18 +7,18 @@
 </script>
 
 <div class="py-1">
-  <h2 class="text-xl pt-2">{translate(title, $_)}</h2>
+  <h2 class="text-xl pt-2">{translate(title, $_, false)}</h2>
 
   {#if content.length > 0}
     {#if contentAsUl}
       <ul class="space-y-4">
         {#each content as ph}
-          <li class="py-1 opacity-70">{translate(ph, $_)}</li>
+          <li class="py-1 opacity-70">{translate(ph, $_, false)}</li>
         {/each}
       </ul>
     {:else}
       {#each content as ph}
-        <p class="py-1 opacity-70">{translate(ph, $_)}</p>
+        <p class="py-1 opacity-70">{translate(ph, $_, false)}</p>
       {/each}
     {/if}
   {:else}

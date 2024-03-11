@@ -14,6 +14,7 @@
   let otp: string = "";
   function onClose() {
     otp = "";
+    dispatch("close");
   }
 </script>
 
@@ -32,4 +33,5 @@
       <GetOtpView {loginReason} {dialog} bind:otp {dispatch} />
     {/if}
   </div>
+  <div id="recaptcha-container" class="absolute !z-[10000]"></div>
 </DialogStrucher>

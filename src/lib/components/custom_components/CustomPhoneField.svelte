@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { PhonePickerEvent } from "$lib/consts/text_fields";
+  import { userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
   import { createEventDispatcher, onMount } from "svelte";
-
   import { TelInput, normalizedCountries } from "svelte-tel-input";
   import type {
     CountryCode,
@@ -27,14 +27,28 @@
   let valid = true;
 
   // Optional - Extended details about the parsed phone number
-  let detailedValue: DetailedValue | null = null;
+  let detailedValue: DetailedValue | undefined = undefined;
 
-  let country: CountryCode | null = null;
+  let country: CountryCode | null = selectedCountry;
+
+  //get the current country from initial value
+  let dialCode = value?.split("-")[0];
+  if (dialCode == "") {
+    dialCode = $userStore.phoneNumber.split("-")[0];
+  }
+
+  if (dialCode != "") {
+    console.log("eeeeeeeeeeeeeeee", dialCode);
+    for (const c of normalizedCountries) {
+      if (`+${c.dialCode}` === dialCode) {
+        selectedCountry = c.iso2;
+      }
+    }
+  }
 
   const dispatch = createEventDispatcher();
   function updatePhoneNumber() {
     const phone = detailedValue?.phoneNumber;
-    console.log(detailedValue?.countryCallingCode);
 
     const formattedPhone = phone?.replace(
       `+${detailedValue?.countryCallingCode ?? "eeeeee"}`,
@@ -48,7 +62,7 @@
         detailedValue?.phoneNumber != null &&
         detailedValue?.phoneNumber?.length > 0,
     };
-    console.log(event);
+
     // update the listeners about phone change
     dispatch("phoneChange", event);
   }
@@ -111,7 +125,7 @@
     <!-- rest of the phone  -->
     <TelInput
       bind:country={selectedCountry}
-      bind:value
+      {value}
       bind:valid
       bind:detailedValue
       name="phoneFormField"

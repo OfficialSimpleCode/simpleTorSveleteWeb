@@ -1,6 +1,7 @@
 <script>
   import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
   import topBarGif from "$lib/images/video example.mp4";
+  import { _, translate } from "$lib/utils/translate";
   import DeviceMock from "../components/DeviceMock.svelte";
 </script>
 
@@ -13,15 +14,14 @@
       <h1
         class="max-w-2xl mb-4 text-3xl font-extrabold tracking-tight leading-none md:text-4xl xl:text-5xl"
       >
-        הלקוחות קובעים תורים בקליק
+        {translate("mainWebTitle", $_, false)}
       </h1>
 
       <!-- sub title -->
       <p
         class="max-w-2xl mb-6 font-light lg:mb-8 md:text-lg lg:text-xl opacity-70"
       >
-        יומן חכם המאפשר לכל בעל עסק לנהל את העסק שלו בצורה נוחה ופשוטה מהמכשיר
-        הסלולארי
+        {translate("mainWebSubTitle", $_, false)}
       </p>
 
       <!-- download app button -->

@@ -12,14 +12,14 @@
     <div class="relative mx-auto max-w-5xl text-center">
       <!-- title -->
       <h2 class="block w-full bg-gradient-to-b text-3xl sm:text-4xl">
-        {translate("mainFeatures", $_)}
+        {translate("mainFeatures", $_, false)}
       </h2>
 
       <!-- sub title -->
       <p
         class="mx-auto my-4 w-full max-w-xl bg-transparent text-center opacity-70"
       >
-        {translate("mainFeaturesDesc", $_)}
+        {translate("mainFeaturesDesc", $_, false)}
       </p>
     </div>
 
@@ -30,41 +30,45 @@
       <FeatureItem
         bg="bg-pink-500"
         icon="mdi:card-account-details-star"
-        titleTransKey={translate("personalBranding", $_)}
-        subTitleTransKey={translate("personalBrandinDesc", $_)}
-        secondSubTitleTransKey={translate("personalBrandinDesc2", $_)}
+        titleTransKey={translate("personalBranding", $_, false)}
+        subTitleTransKey={translate("personalBrandinDesc", $_, false)}
+        secondSubTitleTransKey={translate("personalBrandinDesc2", $_, false)}
       />
 
       <FeatureItem
         bg="bg-green-500"
         icon="mdi:sms"
-        titleTransKey={translate("clientsMessage", $_)}
-        subTitleTransKey={translate("clientsMessagesDesc", $_)}
-        secondSubTitleTransKey={translate("clientsMessagesDesc2", $_)}
+        titleTransKey={translate("clientsMessage", $_, false)}
+        subTitleTransKey={translate("clientsMessagesDesc", $_, false)}
+        secondSubTitleTransKey={translate("clientsMessagesDesc2", $_, false)}
       />
 
       <FeatureItem
         bg="bg-blue-500"
         icon="mdi:electron-framework"
-        titleTransKey={translate("availabilityEverywhere", $_)}
-        subTitleTransKey={translate("availabilityEverywhereDesc", $_)}
-        secondSubTitleTransKey={translate("availabilityEverywhereDesc2", $_)}
+        titleTransKey={translate("availabilityEverywhere", $_, false)}
+        subTitleTransKey={translate("availabilityEverywhereDesc", $_, false)}
+        secondSubTitleTransKey={translate(
+          "availabilityEverywhereDesc2",
+          $_,
+          false
+        )}
       />
 
       <FeatureItem
         bg="bg-indigo-700"
         icon="mdi:database"
-        titleTransKey={translate("clients", $_)}
-        subTitleTransKey={translate("clientsDesc", $_)}
-        secondSubTitleTransKey={translate("clientsDesc2", $_)}
+        titleTransKey={translate("clients", $_, false)}
+        subTitleTransKey={translate("clientsDesc", $_, false)}
+        secondSubTitleTransKey={translate("clientsDesc2", $_, false)}
       />
 
       <FeatureItem
         bg="bg-red-500"
         icon="mdi:payment"
-        titleTransKey={translate("cleranceAndrecipts", $_)}
-        subTitleTransKey={translate("cleranceAndreciptsDesc", $_)}
-        secondSubTitleTransKey={translate("cleranceAndreciptsDesc2", $_)}
+        titleTransKey={translate("cleranceAndrecipts", $_, false)}
+        subTitleTransKey={translate("cleranceAndreciptsDesc", $_, false)}
+        secondSubTitleTransKey={translate("cleranceAndreciptsDesc2", $_, false)}
       />
 
       <FeatureItem

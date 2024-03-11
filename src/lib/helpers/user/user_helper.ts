@@ -361,11 +361,12 @@ export default class UserHelper {
               path: usersCollection,
               docId: UserInitializer.GI().user.id,
               fieldName: "lastTimeUpdateEmail",
-              value: now.toString(),
+              value: dateIsoStr(now),
             })
             .then((value) => {
               if (value) {
                 UserInitializer.GI().user.lastTimeUpdateEmail = now;
+                userStore.set(UserInitializer.GI().user);
               }
               return value;
             });
@@ -656,6 +657,8 @@ export default class UserHelper {
     phone: string,
     isVerified: boolean
   ): Promise<PhoneDataResult | undefined> {
+    const previousPhone = UserInitializer.GI().user.phoneNumber;
+
     // same phone, no need to update
     if (
       UserInitializer.GI().user.phoneNumber === phone &&
@@ -728,13 +731,13 @@ export default class UserHelper {
         isVerified
       );
 
-      if (UserInitializer.GI().user.phoneNumber !== phone) {
+      if (previousPhone !== phone) {
         await this.userRepo
           .updateFieldInsideDocAsMapRepo({
             path: usersCollection,
             docId: UserInitializer.GI().user.id,
             fieldName: "lastTimeUpdatePhone",
-            value: now.toISOString(),
+            value: dateIsoStr(now),
           })
           .then((result) => {
             if (result) {
@@ -920,30 +923,23 @@ export default class UserHelper {
       bookingsToUpdate[bookingId] = booking;
     });
 
-    const futures: Promise<boolean>[] = [];
-    Object.entries(bookingsToUpdate).forEach(([bookingId, booking]) => {
+    //need to do one by one - firebase unknown error
+    for (const booking of Object.values(bookingsToUpdate)) {
       if (booking.isMultiRef) {
         const multiBooking = booking.toMultiBooking;
-        futures.push(
-          multiBookingRepo.updateFieldsInMultiBookingUser({
-            multiBooking,
-            multiBookingUser:
-              multiBooking.users[Object.keys(multiBooking.users)[0]],
-            data: { ["customerPhone"]: newPhone },
-            workerAction: false,
-          })
-        );
+        await multiBookingRepo.updateFieldsInMultiBookingUser({
+          multiBooking,
+          multiBookingUser: Object.values(multiBooking.users)[0],
+          data: { ["customerPhone"]: newPhone },
+          workerAction: false,
+        });
       } else {
-        futures.push(
-          bookingRepo.updateFieldsInBooking({
-            booking: booking,
-            data: { ["customerPhone"]: newPhone },
-          })
-        );
+        await bookingRepo.updateFieldsInBooking({
+          booking: booking,
+          data: { ["customerPhone"]: newPhone },
+        });
       }
-    });
-
-    await Promise.all(futures);
+    }
   }
 
   async updateAllClients(

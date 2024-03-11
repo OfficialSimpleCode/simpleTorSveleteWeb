@@ -6,7 +6,7 @@
     simpleTorHomePage,
   } from "$lib/consts/app_external_links";
   import { contactUsAnimation } from "$lib/consts/resources";
-  import { translate } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import CustomCircleIcon from "../custom_components/CustomCircleIcon.svelte";
   import LottieAnimation from "../custom_components/LottieAnimation.svelte";
   import DialogStrucher from "./DialogStrucher.svelte";
@@ -47,7 +47,7 @@
 
       <!-- conatct us description -->
       <h3 class="text-sm text-center mx-6 mb-8">
-        {translate("SupportDscription")}
+        {translate("SupportDscription", $_)}
       </h3>
     </div>
   </div>

@@ -39,10 +39,7 @@
 <svelte:head>
   <!-- business title -->
   <title
-    >Simple Tor | ניהול תורים | מערכת לניהול תורים | {translate(
-      "profile",
-      $_
-    )}</title
+    >{translate("simpleTorWebTitle", $_)} | {translate("profile", $_)}</title
   >
 
   <!-- the url for search to display for this site -->
@@ -52,10 +49,7 @@
   <!-- title  -->
   <meta
     property="og:title"
-    content="Simple Tor | ניהול תורים | מערכת לניהול תורים | {translate(
-      'profile',
-      $_
-    )}"
+    content="{translate('simpleTorWebTitle', $_)} | {translate('profile', $_)}"
   />
 </svelte:head>
 

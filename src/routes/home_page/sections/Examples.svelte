@@ -26,13 +26,13 @@
     <div>
       <!-- title -->
       <h2 class="text-2xl font-bold text-center sm:text-4xl">
-        {translate("watchSystem", $_)}
+        {translate("watchSystem", $_, false)}
       </h2>
       <!-- sub title -->
       <p
         class="mx-auto my-4 w-full max-w-3xl bg-transparent text-center opacity-70"
       >
-        {translate("clickToWatch", $_)}
+        {translate("clickToWatch", $_, false)}
       </p>
     </div>
 
@@ -47,32 +47,32 @@
           on:changeSelection={changeSelection}
           selected={imageIndex}
           currentIndex={0}
-          titleTransKey={translate("calendarView", $_)}
-          subTitleTransKey={translate("calendarViewExample", $_)}
+          titleTransKey={translate("calendarView", $_, false)}
+          subTitleTransKey={translate("calendarViewExample", $_, false)}
         />
 
         <DataButton
           on:changeSelection={changeSelection}
           selected={imageIndex}
           currentIndex={1}
-          titleTransKey={translate("order", $_)}
-          subTitleTransKey={translate("noComples", $_)}
+          titleTransKey={translate("order", $_, false)}
+          subTitleTransKey={translate("noComples", $_, false)}
         />
 
         <DataButton
           on:changeSelection={changeSelection}
           selected={imageIndex}
           currentIndex={2}
-          titleTransKey={translate("workersControl", $_)}
-          subTitleTransKey={translate("workersControlExample", $_)}
+          titleTransKey={translate("workersControl", $_, false)}
+          subTitleTransKey={translate("workersControlExample", $_, false)}
         />
 
         <DataButton
           on:changeSelection={changeSelection}
           selected={imageIndex}
           currentIndex={3}
-          titleTransKey={translate("placingAnEvent", $_)}
-          subTitleTransKey={translate("placingEventDesc", $_)}
+          titleTransKey={translate("placingAnEvent", $_, false)}
+          subTitleTransKey={translate("placingEventDesc", $_, false)}
         />
         <!-- <DownloadAppButton /> -->
       </div>
