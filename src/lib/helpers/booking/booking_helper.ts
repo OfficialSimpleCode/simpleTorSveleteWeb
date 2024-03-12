@@ -41,14 +41,12 @@ export default class BookingHelper {
     booking,
     worker,
     clientNote = "",
-
     needPayInAdvance = false,
     filledBooking = false,
   }: {
     booking: Booking;
     worker: WorkerModel;
     clientNote?: string;
-
     needPayInAdvance?: boolean;
     ignoreLocalWorker?: boolean;
     filledBooking?: boolean;
@@ -327,7 +325,7 @@ export default class BookingHelper {
     const hasConfirmArrivalReminder =
       booking.remindersTypes.get(BookingReminderType.confirmArrival) != null;
     const minutesBeforeAlert =
-      booking.remindersTypes.get(BookingReminderType.confirmArrival) || 0;
+      booking.remindersTypes.get(BookingReminderType.confirmArrival) ?? 0;
 
     // In case the booking is recurrence and needs to create a new one with the need to cancel value
     let newBooking: Booking | undefined;

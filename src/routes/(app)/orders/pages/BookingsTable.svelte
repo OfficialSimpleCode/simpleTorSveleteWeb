@@ -8,7 +8,7 @@
   $: bookings = $userStore.bookingsToShow ?? [];
 </script>
 
-<table class="table">
+<table class="table h-full">
   <thead>
     <tr>
       <th>{translate("business", $_)}</th>

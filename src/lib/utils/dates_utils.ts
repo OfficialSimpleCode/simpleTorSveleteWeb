@@ -156,9 +156,8 @@ export function dateToRemindMultiBooking(
   multiBooking: MultiBooking,
   minutes: number
 ): Date {
-  return subDuration(
-    dateToUtc(multiBooking.bookingDate),
-    new Duration({ minutes: minutes })
+  return dateToUtc(
+    subDuration(multiBooking.bookingDate, new Duration({ minutes: minutes }))
   );
 }
 
@@ -199,7 +198,7 @@ export function allWeekDays(date: Date): Date[] {
 ///need to give the func the date you want to calculate the utcDeltaMinutes for
 ///and not some random date
 export function utcDeltaMinutes(date: Date): number {
-  return date.getTimezoneOffset();
+  return Math.abs(date.getTimezoneOffset());
 }
 
 // enum CustomDurationOptions {

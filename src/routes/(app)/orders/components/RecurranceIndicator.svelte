@@ -13,14 +13,14 @@
   export let showRecurranceLink: boolean = false;
   export let absolute: boolean = false;
   let downloadAppDialog: HTMLDialogElement;
-  const recurrenceEvent: RecurrenceEvent | undefined =
+  $: recurrenceEvent =
     booking.recurrenceEvent ?? booking.recurrenceEventRefInfo;
 
-  const recurrenceInfo: RecurrenceEvent | undefined =
+  $: recurrenceInfo =
     recurrenceEvent != null
       ? RecurrenceEvent.fromRecurrenceEvent(recurrenceEvent!)
       : undefined;
-  if (recurrenceInfo) {
+  $: if (recurrenceInfo) {
     recurrenceInfo!.exceptionDates = new Set();
     recurrenceInfo!.endOption = RecurrenceEventEnd.endless;
   }

@@ -158,8 +158,6 @@ export default class BookingController {
     const servicesCopy = { ...bookingMaker.services };
     Object.keys(servicesCopy).forEach((serviceId) => {
       if (!workerObj.hasTreatemnt(serviceId)) {
-        console.log("55555555555555555555555555555");
-        console.log("tttttttttttttt", serviceId);
         delete bookingMaker.services[serviceId];
       }
     });
@@ -182,9 +180,7 @@ export default class BookingController {
       bookingMaker.showVerificationAlert =
         showPhoneVerificationAlert(currentWorker);
     }
-    console.log(
-      "33333333333333333333333333333333333333333333333333333333333333333333333333333333"
-    );
+
     bookingMakerStore.set(bookingMaker);
     //only if there picked worker and picked service  need to update the schedule
     if (
@@ -283,9 +279,7 @@ export default class BookingController {
         this.removeService(bookingMaker, treatment);
       } else {
         bookingMaker.currentStep += 1;
-        console.log(
-          "2222222222222222222222222222222222222222222222222222222222222222"
-        );
+
         bookingMakerStore.set(bookingMaker);
       }
     }
@@ -321,7 +315,7 @@ export default class BookingController {
     BusinessInitializer.GI().startTimesListening(worker, treatment.isMulti);
     bookingMaker.isMultiEvent = true;
     bookingMaker.currentStep += 1;
-    console.log("222222211111111111111111111111111111111111111111111111111111");
+
     bookingMakerStore.set(bookingMaker);
   }
 
@@ -404,9 +398,7 @@ export default class BookingController {
     }
     bookingMaker.services[treatment.id] = treatment;
     bookingMaker.isMultiEvent = false;
-    console.log(
-      "4444444444444444444444444444444444444444444444444444444444444444444444"
-    );
+
     bookingMakerStore.set(bookingMaker);
   }
 
@@ -419,9 +411,7 @@ export default class BookingController {
       this.removeService(bookingMaker, treatment);
     } else {
       bookingMaker.services[treatment.id].count -= 1;
-      console.log(
-        "4444444444444444555555555555555555555555555555555555555555555555555555"
-      );
+
       bookingMakerStore.set(bookingMaker);
     }
   }
@@ -452,7 +442,7 @@ export default class BookingController {
       return;
     }
     bookingMaker.services[treatment.id].count += 1;
-    console.log("6666666666666666666666666666666666666666666666666666666666");
+
     bookingMakerStore.set(bookingMaker);
   }
 }

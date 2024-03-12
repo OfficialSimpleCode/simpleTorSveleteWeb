@@ -46,26 +46,27 @@
   <div
     class="mt-10 md:mt-0 {isNotEmpty($businessStore?.design.products ?? {})
       ? 'bg-base-200'
-      : 'bg-base-300'} w-full pb-14 px-2 pt-10 xs:px-16"
+      : 'bg-base-300'} w-full pb-14 px-2 pt-10 flex flex-col items-center justify-center"
   >
     <h2 class="text-center font-bold text-2xl pb-6">
       {$businessStore?.design.storyTitle ?? ""
         ? $businessStore?.design.storyTitle ?? ""
         : translate("myWorks", $_).replaceAll(":", "")}
     </h2>
-    <div
-      class="w-full self-center flex items-center mt-1 justify-center xs:gap-6 gap-4 flex-wrap"
-    >
-      {#each Object.entries(workersStories) as [storyId, imageData]}
-        <button on:click={() => openImageDisplayDialog(storyId)}>
-          <!-- h-[${storyImagesHeigth}px] w-[${storyImagesWidth}px] -->
-          <img
-            class="object-cover md:h-[530px] md:w-[300px] h-[284px] w-[160px] rounded-xl hover:scale-[1.01]"
-            src={imageData.imageUrl}
-            alt={translate("businessWork", $_)}
-          />
-        </button>
-      {/each}
+    <div class="w-[99%] xs:w-[90%] flex flex-row items-center justify-center">
+      <div
+        class=" flex flex-wrap items-center justify-center mt-1 gap-4 xs:gap-6"
+      >
+        {#each Object.entries(workersStories) as [storyId, imageData]}
+          <button on:click={() => openImageDisplayDialog(storyId)}>
+            <img
+              class="object-cover aspect-[4/6] max-w-[160px] md:max-w-[300px] sm:max-w-[250px] xs:max-w-[200px] rounded-xl hover:scale-[1.05] transform transition-transform duration-300"
+              src={imageData.imageUrl}
+              alt={translate("businessWork", $_)}
+            />
+          </button>
+        {/each}
+      </div>
     </div>
   </div>
 {/if}

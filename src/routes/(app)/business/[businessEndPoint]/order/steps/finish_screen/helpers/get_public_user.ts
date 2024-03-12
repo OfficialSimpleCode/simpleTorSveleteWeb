@@ -13,7 +13,7 @@ export function getPublicCustomer(): PublicCustomer {
     Encryptor.GI().shortHashTextSha256(
       UserInitializer.GI().user.id,
       publicCustomerHashSalt
-    )
+    ) ?? ""
   ];
 
   // check if its phone in the public customers
@@ -23,7 +23,7 @@ export function getPublicCustomer(): PublicCustomer {
       Encryptor.GI().shortHashTextSha256(
         UserInitializer.GI().user.phoneNumber,
         publicCustomerHashSalt
-      )
+      ) ?? ""
     ];
   }
 

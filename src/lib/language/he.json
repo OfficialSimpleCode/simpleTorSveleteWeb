@@ -3277,5 +3277,10 @@
   "mainWebTitle": "הלקוחות קובעים תורים בקליק",
   "mainWebSubTitle": "יומן חכם המאפשר לכל בעל עסק לנהל את העסק שלו בצורה נוחה ופשוטה מהמכשיר הסלולארי",
   "googleDisclosure": "השימוש והעברת המידע של Simple Tor שהתקבלו מ-Google Calendar API תואמות למדיניות נתוני המשתמשים של שירותי ה-API של Google, כולל דרישות השימוש המוגבל. למידע נוסף",
-  "googleDisclosureTitle": "גילוי נאות - גוגל"
+  "googleDisclosureTitle": "גילוי נאות - גוגל",
+  "bookingFailedAfterTransaction": "ההזמנה נכשלה לאחר התשלום",
+  "otpSessionExpired": "עבר זמן ארוך מידי הקוד פג תוקף",
+  "encryptionFailed": "ההצפנה נכשלה",
+  "crossBokingsLimitWorker": "עברת את מכסת ההזמנות",
+  "crossBokingsLimitExplain": "מכסת ההזמנות היא - AMOUNT"
 }

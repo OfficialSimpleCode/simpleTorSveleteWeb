@@ -106,8 +106,15 @@ export function dateToCustomYearAndDayAndMonthAndHourStr(date: Date): string {
   return format(date, "dd/M/yy H:mm");
 }
 
-export function dateToDateStr(date: Date): string {
-  return format(date, "dd-MM-yyyy");
+export function dateToDateStr(date: Date, sparateSign: string = "-"): string {
+  return format(date, `dd${sparateSign}MM${sparateSign}yyyy`);
+}
+
+export function dateToDateStrCustomPattern(
+  date: Date,
+  pattern: string
+): string {
+  return format(date, pattern);
 }
 
 export function timeStrToDate(dateStr: string): Date {
@@ -118,9 +125,19 @@ export function timeStrToDate(dateStr: string): Date {
   return date;
 }
 
-export function dateStrToDate(date: string): Date {
-  const [day, month, year] = date.split("-").map(Number);
+export function dateStrToDate(date: string, sparateSign: string = "-"): Date {
+  const [day, month, year] = date.split(sparateSign).map(Number);
 
+  // Month in JavaScript Date object is 0-indexed, so subtract 1 from the parsed month.
+  return new Date(year, month - 1, day);
+}
+
+export function dateStrToDateWithTwoDigit(
+  date: string,
+  sparateSign: string = "-"
+): Date {
+  let [day, month, year] = date.split(sparateSign).map(Number);
+  year = year + 2000;
   // Month in JavaScript Date object is 0-indexed, so subtract 1 from the parsed month.
   return new Date(year, month - 1, day);
 }
@@ -253,7 +270,7 @@ export function isoToDate(dateStr: string): Date {
 }
 
 export function dateToUtc(date: Date) {
-  return new Date(date.toISOString());
+  return isoToDate(date.toISOString());
 }
 
 // export function testDateFunctions() {

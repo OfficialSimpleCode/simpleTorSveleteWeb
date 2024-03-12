@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { pushState } from "$app/navigation";
   import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
   import type Booking from "$lib/models/booking/booking_model";
+  import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
   import BookingActions from "./BookingActions.svelte";
   import BookingDetails from "./BookingDetails.svelte";
@@ -15,12 +15,8 @@
   let bookingDialog: HTMLDialogElement;
 
   function openBookingSheet() {
-    pushState("", {
-      showModal: true,
-    });
-    setTimeout(() => bookingDialog.showModal(), 100);
+    pushDialog(bookingDialog);
   }
-  console.log("dddddddddddddddddddddddddddddddddddddddddddddddd");
 </script>
 
 <!-- booking shhet and dialog -->

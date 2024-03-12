@@ -42,9 +42,9 @@
 </svelte:head>
 
 {#if product != null}
-  <div class="h-screen md:items-center md:justify-center md:flex md:px-5">
+  <div class="h-screen sm:items-center sm:justify-center sm:flex sm:px-5">
     <div
-      class="w-full h-full lg:max-h-[700px] md:max-h-[550px] md:h-screen flex flex-col md:flex-row-reverse max-w-[1200px] md:px-5 mx-auto items-center md:bg-base-200 {containerRadius}"
+      class="w-full lg:max-h-[700px] sm:max-h-[550px] sm:h-screen flex flex-col sm:flex-row-reverse max-w-[1200px] sm:px-5 mx-auto items-center sm:bg-base-200 {containerRadius}"
     >
       <ProductImage {product} />
 

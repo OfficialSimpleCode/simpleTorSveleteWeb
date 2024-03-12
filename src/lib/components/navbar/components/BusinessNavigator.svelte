@@ -1,6 +1,8 @@
 <script lang="ts">
   import { base } from "$app/paths";
+  import { themeStore } from "$lib/controllers/theme_controller";
   import { businessStore } from "$lib/stores/Business";
+  import { getDefaultLogo } from "$lib/utils/images_utils";
   import { _, translate } from "$lib/utils/translate";
 
   $: ngClass = `flex items-center justify-center rounded-full hover:bg-primary hover:text-primary-content bg-base-200 block shrink-0 transition-all duration-200`;
@@ -31,7 +33,9 @@
             : ''}"
         >
           <img
-            src={$businessStore.design.shopIconUrl}
+            src={$businessStore?.design.shopIconUrl
+              ? $businessStore?.design.shopIconUrl
+              : getDefaultLogo($themeStore?.background)}
             alt={translate("theProfileOfTemplate", $_).replace(
               "NAME",
               $businessStore.shopName

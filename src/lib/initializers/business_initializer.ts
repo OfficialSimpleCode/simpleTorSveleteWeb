@@ -27,6 +27,7 @@ import {
 import { isConnectedStore, userStore } from "$lib/stores/User";
 import { workersStore } from "$lib/stores/Workers";
 import { checkForReminders } from "$lib/utils/booking_utils";
+import { length } from "$lib/utils/core_utils";
 import { subTypeFromProductId } from "$lib/utils/subscription_utils";
 import { dateIsoStr } from "$lib/utils/times_utils";
 import {
@@ -49,6 +50,8 @@ export default class BusinessInitializer {
 
     return BusinessInitializer.instance;
   }
+
+  workerDocsLength: number = 0;
 
   generalRepo: GeneralRepo = new GeneralRepo();
 
@@ -260,14 +263,14 @@ export default class BusinessInitializer {
 
       const workersJsonsList =
         await this.generalRepo.getAllDocsInsideCollection(workersPath);
-
-      if (workersJsonsList !== null) {
+      this.workerDocsLength = length(workersJsonsList);
+      if (workersJsonsList != null) {
         workersJsonsList.forEach((workerJson: Record<string, any>) => {
           const workerObj = WorkerModel.fromWorkerDocJson(workerJson);
 
           this.workers[workerObj.id] = workerObj;
-          workersStore.set(this.workers);
         });
+        workersStore.set(this.workers);
       }
 
       return true;
@@ -544,6 +547,16 @@ export default class BusinessInitializer {
     );
   }
 
+  ///worker is declare not exist if he is not in the workers record
+  //and the the workers record is fully loaded
+  isExistWorker(workerId: string): boolean {
+    return (
+      this.workers[workerId] == null &&
+      length(this.business?.workersIds ?? {}) != 0 &&
+      this.workerDocsLength === length(this.business?.workersIds ?? {})
+    );
+  }
+
   async getBuinessData(businessId: string): Promise<BusinessData> {
     if (businessId === this.business.businessId) {
       return this.business.businessData;
@@ -556,5 +569,18 @@ export default class BusinessInitializer {
     const businessData = new BusinessData();
     businessData.setBusinessData(businessDataChild);
     return businessData;
+  }
+
+  async getBusinessModel(
+    businessId: string
+  ): Promise<BusinessModel | undefined> {
+    const businessDoc = await this.generalRepo.getDocRepo({
+      path: buisnessCollection,
+      docId: businessId,
+    });
+    if (!businessDoc.exists()) {
+      return undefined;
+    }
+    return BusinessModel.fromJson(businessDoc.data(), businessId);
   }
 }

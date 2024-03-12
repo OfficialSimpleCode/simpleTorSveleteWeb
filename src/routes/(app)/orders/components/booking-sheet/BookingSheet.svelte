@@ -37,7 +37,7 @@
       <IconsRow {booking} mainDialog={dialog} {downloadAppDialog} />
 
       <!-- general data container -->
-      <TopDetails {booking} {forceOpenBookingSheet} />
+      <TopDetails {booking} {forceOpenBookingSheet} mainDialog={dialog} />
 
       <!-- payments container -->
       <PaymentsContainer {booking} {downloadAppDialog} />

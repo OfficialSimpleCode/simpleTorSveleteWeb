@@ -297,6 +297,9 @@ export default class UserHelper {
       newPassowrd,
       paymentPasswordHashSalt
     );
+    if (hashedPassword == null) {
+      return false;
+    }
     return await this.userRepo
       .updateMultipleFieldsInsideDocAsMapRepo({
         docId: UserInitializer.GI().user.id,

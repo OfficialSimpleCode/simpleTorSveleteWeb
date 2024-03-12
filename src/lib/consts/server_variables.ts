@@ -1,11 +1,13 @@
 /* All the variables related to our server */
-export const SERVER_BASE_URL = "simpletor.officialsimplecode.com"; //  //'192.168.0.104:8225'; //  '192.168.1.10:8225'; //  '172.20.10.10:8225';
+export const SERVER_BASE_URL = "api.simpletor.app"; //  //'192.168.0.104:8225'; //  '192.168.1.10:8225'; //  '172.20.10.10:8225';
 export const GET_CHECKOUT_PAGE_END_POINT = "/hyp/get_checkout_page";
+export const OLD_SERVER_URL = "simpletor.officialsimplecode.com";
 export const GET_PAYMENT_TOKEN_END_POINT = "/hyp/get_payment_token";
 export const SEND_SMS_END_POINT = "/phone_verification/send_sms";
 export const VERIFY_OTP_END_POINT = "/phone_verification/verify_otp";
 export const CANCEL_VERIFICATION_END_POINT =
   "/phone_verification/cancel_verification";
+
 export const COMMIT_TRANSACTION_END_POINT = "/hyp/commit_transaction";
 export const PAY_WITH_TOKEN_END_POINT = "/hyp/pay_with_token";
 export const BUSINESS_LINK_END_POINT = "businesses/BUISNESS_ID";

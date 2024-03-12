@@ -27,22 +27,22 @@
   onlyMiddle={true}
   on:close={() => dispatch("close")}
 >
-  <div class="modal-box bg-base-200 {maxWidth} w-full">
+  <div class="modal-box bg-base-200 {maxWidth} ">
     <!-- title -->
     <DialogTitel {titleTransKey} {dialog} {needTitleGender} />
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center w-full">
       <!-- animation if provided -->
       {#if animation}
         <div class="flex items-center justify-center bg-slate-600 h-[120px]">
           <LottieAnimation animationFile={animation} loop={true} size="md" />
         </div>
       {:else if image}
-        <img class="w-[60px] h-[60px] pb-2" src={image} alt={imageAlt} />
+        <img class="w-[60px] h-[60px] mb-2" src={image} alt={imageAlt} />
       {/if}
 
       <!-- content -->
 
-      <p class="text-center text-sm">
+      <p class="text-center text-sm mx-3">
         {content}
       </p>
 

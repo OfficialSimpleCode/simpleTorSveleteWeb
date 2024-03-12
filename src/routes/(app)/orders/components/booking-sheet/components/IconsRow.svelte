@@ -3,10 +3,11 @@
   import DeleteBookingDialog from "$lib/components/dialogs/DeleteBookingDialog.svelte";
   import NavigationDialog from "$lib/components/dialogs/NavigationDialog.svelte";
   import type { DeleteOption } from "$lib/consts/booking";
+  import { ErrorsController } from "$lib/controllers/errors_controller";
+  import BusinessInitializer from "$lib/initializers/business_initializer";
   import Booking from "$lib/models/booking/booking_model";
   import { businessStore } from "$lib/stores/Business";
   import { ShowToast } from "$lib/stores/ToastManager";
-  import { workersStore } from "$lib/stores/Workers";
   import { pushDialog } from "$lib/utils/general_utils";
   import { translate } from "$lib/utils/translate";
   import { deleteBooking } from "../../../helpers/delete_booking";
@@ -39,7 +40,7 @@
       ShowToast({ status: "info", text: translate("needToLoadBusiness") });
       return;
     }
-    if ($workersStore[booking.workerId] == null) {
+    if (BusinessInitializer.GI().isExistWorker(booking.workerId)) {
       pushDialog(deleteBookingWithoutWorkerDialog);
       return;
     }
@@ -71,7 +72,7 @@
       return;
     }
 
-    if ($workersStore[booking.workerId] == null) {
+    if (BusinessInitializer.GI().isExistWorker(booking.workerId)) {
       pushDialog(deleteBookingWithoutWorkerDialog);
       return;
     }
@@ -99,6 +100,12 @@
       });
       if (resp) {
         mainDialog.close();
+        ShowToast({
+          status: "success",
+          text: translate("successfullydeletedBooking"),
+        });
+      } else {
+        ErrorsController.displayError();
       }
       return resp;
     } finally {
@@ -112,6 +119,8 @@
 
 <DeleteBookingWithoutWorker
   bind:dialog={deleteBookingWithoutWorkerDialog}
+  {mainDialog}
+  bind:loadingDelete
   {booking}
 />
 <div class="flex flex-row gap-4 justify-start w-full">

@@ -3,6 +3,7 @@
   import Logo from "$lib/components/Logo.svelte";
   import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
   import ContactUsDialog from "$lib/components/dialogs/ContactUsDialog.svelte";
+  import { simpleCodeWebUrl } from "$lib/consts/app_external_links";
   import { businessStore } from "$lib/stores/Business";
   import { pushDialog } from "$lib/utils/general_utils";
   import { getDownloadingAppLink } from "$lib/utils/links_utils";
@@ -45,10 +46,8 @@
       <header class="footer-title">
         {translate("company", $_).toLocaleUpperCase()}
       </header>
-      <a
-        target="_blank"
-        href="https://officialsimplecode.github.io/SimpleCodeWeb/"
-        class="link link-hover">{translate("companySite", $_)}</a
+      <a target="_blank" href={simpleCodeWebUrl} class="link link-hover"
+        >{translate("companySite", $_)}</a
       >
     </nav>
 

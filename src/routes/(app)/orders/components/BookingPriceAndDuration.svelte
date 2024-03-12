@@ -8,7 +8,7 @@
   export let isRow: boolean = true;
 </script>
 
-<div class="flex {isRow ? 'flex-rox' : 'flex-col'} gap-1">
+<div class="flex {isRow ? 'flex-rox' : 'flex-col'} gap-1 text-sm sm:text-md">
   <p>
     {`${translate("treatmentDuration", $_).replaceAll(
       "DURATION",

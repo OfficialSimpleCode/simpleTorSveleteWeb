@@ -18,4 +18,4 @@
   active={true}
   icon="mdi:information-variant-circle-outline"
   {bgColor}
-></ActionsContainer>
+/>

@@ -198,15 +198,22 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           workerId: booking.workerId,
         });
 
-        if (firestoreDataBaseWorker === undefined) {
+        if (firestoreDataBaseWorker == null) {
           return false;
         }
+        console.log(
+          "444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444"
+        );
+        console.log(firestoreDataBaseWorker.workerPublicData.bookingsTimes);
+        console.log(firestoreDataBaseWorker.recurrence.recurrenceEvents);
 
         allowedTime = isOptionalTimeForBooking({
           worker: firestoreDataBaseWorker,
           booking: booking,
           timeToOrderOn1970Format: setTo1970(booking.bookingDate),
         });
+        console.log("rrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        console.log(allowedTime);
 
         if (!allowedTime) {
           if (AppErrorsHelper.GI().error === Errors.currentlyOrderingForTime) {
@@ -236,7 +243,6 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       }
 
       if (booking.recurrenceEvent === undefined) {
-        console.log("timesData", timesData);
         this.transactionUpdateMultipleFieldsAsMap({
           transaction: transaction,
           path: `${path}/${worker.id}/${dataCollection}`,
@@ -438,14 +444,6 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         command: NumericCommands.decrement,
         data: { [booking.bookingId]: null },
       });
-
-      // // Update the related transactions
-      // this.updateTransactionBookingReference({
-      //   transaction,
-      //   booking,
-      //   delete: true,
-      //   onlyFromUser: true,
-      // });
 
       return true;
     };

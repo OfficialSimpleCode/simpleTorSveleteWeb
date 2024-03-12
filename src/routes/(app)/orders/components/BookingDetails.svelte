@@ -8,11 +8,11 @@
 
 <div class="flex flex-col text-start max-w-[70%]">
   <!-- date and time of the booking -->
-  <BookingDateAndTime {booking}></BookingDateAndTime>
+  <BookingDateAndTime {booking} />
 
   <!-- padding -->
   <div class="h-2"></div>
 
   <!-- data: durstion, price -->
-  <BookingPriceAndDuration {booking}></BookingPriceAndDuration>
+  <BookingPriceAndDuration {booking} />
 </div>

@@ -309,6 +309,10 @@ export class FirebaseAuthService extends VerificationService {
     return this._auth.currentUser;
   }
 
+  async canUseUserSRV() {
+    return await this._auth.authStateReady();
+  }
+
   async userClaimsSRV(): Promise<ParsedToken | undefined> {
     if (this._auth.currentUser === null) {
       return undefined;
