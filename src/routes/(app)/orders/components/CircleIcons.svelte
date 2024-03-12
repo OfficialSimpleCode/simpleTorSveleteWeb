@@ -1,10 +1,11 @@
 <script lang="ts">
   import type { Gender } from "$lib/consts/gender";
+  import { themeStore } from "$lib/controllers/theme_controller";
   import Booking from "$lib/models/booking/booking_model";
   import WorkerModel from "$lib/models/worker/worker_model";
   import { businessStore } from "$lib/stores/Business";
   import { workersStore } from "$lib/stores/Workers";
-  import { imageByGender } from "$lib/utils/images_utils";
+  import { getDefaultLogo, imageByGender } from "$lib/utils/images_utils";
   import { _, translate } from "$lib/utils/translate";
 
   export let booking: Booking;
@@ -22,13 +23,15 @@
       workerGender = currentWorker.gender;
     }
   }
+
+  $: shopIcon = booking.shopIcon.getShopIconPath(booking.buisnessId);
 </script>
 
 <div class="flex flex-row justify-center">
   <div class="avatar">
     <div class="mask mask-squircle w-[70px] h-[70px] rounded-full">
       <img
-        src={booking.shopIcon.getShopIconPath(booking.buisnessId)}
+        src={shopIcon ? shopIcon : getDefaultLogo($themeStore?.background)}
         alt={translate("theProfileOfTemplate", $_).replace(
           "NAME",
           $businessStore?.shopName ?? ""

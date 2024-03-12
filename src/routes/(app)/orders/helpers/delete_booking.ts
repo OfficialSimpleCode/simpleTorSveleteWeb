@@ -17,22 +17,7 @@ export async function deleteBooking({
 }): Promise<boolean> {
   const worker = get(workersStore)[booking.workerId];
   if (worker == null) {
-    const resp = await BookingHelper.GI().deleteBookingOnlyFromUserDoc({
-      booking: booking,
-    });
-    if (resp) {
-      ShowToast({
-        status: "success",
-        text: translate(
-          booking.isPassed
-            ? "successfullydeletedBooking"
-            : "successfullyCanceledBooking"
-        ),
-      });
-    } else {
-      ErrorsController.displayError();
-    }
-    return resp;
+    return false;
   }
 
   //user need the worker permmision to delete update the booking status

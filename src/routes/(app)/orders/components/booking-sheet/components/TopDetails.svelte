@@ -7,6 +7,7 @@
   import CircleIcons from "../../CircleIcons.svelte";
 
   export let booking: Booking;
+  export let mainDialog: HTMLDialogElement;
 
   export let forceOpenBookingSheet: boolean;
 </script>
@@ -30,5 +31,10 @@
   </div>
 
   <!-- svelte-ignore missing-declaration -->
-  <BookingActions {booking} bgColor="bg-base-200" {forceOpenBookingSheet} />
+  <BookingActions
+    {booking}
+    bgColor="bg-base-200"
+    {forceOpenBookingSheet}
+    {mainDialog}
+  />
 </div>

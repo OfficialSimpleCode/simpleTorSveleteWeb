@@ -98,6 +98,9 @@ export enum Errors {
   cantUpdateEmailTooShortTimeBetween,
   cantUpdatePhonelTooShortTimeBetween,
   invalidPhoneNumber,
+  encryptionFailed,
+  bookingFailedAfterTransaction,
+  otpSessionExpired,
 }
 
 export const errorMessageToStr: { [key in Errors]: string } = {
@@ -209,5 +212,9 @@ export const errorMessageToStr: { [key in Errors]: string } = {
     "cantUpdateEmailTooShortTimeBetween",
   [Errors.cantUpdatePhonelTooShortTimeBetween]:
     "cantUpdatePhonelTooShortTimeBetween",
+
   [Errors.invalidPhoneNumber]: "invalidPhoneNumber",
+  [Errors.bookingFailedAfterTransaction]: "bookingFailedAfterTransaction",
+  [Errors.otpSessionExpired]: "otpSessionExpired",
+  [Errors.encryptionFailed]: "encryptionFailed",
 };

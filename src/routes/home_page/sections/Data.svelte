@@ -40,7 +40,7 @@
         subTitleTransKey={translate("businessesSearch", $_)}
       />
       <DataItem
-        titleTransKey="38"
+        titleTransKey="51"
         subTitleTransKey={translate("categories", $_)}
       />
       <DataItem

@@ -43,6 +43,7 @@ export const cssSizesClasses = {
   },
 };
 
-export const scheuleItemWidthClass = "items-center  p-[2px] w-full";
+export const scheuleItemWidthClass =
+  "items-center  p-[2px] w-full min-w-[60px] ";
 
 export const bookingMakerButton = `btn btn-primary  hover:text-primary-content hover:outline rounded-[0.3rem]`;

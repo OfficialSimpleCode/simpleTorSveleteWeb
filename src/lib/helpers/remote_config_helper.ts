@@ -39,7 +39,8 @@ export default class RemoteConfigHelper {
     if (business != null && get(activeBusiness) == null) {
       activeBusiness.set(BusinessInitializer.GI().isBusinessActive());
       // Update the subtype before continuing to the rest of the loading
-
+    }
+    if (business != null && get(businessSubStore) == null) {
       businessSubStore.set(
         subTypeFromProductId(business.productId, business.businessId)
       );

@@ -23,7 +23,7 @@
 </script>
 
 <div
-  class="flex flex-col flex-1 gap-1 border-y-[1px] {isActive
+  class="flex flex-col flex-1 gap-1 border-y-[1px] min-w-[60px] {isActive
     ? ''
     : 'opacity-50'} rounded-[2px] items-center justify-center py-[6px] {scheuleItemWidthClass} "
 >
@@ -35,5 +35,9 @@
     <h3>{date.getDate()}</h3>
   </div>
 
-  <h3 class="text-sm opacity-70">{translate(weekdays[date.getDay()], $_)}</h3>
+  <h3
+    class="text-sm opacity-70 text-ellipsis overflow-hidden mx-3 w-full text-center"
+  >
+    {translate(weekdays[date.getDay()], $_)}
+  </h3>
 </div>

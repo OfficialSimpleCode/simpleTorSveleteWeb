@@ -45,7 +45,7 @@ export default class WorkerPublicData {
       this.bookingsTimes[dateToDateStr(date)] = { [dateToTimeStr(date)]: 60 };
     });
 
-    if (json["bookingsTimes"] != undefined) {
+    if (json["bookingsTimes"] != null) {
       Object.entries<Record<string, any>>(json["bookingsTimes"]!).forEach(
         ([dateString, times]) => {
           const date = dateStrToDate(dateString);
@@ -80,7 +80,7 @@ export default class WorkerPublicData {
       );
     }
 
-    if (json["duringPaymentBookingsTime"] !== null) {
+    if (json["duringPaymentBookingsTime"] != null) {
       Object.entries(json["duringPaymentBookingsTime"]).forEach(
         ([dateString, times]) => {
           const date = dateStrToDate(dateString);

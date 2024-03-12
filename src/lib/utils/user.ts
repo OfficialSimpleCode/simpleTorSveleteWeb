@@ -6,7 +6,11 @@ export function phoneToDocId(phone: string): string {
   //make a unique salt to avoid same salt every time from security wise
   const uniqueSalt = phone.substring(3, 7) + addedKeyOnPhoneHash;
   const hashedText = Encryptor.GI().shortHashTextSha256(phone, uniqueSalt);
+  if (hashedText == null) {
+    return phone;
+  }
 
+  //cant have this chars - firebase chars limit for doc names
   return hashedText.replace("/", "").replace("*", "").replace(".", "");
 }
 

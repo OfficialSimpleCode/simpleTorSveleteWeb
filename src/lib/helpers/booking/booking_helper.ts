@@ -41,14 +41,12 @@ export default class BookingHelper {
     booking,
     worker,
     clientNote = "",
-
     needPayInAdvance = false,
     filledBooking = false,
   }: {
     booking: Booking;
     worker: WorkerModel;
     clientNote?: string;
-
     needPayInAdvance?: boolean;
     ignoreLocalWorker?: boolean;
     filledBooking?: boolean;

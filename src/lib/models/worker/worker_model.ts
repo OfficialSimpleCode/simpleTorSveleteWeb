@@ -14,7 +14,7 @@ import {
   religionToStr,
   type Religion,
 } from "$lib/consts/worker_schedule";
-import { durationStrikings } from "$lib/utils/duration_utils";
+import { addDuration, durationStrikings } from "$lib/utils/duration_utils";
 import {
   combinedShuffleShifts,
   shiftsFromStrList,
@@ -30,6 +30,7 @@ import {
 import { translate } from "$lib/utils/translate";
 import { format } from "date-fns";
 import { Timestamp, type Unsubscribe } from "firebase/firestore";
+import { Duration } from "../core/duration";
 import Device from "../general/device";
 import Treatment from "../general/treatment_model";
 import Events from "./events";
@@ -170,8 +171,9 @@ export default class WorkerModel {
       if (
         durationStrikings(
           specifiRangeObj.start,
-          new Date(
-            specifiRangeObj.end.getTime() + 23 * 60 * 60 * 1000 + 59 * 60 * 1000
+          addDuration(
+            specifiRangeObj.end,
+            new Duration({ hours: 23, minutes: 59 })
           ),
           day,
           day
@@ -420,12 +422,20 @@ export default class WorkerModel {
 
     this.specificRangeChanges = {};
     if (workerJson["specificRangeChanges"]) {
+      console.log(this.id);
+      console.log(
+        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      );
       Object.entries<Record<string, any>>(
         workerJson["specificRangeChanges"]
       ).forEach(([key, val]) => {
+        console.log("55555555555555555555555555555");
+
         const shiftRange = ShiftChangeRange.fromJson(val, key);
+        console.log(shiftRange);
         // the specific range dosen't over
         if (shiftRange.end >= setToMidNight(new Date())) {
+          console.log("33333333333333333333333333333");
           this.specificRangeChanges[key] = shiftRange;
         }
       });

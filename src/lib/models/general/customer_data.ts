@@ -360,10 +360,11 @@ export default class CustomerData {
     return new PublicCustomer({
       freeFromPayments: this.freeFromPayments,
       blocked: this.blocked,
-      hashNumber: Encryptor.GI().shortHashTextSha256(
-        this.customerUuid,
-        publicCustomerHashSalt
-      ),
+      hashNumber:
+        Encryptor.GI().shortHashTextSha256(
+          this.customerUuid,
+          publicCustomerHashSalt
+        ) ?? this.customerUuid,
     });
   }
 

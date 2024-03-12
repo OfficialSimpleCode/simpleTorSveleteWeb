@@ -19,8 +19,10 @@
   import { maxButtonSize } from "$lib/consts/sizes";
   import { pushDialog } from "$lib/utils/general_utils";
   import { getPublicCustomer } from "../helpers/get_public_user";
+
   import { handleApproveTerm } from "../helpers/handle_approving_term";
   import { hasTooManyTickets } from "../helpers/has_too_many_tickets";
+  import { isUserOverPassMaxBookings } from "../helpers/is_user_overpass_max_bookings";
   import { onFinishNavigator } from "../helpers/on_finish_navigator";
 
   export let verificationDialog: HTMLDialogElement;
@@ -34,6 +36,7 @@
   const worker = BookingController.worker;
 
   $: overflowTickets = hasTooManyTickets($bookingMakerStore);
+  $: overpassBookings = isUserOverPassMaxBookings($bookingMakerStore);
 
   const needOnHold = needToHoldOn(
     get(bookingMakerStore).date ?? new Date(0),
@@ -63,6 +66,10 @@
     if (overflowTickets) {
       return;
     }
+    if (overpassBookings) {
+      return;
+    }
+
     if (!handleApproveTerm(termDialog)) {
       return;
     }
@@ -146,18 +153,20 @@
     {#if isLoading}
       <div class="loading loading-spinner" />
     {:else}
-      {overflowTickets
-        ? translate("toManyTickets")
-        : publicCustomer.blocked
-          ? translate("blockUser", $_, false)
-          : translate(
-              needOnHold
-                ? "askForConfirmation"
-                : $bookingMakerStore.isUpdate
-                  ? "update"
-                  : "order2",
-              $_
-            )}
+      {overpassBookings
+        ? translate("crossBokingsLimitWorker", $_, false)
+        : overflowTickets
+          ? translate("toManyTickets")
+          : publicCustomer.blocked
+            ? translate("blockUser", $_, false)
+            : translate(
+                needOnHold
+                  ? "askForConfirmation"
+                  : $bookingMakerStore.isUpdate
+                    ? "update"
+                    : "order2",
+                $_
+              )}
     {/if}
   </button>
   {#if publicCustomer.blocked}
@@ -167,7 +176,16 @@
   {/if}
   {#if overflowTickets}
     <p class="opacity-70 text-xs">
-      {translate("toManyTicketsExplain")}
+      {translate("toManyTicketsExplain", $_)}
+    </p>
+  {/if}
+
+  {#if overpassBookings}
+    <p class="opacity-70 text-xs">
+      {translate("crossBokingsLimitExplain", $_, false).replace(
+        "AMOUNT",
+        BookingController.worker.maxFutureBookings.toString()
+      )}
     </p>
   {/if}
 </div>

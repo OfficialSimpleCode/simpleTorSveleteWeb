@@ -7,7 +7,11 @@
 <svelte:head>
   <!-- business title -->
   <title
-    >{translate("simpleTorWebTitle", $_)} | {translate("myBookings", $_)}</title
+    >{translate("simpleTorWebTitle", $_, false)} | {translate(
+      "myBookings",
+      $_,
+      false
+    )}</title
   >
 
   <!-- the url for search to display for this site -->
@@ -17,9 +21,10 @@
   <!-- title  -->
   <meta
     property="og:title"
-    content="{translate('simpleTorWebTitle', $_)} | {translate(
+    content="{translate('simpleTorWebTitle', $_, false)} | {translate(
       'myBookings',
-      $_
+      $_,
+      false
     )}"
   />
 </svelte:head>

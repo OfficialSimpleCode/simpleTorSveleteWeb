@@ -115,7 +115,7 @@ export function isOptionalTimeForBooking({
 
   // Get rid of earlier times - not necessary
   forbbidenTimes = getOnlyEqualOrAfter(forbbidenTimes, timeToOrderOn1970Format);
-
+  console.log("forbbidenTimes", forbbidenTimes);
   // Fill this list with 0, those will be the pointers on each time segment
   const treatment = Treatment.fromTreatmentsMap(booking.treatments);
   const forbiddenTimesPointers = Array.from(

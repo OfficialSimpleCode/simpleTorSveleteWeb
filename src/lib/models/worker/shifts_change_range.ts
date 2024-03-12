@@ -2,7 +2,10 @@ import {
   addShiftsFromStrList,
   combinedShuffleShifts,
 } from "$lib/utils/shifts_utils";
-import { dateStrToDate, dateToDateStr } from "$lib/utils/times_utils";
+import {
+  dateStrToDateWithTwoDigit,
+  dateToDateStrCustomPattern,
+} from "$lib/utils/times_utils";
 import type Shift from "../general/shift";
 
 export enum ShiftOperations {
@@ -50,8 +53,8 @@ export default class ShiftChangeRange {
 
   static fromJson(json: Record<string, any>, key: string): ShiftChangeRange {
     const dates = key.split("&");
-    const start = dateStrToDate(dates[0]);
-    const end = dateStrToDate(dates[1]);
+    const start = dateStrToDateWithTwoDigit(dates[0], "/");
+    const end = dateStrToDateWithTwoDigit(dates[1], "/");
     const operation =
       shiftOperationsFromStr[json["operation"]] || ShiftOperations.replace;
     const shifts = json["shifts"].map((item: any) => item as string);
@@ -92,8 +95,8 @@ export default class ShiftChangeRange {
   }
 
   getKey(): string {
-    const startStr = dateToDateStr(this.start);
-    const endStr = dateToDateStr(this.end);
+    const startStr = dateToDateStrCustomPattern(this.start, `dd/MM/yy`);
+    const endStr = dateToDateStrCustomPattern(this.end, `dd/MM/yy`);
     return `${startStr}&${endStr}`;
   }
 

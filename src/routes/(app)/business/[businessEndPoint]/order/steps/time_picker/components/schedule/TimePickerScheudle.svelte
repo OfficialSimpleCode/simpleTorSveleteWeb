@@ -59,7 +59,7 @@
 </script>
 
 <div
-  class="flex flex-col items-center justify-center gap-1 w-[95%] xs:w-[84%] sm:w-[85%]"
+  class="flex flex-col items-center justify-center gap-1 w-[95%] xs:w-[89%] sm:w-[85%]"
 >
   <!-- nav bar -->
   <ScheduleNavBar />
@@ -78,7 +78,7 @@
     <div
       class="grid {$bookingMakerStore.numberOfShownDays === 7
         ? 'grid-cols-7'
-        : 'grid-cols-5'} w-full"
+        : 'grid-cols-5'}  w-full"
     >
       {#each { length: $bookingMakerStore.numberOfShownDays } as _, index}
         <DayColumn {index} />
