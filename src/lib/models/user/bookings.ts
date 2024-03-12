@@ -1,9 +1,11 @@
+import { BookingStatuses } from "$lib/consts/booking";
 import {
   dateToMonthStr,
   monthStrToDate,
   setToStartOfMonth,
 } from "$lib/utils/times_utils";
 import Booking from "../booking/booking_model";
+import type MultiBooking from "../multi_booking/multi_booking";
 
 export default class UserBookings {
   futureBookings: Record<string, Record<string, Booking>> = {};
@@ -208,5 +210,33 @@ export default class UserBookings {
     }
 
     return firstDate;
+  }
+
+  ///get the user tickets on the multi bookings
+  userTickets(
+    multiBooking: MultiBooking,
+    userId: string,
+    options: { excludeId?: string; needApprove?: boolean } = {}
+  ): Record<string, Booking> {
+    const { excludeId = null, needApprove = false } = options;
+    const newUsers: Record<string, Booking> = {};
+
+    Object.entries(this.all).forEach(([bookingId, booking]) => {
+      if (
+        userId === booking.customerId &&
+        multiBooking.bookingDate.getTime() === booking.bookingDate.getTime() &&
+        booking.workerId === multiBooking.workerId &&
+        booking.buisnessId === multiBooking.buisnessId &&
+        booking.cancelDate == null &&
+        bookingId !== excludeId &&
+        booking.recurrenceEvent == null &&
+        booking.isMultiRef &&
+        (!needApprove || booking.status === BookingStatuses.approved)
+      ) {
+        newUsers[bookingId] = booking;
+      }
+    });
+
+    return newUsers;
   }
 }

@@ -22,7 +22,7 @@
   >
     <div class="flex items-center justify-between gap-1 w-full">
       <!-- name of the service -->
-      <h1 class="text-lg sm:text-2xl text-start w-[55%] line-clamp-2">
+      <h1 class="text-lg sm:text-xl text-start w-[55%] line-clamp-2">
         {treatment.name}
       </h1>
 

@@ -7,7 +7,7 @@ import type Booking from "$lib/models/booking/booking_model";
 import type CustomerData from "$lib/models/general/customer_data";
 import type MultiBooking from "$lib/models/multi_booking/multi_booking";
 import type MultiBookingUser from "$lib/models/multi_booking/multi_booking_user";
-import type MultiBookingUsersPerCustomer from "$lib/models/multi_booking/multi_booking_users_per_customer";
+import MultiBookingUsersPerCustomer from "$lib/models/multi_booking/multi_booking_users_per_customer";
 import type PaymentRequestPreview from "$lib/models/payment_hyp/payment_request/payment_request_preview";
 
 import type PaymentRequestUser from "$lib/models/payment_hyp/payment_request/payment_request_user";
@@ -56,7 +56,12 @@ export default class MultiBookingHelper {
     const newUsersBookingIds = new Set<string>();
 
     Object.entries(multiBookingsPerCustomer).forEach(([__, customer]) => {
-      Object.entries(customer.multiBookingUsers).forEach(
+      const customerToIterate: MultiBookingUsersPerCustomer =
+        MultiBookingUsersPerCustomer.fromMultiBookingUsersPerCustomer(customer);
+      if (customer.multiBookingUsers.isNotEmpty) {
+        Object.values(customerToIterate.multiBookingUsers)[0].canRemind = true;
+      }
+      Object.entries(customerToIterate.multiBookingUsers).forEach(
         ([_, userMultiBookingObj]) => {
           userMultiBookingObj.copyDataToOrder({
             workerAction: workerAction,
@@ -146,7 +151,14 @@ export default class MultiBookingHelper {
     const customersToSave: Record<string, CustomerData> = {};
 
     Object.entries(multiBookingsPerCustomer).forEach(([_, customer]) => {
-      Object.entries(customer.multiBookingUsers).forEach(
+      const customerToIterate: MultiBookingUsersPerCustomer =
+        MultiBookingUsersPerCustomer.fromMultiBookingUsersPerCustomer(customer);
+      customerToIterate.updateNeedToRemind({
+        multiBooking: multiBooking,
+        user: UserInitializer.GI().user,
+      });
+
+      Object.entries(customerToIterate.multiBookingUsers).forEach(
         ([_, userMultiBookingObj]) => {
           userMultiBookingObj.copyDataToOrder({
             workerAction: workerAction,
@@ -220,7 +232,6 @@ export default class MultiBookingHelper {
       worker,
     });
     if (value) {
-      console.log(value);
       this._addUsersLocally({
         multiBookingUsers: newUsersObj,
       });

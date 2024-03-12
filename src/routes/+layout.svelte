@@ -29,7 +29,6 @@
   onMount(() => {
     RemoteConfigHelper.GI().init();
 
-    console.log("wwwwwwwwwwwwwwwwwwwwwwww");
     initialTheme(localStorage, document);
     handleLocaleChanges(localStorage, document);
 

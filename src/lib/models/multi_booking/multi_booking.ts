@@ -52,7 +52,7 @@ import type WorkerModel from "../worker/worker_model";
 import MultiBookingTextTemplate from "./multi_booking_text_template";
 import MultiBookingTime from "./multi_booking_time";
 import MultiBookingUser from "./multi_booking_user";
-import type MultiBookingUsersPerCustomer from "./multi_booking_users_per_customer";
+import MultiBookingUsersPerCustomer from "./multi_booking_users_per_customer";
 
 const { v4 } = pkg;
 export default class MultiBooking extends ScheduleItem {
@@ -384,6 +384,28 @@ export default class MultiBooking extends ScheduleItem {
       businessName: this.businessName,
     });
   }
+
+  userTickets(
+    userId: string,
+    options: { excludeId?: string; needApprove?: boolean } = {}
+  ): Record<string, MultiBookingUser> {
+    const { excludeId = null, needApprove = false } = options;
+    const newUsers: Record<string, MultiBookingUser> = {};
+
+    Object.entries(this.users).forEach(([bookingId, user]) => {
+      if (
+        userId === user.customerId &&
+        user.cancelDate == null &&
+        bookingId !== excludeId &&
+        (!needApprove || user.status === BookingStatuses.approved)
+      ) {
+        newUsers[bookingId] = user;
+      }
+    });
+
+    return newUsers;
+  }
+
   toUserNotification(
     enterAction: EnterAction,
     user: MultiBookingUser
@@ -440,20 +462,18 @@ export default class MultiBooking extends ScheduleItem {
   }
   messageRemindersOnUser(multiBookingUser: MultiBookingUser): string[] {
     const reminders: string[] = [];
-    console.log("111111111111");
+
     if (multiBookingUser.cancelDate != null) {
       return [];
     }
-    console.log("dddddddddddd");
+
     multiBookingUser.remindersTypes.forEach((minutes, type) => {
       if (minutes <= 0) {
         return;
       }
-      console.log("2222222222222222222");
 
       const dateToNotify = dateToRemindMultiBooking(this, minutes);
-      console.log("dateToNotify", dateToNotify);
-      console.log("dateToUtc(new Date())", dateToUtc(new Date()));
+
       if (dateToNotify >= dateToUtc(new Date())) {
         reminders.push(multiBookingUser.reminderId(type));
       }
@@ -489,19 +509,28 @@ export default class MultiBooking extends ScheduleItem {
     if (customers != null) {
       this.users = {};
       Object.entries(customers).forEach(([__, customer]) => {
-        Object.entries(customer).forEach(([_, multiBookingUser]) => {
-          multiBookingUser.copyDataToOrder({
-            worker: worker,
-            bookingDate: this.bookingDate,
-            noteText: clientNote,
-            business: business,
-            user: user,
-            workerAction: workerAction,
-            needToHoldOn: needToHoldOn(this.bookingDate, worker),
-            addToCalendar: false,
-          });
-          this.users[multiBookingUser.userBookingId] = multiBookingUser;
-        });
+        const customerToIterate: MultiBookingUsersPerCustomer =
+          MultiBookingUsersPerCustomer.fromMultiBookingUsersPerCustomer(
+            customer
+          );
+        if (customer.multiBookingUsers.isNotEmpty) {
+          Object.values(customerToIterate.multiBookingUsers)[0].canRemind =
+            true;
+        }
+        Object.entries(customerToIterate.multiBookingUsers).forEach(
+          ([_, multiBookingUser]) => {
+            multiBookingUser.copyDataToOrder({
+              worker: worker,
+              bookingDate: this.bookingDate,
+              noteText: clientNote,
+              business: business,
+              user: user,
+              workerAction: workerAction,
+              needToHoldOn: needToHoldOn(this.bookingDate, worker),
+            });
+            this.users[multiBookingUser.userBookingId] = multiBookingUser;
+          }
+        );
       });
     }
     this.businessName = business.shopName;
@@ -547,7 +576,12 @@ export default class MultiBooking extends ScheduleItem {
     }
     this.users = {};
     Object.entries(customers).forEach(([customerId, customer]) => {
-      Object.entries(customer.multiBookingUsers).forEach(
+      const customerToIterate: MultiBookingUsersPerCustomer =
+        MultiBookingUsersPerCustomer.fromMultiBookingUsersPerCustomer(customer);
+      if (customer.multiBookingUsers.isNotEmpty) {
+        Object.values(customerToIterate.multiBookingUsers)[0].canRemind = true;
+      }
+      Object.entries(customerToIterate.multiBookingUsers).forEach(
         ([userBookingId, multiBookingUser]) => {
           if (previousUsers[multiBookingUser.userBookingId] !== undefined) {
             multiBookingUser = MultiBookingUser.fromMultiBookingUser(

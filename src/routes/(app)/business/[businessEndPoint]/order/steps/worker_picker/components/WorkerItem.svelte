@@ -47,7 +47,7 @@
     <div class="flex flex-col w-[80%]">
       <!-- name  -->
       <h1
-        class="text-lg sm:text-2xl text-start overflow-hidden whitespace-nowrap text-ellipsis"
+        class="text-lg sm:text-xl text-start overflow-hidden whitespace-nowrap text-ellipsis"
       >
         {worker.name}
       </h1>

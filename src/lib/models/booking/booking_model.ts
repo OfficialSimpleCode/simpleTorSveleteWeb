@@ -925,7 +925,7 @@ export default class Booking extends ScheduleItem {
       if (
         subDuration(this.bookingDate, new Duration({ minutes: minutes })) <
           addDuration(new Date(), new Duration({ seconds: 1 })) &&
-        this.recurrenceEvent === undefined
+        this.recurrenceEvent == null
       ) {
         this.remindersTypes.set(
           type,
@@ -933,6 +933,12 @@ export default class Booking extends ScheduleItem {
             Math.round(diffDuration(new Date(), this.bookingDate).inMinutes / 2)
           )
         );
+        //round to 5 or 0 the minutesBeforeNotify
+        this.remindersTypes.set(
+          type,
+          this.remindersTypes.get(type)! - (this.remindersTypes.get(type)! % 5)
+        );
+
         if (this.remindersTypes.get(type)! < 10) {
           this.remindersTypes.delete(type);
         }

@@ -61,11 +61,8 @@ export class VerificationHelper {
     this.phoneVerificationWithFirebase = true;
   }
 
-  public startUserAuthListener(onInvoke: () => Promise<void>) {
-    this.verificationRepo.onAuthUserStateChanged(async () => {
-      this.canUseAuthVars = true;
-      await onInvoke();
-    });
+  public async canUseUser() {
+    return await this.verificationRepo.canUseUserSRV();
   }
 
   public async sendSmsForFirebaseVerification(

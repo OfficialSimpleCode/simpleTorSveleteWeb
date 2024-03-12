@@ -827,23 +827,26 @@ export default class NotificationsHelper {
     reminderType: BookingReminderType;
     minutesBefore: number;
   }): Promise<boolean> {
+    console.log("33333333333333333333332222222222222222222");
     if (minutesBefore === 0) {
       return true;
     }
-
+    console.log("4444444444444");
     const dateToNotify = dateToRemindBooking(booking, minutesBefore);
 
     if (dateToNotify < new Date()) {
       return true;
     }
-
+    console.log("4444444444444444eeeeeeeeeeeee");
     // No possibility for non-valid data
     const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${
       dateToNotify.getMonth() + 1
     }/${dateToNotify.getDate()}/${dateToNotify.getHours()}`;
     const docId = dateToNotify.getMinutes().toString();
     const fieldName = booking.reminderId(reminderType);
-
+    console.log(path);
+    console.log(fieldName);
+    console.log(docId);
     return this.generalRepo.updateFieldInsideDocAsMapRepo({
       insideEnviroments: false,
       path,

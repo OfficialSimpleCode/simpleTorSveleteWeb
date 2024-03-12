@@ -8,6 +8,7 @@ import {
   bookingsMassage,
   bookingsMassageKeys,
   notificationTypeFromStr,
+  notificationTypeToStr,
   orderingOptionsFromStr,
   orderingOptionsToStr,
 } from "$lib/consts/booking";
@@ -15,9 +16,15 @@ import { Gender, genderFromStr, genderToStr } from "$lib/consts/gender";
 import {
   NotificationOption,
   notificationOptionFromStr,
+  notificationOptionToStr,
 } from "$lib/consts/notification";
 import { EventFilterType } from "$lib/consts/worker_schedule";
 
+import {
+  addDuration,
+  diffDuration,
+  subDuration,
+} from "$lib/utils/duration_utils";
 import { sendMessageForMulti } from "$lib/utils/notifications_utils";
 import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
 import { phoneToDocId } from "$lib/utils/user";
@@ -28,6 +35,7 @@ import BookingTransactionModel, {
   PaymentTypes,
 } from "../booking/booking_transaction";
 import type BusinessModel from "../business/business_model";
+import { Duration } from "../core/duration";
 import PaymentRequestUser from "../payment_hyp/payment_request/payment_request_user";
 import Debt from "../schedule/debt";
 import type UserModel from "../user/user_model";
@@ -64,7 +72,14 @@ export default class MultiBookingUser {
   transactions: Map<string, BookingTransactionModel> = new Map();
   debts: Map<string, Debt> = new Map();
   addToClientAt: boolean = false;
-  userDeleted: boolean = false;
+
+  userDeleted: boolean = false; //not saved on the json only for the
+  //saving of the booking
+
+  ///incase there are few tickets to this customer need to remind only to
+  ///one ticket and there for we need to know who is the one - only
+  ///for helper use
+  canRemind: boolean = false;
 
   constructor() {}
 
@@ -73,7 +88,6 @@ export default class MultiBookingUser {
     needToHoldOn,
     workerAction,
     bookingDate,
-
     business,
     user,
     noteText = "",
@@ -82,7 +96,6 @@ export default class MultiBookingUser {
     needToHoldOn: boolean;
     workerAction: boolean;
     bookingDate: Date;
-
     business: BusinessModel;
     user: UserModel;
     noteText?: string;
@@ -96,41 +109,47 @@ export default class MultiBookingUser {
     this.showAdressAlert = worker.notifications.showAdressAlert;
     this.showPhoneAlert = worker.notifications.showPhoneAlert;
     if (!workerAction && !needToHoldOn) {
-      if (bookingDate.getTime() - Date.now() < 60 * 60 * 1000) {
+      if (diffDuration(bookingDate, new Date()).inMinutes < 60) {
         this.confirmedArrival = true;
       }
     }
 
     this.workerNotificationOption = worker.notifications.notificationOption;
     this.workerRemindersTypes = new Map(worker.notifications.remindersTypes);
-    worker.notifications.remindersTypes.forEach((minutes, type) => {
-      if (bookingDate.getTime() < Date.now()) {
-        return;
+    for (const [type, minutes] of worker.notifications.remindersTypes) {
+      //if the booking is passed no need to remind
+      if (bookingDate < new Date()) {
+        continue;
       }
       if (
         type === BookingReminderType.confirmArrival &&
         this.confirmedArrival
       ) {
-        return;
+        continue;
       }
-      if (bookingDate.getTime() - minutes * 60 * 1000 < Date.now() + 1000) {
+      if (
+        subDuration(bookingDate, new Duration({ minutes: minutes })) <
+        addDuration(new Date(), new Duration({ seconds: 1 }))
+      ) {
         this.remindersTypes.set(
           type,
           Math.abs(
-            Math.floor((Date.now() - bookingDate.getTime()) / 1000 / 60 / 2)
-          ) -
-            (Math.abs(
-              Math.floor((Date.now() - bookingDate.getTime()) / 1000 / 60 / 2)
-            ) %
-              5)
+            Math.round(diffDuration(new Date(), bookingDate).inMinutes / 2)
+          )
         );
+        //round to 5 or 0 the minutesBeforeNotify
+        this.remindersTypes.set(
+          type,
+          this.remindersTypes.get(type)! - (this.remindersTypes.get(type)! % 5)
+        );
+
         if (this.remindersTypes.get(type)! < 10) {
           this.remindersTypes.delete(type);
         }
       } else {
         this.remindersTypes.set(type, minutes);
       }
-    });
+    }
 
     this.orderingOptions = OrderingOptions.web;
 
@@ -149,7 +168,10 @@ export default class MultiBookingUser {
     if (this.userBookingId === "") {
       this.userBookingId = v4();
     }
-    this.notificationType = sendMessageForMulti(this, worker);
+
+    this.notificationType = this.canRemind
+      ? sendMessageForMulti(this, worker)
+      : NotificationType.none;
   }
 
   get isDepositTransaction(): boolean {
@@ -242,8 +264,9 @@ export default class MultiBookingUser {
     const newMultiBookingUser = new MultiBookingUser();
     newMultiBookingUser.customerName = multiBookingUser.customerName;
     newMultiBookingUser.customerPhone = multiBookingUser.customerPhone;
-    newMultiBookingUser.workerRemindersTypes =
-      multiBookingUser.workerRemindersTypes;
+    newMultiBookingUser.workerRemindersTypes = new Map(
+      multiBookingUser.workerRemindersTypes
+    );
     newMultiBookingUser.lastTimeNotifyOnDebt =
       multiBookingUser.lastTimeNotifyOnDebt;
     newMultiBookingUser.showAdressAlert = multiBookingUser.showAdressAlert;
@@ -278,7 +301,9 @@ export default class MultiBookingUser {
     newMultiBookingUser.status = multiBookingUser.status;
     newMultiBookingUser.confirmedArrival = multiBookingUser.confirmedArrival;
     newMultiBookingUser.createdAt = multiBookingUser.createdAt;
-    newMultiBookingUser.remindersTypes = { ...multiBookingUser.remindersTypes };
+    newMultiBookingUser.remindersTypes = new Map(
+      multiBookingUser.remindersTypes
+    );
     newMultiBookingUser.clientMail = multiBookingUser.clientMail;
 
     newMultiBookingUser.notificationType = multiBookingUser.notificationType;
@@ -508,6 +533,9 @@ export default class MultiBookingUser {
         data["invoices"][id] = invoice.toJson();
       });
     }
+    data["notificationType"] = notificationTypeToStr[this.notificationType];
+    data["workerNotificationOption"] =
+      notificationOptionToStr[this.workerNotificationOption];
     if (this.debts.size > 0) {
       data["debts"] = {};
       this.debts.forEach((debt, id) => {

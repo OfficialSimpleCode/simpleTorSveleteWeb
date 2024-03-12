@@ -13,7 +13,7 @@
 
   let loading = false;
   const worker = $workersStore[booking.workerId];
-  const cantConfirm =
+  $: cantConfirm =
     worker != null &&
     addDuration(
       new Date(),

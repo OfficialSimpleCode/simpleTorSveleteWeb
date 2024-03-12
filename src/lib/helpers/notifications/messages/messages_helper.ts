@@ -210,7 +210,7 @@ export default class MessagesHelper {
     if (Object.entries(multiBookingUsers).length === 0) {
       return true;
     }
-    console.log("dddddddddddddddddddddddddddddddddddddddddddd");
+
     const messages: Record<string, string> = {};
     const businessToIncrease: Record<string, number> = {};
     const existNumbers: Set<string> = new Set();

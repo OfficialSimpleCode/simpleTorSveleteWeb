@@ -74,7 +74,12 @@ export class LoadAppHelper {
 
   private loadUserData() {
     if (!VerificationHelper.GI().canUseAuthVars) {
-      VerificationHelper.GI().startUserAuthListener(() => this.loadUser());
+      //wait for the firebase to initial
+      VerificationHelper.GI()
+        .canUseUser()
+        .then(() => {
+          this.loadUser();
+        });
     } else {
       this.loadUser();
     }

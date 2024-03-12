@@ -387,22 +387,25 @@ export default class NotificationHandler {
     minutesBeforeAlert: number;
     hasConfirmArrivalReminder: boolean;
   }): Promise<void> {
+    console.log("fffffffffffffffffff");
+
     // Notify worker that user confirmed arrival
     await NotificationsHelper.GI().notifyWorkerThatClientConfirmArrival({
       worker,
       booking,
     });
-
+    console.log("wwwwwwwwwwwwwwwwwwww");
     if (!hasConfirmArrivalReminder) {
       return;
     }
-
+    console.log("333333333333333333");
     if (booking.notificationType === NotificationType.message) {
       await MessagesHelper.GI().cancelSpecificScheduleMessageOnBooking(
         booking,
         BookingReminderType.confirmArrival
       );
     } else if (booking.notificationType === NotificationType.push) {
+      console.log("11111111111111111111111111");
       await NotificationsHelper.GI().cancelSpecificScheduleNotificationOnBooking(
         {
           booking: booking,
@@ -518,9 +521,11 @@ export default class NotificationHandler {
     worker: WorkerModel;
     workerAction: boolean;
   }): Promise<void> {
-    // Collect all the data from the customers
-    const scheduleWithNotifications: Record<string, MultiBookingUser> = {};
-    const scheduleWithMessages: Record<string, MultiBookingUser> = {};
+    const removeScheduleWithNotifications: Record<string, MultiBookingUser> =
+      {};
+    const removeScheduleWithMessages: Record<string, MultiBookingUser> = {};
+    const addScheduleWithNotifications: Record<string, MultiBookingUser> = {};
+    const addScheduleWithMessages: Record<string, MultiBookingUser> = {};
 
     Object.entries(multiBooking.users).forEach(
       ([bookingUserId, multiBookingUser]) => {
@@ -532,15 +537,24 @@ export default class NotificationHandler {
         }
         if (multiBookingUser.status === BookingStatuses.approved) {
           if (multiBookingUser.notificationType === NotificationType.message) {
-            scheduleWithMessages[multiBookingUser.userBookingId] =
+            removeScheduleWithMessages[multiBookingUser.userBookingId] =
               multiBookingUser;
           } else if (
             multiBookingUser.notificationType === NotificationType.push
           ) {
-            scheduleWithNotifications[multiBookingUser.userBookingId] =
+            removeScheduleWithNotifications[multiBookingUser.userBookingId] =
               multiBookingUser;
           }
         }
+        //fill the user that need to pass him the reminder of this
+        //current multiBookingUser
+        this.handleSameTickets({
+          multiBooking: multiBooking,
+          multiBookingUser: multiBookingUser,
+          workerAction: workerAction,
+          addScheduleWithNotifications: addScheduleWithNotifications,
+          addScheduleWithMessages: addScheduleWithMessages,
+        });
       }
     );
     if (!workerAction) {
@@ -554,19 +568,30 @@ export default class NotificationHandler {
       );
     }
 
-    console.log("scheduleWithNotifications", scheduleWithNotifications);
-    console.log("scheduleWithMessages", scheduleWithMessages);
     //----------------------------- Remove schedule notifications -------------------
-    if (isNotEmpty(scheduleWithNotifications)) {
+    if (isNotEmpty(removeScheduleWithNotifications)) {
       NotificationsHelper.GI().deleteAllScheduleMultiBookingNotifications({
         multiBooking: multiBooking,
-        usersToDelete: scheduleWithNotifications,
+        usersToDelete: removeScheduleWithNotifications,
       });
     }
-    if (isNotEmpty(scheduleWithMessages)) {
+    if (isNotEmpty(removeScheduleWithMessages)) {
       MessagesHelper.GI().cancelScheduleMultiBookingMessagesToUsers({
         multiBooking: multiBooking,
-        multiBookingUsers: scheduleWithMessages,
+        multiBookingUsers: removeScheduleWithMessages,
+      });
+    }
+
+    if (isNotEmpty(addScheduleWithNotifications)) {
+      NotificationsHelper.GI().makeScheduleNotificationsToUsers({
+        multiBooking: multiBooking,
+        usersToScheudle: addScheduleWithNotifications,
+      });
+    }
+    if (isNotEmpty(addScheduleWithMessages)) {
+      MessagesHelper.GI().scheduleMultiBookingMessagesToUsers({
+        multiBooking: multiBooking,
+        multiBookingUsers: addScheduleWithMessages,
       });
     }
 
@@ -580,6 +605,106 @@ export default class NotificationHandler {
         multiBooking.notificationTopic,
         multiBooking.businessPayloadData
       );
+    }
+  }
+
+  /// Remove user with notification - need to check if there are more tickets
+  /// for this user and put new reminders on one of the tickets
+  async handleSameTickets({
+    multiBooking,
+    multiBookingUser,
+
+    workerAction,
+    addScheduleWithNotifications,
+    addScheduleWithMessages,
+  }: {
+    multiBooking: MultiBooking;
+    multiBookingUser: MultiBookingUser;
+
+    workerAction: boolean;
+    addScheduleWithNotifications: Record<string, MultiBookingUser>;
+    addScheduleWithMessages: Record<string, MultiBookingUser>;
+  }): Promise<void> {
+    if (multiBookingUser.notificationType === NotificationType.none) {
+      // No need to pass the reminder if there is no reminder
+      return;
+    }
+
+    let userOtherTickets: Record<string, MultiBookingUser> = {};
+    let userOtherBookings: Record<string, Booking> | undefined;
+
+    if (workerAction) {
+      // Get only the tickets that are status approved and not canceled ones
+      userOtherTickets = multiBooking.userTickets(multiBookingUser.customerId, {
+        excludeId: multiBookingUser.userBookingId,
+        needApprove: true,
+      });
+    } else {
+      // Keep the bookings that are signed to this multi booking
+      userOtherBookings = UserInitializer.GI().user.bookings.userTickets(
+        multiBooking,
+        multiBookingUser.customerId,
+        {
+          excludeId: multiBookingUser.userBookingId,
+          needApprove: true,
+        }
+      );
+
+      // Parse the bookings to multi booking user
+      Object.entries(userOtherBookings).forEach(([bookingId, booking]) => {
+        userOtherTickets[bookingId] = Object.values(
+          booking.toMultiBooking.users
+        )[0];
+      });
+    }
+
+    // If there are tickets accepted from this one
+    if (
+      isNotEmpty(userOtherTickets) &&
+      Object.values(userOtherTickets)[0].notificationType ===
+        NotificationType.none
+    ) {
+      // Need to remind this user now
+      const newTicketToNotify = Object.values(userOtherTickets)[0];
+      newTicketToNotify.notificationType = multiBookingUser.notificationType;
+
+      // If the user was with message reminder
+      if (newTicketToNotify.notificationType === NotificationType.message) {
+        addScheduleWithMessages[newTicketToNotify.userBookingId] =
+          newTicketToNotify;
+      }
+
+      // If the user was with push reminder
+      else if (newTicketToNotify.notificationType === NotificationType.push) {
+        addScheduleWithNotifications[newTicketToNotify.userBookingId] =
+          newTicketToNotify;
+      }
+
+      // Update the new notification type in the db
+
+      // Get the booking from the userOtherBookings in case of user action
+      // Else take from the multi booking
+      let booking: Booking | undefined;
+      if (userOtherBookings) {
+        booking = userOtherBookings![newTicketToNotify.userBookingId];
+      }
+      if (booking == null) {
+        booking = multiBooking.createRegularBooking(
+          newTicketToNotify.userBookingId
+        );
+      }
+
+      if (booking) {
+        await BookingHelper.GI().updateNotificationType(
+          booking,
+          newTicketToNotify.notificationType
+        );
+
+        if (multiBooking.users[newTicketToNotify.userBookingId]) {
+          multiBooking.users[newTicketToNotify.userBookingId].notificationType =
+            newTicketToNotify.notificationType;
+        }
+      }
     }
   }
 

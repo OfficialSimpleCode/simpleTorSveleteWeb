@@ -37,7 +37,7 @@
           <LottieAnimation animationFile={animation} loop={true} size="md" />
         </div>
       {:else if image}
-        <img class="w-[60px] h-[60px] pb-2" src={image} alt={imageAlt} />
+        <img class="w-[60px] h-[60px] mb-2" src={image} alt={imageAlt} />
       {/if}
 
       <!-- content -->
