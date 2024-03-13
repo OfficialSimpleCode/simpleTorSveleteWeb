@@ -49,6 +49,12 @@
       <a target="_blank" href={simpleCodeWebUrl} class="link link-hover"
         >{translate("companySite", $_)}</a
       >
+      <a href="{base}/pricing" class="link link-hover"
+        >{translate("pricing", $_)}</a
+      >
+      <a href="{base}/contact-us" class="link link-hover"
+        >{translate("sales", $_)}</a
+      >
     </nav>
 
     <!-- legal -->

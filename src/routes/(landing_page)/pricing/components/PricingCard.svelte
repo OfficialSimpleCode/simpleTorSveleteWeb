@@ -10,9 +10,9 @@
 </script>
 
 <div
-  class="flex flex-col bg-base-200 p-6 mx-auto max-w-lg text-center rounded-lg border-2 {bestSeller
+  class="flex flex-col bg-base-300 py-6 px-4 mx-auto max-w-lg text-center rounded-lg border-2 {bestSeller
     ? 'border-primary'
-    : 'border-gray-100'}  shadow xl:p-8"
+    : 'border-gray-500'} shadow hover:scale-105 transform transition-transform duration-300"
 >
   <!-- title and subtitle -->
   <h3 class="mb-4 text-2xl font-semibold">{title}</h3>
@@ -24,11 +24,12 @@
   <div class="flex justify-center items-baseline my-8">
     <span class="mr-2 text-5xl font-extrabold">{price}₪</span>
     <span class="opacity-70">/בחודש</span>
+    <span class="opacity-70 text-sm px-1">(כולל מע״מ)</span>
   </div>
   <!-- download the app button -->
   <DownloadAppButton textTransKey="start" />
   <!-- list of what includes in the subscription -->
-  <ul role="list" class="mb-8 space-y-4 text-left pt-6">
+  <ul role="list" class="mb-8 space-y-2 text-start pt-6">
     {#if !isFirst}
       <li class="flex items-center space-x-3">
         <span class="font-extrabold">כל מה שבמנויים האחרים פלוס:</span>

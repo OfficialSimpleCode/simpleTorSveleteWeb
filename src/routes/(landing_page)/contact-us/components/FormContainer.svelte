@@ -81,7 +81,7 @@
   }
 </script>
 
-<div class=" lg:w-1/2 lg:mx-2">
+<div id="contact-form" class="py-4 lg:w-1/2 lg:mx-2">
   <div
     class="w-full px-4 sm:px-8 py-10 mx-auto overflow-hidden {containerRadius} shadow-2xl lg:max-w-xl bg-base-200"
   >

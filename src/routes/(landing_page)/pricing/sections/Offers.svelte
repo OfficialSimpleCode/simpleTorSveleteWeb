@@ -2,7 +2,7 @@
   import PricingCard from "../components/PricingCard.svelte";
 </script>
 
-<section class="bg-base-100">
+<section class="bg-base-200">
   <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
     <!-- title and sub title -->
     <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
@@ -11,7 +11,7 @@
         <p class="opacity-70">
           מסלולים מותאמים לכל סוגי העסקים בין אם אתה עסק מתחיל או ותיק.
         </p>
-        <span class="font-extrabold">המחירים הינם סופיים לתשלום לאחר מע״מ</span>
+        <!-- <span class="font-extrabold">המחירים הינם סופיים לתשלום לאחר מע״מ</span> -->
       </div>
     </div>
     <!-- items grid -->

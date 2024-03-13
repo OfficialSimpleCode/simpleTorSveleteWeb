@@ -1,8 +1,8 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import { _, translate } from "$lib/utils/translate";
-  import FormContainer from "../components.svelte/FormContainer.svelte";
-  import TextChip from "../components.svelte/TextChip.svelte";
+  import FormContainer from "../components/FormContainer.svelte";
+  import TextChip from "../components/TextChip.svelte";
 
   let subject: string = "";
 </script>
@@ -32,7 +32,7 @@
   />
 </svelte:head>
 
-<section class="bg-base-100">
+<section class="bg-base-300">
   <div class="container px-6 py-12 mx-auto">
     <div class="lg:flex lg:items-center lg:-mx-6">
       <!-- text side -->
