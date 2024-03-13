@@ -119,10 +119,10 @@ export function isOptionalTimeForBooking({
   // Fill this list with 0, those will be the pointers on each time segment
   const treatment = Treatment.fromTreatmentsMap(booking.treatments);
   const forbiddenTimesPointers = Array.from(
-    { length: treatment.times.keys.length },
-    (_, index) => 0
+    { length: treatment.times.size },
+    () => 0
   );
-
+  console.log("forbiddenTimesPointers", forbiddenTimesPointers);
   console.log(treatment);
   console.log("work", work);
   // Pass over the work times
