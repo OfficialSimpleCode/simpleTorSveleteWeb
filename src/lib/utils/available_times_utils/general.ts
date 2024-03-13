@@ -84,12 +84,17 @@ export function minutesToJumpOverForbbiden(
   timeSegments: Map<string, TimeSegment>,
   forbiddenTimes: Date[]
 ): number {
+  console.log("aaaaa start");
   const segments: TimeSegment[] = Array.from(timeSegments.values());
 
   let minutesToJump: number = 0; // 0 represents allowed time
   let segmentIndex: number = 0;
 
   forbiddenTimesPointers.forEach((pointer) => {
+    console.log(
+      "xsabicsdiauvsiduvhiusdahviuhsadfiuvhsiufhvuisdfhviushduivhuisdfhviudsfhviudsfh"
+    );
+
     const startSegment: Date = segments[segmentIndex].start;
     const endSegment: Date = addDuration(
       startSegment,
@@ -122,6 +127,7 @@ export function minutesToJumpOverForbbiden(
     // Passing to the next time segment
     segmentIndex += 1;
   });
+  console.log("aaaaaaa finish");
 
   return minutesToJump;
 }
@@ -630,8 +636,8 @@ export function isBlockFromMiddlePaymentUser(
   // Fill this list with 0; these will be the pointers on each time segment
   const treatment = Treatment.fromTreatmentsMap(booking.treatments);
   const forbiddenTimesPointers = Array.from(
-    { length: treatment.times.keys.length },
-    (_, index) => 0
+    { length: treatment.times.size },
+    () => 0
   );
 
   // Getting time to jump if one or more time segments striking with forbidden
