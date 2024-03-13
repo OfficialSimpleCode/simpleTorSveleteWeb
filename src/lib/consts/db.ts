@@ -34,7 +34,9 @@ export const paymentsRequestsPreviewsCollection = "PaymentsRequestsPreviews";
 
 export const hypBusinessesCollection = "HypBusinesses";
 
-export const reportsCollection = "Reports";
+export const reportsDoc = "Reports";
+
+export const contactUsCollection = "ContactUs";
 
 // fireStore docs
 export const customersDataDoc = "customersData";

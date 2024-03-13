@@ -54,7 +54,9 @@
           >
             <div class="flex flex-col items-end">
               <h4 class="text-sm text-base-content">{$userStore.name}</h4>
-              <p class="text-xs opacity-70 text-base-content">
+              <p
+                class="text-xs opacity-70 text-base-content text-ellipsis truncate"
+              >
                 {formatedPhone($userStore.phoneNumber)}
               </p>
             </div>

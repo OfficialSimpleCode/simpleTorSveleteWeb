@@ -1,8 +1,8 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import {
     appInstagram,
     cuntactPhone,
-    simpleCodeWebUrl,
     simpleTorHomePage,
   } from "$lib/consts/app_external_links";
   import { contactUsAnimation } from "$lib/consts/resources";
@@ -44,7 +44,7 @@
           icon="iconoir:message"
           size="md"
           target="_blank"
-          href={simpleCodeWebUrl}
+          href={`${base}/contact-us`}
         />
       </div>
 

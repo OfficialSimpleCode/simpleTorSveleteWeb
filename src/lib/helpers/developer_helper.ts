@@ -5,11 +5,12 @@ import {
 } from "$lib/consts/application_general";
 import {
   buisnessCollection,
+  contactUsCollection,
   dataCollection,
   dataDoc,
   errorsCollection,
   helpersCollection,
-  reportsCollection,
+  reportsDoc,
   usersCollection,
 } from "$lib/consts/db";
 
@@ -141,7 +142,7 @@ export default class DeveloperHelper {
   ): Promise<boolean> {
     return await this.generalRepo
       .setAsMapWithMergeRepo({
-        path: `${helpersCollection}/${reportsCollection}/${errorsTypeLogToStr[errorType]}`,
+        path: `${helpersCollection}/${reportsDoc}/${errorsTypeLogToStr[errorType]}`,
         docId: dateToMonthStr(new Date()),
         insideEnviroments: false,
         valueAsJson: { [report.id]: report.toJson() },
@@ -151,6 +152,24 @@ export default class DeveloperHelper {
           NotificationsHelper.GI().notifyDevelopersAboutReport({
             name: report.name,
             communication: report.communication,
+          });
+        }
+        return value;
+      });
+  }
+
+  public async newMessageFromWebsite(message: ContactUsMessage) {
+    return await this.generalRepo
+      .setAsMapWithMergeRepo({
+        path: `${helpersCollection}/${reportsDoc}/${contactUsCollection}`,
+        docId: dateToMonthStr(new Date()),
+        insideEnviroments: false,
+        valueAsJson: { [v4()]: message },
+      })
+      .then((value) => {
+        if (value) {
+          NotificationsHelper.GI().notifyDevelopersContactUsMessage({
+            message: message,
           });
         }
         return value;

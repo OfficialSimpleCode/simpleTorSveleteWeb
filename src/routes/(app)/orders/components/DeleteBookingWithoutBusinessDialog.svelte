@@ -1,5 +1,6 @@
 <script lang="ts">
   import GeneralDialog from "$lib/components/dialogs/GeneralDialog.svelte";
+  import { ErrorsController } from "$lib/controllers/errors_controller";
   import BookingHelper from "$lib/helpers/booking/booking_helper";
   import Booking from "$lib/models/booking/booking_model";
   import { ShowToast } from "$lib/stores/ToastManager";
@@ -32,6 +33,8 @@
       if (mainDialog != null) {
         mainDialog.close();
       }
+    } else {
+      ErrorsController.displayError();
     }
     return resp;
   }

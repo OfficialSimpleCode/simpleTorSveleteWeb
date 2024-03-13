@@ -121,12 +121,13 @@ export function isNumber(value?: string | number): boolean {
 
 export function pushDialog(
   dialog: HTMLDialogElement | undefined,
-  herf?: string
+  herf?: string,
+  delay: number = 0
 ) {
   pushState(herf ?? "", {
     showModal: true,
   });
-  setTimeout(() => dialog!.showModal(), 0);
+  setTimeout(() => dialog!.showModal(), delay);
 }
 
 export function setIntersecation(set1: Set<any>, set2: Set<any>) {

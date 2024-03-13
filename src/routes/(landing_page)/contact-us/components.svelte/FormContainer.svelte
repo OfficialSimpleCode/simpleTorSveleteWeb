@@ -1,40 +1,138 @@
-<script>
+<script lang="ts">
   import CustomPhoneField from "$lib/components/custom_components/CustomPhoneField.svelte";
+  import CustomTextArea from "$lib/components/custom_components/CustomTextArea.svelte";
   import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
   import { containerRadius } from "$lib/consts/sizes";
+  import type { TextFieldEvent } from "$lib/consts/text_fields";
+  import { ErrorsController } from "$lib/controllers/errors_controller";
+  import DeveloperHelper from "$lib/helpers/developer_helper";
+  import { ShowToast } from "$lib/stores/ToastManager";
+  import { isConnectedStore, userStore } from "$lib/stores/User";
+  import { translate } from "$lib/utils/translate";
+  import {
+    contactUsMessageValidation,
+    contactUsSubjectValidation,
+    nameValidation,
+  } from "$lib/utils/validation_utils";
+  export let subject: string;
+  let content: string = "";
+  let loading: boolean = false;
+
+  $: message = {
+    message: content,
+    phone: $userStore.phoneNumber,
+    subject: subject,
+    name: $userStore.name,
+  };
+
+  $: isValid = {
+    message: contactUsMessageValidation(content) == null,
+    phone: $userStore.phoneNumber != "",
+    subject: subject != "",
+    name: $userStore.name != "",
+  };
+
+  async function onSendMessage() {
+    if (loading) {
+      return;
+    }
+    let isValidResp: boolean = true;
+    Object.entries(isValid).forEach(([name, val]) => {
+      console.log(name, val);
+      isValidResp = val && isValidResp;
+    });
+    if (!isValidResp) {
+      return;
+    }
+    try {
+      loading = true;
+
+      const resp = await DeveloperHelper.GI().newMessageFromWebsite(message);
+      if (resp) {
+        ShowToast({ text: translate("contactSuccess"), status: "success" });
+        content = "";
+        subject = "";
+      } else {
+        ErrorsController.displayError();
+      }
+    } finally {
+      loading = false;
+    }
+  }
+
+  function onChangeName(event: CustomEvent<TextFieldEvent>) {
+    message.name = event.detail.value;
+    isValid.name = event.detail.isValid;
+  }
+
+  function onChangeSubject(event: CustomEvent<TextFieldEvent>) {
+    message.subject = event.detail.value;
+    isValid.subject = event.detail.isValid;
+  }
+
+  function onChangePhone(event: CustomEvent<TextFieldEvent>) {
+    message.phone = event.detail.value;
+    isValid.phone = event.detail.isValid;
+  }
+
+  function onChangeMessage(event: CustomEvent<TextFieldEvent>) {
+    message.message = event.detail.value;
+    isValid.message = event.detail.isValid;
+  }
 </script>
 
-<div class="mt-8 lg:w-1/2 lg:mx-6">
+<div class="mt-8 lg:w-1/2 lg:mx-2">
   <div
-    class="w-full px-8 py-10 mx-auto overflow-hidden {containerRadius} shadow-2xl lg:max-w-xl bg-base-200"
+    class="w-full px-4 py-10 mx-auto overflow-hidden {containerRadius} shadow-2xl lg:max-w-xl bg-base-200"
   >
     <!-- The from -->
-    <form class="">
-      <!-- user name -->
-      <div class="flex-1">
-        <CustomTextFormField lableTranslateKey="firstName" />
-      </div>
+    <form class="" on:submit={onSendMessage}>
+      <CustomTextFormField
+        lableTranslateKey="name"
+        validationFunc={nameValidation}
+        value={message.name}
+        on:valueChange={onChangeName}
+      />
 
-      <!-- User Phone -->
-      <div class="flex-1 mt-6">
-        <CustomPhoneField titleTransKey="phoneNumber" />
-      </div>
+      <CustomTextFormField
+        lableTranslateKey="subject"
+        bind:value={subject}
+        validationFunc={contactUsSubjectValidation}
+        on:valueChange={onChangeSubject}
+      />
 
-      <!-- message -->
-      <div class="w-full mt-6">
-        <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200"
-          >Message</label
-        >
-        <textarea
-          class=" block w-full h-32 px-5 py-3 mt-2 input input-bordered placeholder-opacity-70 {containerRadius} md:h-48"
-          placeholder="Message"
-        ></textarea>
-      </div>
+      {#if $isConnectedStore != null}
+        <CustomPhoneField
+          titleTransKey="phoneNumber"
+          value={message.phone}
+          on:valueChange={onChangePhone}
+        />
+      {:else}
+        <div class="flex flex-row animate-pulse mt-6 gap-3">
+          <div class="w-full bg-base-100 {containerRadius} h-12 border-[2px]" />
+          <div
+            class="w-[30%] bg-base-100 {containerRadius} h-12 border-[2px]"
+          />
+        </div>
+      {/if}
+      <CustomTextArea
+        lableTranslateKey="message"
+        bind:value={content}
+        validationFunc={contactUsMessageValidation}
+        on:valueChange={onChangeMessage}
+      />
 
       <button
-        class="w-full px-6 py-3 mt-6 text-sm bg-primary {containerRadius}"
+        class="btn btn-primary w-full px-6 py-3 mt-6 text-sm {containerRadius} {loading
+          ? 'opacity-60'
+          : ''}"
+        on:click={onSendMessage}
       >
-        שליחה
+        {#if loading}
+          <div class="loading loading-spinner" />
+        {:else}
+          שליחה
+        {/if}
       </button>
     </form>
   </div>

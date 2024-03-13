@@ -1,4 +1,8 @@
-import { noteCharLimit } from "$lib/consts/limitation";
+import {
+  contactAsMessageCharsLimit,
+  contactAsSubjectCharsLimit,
+  noteCharLimit,
+} from "$lib/consts/limitation";
 import { translate } from "./translate";
 
 export function emailValidation(email: string | null): string | null {
@@ -53,5 +57,23 @@ export function nameValidation(
     }
   }
 
+  return null;
+}
+
+export function contactUsMessageValidation(
+  message: string | null
+): string | null {
+  if (message == null) return translate("mustIncluteChars");
+  if (message.trim().length > contactAsMessageCharsLimit)
+    return translate("toLong");
+  return null;
+}
+
+export function contactUsSubjectValidation(
+  subject: string | null
+): string | null {
+  if (subject == null) return translate("mustIncluteChars");
+  if (subject.trim().length > contactAsSubjectCharsLimit)
+    return translate("toLong");
   return null;
 }

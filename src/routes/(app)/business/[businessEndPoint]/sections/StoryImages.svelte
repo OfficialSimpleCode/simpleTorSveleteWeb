@@ -26,6 +26,7 @@
   function openImageDisplayDialog(imageId: string) {
     BusinessInitializer.GI().loadLikes(workersStories);
     selectedStoryId = imageId;
+    console.log(selectedStoryId);
     pushState("", {
       showModal: true,
     });
@@ -41,7 +42,6 @@
     {workersStories}
   />
 {/if}
-
 {#if Object.keys(workersStories).length > 0}
   <div
     class="mt-10 md:mt-0 {isNotEmpty($businessStore?.design.products ?? {})
@@ -64,6 +64,7 @@
               src={imageData.imageUrl}
               alt={translate("businessWork", $_)}
             />
+            {storyId}
           </button>
         {/each}
       </div>

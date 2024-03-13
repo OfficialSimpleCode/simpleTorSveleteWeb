@@ -1,7 +1,36 @@
-<script>
+<script lang="ts">
+  import { page } from "$app/stores";
+  import { _, translate } from "$lib/utils/translate";
   import FormContainer from "../components.svelte/FormContainer.svelte";
   import TextChip from "../components.svelte/TextChip.svelte";
+
+  let subject: string = "";
 </script>
+
+<svelte:head>
+  <!-- business title -->
+  <title
+    >{translate("simpleTorWebTitle", $_, false)} | {translate(
+      "contactUs",
+      $_,
+      false
+    )}</title
+  >
+
+  <!-- the url for search to display for this site -->
+  <link rel="canonical" href={`${$page.url.origin}/contactUs`} />
+
+  <!-- Open Graphes links -->
+  <!-- title  -->
+  <meta
+    property="og:title"
+    content="{translate('simpleTorWebTitle', $_, false)} | {translate(
+      'contactUs',
+      $_,
+      false
+    )}"
+  />
+</svelte:head>
 
 <section class="bg-base-100">
   <div class="container px-6 py-12 mx-auto">
@@ -11,31 +40,28 @@
         class="lg:w-1/2 lg:mx-6 text-center lg:text-start flex flex-col justify-center items-center lg:items-start"
       >
         <!-- title -->
-        <h1
-          class="text-2xl font-semibold text-gray-800 capitalize dark:text-white lg:text-3xl"
-        >
-          דברו עם הצוות שלנו שעומד לרשותכם
+        <h1 class="text-2xl lg:text-3xl font-semibold capitalize">
+          {translate("talkWithOurCrew", $_)}
         </h1>
         <!-- sub title -->
         <p class="pt-5 opacity-70 text-lg">
-          זמן מענה ממוצע הינו פחות מדקה, נסו את הצוות שלנו
+          {translate("timeToAnswerLessThan", $_)}
         </p>
         <!-- chips -->
         <div
           class="flex flex-wrap gap-2 py-4 max-w-[550px] justify-center lg:justify-start"
         >
-          <TextChip textTransKey="תמיכה טכנית" />
-          <TextChip textTransKey="שאלה כללית" />
-          <TextChip textTransKey="בקשת פיתוח והוספת פיצר" />
-          <TextChip textTransKey="דיווח על הפרה של משתמשים" />
-          <TextChip textTransKey="תמיכה טכנית" />
-          <TextChip textTransKey="שאלה כללית" />
-          <TextChip textTransKey="בקשת פיתוח והוספת פיצר" />
-          <TextChip textTransKey="דיווח על הפרה של משתמשים" />
+          <TextChip textTransKey="textChip1" bind:subject />
+          <TextChip textTransKey="textChip2" bind:subject />
+          <TextChip textTransKey="textChip3" bind:subject />
+          <TextChip textTransKey="textChip4" bind:subject />
+          <TextChip textTransKey="textChip5" bind:subject />
+          <TextChip textTransKey="textChip6" bind:subject />
+          <TextChip textTransKey="textChip7" bind:subject />
         </div>
       </div>
       <!-- form side -->
-      <FormContainer />
+      <FormContainer bind:subject />
     </div>
   </div>
 </section>

@@ -3,30 +3,24 @@
   import type Booking from "$lib/models/booking/booking_model";
   import { businessStore } from "$lib/stores/Business";
   import AttentionIndicatorUserBooking from "./AttentionIndicatorUserBooking.svelte";
-  import DeleteBookingWithoutBusinessDialog from "./DeleteBookingWithoutBusinessDialog.svelte";
   import LoadBusinessBookingButton from "./LoadBusinessBookingButton.svelte";
   import ReminderApproveArrivalButton from "./ReminderApproveArrivalButton.svelte";
 
   export let booking: Booking;
   export let bgColor: string = "bg-base-300";
-  export let mainDialog: HTMLDialogElement | undefined = undefined;
-
+  export let mainDialog: HTMLDialogElement;
   export let forceOpenBookingSheet: boolean;
-  let deleteBookingWithoutBusinessDialog: HTMLDialogElement;
+  export let deleteBookingWithoutBusinessDialog: HTMLDialogElement;
   $: showAttention =
     !booking.isPassed &&
     (booking.status !== BookingStatuses.approved || booking.needCancel);
 </script>
 
-<DeleteBookingWithoutBusinessDialog
-  bind:dialog={deleteBookingWithoutBusinessDialog}
-  {mainDialog}
-  {booking}
-/>
 <!-- the business isn't loaded -->
 {#if $businessStore == null || booking.buisnessId !== $businessStore.businessId}
   <LoadBusinessBookingButton
     {booking}
+    {mainDialog}
     {bgColor}
     bind:deleteBookingWithoutBusinessDialog
   />

@@ -6,6 +6,7 @@
   import BookingActions from "./BookingActions.svelte";
   import BookingDetails from "./BookingDetails.svelte";
   import CircleIcons from "./CircleIcons.svelte";
+  import DeleteBookingWithoutBusinessDialog from "./DeleteBookingWithoutBusinessDialog.svelte";
   import TopIndicators from "./TopIndicators.svelte";
   import BookingSheet from "./booking-sheet/BookingSheet.svelte";
 
@@ -13,15 +14,21 @@
   export let forceOpenBookingSheet: boolean;
 
   let bookingDialog: HTMLDialogElement;
+  let deleteBookingWithoutBusinessDialog: HTMLDialogElement;
 
-  function openBookingSheet() {
-    console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
+  function openBookingSheet(event: MouseEvent) {
     pushDialog(bookingDialog);
   }
 </script>
 
 <!-- booking shhet and dialog -->
 <BookingSheet bind:dialog={bookingDialog} {booking} {forceOpenBookingSheet} />
+
+<DeleteBookingWithoutBusinessDialog
+  bind:dialog={deleteBookingWithoutBusinessDialog}
+  mainDialog={bookingDialog}
+  {booking}
+/>
 
 <button
   on:click={openBookingSheet}
@@ -59,6 +66,11 @@
   <div class="flex flex-row justify-between w-full items-center">
     <BookingDetails {booking} />
     <div class="w-2"></div>
-    <BookingActions {booking} {forceOpenBookingSheet} />
+    <BookingActions
+      {booking}
+      mainDialog={bookingDialog}
+      {forceOpenBookingSheet}
+      {deleteBookingWithoutBusinessDialog}
+    />
   </div>
 </button>

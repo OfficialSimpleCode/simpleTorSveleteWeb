@@ -3282,5 +3282,17 @@
   "otpSessionExpired": "עבר זמן ארוך מידי הקוד פג תוקף",
   "encryptionFailed": "ההצפנה נכשלה",
   "crossBokingsLimitWorker": "עברת את מכסת ההזמנות",
-  "crossBokingsLimitExplain": "מכסת ההזמנות היא - AMOUNT"
+  "crossBokingsLimitExplain": "מכסת ההזמנות היא - AMOUNT",
+  "contactSuccess": "ההודעה נשלחה בהצלחה",
+  "subject": "נושא",
+  "textChip1": "תמיכה טכנית",
+  "textChip2": "הצטרפות למערכת",
+  "textChip3": "שאלה כללית",
+  "textChip4": "בקשת פיתוח והוספת פיצר",
+  "textChip5": "דיווח על הפרה של משתמשים",
+  "textChip6": "תמיכה טכנית",
+  "textChip7": "שאלה כללית",
+  "talkWithOurCrew": "דברו עם הצוות שלנו שעומד לרשותכם",
+  "timeToAnswerLessThan": "זמן מענה ממוצע הינו פחות מדקה, נסו את הצוות שלנו",
+  "contactUs": "צור קשר"
 }

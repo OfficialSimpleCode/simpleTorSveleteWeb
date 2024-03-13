@@ -11,7 +11,7 @@
   export let bgColor: string = "bg-base-300";
   export let booking: Booking;
   export let deleteBookingWithoutBusinessDialog: HTMLDialogElement;
-
+  export let mainDialog: HTMLDialogElement | undefined = undefined;
   let loading: boolean = false;
   let businessModel: BusinessModel | undefined;
 
@@ -29,10 +29,15 @@
       }
       if (businessModel == null) {
         loading = false;
+        if (mainDialog) {
+          mainDialog.close();
+        }
+
         pushDialog(deleteBookingWithoutBusinessDialog);
+
         return;
       }
-      console.log(`${base}/business/${businessModel.url}/orders`);
+
       await goto(`${base}/business/${businessModel.url}/orders`);
     } finally {
       loading = false;

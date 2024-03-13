@@ -1,13 +1,9 @@
 <script>
-  import Footer from "$lib/components/Footer.svelte";
-  import Navbar from "$lib/components/navbar/Navbar.svelte";
   import Offers from "./sections/Offers.svelte";
   import OffersFaq from "./sections/OffersFaq.svelte";
 </script>
 
 <main class="w-full h-full">
-  <Navbar />
   <Offers />
   <OffersFaq />
-  <Footer />
 </main>

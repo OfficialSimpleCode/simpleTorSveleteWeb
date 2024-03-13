@@ -721,6 +721,23 @@ export default class NotificationsHelper {
     });
   }
 
+  async notifyDevelopersContactUsMessage({
+    message,
+  }: {
+    message: ContactUsMessage;
+  }): Promise<void> {
+    // Get FCMS tokens of developers
+    const developersFcm = await DeveloperHelper.GI().getDevelopersFcms();
+
+    // Notify multiple users (developers) about the report
+    await this.notificationRepo.notifyMultipleUsers({
+      fcms: developersFcm,
+      payload: new NotificationPayload(), // Provide the payload if necessary
+      title: "לקוח יצר קשר", // Translate the title
+      content: `שם: ${message.name}, נושא: ${message.subject}, פלאפון: ${message.phone}`,
+    });
+  }
+
   //-------------------------------------- schedule message --------------------------------
   // EXPLAIN: Upload the FutureNotification Object to the ScheduleNotifications
   // Collection to the correct time and the server will notify for all the

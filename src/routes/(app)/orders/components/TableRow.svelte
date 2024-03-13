@@ -5,12 +5,14 @@
   import BookingDateAndTime from "./BookingDateAndTime.svelte";
   import BookingPriceAndDuration from "./BookingPriceAndDuration.svelte";
   import CircleIcons from "./CircleIcons.svelte";
+  import DeleteBookingWithoutBusinessDialog from "./DeleteBookingWithoutBusinessDialog.svelte";
   import BookingSheet from "./booking-sheet/BookingSheet.svelte";
 
   export let booking: Booking;
   export let forceOpenBookingSheet: boolean;
 
   let bookingDialog: HTMLDialogElement;
+  let deleteBookingWithoutBusinessDialog: HTMLDialogElement;
 
   function openBookingSheet() {
     pushDialog(bookingDialog);
@@ -21,6 +23,11 @@
 
 <BookingSheet bind:dialog={bookingDialog} {booking} {forceOpenBookingSheet} />
 
+<DeleteBookingWithoutBusinessDialog
+  bind:dialog={deleteBookingWithoutBusinessDialog}
+  mainDialog={bookingDialog}
+  {booking}
+/>
 <tr
   on:click={openBookingSheet}
   class="group bg-base-200 hover:bg-base-300 hover:bg-opacity-20 cursor-pointer border border-base-300"
@@ -49,7 +56,12 @@
   </td>
 
   <td class="text-nowrap">
-    <BookingActions {booking} {forceOpenBookingSheet} />
+    <BookingActions
+      {booking}
+      mainDialog={bookingDialog}
+      {forceOpenBookingSheet}
+      {deleteBookingWithoutBusinessDialog}
+    />
   </td>
 
   <!-- <th class="sm:opacity-0 sm:group-hover:opacity-100">

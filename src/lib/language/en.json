@@ -3297,5 +3297,18 @@
   "otpSessionExpired": "Too much time has passed, the code has expired",
   "encryptionFailed": "Encryption failed",
   "crossBookingsLimitWorker": "You have exceeded the bookings limit",
-  "crossBokingsLimitExplain": "The booking limit is - AMOUNT"
+  "crossBokingsLimitExplain": "The booking limit is - AMOUNT",
+  "contactSuccess": "The message was sent successfully",
+  "subject": "Subject",
+  "textChip1": "Technical Support",
+  "textChip2": "Joining the system",
+  "textChip3": "General question",
+  "textChip4": "Feature development and addition request",
+  "textChip5": "Report user violation",
+  "textChip6": "Technical Support",
+  "textChip7": "General question",
+  "talkWithOurCrew": "Talk to our crew at your disposal",
+  "timeToAnswerLessThan": "Average response time is less than a minute, try our team",
+  "contactUs": "Contact us",
+  "simpleTorWebTitle": "Simple Tor | Queue Management | Queue Management System"
 }
