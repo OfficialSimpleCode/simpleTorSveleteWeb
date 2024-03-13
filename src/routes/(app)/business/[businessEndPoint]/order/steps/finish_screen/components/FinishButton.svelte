@@ -137,7 +137,7 @@
   cancelTranslateKey={"skip"}
 />
 <!-- xs:px-10 px-3 -->
-<div class="flex flex-col items-center justify-center gap-3 w-full">
+<div class="flex flex-col items-center justify-center gap-1 w-full">
   {#if needOnHold}
     <AttentionText
       text={worker?.orderNeerDedlineBookingMessage ??
@@ -170,7 +170,7 @@
     {/if}
   </button>
   {#if publicCustomer.blocked}
-    <h3 class="opacity-70">
+    <h3 class="opacity-70 text-xs">
       {translate("blockedUserCantOrder", $_)}
     </h3>
   {/if}

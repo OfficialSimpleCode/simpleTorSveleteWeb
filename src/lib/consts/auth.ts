@@ -1,4 +1,4 @@
-import Apple from "$lib/images/apple.svg";
+import Apple from "$lib/images/apple.webp";
 import Facebook from "$lib/images/facebook.svg";
 import Google from "$lib/images/google.svg";
 import Phone from "$lib/images/smartphone.webp";
