@@ -81,9 +81,9 @@
   }
 </script>
 
-<div class="mt-8 lg:w-1/2 lg:mx-2">
+<div class=" lg:w-1/2 lg:mx-2">
   <div
-    class="w-full px-4 py-10 mx-auto overflow-hidden {containerRadius} shadow-2xl lg:max-w-xl bg-base-200"
+    class="w-full px-4 sm:px-8 py-10 mx-auto overflow-hidden {containerRadius} shadow-2xl lg:max-w-xl bg-base-200"
   >
     <!-- The from -->
     <form class="" on:submit={onSendMessage}>
@@ -92,13 +92,6 @@
         validationFunc={nameValidation}
         value={message.name}
         on:valueChange={onChangeName}
-      />
-
-      <CustomTextFormField
-        lableTranslateKey="subject"
-        bind:value={subject}
-        validationFunc={contactUsSubjectValidation}
-        on:valueChange={onChangeSubject}
       />
 
       {#if $isConnectedStore != null}
@@ -115,6 +108,14 @@
           />
         </div>
       {/if}
+
+      <CustomTextFormField
+        lableTranslateKey="subject"
+        bind:value={subject}
+        validationFunc={contactUsSubjectValidation}
+        on:valueChange={onChangeSubject}
+      />
+
       <CustomTextArea
         lableTranslateKey="message"
         bind:value={content}
