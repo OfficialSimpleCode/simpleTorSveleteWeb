@@ -15,6 +15,7 @@
   let bookingDialog: HTMLDialogElement;
 
   function openBookingSheet() {
+    console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
     pushDialog(bookingDialog);
   }
 </script>
