@@ -2,18 +2,17 @@
   import PricingCard from "../components/PricingCard.svelte";
 </script>
 
-<section class="bg-white dark:bg-gray-900">
+<section class="bg-base-100">
   <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+    <!-- title and sub title -->
     <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
-      <h2
-        class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
-      >
-        Designed for business teams like yours
-      </h2>
-      <p class="mb-5 font-light text-gray-500 sm:text-xl dark:text-gray-400">
-        Here at Flowbite we focus on markets where technology, innovation, and
-        capital can unlock long-term value and drive economic growth.
-      </p>
+      <h2 class="mb-4 text-4xl font-extrabold">נסו את המערכת שלנו בחינם</h2>
+      <div class="mb-5 sm:text-xl">
+        <p class="opacity-70">
+          מסלולים מותאמים לכל סוגי העסקים בין אם אתה עסק מתחיל או ותיק.
+        </p>
+        <span class="font-extrabold">המחירים הינם סופיים לתשלום לאחר מע״מ</span>
+      </div>
     </div>
     <!-- items grid -->
     <div
@@ -21,52 +20,56 @@
     >
       <PricingCard
         title="בסיסי"
-        sunTitle=""
-        price={59}
+        sunTitle="לעסקים מתחילים - יומן שירכז לכם את הפגישות בצורה מסודרת ונוחה"
+        price={59.9}
+        isFirst
         includesList={[
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
+          "37 ימים ראשונים בחינם",
+          "ללא הגבלת תורים",
+          "הוספת לקוחות מאנשי קשר",
+          "התראות תפוצה ללקוחות ללא הגבלה",
+          "אישורי הגעה",
+          "מיתוג אישי לעמוד העסק כולל דף נחיתה שנבנה אוטומטי",
+          "יומן דיגיטלי המתעדכן בזמן אמת ללא רענונים",
+          "סטטסיטקות ודוחות",
+          "גישה מהמחשב ומהאפליקציה",
         ]}
       />
       <!-- Pricing Card -->
       <PricingCard
-        title="בסיסי"
-        sunTitle=""
-        price={59}
+        title="פרימיום"
+        sunTitle="עסקים גדולים - מערכת ניהול תורים שתשלח הודעות ותזכורות ללקוחות"
+        price={79.9}
+        bestSeller
         includesList={[
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
+          "רשימות המתנה",
+          "ללא הגבלת לקוחות",
+          "200 הודעות בחודש",
+          "יומן דיגיטלי",
+          "קביעת תורים און-ליין",
+          "אישורי הגעה",
+          "סטטסיטקות ודוחות",
+          "גישה מהמחשב ומהאפליקציה",
+          "שליחת הודעות תפוצה",
+          "רשימת המתנה",
+          "כלי שיווק מתקדמים",
         ]}
       />
       <!-- Pricing Card -->
       <PricingCard
-        title="בסיסי"
-        sunTitle=""
-        price={59}
+        title="גולדן"
+        sunTitle="עסקים ברמה אחרת - לקיחת העסק שלב קדימה עם מיתוג אישי וקבלת לקוחות חדשים"
+        price={239.9}
         includesList={[
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
-          "dsacs",
+          "1000 הודעות בחודש",
+          "ממשק קופה",
+          "חשבוניות וקבלות",
+          "ניהול כרטיסיות ומנויים",
+          "שליחת בקשות תשלום",
+          "אשראי, Apple Pay ו Bit",
+          "דמי ביטול ומקדמות",
+          "שליחת מסמכים לרואה חשבון",
+          "ניהול מוצרים ומלאי",
         ]}
       />
     </div>

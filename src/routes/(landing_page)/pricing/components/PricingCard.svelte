@@ -5,33 +5,41 @@
   export let sunTitle: string;
   export let price: number;
   export let includesList: string[];
+  export let isFirst: boolean = false;
+  export let bestSeller: boolean = false;
 </script>
 
 <div
-  class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white"
+  class="flex flex-col bg-base-200 p-6 mx-auto max-w-lg text-center rounded-lg border-2 {bestSeller
+    ? 'border-primary'
+    : 'border-gray-100'}  shadow xl:p-8"
 >
   <!-- title and subtitle -->
   <h3 class="mb-4 text-2xl font-semibold">{title}</h3>
-  <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">
+  <p class="opacity-70">
     {sunTitle}
   </p>
 
   <!-- price and period -->
   <div class="flex justify-center items-baseline my-8">
     <span class="mr-2 text-5xl font-extrabold">{price}₪</span>
-    <span class="text-gray-500 dark:text-gray-400">/בחודש</span>
+    <span class="opacity-70">/בחודש</span>
   </div>
+  <!-- download the app button -->
+  <DownloadAppButton textTransKey="start" />
   <!-- list of what includes in the subscription -->
-  <ul role="list" class="mb-8 space-y-4 text-left">
+  <ul role="list" class="mb-8 space-y-4 text-left pt-6">
+    {#if !isFirst}
+      <li class="flex items-center space-x-3">
+        <span class="font-extrabold">כל מה שבמנויים האחרים פלוס:</span>
+      </li>
+    {/if}
     {#each includesList as item}
       <!-- include item -->
-      <li class="flex items-center space-x-3">
+      <li class="flex items-center space-x-3 text-start">
         <CheckIcon />
-        <p><span>{item}</span></p>
+        <p class="px-2"><span>{item}</span></p>
       </li>
     {/each}
   </ul>
-
-  <!-- download the app button -->
-  <DownloadAppButton textTransKey="start" />
 </div>
