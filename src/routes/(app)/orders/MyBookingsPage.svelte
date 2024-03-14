@@ -1,5 +1,6 @@
 <script lang="ts">
   import { base } from "$app/paths";
+  import { page } from "$app/stores";
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { SubType } from "$lib/consts/purchases";
   import { maxButtonSize } from "$lib/consts/sizes";
@@ -11,6 +12,7 @@
   } from "$lib/stores/Business";
   import { isConnectedStore, userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
+  import { onMount } from "svelte";
   import BookingList from "./pages/BookingList.svelte";
   import BookingsTable from "./pages/BookingsTable.svelte";
   import EmptyBookingPage from "./pages/EmptyBookingPage.svelte";
@@ -24,6 +26,8 @@
     $businessSubStore !== SubType.landingPage &&
     !$businessStore.isLandingPageMode &&
     $activeBusiness !== false;
+
+  let isInstagramWebView = false;
 
   function onMakeBooking() {
     if (loadingBookingButton || $isConnectedStore == null) {
@@ -49,6 +53,12 @@
     ($isConnectedStore != null &&
       $userStore.bookingsToShow != null &&
       $userStore.bookingsToShow.length === 0);
+
+  onMount(() => {
+    isInstagramWebView = navigator.userAgent
+      .toLowerCase()
+      .includes("instagram");
+  });
 </script>
 
 <main class=" h-full">
@@ -78,11 +88,13 @@
             class="btn w-full btn-primary max-w-[450px]"
             on:click={onMakeBooking}
             on:load={onFinishLoad}
-            href={loadingBookingButton
-              ? undefined
-              : $isConnectedStore === true
-                ? `${base}/business/${$businessStore?.url ?? ""}/order`
-                : `${base}/login`}
+            href={isInstagramWebView
+              ? `${$page.url.pathname}`
+              : loadingBookingButton
+                ? undefined
+                : $isConnectedStore === true
+                  ? `${base}/business/${$businessStore?.url ?? ""}/order`
+                  : `${base}/login`}
           >
             {#if $activeBusiness === true && !loadingBookingButton}
               <div class="flex flex-row gap-1 items-center">

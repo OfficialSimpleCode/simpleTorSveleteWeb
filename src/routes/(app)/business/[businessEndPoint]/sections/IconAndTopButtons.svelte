@@ -9,6 +9,7 @@
   import { _, translate } from "$lib/utils/translate";
 
   import { base } from "$app/paths";
+  import { page } from "$app/stores";
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { isAppleUser } from "$lib/consts/platform";
   import { subsLevels } from "$lib/consts/purchases";
@@ -28,8 +29,12 @@
   let smallView: boolean = true;
 
   let loadingBookingButton: boolean = false;
+  let isInstagramWebView = false;
 
   onMount(() => {
+    isInstagramWebView = navigator.userAgent
+      .toLowerCase()
+      .includes("instagram");
     smallView = window.innerWidth < 768;
     const handleResize = () => {
       smallView = window.innerWidth < 768;
@@ -53,6 +58,10 @@
   }
 
   function onMakeBooking() {
+    if (isInstagramWebView) {
+      window.open(window.location.href, "_system");
+      return;
+    }
     if (loadingBookingButton || $isConnectedStore == null) {
       return;
     }
@@ -141,11 +150,13 @@
         <a
           on:click={onMakeBooking}
           on:load={onFinishLoad}
-          href={$isConnectedStore == null
-            ? ""
-            : $isConnectedStore
-              ? `${base}/business/${$businessStore?.url ?? ""}/order`
-              : `${base}/login`}
+          href={isInstagramWebView
+            ? `${$page.url.pathname}`
+            : $isConnectedStore == null
+              ? ""
+              : $isConnectedStore
+                ? `${base}/business/${$businessStore?.url ?? ""}/order`
+                : `${base}/login`}
           class="btn btn-primary xs:px-10 px-6 md:px-20"
         >
           {#if $isConnectedStore == null || loadingBookingButton}

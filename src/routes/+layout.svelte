@@ -29,11 +29,6 @@
   onMount(() => {
     RemoteConfigHelper.GI().init();
 
-    // Check if the user agent contains 'Instagram' indicating the Instagram in-app browser
-    if (navigator.userAgent.toLowerCase().includes("instagram")) {
-      window.open(window.location.href, "_system");
-    }
-
     initialTheme(localStorage, document);
     handleLocaleChanges(localStorage, document);
 
@@ -89,7 +84,10 @@
     <!-- description -->
     <meta property="og:description" content={translate("simpleTorDesc", $_)} />
     <!-- image in the center of the link -->
-    <meta property="og:image" content="./openGraphIcon.png" />
+    <meta
+      property="og:image"
+      content="https://firebasestorage.googleapis.com/v0/b/managementsystemapp-c1fda.appspot.com/o/general%2Fsearch_page%2Fswords.png?alt=media&token=0f0e720f-871b-4c3f-adc3-eedd102da14b"
+    />
 
     <!-- icon for iphones that saves the web -->
     <link rel="apple-touch-icon" href="/AppIcon.png" />

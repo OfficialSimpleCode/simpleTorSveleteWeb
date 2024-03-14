@@ -1,5 +1,6 @@
 <script lang="ts">
   import { base } from "$app/paths";
+  import { page } from "$app/stores";
   import Avatar from "$lib/components/Avatar.svelte";
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import { containerRadius } from "$lib/consts/sizes";
@@ -7,9 +8,23 @@
   import { imageByGender } from "$lib/utils/images_utils";
   import { formatedPhone } from "$lib/utils/string_utils";
   import { Tooltip } from "flowbite-svelte";
+  import { onMount } from "svelte";
 
   let loading: boolean = false;
+
+  let isInstagramWebView = false;
+
+  onMount(() => {
+    isInstagramWebView =
+      navigator.userAgent.toLowerCase().includes("instagram") || true;
+  });
+
   function onClick() {
+    if (isInstagramWebView) {
+      window.open(window.location.href, "_system");
+      return;
+    }
+
     if (true) {
       return;
     }
@@ -36,11 +51,13 @@
         : $isConnectedStore
           ? "iconamoon:profile-fill"
           : "ic:baseline-login"}
-      href={loading
-        ? undefined
-        : $isConnectedStore
-          ? `${base}/profile`
-          : `${base}/login`}
+      href={isInstagramWebView
+        ? `${$page.url.pathname}`
+        : loading
+          ? undefined
+          : $isConnectedStore
+            ? `${base}/profile`
+            : `${base}/login`}
       {loading}
       on:click={onClick}
       on:load={onLoad}
