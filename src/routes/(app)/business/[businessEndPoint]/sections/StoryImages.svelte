@@ -64,7 +64,6 @@
               src={imageData.imageUrl}
               alt={translate("businessWork", $_)}
             />
-            {storyId}
           </button>
         {/each}
       </div>
