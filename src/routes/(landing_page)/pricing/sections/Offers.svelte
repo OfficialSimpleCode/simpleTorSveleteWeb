@@ -28,15 +28,15 @@
         includesList={[
           "basicExplain1",
           "basicExplain2",
-          "basicExplain3",
-          "basicExplain4",
-          "basicExplain5",
-          "basicExplain6",
           "basicExplain7",
           "basicExplain8",
+          "basicExplain4",
           "basicExplain9",
-          "basicExplain10",
+          "basicExplain3",
+          "basicExplain5",
+          "basicExplain6",
           "basicExplain11",
+          "basicExplain10",
         ]}
       />
       <!-- Pricing Card -->
@@ -47,13 +47,13 @@
         bestSeller
         extraOverSub={translate("onBasic", $_, false)}
         includesList={[
-          "preminumExplain1",
           "preminumExplain2",
           "preminumExplain3",
           "preminumExplain4",
           "preminumExplain5",
           "preminumExplain6",
           "preminumExplain7",
+          "preminumExplain1",
           "preminumExplain8",
           "preminumExplain9",
         ]}
@@ -70,8 +70,8 @@
           "goldenExplain3",
           "goldenExplain4",
           "goldenExplain5",
-          "goldenExplain6",
           "goldenExplain7",
+          "goldenExplain6",
           "goldenExplain8",
           "goldenExplain9",
         ]}
