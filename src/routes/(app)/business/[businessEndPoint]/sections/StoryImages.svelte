@@ -53,14 +53,14 @@
         ? $businessStore?.design.storyTitle ?? ""
         : translate("myWorks", $_).replaceAll(":", "")}
     </h2>
-    <div class="w-[99%] xs:w-[90%] flex flex-row items-center justify-center">
+    <div class="w-[99%] xs:w-[95%] flex flex-row items-center justify-center">
       <div
         class=" flex flex-wrap items-center justify-center mt-1 gap-4 xs:gap-6"
       >
         {#each Object.entries(workersStories) as [storyId, imageData]}
           <button on:click={() => openImageDisplayDialog(storyId)}>
             <img
-              class="object-cover aspect-[4/6] max-w-[140px] md:max-w-[300px] sm:max-w-[250px] xs:max-w-[190px] rounded-xl hover:scale-[1.05] transform transition-transform duration-300"
+              class="object-cover aspect-[4/6] max-w-[160px] md:max-w-[300px] sm:max-w-[250px] xs:max-w-[190px] rounded-xl hover:scale-[1.05] transform transition-transform duration-300"
               src={imageData.imageUrl}
               alt={translate("businessWork", $_)}
             />
