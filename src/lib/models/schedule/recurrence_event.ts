@@ -476,7 +476,7 @@ export default class RecurrenceEvent {
   }
 
   get explainText(): string {
-    if (this.start === undefined) {
+    if (this.start == null) {
       return "";
     }
     let resp = "";
@@ -665,7 +665,7 @@ export default class RecurrenceEvent {
       return this.start;
     }
 
-    const delta = diffDuration(date, this.start!).inDays;
+    const delta = Math.max(0, diffDuration(date, this.start!).inDays);
 
     if (this.freqRecurrence === FreqRecurrence.weeks) {
       const jumpsToReachDate = Math.floor(
@@ -717,13 +717,11 @@ export default class RecurrenceEvent {
 
     while (
       !this.isAccureInDate({ date: nearestDate }) &&
-      (end === undefined || nearestDate < end)
+      (end == null || nearestDate < end)
     ) {
-      console.log(this.isAccureInDate({ date: nearestDate }));
-
       nearestDate = this.addRangeBetween(nearestDate);
     }
-    if (end === undefined || nearestDate <= end) {
+    if (end == null || nearestDate <= end) {
       return nearestDate;
     }
     return undefined;

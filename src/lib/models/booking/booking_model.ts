@@ -191,12 +191,12 @@ export default class Booking extends ScheduleItem {
     newBooking.needCancel = booking.needCancel;
     newBooking.userGender = booking.userGender;
     newBooking.bookingDate = booking.bookingDate;
-    if (booking.recurrenceEventRefInfo !== undefined) {
+    if (booking.recurrenceEventRefInfo != null) {
       newBooking.recurrenceEventRefInfo = RecurrenceEvent.fromRecurrenceEvent(
         booking.recurrenceEventRefInfo!
       );
     }
-    if (booking.recurrenceEvent !== undefined) {
+    if (booking.recurrenceEvent != null) {
       newBooking.recurrenceEvent = RecurrenceEvent.fromRecurrenceEvent(
         booking.recurrenceEvent!
       );

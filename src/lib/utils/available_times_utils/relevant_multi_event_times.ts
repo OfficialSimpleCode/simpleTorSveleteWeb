@@ -61,6 +61,11 @@ export function relevantMultiEventTime({
         new TimePickerObj({
           isMulti: true,
           showMultiWaitingList: timeObj.showWaitingList,
+          changedEventPrice: timeObj.changedPrice,
+          chchangedEventTimes:
+            timeObj.changedTimes != null
+              ? new Map(timeObj.changedTimes)
+              : undefined,
           signedPaymentRequestId: timeObj.paymentRequestId,
           displayDate,
           maxParticipants,

@@ -1,7 +1,9 @@
 <script lang="ts">
   import CustomArrow from "$lib/components/custom_components/CustomArrow.svelte";
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
-  import { bookingMakerStore } from "$lib/controllers/booking_controller";
+  import BookingController, {
+    bookingMakerStore,
+  } from "$lib/controllers/booking_controller";
   import { Duration } from "$lib/models/core/duration";
   import {
     defaultCurrency,
@@ -20,6 +22,22 @@
   let notShownPrice: number = 0;
 
   let notShownTime: number = 0;
+
+  //if the worker change the durations or the pricing
+  // of the event after creation
+  $: if (
+    BookingController.pickedTimeObj != null &&
+    $bookingMakerStore.isMultiEvent == true
+  ) {
+    const timeObj = BookingController.pickedTimeObj!;
+    const treatment = Object.values($bookingMakerStore.services)[0];
+    if (timeObj.changedEventPrice != null) {
+      treatment.changedPrice = timeObj.changedEventPrice;
+    }
+    if (timeObj.changedEventTimes != null) {
+      treatment.changedTimes = timeObj.changedEventTimes;
+    }
+  }
 
   Object.entries($bookingMakerStore.services).forEach(
     ([treatmentId, treatment]) => {

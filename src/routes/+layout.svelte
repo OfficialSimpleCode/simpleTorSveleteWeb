@@ -29,6 +29,11 @@
   onMount(() => {
     RemoteConfigHelper.GI().init();
 
+    // Check if the user agent contains 'Instagram' indicating the Instagram in-app browser
+    if (navigator.userAgent.toLowerCase().includes("instagram")) {
+      window.open(window.location.href, "_system");
+    }
+
     initialTheme(localStorage, document);
     handleLocaleChanges(localStorage, document);
 

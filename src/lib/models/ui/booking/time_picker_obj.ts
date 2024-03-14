@@ -1,3 +1,5 @@
+import type { Price } from "$lib/models/general/price";
+import type TreatmentTime from "$lib/models/general/treatment_time";
 import RecurrenceEvent from "$lib/models/schedule/recurrence_event";
 import pkg from "uuid";
 const { v4 } = pkg;
@@ -20,6 +22,11 @@ export default class TimePickerObj {
   id: string = "";
   signedPaymentRequestId?: string;
 
+  //incase the worker change the event price after book it
+  changedEventPrice: Price | undefined;
+  //incase the worker change the event treatment durations after book it
+  changedEventTimes: Map<string, TreatmentTime> | undefined;
+
   constructor({});
   constructor({
     displayDate,
@@ -32,6 +39,8 @@ export default class TimePickerObj {
     signedPaymentRequestId,
     isVacation = false,
     recurrenceTimeId,
+    changedEventPrice,
+    changedEventTimes,
     showParticipants = true,
     showMultiWaitingList = true,
     recurrenceFatherBookingId,
@@ -44,6 +53,8 @@ export default class TimePickerObj {
     currentParticipants?: number;
     isMulti?: boolean;
     isHoliday?: boolean;
+    changedEventTimes?: Map<string, TreatmentTime>;
+    changedEventPrice?: Price;
     signedPaymentRequestId?: string;
     isVacation?: boolean;
     recurrenceTimeId?: string;
@@ -59,6 +70,9 @@ export default class TimePickerObj {
     this.maxParticipants = maxParticipants;
     this.currentParticipants = currentParticipants;
     this.isMulti = isMulti;
+    this.changedEventPrice = changedEventPrice;
+    this.changedEventTimes =
+      changedEventTimes != null ? new Map(changedEventTimes) : undefined;
     this.isHoliday = isHoliday;
     this.signedPaymentRequestId = signedPaymentRequestId;
     this.isVacation = isVacation;
@@ -79,6 +93,11 @@ export default class TimePickerObj {
       isVacation: other.isVacation,
       isHoliday: other.isHoliday,
       isMulti: other.isMulti,
+      changedEventTimes:
+        other.changedEventTimes != null
+          ? new Map(other.changedEventTimes)
+          : undefined,
+      changedEventPrice: other.changedEventPrice,
       signedPaymentRequestId: other.signedPaymentRequestId,
       maxParticipants: other.maxParticipants,
       currentParticipants: other.currentParticipants,
@@ -132,62 +151,6 @@ export default class TimePickerObj {
     clonedTimePickerObj.from = event.from;
 
     return clonedTimePickerObj;
-  }
-
-  toJson(): Record<string, any> {
-    const data: Record<string, any> = {};
-    data["from"] = this.from;
-    data["id"] = this.id;
-
-    if (this.displayDate != null) {
-      data["displayDate"] = this.displayDate;
-    }
-
-    data["isWaitingList"] = this.isWaitingList;
-
-    if (this.recurrenceTimeId != undefined) {
-      data["recurrenceTimeId"] = this.recurrenceTimeId;
-    }
-    if (this.recurrenceFatherBookingId != undefined) {
-      data["recurrenceFatherBookingId"] = this.recurrenceFatherBookingId;
-    }
-
-    if (this.fatherRecurrenceMultiEventDate != undefined) {
-      data["fatherRecurrenceMultiEventDate"] =
-        this.fatherRecurrenceMultiEventDate;
-    }
-
-    if (this.recurrenceMultiEvent != undefined) {
-      data["recurrenceMultiEvent"] = this.recurrenceMultiEvent!.toJson({});
-    }
-
-    if (!this.showMultiWaitingList) {
-      data["showMultiWaitingList"] = this.showMultiWaitingList;
-    }
-
-    if (this.isVacation) {
-      data["isVacation"] = this.isVacation;
-    }
-    if (this.isHoliday) {
-      data["isHoliday"] = this.isHoliday;
-    }
-    if (this.isMulti) {
-      data["isMulti"] = this.isMulti;
-    }
-    if (this.signedPaymentRequestId != undefined) {
-      data["signedPaymentRequestId"] = this.signedPaymentRequestId;
-    }
-    if (this.maxParticipants != 0) {
-      data["maxParticipants"] = this.maxParticipants;
-    }
-    if (this.currentParticipants != 0) {
-      data["currentParticipants"] = this.currentParticipants;
-    }
-    if (!this.showParticipants) {
-      data["showParticipants"] = this.showParticipants;
-    }
-
-    return data;
   }
 
   private dateToTimeStr(date: Date): string {

@@ -1,4 +1,6 @@
 import { dateIsoStr, isoToDate } from "$lib/utils/times_utils";
+import { Price } from "../general/price";
+import TreatmentTime from "../general/treatment_time";
 
 export default class MultiBookingTime {
   treatmentId: string = "";
@@ -10,11 +12,19 @@ export default class MultiBookingTime {
   expiredDate?: Date;
   paymentRequestId?: string;
 
+  //incase the worker change the event treatment durations after book it
+  changedTimes: Map<string, TreatmentTime> | undefined;
+
+  //incase the worker change the event price after book it
+  changedPrice: Price | undefined;
+
   constructor({
     treatmentId,
     minutes,
     maxParticipants,
     paymentRequestId,
+    changedPrice,
+    changedTimes,
     showWaitingList = true,
     currentParticipants = 0,
     expiredDate,
@@ -22,6 +32,8 @@ export default class MultiBookingTime {
   }: {
     treatmentId: string;
     minutes: number;
+    changedTimes?: Map<string, TreatmentTime>;
+    changedPrice?: Price;
     maxParticipants?: number;
     paymentRequestId?: string;
     showWaitingList?: boolean;
@@ -32,6 +44,8 @@ export default class MultiBookingTime {
     this.treatmentId = treatmentId;
     this.currentParticipants = currentParticipants;
     this.minutes = minutes;
+    this.changedPrice = changedPrice;
+    this.changedTimes = changedTimes;
     this.showWaitingList = showWaitingList;
     this.maxParticipants = maxParticipants;
     this.expiredDate = expiredDate;
@@ -44,6 +58,9 @@ export default class MultiBookingTime {
       treatmentId: other.treatmentId,
       currentParticipants: other.currentParticipants,
       minutes: other.minutes,
+      changedTimes:
+        other.changedTimes != null ? new Map(other.changedTimes) : undefined,
+      changedPrice: other.changedPrice,
       showWaitingList: other.showWaitingList,
       maxParticipants: other.maxParticipants,
       expiredDate: other.expiredDate,
@@ -56,6 +73,7 @@ export default class MultiBookingTime {
     const treatmentId = json["TI"] ?? "";
     const currentParticipants = json["CP"] ?? 0;
     const minutes = json["M"] ?? 0;
+
     const paymentRequestId = json["PRI"];
     const showWaitingList = json["SWL"] ?? true;
     const expiredDateString = json["ED"];
@@ -65,6 +83,19 @@ export default class MultiBookingTime {
     const expiredDate = expiredDateString
       ? isoToDate(expiredDateString)
       : undefined;
+    let changedTimes: Map<string, TreatmentTime> | undefined;
+    if (json["changedTimes"] != null) {
+      changedTimes = new Map();
+      Object.entries<any>(json["changedTimes"]).forEach(
+        ([timeIndex, timeData]) => {
+          changedTimes!.set(timeIndex, TreatmentTime.fromJson(timeData));
+        }
+      );
+    }
+    let changedPrice: Price | undefined;
+    if (json["changedPrice"] != null) {
+      changedPrice = Price.fromJson(json["changedPrice"]);
+    }
 
     return new MultiBookingTime({
       treatmentId,
@@ -72,6 +103,8 @@ export default class MultiBookingTime {
       minutes,
       maxParticipants,
       paymentRequestId,
+      changedTimes,
+      changedPrice,
       showWaitingList,
       expiredDate,
       index,
@@ -89,11 +122,11 @@ export default class MultiBookingTime {
       data["CP"] = this.currentParticipants;
     }
 
-    if (this.maxParticipants !== undefined) {
+    if (this.maxParticipants != null) {
       data["MP"] = this.maxParticipants;
     }
 
-    if (this.paymentRequestId !== undefined) {
+    if (this.paymentRequestId != null) {
       data["PRI"] = this.paymentRequestId;
     }
 
@@ -107,8 +140,18 @@ export default class MultiBookingTime {
       data["SWL"] = this.showWaitingList;
     }
 
-    if (this.expiredDate !== undefined) {
+    if (this.expiredDate != null) {
       data["ED"] = dateIsoStr(this.expiredDate);
+    }
+    if (this.changedPrice != null) {
+      data["changedPrice"] = this.changedPrice!.toJson();
+    }
+
+    if (this.changedTimes != null) {
+      data["changedTimes"] = {};
+      this.changedTimes!.forEach((time, index) => {
+        data["changedTimes"]![index] = time.toJson();
+      });
     }
 
     return data;

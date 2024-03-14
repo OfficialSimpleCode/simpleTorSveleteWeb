@@ -32,6 +32,12 @@ export default class Treatment {
   times: Map<string, TreatmentTime> = new Map();
   priceChangingNote?: string;
 
+  //incase the worker change the event treatment durations after book it
+  changedTimes: Map<string, TreatmentTime> | undefined;
+
+  //incase the worker change the event price after book it
+  changedPrice: Price | undefined;
+
   constructor({
     times = new Map(),
     id = "",

@@ -1282,23 +1282,23 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           fieldName: `${reccurenceBooking.bookingId}.RE.EDA.${newBookingDateStr}`,
           value: "",
         });
-
-        this.updateUserBooking({
-          transaction,
-          booking: newBooking,
-          isSetMerge: true,
-          command: NumericCommands.increment,
-          data: { [newBooking.bookingId]: newBooking.toJson() },
-        });
-
-        this.updateUserBooking({
-          transaction,
-          booking: reccurenceBooking,
-          data: {
-            [`${reccurenceBooking.bookingId}.RE.EDA.${newBookingDateStr}`]: "",
-          },
-        });
       }
+
+      this.updateUserBooking({
+        transaction,
+        booking: newBooking,
+        isSetMerge: true,
+        command: NumericCommands.increment,
+        data: { [newBooking.bookingId]: newBooking.toJson() },
+      });
+
+      this.updateUserBooking({
+        transaction,
+        booking: reccurenceBooking,
+        data: {
+          [`${reccurenceBooking.bookingId}.RE.EDA.${newBookingDateStr}`]: "",
+        },
+      });
 
       return true;
     };

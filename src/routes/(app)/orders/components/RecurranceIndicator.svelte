@@ -23,6 +23,7 @@
   $: if (recurrenceInfo) {
     recurrenceInfo!.exceptionDates = new Set();
     recurrenceInfo!.endOption = RecurrenceEventEnd.endless;
+    recurrenceInfo.start = booking.bookingDate;
   }
   function onWatchRecurrenceBooking() {
     pushDialog(downloadAppDialog);
