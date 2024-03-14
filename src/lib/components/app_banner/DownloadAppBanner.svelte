@@ -18,7 +18,7 @@
   >
     <div class="relative w-full mx-4">
       <div
-        class="flex flex-row bg-opacity-80 backdrop-blur-lg bg-base-300 rounded-[1.9rem] py-4 px-2 sm:px-8 gap-7 border-[2px] border-base-200"
+        class="flex flex-row bg-opacity-80 backdrop-blur-lg bg-base-300 rounded-[1.3rem] sm:rounded-[1.9rem] py-4 px-2 sm:px-8 gap-7 border-[2px] border-base-200"
       >
         <div class="flex flex-row justify-center w-full gap-5">
           <div class="flex flex-col w-full gap-4 sm:gap-6">

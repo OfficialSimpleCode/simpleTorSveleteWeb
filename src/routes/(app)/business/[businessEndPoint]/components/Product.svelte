@@ -51,21 +51,11 @@
       </figure>
 
       <!-- card below data -->
-      <div class="card-body">
-        <h2 class="card-title text-sm sm:text-lg">{product.name}</h2>
+      <div class="card-body w-[250px]">
+        <h4 class="card-title text-sm sm:text-lg">{product.name}</h4>
         <p class="text-xs sm:text-sm">
           {translate("price")}: {product.price}
         </p>
-
-        <!-- details button
-        <div class="card-actions justify-end">
-          <a
-            href={`${base}/business/${$businessStore.url}/product/${productId}`}
-            class="btn btn-primary"
-          >
-            {translate("details", $_)}
-          </a>
-        </div> -->
       </div>
     </div>
     {#if loading}

@@ -1,4 +1,5 @@
 <script>
+  import ContactSalesButton from "$lib/components/custom_components/ContactSalesButton.svelte";
   import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
   import topBarGif from "$lib/images/video example.mp4";
   import { _, translate } from "$lib/utils/translate";
@@ -28,9 +29,7 @@
 
       <div class="flex justify-center lg:justify-start w-full">
         <DownloadAppButton />
-        <!-- <div class="">
-          
-        </div> -->
+        <ContactSalesButton />
       </div>
     </div>
 

@@ -53,11 +53,11 @@ export default class MultiBookingTime {
   }
 
   static fromJson(json: Record<string, any>): MultiBookingTime {
-    const treatmentId = json["TI"] || "";
-    const currentParticipants = json["CP"] || 0;
-    const minutes = json["M"] || 0;
+    const treatmentId = json["TI"] ?? "";
+    const currentParticipants = json["CP"] ?? 0;
+    const minutes = json["M"] ?? 0;
     const paymentRequestId = json["PRI"];
-    const showWaitingList = json["SWL"] || true;
+    const showWaitingList = json["SWL"] ?? true;
     const expiredDateString = json["ED"];
     const maxParticipants = json["MP"];
     const index = json["I"] || 0;

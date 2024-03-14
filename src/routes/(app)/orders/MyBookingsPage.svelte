@@ -42,30 +42,35 @@
   function onFinishLoad() {
     loadingBookingButton = false;
   }
+
+  $: loading = $isConnectedStore !== false && $userStore.bookingsToShow == null;
+  $: showEmpty =
+    $isConnectedStore == false ||
+    ($isConnectedStore != null &&
+      $userStore.bookingsToShow != null &&
+      $userStore.bookingsToShow.length === 0);
 </script>
 
 <main class=" h-full">
   <div class="md:pt-10 pt-2 flex flex-col gap-8 items-center h-full">
     <!-- title -->
-    {#if $isConnectedStore === false || $userStore.bookingsToShow != null}
-      {#if $isConnectedStore === false || ($userStore?.bookingsToShow ?? []).length === 0}
-        <EmptyBookingPage />
-      {:else}
-        <!-- table object in widge screens -->
-        <div class="w-full hidden md:block min-h-[400px] mx-10">
-          <BookingsTable forceOpenBookingSheet={true} />
-        </div>
 
-        <!-- list of booking in small screens -->
-        <div
-          class="flex flex-col md:hidden max-w-[95%] sm:max-w-[80%] w-full gap-3 pt-10"
-        >
-          <BookingList forceOpenBookingSheet={true} />
-        </div>
-      {/if}
+    {#if showEmpty}
+      <EmptyBookingPage />
     {:else}
-      <div class="loading loading-spinner" />
+      <!-- table object in widge screens -->
+      <div class="w-full hidden md:block min-h-[400px] mx-10">
+        <BookingsTable forceOpenBookingSheet={true} shimmerEffect={loading} />
+      </div>
+
+      <!-- list of booking in small screens -->
+      <div
+        class="flex flex-col md:hidden max-w-[95%] sm:max-w-[80%] w-full gap-3 pt-10"
+      >
+        <BookingList forceOpenBookingSheet={true} shimmerEffect={loading} />
+      </div>
     {/if}
+
     <div class="flex flex-col gap-2 w-full items-center">
       {#if showMakeBookingButton}
         <div class="pb-4 w-[90%] flex flex-row items-center justify-center">

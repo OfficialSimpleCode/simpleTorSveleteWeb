@@ -125,6 +125,9 @@ async function handleSinging({
   // For the old multi bookings that have no icon data
   multiBooking.shopIcon = BusinessInitializer.GI().business.design.shopIconData;
   let resp: MultiBooking | undefined = undefined;
+  console.log(BookingController.pickedTimeObj);
+  console.log(BookingController.pickedTimeObj?.recurrenceMultiEvent);
+
   if (BookingController.pickedTimeObj?.recurrenceMultiEvent != null) {
     const recurrenceId =
       BookingController.pickedTimeObj!.recurrenceFatherBookingId;

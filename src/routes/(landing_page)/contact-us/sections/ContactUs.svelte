@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import { _, translate } from "$lib/utils/translate";
   import FormContainer from "../components/FormContainer.svelte";
   import TextChip from "../components/TextChip.svelte";
 
-  let subject: string = "";
+  const urlParams = $page.url.searchParams;
+  let subject: string = urlParams.get("subject") ?? "";
 </script>
 
 <section class="bg-base-300">

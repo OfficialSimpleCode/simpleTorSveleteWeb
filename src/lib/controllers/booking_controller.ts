@@ -93,8 +93,12 @@ export default class BookingController {
       }
     );
 
+    //initial the picked time obj
+    BookingController.pickedTimeObj = undefined;
+
     //initial back to undified the booking
     BookingController.bookingToUpdate = undefined;
+
     bookingMakerStore.set(initialBookingMaker);
 
     //jump to the service picker there is only one worker no need for the worker picker

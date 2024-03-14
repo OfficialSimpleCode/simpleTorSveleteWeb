@@ -64,6 +64,7 @@ export function contactUsMessageValidation(
   message: string | null
 ): string | null {
   if (message == null) return translate("mustIncluteChars");
+  if (message.length == 0) return translate("mustIncluteChars");
   if (message.trim().length > contactAsMessageCharsLimit)
     return translate("toLong");
   return null;
@@ -73,6 +74,7 @@ export function contactUsSubjectValidation(
   subject: string | null
 ): string | null {
   if (subject == null) return translate("mustIncluteChars");
+  if (subject.length == 0) return translate("mustIncluteChars");
   if (subject.trim().length > contactAsSubjectCharsLimit)
     return translate("toLong");
   return null;

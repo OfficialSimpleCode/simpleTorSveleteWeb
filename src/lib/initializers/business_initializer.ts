@@ -164,6 +164,10 @@ export default class BusinessInitializer {
       docId: businessId,
     });
 
+    if (!doc.exists()) {
+      return undefined;
+    }
+
     return {
       businessId: doc.id,
       business: this.fixBusinessDoc(doc.data()!),

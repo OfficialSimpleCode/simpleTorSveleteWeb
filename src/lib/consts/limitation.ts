@@ -37,6 +37,7 @@ export const contactAsMessageCharsLimit = 700;
 export const contactAsSubjectCharsLimit = 80;
 export const treatmentDurationCharsLimit = 3;
 export const updatesLimit = 6;
+export const contactUsLimitPerSession = 5;
 export const treatmentLimit = 20;
 export const treatmentSectionLimit = 10;
 export const successDialogMiliseconds = 1400;

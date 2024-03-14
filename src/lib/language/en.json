@@ -3371,7 +3371,12 @@
   "everythingInOtherSubs": "Everything SUB and also:",
   "inMonth": "Per month",
   "includeVAT": "Includes VAT",
-  "onBasicAndPremium": "On Basic and Premium subscriptions",
-  "onBasic": "on Basic",
-  "sending": "Send"
+  "onBasicAndPremium": "On 'basic' and 'premium' subscriptions",
+  "onBasic": "on 'basic'",
+  "sending": "Send",
+  "cantSendMoreContactUsPassTheLimit": "Can't send more messages - you've reached the limit",
+  "messageNotValid": "Invalid message",
+  "subjectNotValid": "Invalid subject",
+  "phoneNotValid": "Invalid phone number",
+  "nameNotValid": "Invalid name"
 }

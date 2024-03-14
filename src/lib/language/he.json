@@ -3355,7 +3355,12 @@
   "everythingInOtherSubs": "כל מה SUB וגם:",
   "inMonth": "בחודש",
   "includeVAT": "כולל מע״מ",
-  "onBasicAndPremium": "שבמנויים בסיסי ופרימיום",
-  "onBasic": "שבמנוי בסיסי",
-  "sending": "שליחה"
+  "onBasicAndPremium": "שבמנויים 'בסיסי' ו-'פרימיום'",
+  "onBasic": "שבמנוי 'בסיסי'",
+  "sending": "שליחה",
+  "cantSendMoreContactUsPassTheLimit": "אין אפשרות לשלוח עוד הודעות - הגעת לגבול",
+  "messageNotValid": "הודעה לא תקינה",
+  "subjectNotValid": "נושא לא תקין",
+  "phoneNotValid": "מספר טלפון לא תקין",
+  "nameNotValid": "שם לא תקין"
 }

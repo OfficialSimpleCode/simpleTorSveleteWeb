@@ -138,6 +138,11 @@ export default class Event {
       time.getHours(),
       time.getMinutes()
     );
+    if (json["RTI"] != null) {
+      newObj.timeId = json["RTI"] ?? "";
+    } else {
+      newObj.timeId = newTimeId;
+    }
 
     newObj.to = addDuration(
       newObj.from,
@@ -198,7 +203,7 @@ export default class Event {
     if (!this.blockSchedule) {
       data["BS"] = this.blockSchedule;
     }
-    if (this.treatmentId !== undefined) {
+    if (this.treatmentId != null) {
       data["TID"] = this.treatmentId;
     }
     if (this.wantDeleteCounter > 0) {
@@ -249,40 +254,40 @@ export default class Event {
     if (this.hasInvoice) {
       data["Hi"] = this.hasInvoice;
     }
-    if (this.recurrenceEvent != undefined) {
+    if (this.recurrenceEvent != null) {
       data["RE"] = this.recurrenceEvent!.toJson({});
     }
-    if (this.note !== undefined && this.note !== "") {
+    if (this.note != null && this.note !== "") {
       data["N"] = this.note;
     }
     if (this.partOfRecurrence) {
       data["POR"] = this.partOfRecurrence;
     }
-    if (this.recurrenceFatherBookingId != undefined) {
+    if (this.recurrenceFatherBookingId != null) {
       data["RFBI"] = this.recurrenceFatherBookingId;
     }
     if (this.isVacation) {
       data["IV"] = this.isVacation;
     }
-    if (this.breakFatherRecurrenceId != undefined) {
+    if (this.breakFatherRecurrenceId != null) {
       data["BFRI"] = this.breakFatherRecurrenceId;
     }
     if (this.vacationAddedToDeviceCalendar) {
       data["VATDC"] = this.vacationAddedToDeviceCalendar;
     }
-    if (this.vacationCreatedAt != undefined) {
+    if (this.vacationCreatedAt != null) {
       data["VCA"] = dateIsoStr(this.vacationCreatedAt!);
     }
     if (this.breakAddedToDeviceCalendar) {
       data["BATDC"] = this.breakAddedToDeviceCalendar;
     }
-    if (this.timeId !== undefined && this.recurrenceEvent === undefined) {
+    if (this.timeId != null && this.recurrenceEvent == null) {
       data["RTI"] = this.timeId;
     }
-    if (this.recurrenceBreakFatherDate !== undefined) {
+    if (this.recurrenceBreakFatherDate != null) {
       data["RBFD"] = this.recurrenceBreakFatherDate;
     }
-    if (this.recurrenceBreakRefInfo != undefined) {
+    if (this.recurrenceBreakRefInfo != null) {
       data["RBRI"] = this.recurrenceBreakRefInfo.toJson({
         saveStartDate: false,
         saveEnd: true,

@@ -60,7 +60,7 @@
         {#each Object.entries(workersStories) as [storyId, imageData]}
           <button on:click={() => openImageDisplayDialog(storyId)}>
             <img
-              class="object-cover aspect-[4/6] max-w-[160px] md:max-w-[300px] sm:max-w-[250px] xs:max-w-[200px] rounded-xl hover:scale-[1.05] transform transition-transform duration-300"
+              class="object-cover aspect-[4/6] max-w-[140px] md:max-w-[300px] sm:max-w-[250px] xs:max-w-[190px] rounded-xl hover:scale-[1.05] transform transition-transform duration-300"
               src={imageData.imageUrl}
               alt={translate("businessWork", $_)}
             />

@@ -104,6 +104,7 @@ export default class MultiBooking extends ScheduleItem {
     newObj.paymentRequest = multiBooking.paymentRequest;
     newObj.note = multiBooking.note;
     newObj.adress = multiBooking.adress;
+
     newObj.showWaitingList = multiBooking.showWaitingList;
     newObj.recurrenceTimeId = multiBooking.recurrenceTimeId;
     newObj.businessName = multiBooking.businessName;

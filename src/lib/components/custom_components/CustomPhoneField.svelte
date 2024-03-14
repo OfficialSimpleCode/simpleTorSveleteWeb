@@ -99,7 +99,7 @@
   <div dir="ltr" class="flex flex-row gap-2 xs:text-md w-full">
     <!-- selct for the prefix (by country) -->
     <select
-      class="country-select rounded-md input input-bordered w-[40%]"
+      class="country-select rounded-md input input-bordered w-[50%] xs:w-[30%]"
       name="Country"
       disabled={!isActive}
       bind:value={selectedCountry}

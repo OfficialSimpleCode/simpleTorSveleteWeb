@@ -1,9 +1,11 @@
 <script lang="ts">
+  import Booking from "$lib/models/booking/booking_model";
   import { userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
   import TableRow from "../components/TableRow.svelte";
 
   export let forceOpenBookingSheet: boolean;
+  export let shimmerEffect: boolean;
 
   $: bookings = $userStore.bookingsToShow ?? [];
 </script>
@@ -21,8 +23,21 @@
     </tr>
   </thead>
   <tbody>
-    {#each bookings as booking}
-      <TableRow {booking} {forceOpenBookingSheet} />
-    {/each}
+    {#if shimmerEffect}
+      <TableRow
+        booking={new Booking({})}
+        {forceOpenBookingSheet}
+        {shimmerEffect}
+      />
+      <TableRow
+        booking={new Booking({})}
+        {forceOpenBookingSheet}
+        {shimmerEffect}
+      />
+    {:else}
+      {#each bookings as booking}
+        <TableRow {booking} {forceOpenBookingSheet} {shimmerEffect} />
+      {/each}
+    {/if}
   </tbody>
 </table>

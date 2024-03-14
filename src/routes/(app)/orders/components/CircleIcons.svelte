@@ -9,6 +9,7 @@
   import { _, translate } from "$lib/utils/translate";
 
   export let booking: Booking;
+  export let shimmerEffect: boolean = false;
 
   let currentWorker: WorkerModel | undefined;
   let workerGender: Gender = booking.workerGender;
@@ -29,8 +30,13 @@
 
 <div class="flex flex-row justify-center">
   <div class="avatar">
-    <div class="mask mask-squircle w-[70px] h-[70px] rounded-full">
+    <div
+      class="mask mask-squircle w-[70px] h-[70px] rounded-full {shimmerEffect
+        ? 'me-1 bg-base-content opacity-10 '
+        : ''}"
+    >
       <img
+        class={shimmerEffect ? "hidden" : ""}
         src={shopIcon ? shopIcon : getDefaultLogo($themeStore?.background)}
         alt={translate("theProfileOfTemplate", $_).replace(
           "NAME",
@@ -40,7 +46,11 @@
     </div>
   </div>
 
-  <div class="avatar relative top-[42px] end-[26px]">
+  <div
+    class="avatar relative top-[42px] end-[26px] {shimmerEffect
+      ? 'hidden'
+      : ''}"
+  >
     <div
       class="mask mask-squircle w-[30px] h-[30px] rounded-full border-[1px] border-opacity-70"
     >

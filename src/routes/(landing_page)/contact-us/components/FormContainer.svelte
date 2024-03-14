@@ -2,12 +2,14 @@
   import CustomPhoneField from "$lib/components/custom_components/CustomPhoneField.svelte";
   import CustomTextArea from "$lib/components/custom_components/CustomTextArea.svelte";
   import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
+  import { contactUsLimitPerSession } from "$lib/consts/limitation";
   import { containerRadius } from "$lib/consts/sizes";
   import type {
     PhonePickerEvent,
     TextFieldEvent,
   } from "$lib/consts/text_fields";
   import { ErrorsController } from "$lib/controllers/errors_controller";
+  import { HomePageController } from "$lib/controllers/home_page_controller";
   import DeveloperHelper from "$lib/helpers/developer_helper";
   import { ShowToast } from "$lib/stores/ToastManager";
   import { isConnectedStore, userStore } from "$lib/stores/User";
@@ -19,7 +21,7 @@
   } from "$lib/utils/validation_utils";
   export let subject: string;
   let content: string = "";
-  let name: string = $isConnectedStore ? $userStore.phoneNumber : "";
+  let name: string = $isConnectedStore ? $userStore.name : "";
   let phone: string = $isConnectedStore ? $userStore.phoneNumber : "";
   let loading: boolean = false;
 
@@ -37,16 +39,59 @@
     name: name != "",
   };
 
+  isConnectedStore.subscribe((value) => {
+    if (value == true) {
+      name = $userStore.name;
+      phone = $userStore.phoneNumber;
+      isValid.name = true;
+      isValid.phone = true;
+      console.log("dd", isValid);
+    }
+  });
+  console.log(isValid);
   async function onSendMessage() {
     if (loading) {
       return;
     }
-    let isValidResp: boolean = true;
-    Object.entries(isValid).forEach(([name, val]) => {
-      console.log(name, val);
-      isValidResp = val && isValidResp;
-    });
-    if (!isValidResp) {
+    if (
+      HomePageController.messageContactUsCounter >= contactUsLimitPerSession
+    ) {
+      ShowToast({
+        text: translate("cantSendMoreContactUsPassTheLimit"),
+        status: "fail",
+      });
+      return;
+    }
+    console.log(isValid);
+    if (Object.values(isValid).includes(false)) {
+      if (!isValid.name) {
+        ShowToast({
+          text: translate("nameNotValid"),
+          status: "fail",
+        });
+        return;
+      }
+      if (!isValid.phone) {
+        ShowToast({
+          text: translate("phoneNotValid"),
+          status: "fail",
+        });
+        return;
+      }
+
+      if (!isValid.subject) {
+        ShowToast({
+          text: translate("subjectNotValid"),
+          status: "fail",
+        });
+        return;
+      }
+      if (!isValid.message) {
+        ShowToast({
+          text: translate("messageNotValid"),
+          status: "fail",
+        });
+      }
       return;
     }
     try {
@@ -57,6 +102,7 @@
         ShowToast({ text: translate("contactSuccess"), status: "success" });
         content = "";
         subject = "";
+        HomePageController.messageContactUsCounter += 1;
       } else {
         ErrorsController.displayError();
       }

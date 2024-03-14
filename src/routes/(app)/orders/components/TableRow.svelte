@@ -7,7 +7,7 @@
   import CircleIcons from "./CircleIcons.svelte";
   import DeleteBookingWithoutBusinessDialog from "./DeleteBookingWithoutBusinessDialog.svelte";
   import BookingSheet from "./booking-sheet/BookingSheet.svelte";
-
+  export let shimmerEffect: boolean;
   export let booking: Booking;
   export let forceOpenBookingSheet: boolean;
 
@@ -15,71 +15,79 @@
   let deleteBookingWithoutBusinessDialog: HTMLDialogElement;
 
   function openBookingSheet() {
+    if (shimmerEffect) {
+      return;
+    }
     pushDialog(bookingDialog);
   }
 </script>
 
 <!-- booking shhet and dialog -->
+{#if !shimmerEffect}
+  <BookingSheet bind:dialog={bookingDialog} {booking} {forceOpenBookingSheet} />
 
-<BookingSheet bind:dialog={bookingDialog} {booking} {forceOpenBookingSheet} />
-
-<DeleteBookingWithoutBusinessDialog
-  bind:dialog={deleteBookingWithoutBusinessDialog}
-  mainDialog={bookingDialog}
-  {booking}
-/>
+  <DeleteBookingWithoutBusinessDialog
+    bind:dialog={deleteBookingWithoutBusinessDialog}
+    mainDialog={bookingDialog}
+    {booking}
+  />
+{/if}
 <tr
   on:click={openBookingSheet}
-  class="group bg-base-200 hover:bg-base-300 hover:bg-opacity-20 cursor-pointer border border-base-300"
+  class="group bg-base-200 hover:bg-base-300 hover:bg-opacity-20 cursor-pointer border border-base-300 {shimmerEffect
+    ? 'animate-pulse'
+    : ''}"
 >
   <td>
     <div class="flex flex-row justify-center items-center">
-      <CircleIcons {booking} />
-      <p class="text-lg w-full">{booking.businessName}</p>
+      <CircleIcons {booking} {shimmerEffect} />
+      {#if shimmerEffect}
+        <div class="flex flex-col">
+          <div class="bg-base-content opacity-10 h-4 w-[100px] rounded-md" />
+          <div
+            class="bg-base-content opacity-10 h-4 w-[60px] rounded-md mt-1"
+          />
+        </div>
+      {:else}
+        <p class="text-lg w-full">{booking.businessName}</p>
+      {/if}
     </div>
   </td>
 
   <td class="text-lg">
-    {booking.workerName}
+    {#if shimmerEffect}
+      <div class="bg-base-content opacity-10 h-4 w-[100px] rounded-md" />
+    {:else}
+      {booking.workerName}
+    {/if}
   </td>
 
   <td class="text-lg">
-    {booking.treatmentsToStringDetailed}
+    {#if shimmerEffect}
+      <div class="flex flex-col">
+        <div class="bg-base-content opacity-10 h-4 w-[100px] rounded-md" />
+        <div class="bg-base-content opacity-10 h-4 w-[60px] rounded-md mt-1" />
+      </div>
+    {:else}
+      {booking.treatmentsToStringDetailed}
+    {/if}
   </td>
 
   <td class="min-w-[145px]">
     <!-- svelte-ignore missing-declaration -->
-    <BookingPriceAndDuration {booking} isRow={false} />
+    <BookingPriceAndDuration {booking} isRow={false} {shimmerEffect} />
   </td>
   <td>
-    <BookingDateAndTime {booking} />
+    <BookingDateAndTime {booking} {shimmerEffect} />
   </td>
 
   <td class="text-nowrap">
     <BookingActions
       {booking}
+      {shimmerEffect}
       mainDialog={bookingDialog}
       {forceOpenBookingSheet}
       {deleteBookingWithoutBusinessDialog}
     />
   </td>
-
-  <!-- <th class="sm:opacity-0 sm:group-hover:opacity-100">
-    <div class="dropdown dropdown-hover dropdown-left">
-      <div tabindex="0" role="button" class="btn btn-outline m-1">Actions</div>
-      <ul
-        class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 fixed z-20"
-      >
-        <li>
-          <button> Load Business </button>
-        </li>
-        <li>
-          <button> Edit </button>
-        </li>
-        <li>
-          <button class="text-error"> Delete </button>
-        </li>
-      </ul>
-    </div>
-  </th> -->
 </tr>

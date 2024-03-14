@@ -99,7 +99,7 @@ export function relevantMultiEventTime({
           new TimePickerObj({
             displayDate,
             isMulti: true,
-            recurrenceTimeId: event.timeId ?? undefined,
+            recurrenceTimeId: event.timeId,
             recurrenceFatherBookingId: event.recurrenceFatherBookingId,
             maxParticipants: treatment.participants,
             currentParticipants: event.currentParticipants,
