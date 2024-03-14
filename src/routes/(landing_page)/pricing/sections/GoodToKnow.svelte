@@ -21,24 +21,6 @@
       class="grid grid-cols-1 xs:gap-8 gap-6 mt-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
     >
       <InfoItem
-        title={translate("infoItem1", $_, false)}
-        subTitle={translate("infoItemExplain1", $_, false)}
-        icon="clarity:employee-group-line"
-        bg="bg-red-500"
-      />
-      <InfoItem
-        title={translate("infoItem2", $_, false)}
-        subTitle={translate("infoItemExplain2", $_, false)}
-        icon="fluent:payment-20-filled"
-        bg="bg-purple-500"
-      />
-      <InfoItem
-        title={translate("infoItem3", $_, false)}
-        subTitle={translate("infoItemExplain3", $_, false)}
-        icon="streamline:payment-cash-out-3"
-        bg="bg-green-500"
-      />
-      <InfoItem
         title={translate("infoItem4", $_, false)}
         subTitle={translate("infoItemExplain4", $_, false)}
         icon="mdi:book-multiple"
@@ -56,6 +38,25 @@
         icon="ri:contract-fill"
         bg="bg-yellow-500"
       />
+      <InfoItem
+        title={translate("infoItem1", $_, false)}
+        subTitle={translate("infoItemExplain1", $_, false)}
+        icon="clarity:employee-group-line"
+        bg="bg-red-500"
+      />
+      <InfoItem
+        title={translate("infoItem2", $_, false)}
+        subTitle={translate("infoItemExplain2", $_, false)}
+        icon="fluent:payment-20-filled"
+        bg="bg-purple-500"
+      />
+      <InfoItem
+        title={translate("infoItem3", $_, false)}
+        subTitle={translate("infoItemExplain3", $_, false)}
+        icon="streamline:payment-cash-out-3"
+        bg="bg-green-500"
+      />
+
       <InfoItem
         title={translate("infoItem7", $_, false)}
         subTitle={translate("infoItemExplain7", $_, false)}
