@@ -3,12 +3,15 @@
   import CustomTextArea from "$lib/components/custom_components/CustomTextArea.svelte";
   import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
   import { containerRadius } from "$lib/consts/sizes";
-  import type { TextFieldEvent } from "$lib/consts/text_fields";
+  import type {
+    PhonePickerEvent,
+    TextFieldEvent,
+  } from "$lib/consts/text_fields";
   import { ErrorsController } from "$lib/controllers/errors_controller";
   import DeveloperHelper from "$lib/helpers/developer_helper";
   import { ShowToast } from "$lib/stores/ToastManager";
   import { isConnectedStore, userStore } from "$lib/stores/User";
-  import { translate } from "$lib/utils/translate";
+  import { _, translate } from "$lib/utils/translate";
   import {
     contactUsMessageValidation,
     contactUsSubjectValidation,
@@ -16,20 +19,22 @@
   } from "$lib/utils/validation_utils";
   export let subject: string;
   let content: string = "";
+  let name: string = $isConnectedStore ? $userStore.phoneNumber : "";
+  let phone: string = $isConnectedStore ? $userStore.phoneNumber : "";
   let loading: boolean = false;
 
   $: message = {
     message: content,
-    phone: $userStore.phoneNumber,
+    phone: phone,
     subject: subject,
-    name: $userStore.name,
+    name: name,
   };
 
-  $: isValid = {
+  let isValid = {
     message: contactUsMessageValidation(content) == null,
-    phone: $userStore.phoneNumber != "",
+    phone: phone != "",
     subject: subject != "",
-    name: $userStore.name != "",
+    name: name != "",
   };
 
   async function onSendMessage() {
@@ -63,6 +68,7 @@
   function onChangeName(event: CustomEvent<TextFieldEvent>) {
     message.name = event.detail.value;
     isValid.name = event.detail.isValid;
+    name = event.detail.value;
   }
 
   function onChangeSubject(event: CustomEvent<TextFieldEvent>) {
@@ -70,9 +76,12 @@
     isValid.subject = event.detail.isValid;
   }
 
-  function onChangePhone(event: CustomEvent<TextFieldEvent>) {
-    message.phone = event.detail.value;
+  function onChangePhone(event: CustomEvent<PhonePickerEvent>) {
+    console.log("Ddddddddddddddddddddd");
+    console.log(event.detail.value, event.detail.isValid);
+    message.phone = event.detail.value ?? "";
     isValid.phone = event.detail.isValid;
+    phone = event.detail.value ?? "";
   }
 
   function onChangeMessage(event: CustomEvent<TextFieldEvent>) {
@@ -98,7 +107,7 @@
         <CustomPhoneField
           titleTransKey="phoneNumber"
           value={message.phone}
-          on:valueChange={onChangePhone}
+          on:phoneChange={onChangePhone}
         />
       {:else}
         <div class="flex flex-row animate-pulse mt-6 gap-3">
@@ -132,7 +141,7 @@
         {#if loading}
           <div class="loading loading-spinner" />
         {:else}
-          שליחה
+          {translate("sending", $_, false)}
         {/if}
       </button>
     </form>

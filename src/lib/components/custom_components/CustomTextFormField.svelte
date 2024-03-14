@@ -86,7 +86,7 @@
 
   <!-- the error indicator -->
   <p
-    class="flex items-center {withErrorSpacing ? 'h-5' : ''} mt-2 text-red-700"
+    class="flex items-center {withErrorSpacing ? 'h-5' : ''} mt-2 text-red-500"
   >
     {errorMessage}
   </p>

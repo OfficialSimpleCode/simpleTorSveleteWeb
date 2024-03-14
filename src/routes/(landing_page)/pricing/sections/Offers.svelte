@@ -1,4 +1,5 @@
 <script>
+  import { _, translate } from "$lib/utils/translate";
   import PricingCard from "../components/PricingCard.svelte";
 </script>
 
@@ -6,11 +7,13 @@
   <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
     <!-- title and sub title -->
     <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
-      <h2 class="mb-4 text-4xl font-extrabold">נסו את המערכת שלנו בחינם</h2>
+      <h1 class="mb-4 text-4xl font-extrabold">
+        {translate("pricingTitle", $_, false)}
+      </h1>
       <div class="mb-5 sm:text-xl">
-        <p class="opacity-70">
-          מסלולים מותאמים לכל סוגי העסקים בין אם אתה עסק מתחיל או ותיק.
-        </p>
+        <h2 class="opacity-70">
+          {translate("pricingSubtitle", $_, false)}
+        </h2>
         <!-- <span class="font-extrabold">המחירים הינם סופיים לתשלום לאחר מע״מ</span> -->
       </div>
     </div>
@@ -19,57 +22,58 @@
       class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0"
     >
       <PricingCard
-        title="בסיסי"
-        sunTitle="לעסקים מתחילים - יומן שירכז לכם את הפגישות בצורה מסודרת ונוחה"
+        title={translate("basic", $_, false)}
+        sunTitle={translate("basicSubtitle", $_, false)}
         price={59.9}
-        isFirst
         includesList={[
-          "37 ימים ראשונים בחינם",
-          "ללא הגבלת תורים",
-          "הוספת לקוחות מאנשי קשר",
-          "התראות תפוצה ללקוחות ללא הגבלה",
-          "אישורי הגעה",
-          "מיתוג אישי לעמוד העסק כולל דף נחיתה שנבנה אוטומטי",
-          "יומן דיגיטלי המתעדכן בזמן אמת ללא רענונים",
-          "סטטסיטקות ודוחות",
-          "גישה מהמחשב ומהאפליקציה",
+          "basicExplain1",
+          "basicExplain2",
+          "basicExplain3",
+          "basicExplain4",
+          "basicExplain5",
+          "basicExplain6",
+          "basicExplain7",
+          "basicExplain8",
+          "basicExplain9",
+          "basicExplain10",
+          "basicExplain11",
         ]}
       />
       <!-- Pricing Card -->
       <PricingCard
-        title="פרימיום"
-        sunTitle="עסקים גדולים - מערכת ניהול תורים שתשלח הודעות ותזכורות ללקוחות"
+        title={translate("premium", $_, false)}
+        sunTitle={translate("premiumSubtitle", $_, false)}
         price={79.9}
         bestSeller
+        extraOverSub={translate("onBasic", $_, false)}
         includesList={[
-          "רשימות המתנה",
-          "ללא הגבלת לקוחות",
-          "200 הודעות בחודש",
-          "יומן דיגיטלי",
-          "קביעת תורים און-ליין",
-          "אישורי הגעה",
-          "סטטסיטקות ודוחות",
-          "גישה מהמחשב ומהאפליקציה",
-          "שליחת הודעות תפוצה",
-          "רשימת המתנה",
-          "כלי שיווק מתקדמים",
+          "preminumExplain1",
+          "preminumExplain2",
+          "preminumExplain3",
+          "preminumExplain4",
+          "preminumExplain5",
+          "preminumExplain6",
+          "preminumExplain7",
+          "preminumExplain8",
+          "preminumExplain9",
         ]}
       />
       <!-- Pricing Card -->
       <PricingCard
-        title="גולדן"
-        sunTitle="עסקים ברמה אחרת - לקיחת העסק שלב קדימה עם מיתוג אישי וקבלת לקוחות חדשים"
+        title={translate("golden", $_, false)}
+        sunTitle={translate("goldenSubtitle", $_, false)}
         price={239.9}
+        extraOverSub={translate("onBasicAndPremium", $_, false)}
         includesList={[
-          "1000 הודעות בחודש",
-          "ממשק קופה",
-          "חשבוניות וקבלות",
-          "ניהול כרטיסיות ומנויים",
-          "שליחת בקשות תשלום",
-          "אשראי, Apple Pay ו Bit",
-          "דמי ביטול ומקדמות",
-          "שליחת מסמכים לרואה חשבון",
-          "ניהול מוצרים ומלאי",
+          "goldenExplain1",
+          "goldenExplain2",
+          "goldenExplain3",
+          "goldenExplain4",
+          "goldenExplain5",
+          "goldenExplain6",
+          "goldenExplain7",
+          "goldenExplain8",
+          "goldenExplain9",
         ]}
       />
     </div>

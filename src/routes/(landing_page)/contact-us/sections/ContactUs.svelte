@@ -1,36 +1,10 @@
 <script lang="ts">
-  import { page } from "$app/stores";
   import { _, translate } from "$lib/utils/translate";
   import FormContainer from "../components/FormContainer.svelte";
   import TextChip from "../components/TextChip.svelte";
 
   let subject: string = "";
 </script>
-
-<svelte:head>
-  <!-- business title -->
-  <title
-    >{translate("simpleTorWebTitle", $_, false)} | {translate(
-      "contactUs",
-      $_,
-      false
-    )}</title
-  >
-
-  <!-- the url for search to display for this site -->
-  <link rel="canonical" href={`${$page.url.origin}/contactUs`} />
-
-  <!-- Open Graphes links -->
-  <!-- title  -->
-  <meta
-    property="og:title"
-    content="{translate('simpleTorWebTitle', $_, false)} | {translate(
-      'contactUs',
-      $_,
-      false
-    )}"
-  />
-</svelte:head>
 
 <section class="bg-base-300">
   <div class="container px-6 py-12 mx-auto">
