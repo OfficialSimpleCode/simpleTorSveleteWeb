@@ -42,7 +42,7 @@
 <!-- wide screens -->
 <div class=" md:h-[800px] w-full hidden md:block">
   {#key currentIndex}
-    <div class="absolute w-full bg-base-300">
+    <div class="absolute w-full bg-base-100">
       <img
         class="relative top-0 h-[800px] w-full object-cover hidden md:block transition-opacity"
         src={useDefault ? defaultImage : changingImages[currentIndex]}

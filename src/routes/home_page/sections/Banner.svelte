@@ -13,7 +13,7 @@
     <!-- title  -->
     <div>
       <h1
-        class="max-w-2xl mb-4 text-3xl font-extrabold tracking-tight leading-none md:text-4xl xl:text-5xl"
+        class="max-w-2xl mb-4 font-extrabold tracking-tight leading-none text-3xl md:text-4xl xl:text-5xl"
       >
         {translate("mainWebTitle", $_, false)}
       </h1>

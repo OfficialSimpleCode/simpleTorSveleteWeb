@@ -10,15 +10,15 @@
   export let booking: Booking;
   export let downloadAppDialog: HTMLDialogElement | undefined;
 
-  const leftToPay: number =
+  $: leftToPay =
     booking.totalPrice.amount - booking.transactionsTotalPaymentPrice.amount;
   /*Make the string of payment */
-  const paidString = `${
+  $: paidString = `${
     booking.isDepositTransaction
       ? booking.transactionsTotalDepositPrice
       : booking.transactionsTotalPaymentPrice
   } / ${booking.totalPrice}`;
-  const paid = leftToPay <= 0 && booking.totalPrice.amount > 0;
+  $: paid = leftToPay <= 0 && booking.totalPrice.amount > 0;
 
   function onClick() {
     pushDialog(downloadAppDialog);
@@ -34,7 +34,7 @@
     <!-- like a listTile widget -->
     <div class="flex flex-col items-start">
       <p>{translate("onlinePayments", $_)}</p>
-      <p class="text-sm">
+      <p class="text-xs opacity-70">
         {translate(paid ? "pressToWatch" : "pressToPay", $_)}
       </p>
     </div>

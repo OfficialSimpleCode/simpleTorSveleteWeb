@@ -1227,7 +1227,8 @@ export default class Booking extends ScheduleItem {
       amount: "0",
       currency: this.totalPrice.currency,
     });
-    Object.values(this.transactions).forEach((transaction) => {
+    this.transactions.forEach((transaction, transactionId) => {
+      console.log(transactionId);
       if (transaction.type === PaymentTypes.payment && !transaction.canceled) {
         totalTransactionsPrice.amount +=
           transaction.amount * (transaction.refund ? -1 : 1);
@@ -1355,11 +1356,11 @@ export default class Booking extends ScheduleItem {
       amount: "0",
       currency: this.totalPrice.currency,
     });
-    for (const transaction of Object.values(this.transactions)) {
+    this.transactions.forEach((transaction, transactionId) => {
       if (transaction.type === PaymentTypes.deposit) {
         totalTransactionsPrice.amount += transaction.amount;
       }
-    }
+    });
     return totalTransactionsPrice;
   }
 
