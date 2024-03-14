@@ -47,7 +47,7 @@
         class="relative top-0 h-[800px] w-full object-cover hidden md:block transition-opacity"
         src={useDefault ? defaultImage : changingImages[currentIndex]}
         alt={translate("bannerImage", $_)}
-        transition:fade={{ delay: 0, duration: 1000 }}
+        in:fade={{ delay: 0, duration: 1000 }}
       />
     </div>
   {/key}
