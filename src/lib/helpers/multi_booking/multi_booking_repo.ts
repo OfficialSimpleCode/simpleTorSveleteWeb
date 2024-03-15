@@ -236,8 +236,8 @@ export default class MultiBookingRepo
           dateToDateStr(newMultiBooking.bookingDate)
         ];
       if (
-        day == null ||
-        day[dateToTimeStr(newMultiBooking.bookingDate)] == null
+        day != null &&
+        day[dateToTimeStr(newMultiBooking.bookingDate)] != null
       ) {
         const allow = hasPlaceInMultiBooking({
           worker: worker,
