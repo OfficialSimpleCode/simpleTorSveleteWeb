@@ -3362,5 +3362,14 @@
   "messageNotValid": "הודעה לא תקינה",
   "subjectNotValid": "נושא לא תקין",
   "phoneNotValid": "מספר טלפון לא תקין",
-  "nameNotValid": "שם לא תקין"
+  "nameNotValid": "שם לא תקין",
+  "keyWord1": "ניהול תורים",
+  "keyWord2": "ניהול עסק",
+  "keyWord3": "קביעת תורים",
+  "keyWord4": "זימון",
+  "keyWord5": "תור",
+  "keyWord6": "עסק",
+  "priceAndDurationsChanged": "שים לב! מחיר ומשך שונים מהרגיל",
+  "priceEventChanged": "שים לב! מחיר שונה מהרגיל",
+  "timesEventChanged": "שים לב! משך שונה מהרגיל"
 }

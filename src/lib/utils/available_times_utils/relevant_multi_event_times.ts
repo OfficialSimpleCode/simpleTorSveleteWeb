@@ -62,7 +62,7 @@ export function relevantMultiEventTime({
           isMulti: true,
           showMultiWaitingList: timeObj.showWaitingList,
           changedEventPrice: timeObj.changedPrice,
-          chchangedEventTimes:
+          changedEventTimes:
             timeObj.changedTimes != null
               ? new Map(timeObj.changedTimes)
               : undefined,

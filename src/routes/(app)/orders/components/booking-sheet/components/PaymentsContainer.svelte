@@ -41,7 +41,7 @@
   </div>
 
   <div class="flex flex-row justify-center items-center">
-    <p class="text-nowrap" dir="ltr">{paidString}</p>
+    <p class="text-nowrap text-sm" dir="ltr">{paidString}</p>
     <CustomArrow />
   </div>
 </button>

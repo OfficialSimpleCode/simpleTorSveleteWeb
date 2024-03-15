@@ -145,6 +145,7 @@ export default class MultiBookingHelper {
     fromPayment?: boolean;
     clientNote?: string;
   }): Promise<MultiBooking | undefined> {
+    console.log("signUsers", multiBooking.treatment);
     let newOnHoldUsers = 0;
     let invoiceCoverCounter = 0;
     const newUsersObj: Record<string, MultiBookingUser> = {};

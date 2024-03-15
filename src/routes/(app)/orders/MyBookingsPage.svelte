@@ -30,6 +30,10 @@
   let isInstagramWebView = false;
 
   function onMakeBooking() {
+    // if (isInstagramWebView) {
+    //   window.open(window.location.href, "_system");
+    //   return;
+    // }
     if (loadingBookingButton || $isConnectedStore == null) {
       return;
     }
@@ -55,9 +59,9 @@
       $userStore.bookingsToShow.length === 0);
 
   onMount(() => {
-    isInstagramWebView = navigator.userAgent
-      .toLowerCase()
-      .includes("instagram");
+    // isInstagramWebView = navigator.userAgent
+    //   .toLowerCase()
+    //   .includes("instagram");
   });
 </script>
 

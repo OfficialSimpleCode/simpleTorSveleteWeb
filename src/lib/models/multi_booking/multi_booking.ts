@@ -120,7 +120,7 @@ export default class MultiBooking extends ScheduleItem {
     newObj.shopIcon = multiBooking.shopIcon;
     newObj.bookingId = multiBooking.bookingId;
     newObj.workerPhone = multiBooking.workerPhone;
-    newObj.treatment = new Treatment(multiBooking.treatment);
+    newObj.treatment = Treatment.fromTreatment(multiBooking.treatment);
     newObj.recurrenceRef = multiBooking.recurrenceRef;
     newObj.recurrenceFatherDate = multiBooking.recurrenceFatherDate;
     newObj.workerName = multiBooking.workerName;

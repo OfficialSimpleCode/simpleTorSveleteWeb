@@ -6,6 +6,7 @@
 
   import { beforeNavigate } from "$app/navigation";
   import { page } from "$app/stores";
+  import { isProduction } from "$lib/consts/application_general";
   import {
     BusinessesTypes,
     businessTypeToStr,
@@ -31,6 +32,7 @@
 
   beforeNavigate(({ cancel }) => {
     if (
+      isProduction &&
       !$bookingMakerStore.finish &&
       !confirm(
         translate(

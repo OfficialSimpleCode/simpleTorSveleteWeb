@@ -1572,13 +1572,14 @@ export default class Booking extends ScheduleItem {
     if (this.recurrenceTimeId != null) {
       data["recurrenceTimeId"] = this.recurrenceTimeId;
     }
-    data["treatments"] = {};
+
     if (this.recurrenceRef != null) {
       data["recurrenceRef"] = this.recurrenceRef;
     }
     if (this.recurreneFatherDate != null) {
       data["recurreneFatherDate"] = this.recurreneFatherDate;
     }
+    data["treatments"] = {};
     Object.entries(this.treatments).forEach(([index, treatment]) => {
       data["treatments"][index.toString()] = treatment.toJson();
     });

@@ -31,22 +31,6 @@
   let loadingBookingButton: boolean = false;
   let isInstagramWebView = false;
 
-  onMount(() => {
-    isInstagramWebView = navigator.userAgent
-      .toLowerCase()
-      .includes("instagram");
-    smallView = window.innerWidth < 768;
-    const handleResize = () => {
-      smallView = window.innerWidth < 768;
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  });
-
   // open choose navigation option dialog
   function openNavigationDialog() {
     pushDialog(navigationDialog);
@@ -58,10 +42,10 @@
   }
 
   function onMakeBooking() {
-    if (isInstagramWebView) {
-      window.open(window.location.href, "_system");
-      return;
-    }
+    // if (isInstagramWebView) {
+    //   window.open(window.location.href, "_system");
+    //   return;
+    // }
     if (loadingBookingButton || $isConnectedStore == null) {
       return;
     }
@@ -79,6 +63,19 @@
   // After the ui is loaded
   onMount(() => {
     iconStr = isAppleUser() ? "mdi:ios-share" : "mdi:share-variant";
+    // isInstagramWebView = navigator.userAgent
+    //   .toLowerCase()
+    //   .includes("instagram");
+    smallView = window.innerWidth < 768;
+    const handleResize = () => {
+      smallView = window.innerWidth < 768;
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   });
 </script>
 

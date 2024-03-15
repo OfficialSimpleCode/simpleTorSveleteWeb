@@ -66,6 +66,7 @@
           {translate(contentTransKey, $_)}
         </h3>
 
+        <slot />
         <CustomPhoneField
           on:phoneChange={handlePhoneChange}
           bind:value
@@ -74,7 +75,7 @@
         />
       </div>
 
-      <!-- button actions buttons -->
+      <!-- buttom actions buttons -->
       <div
         class=" modal-action w-full flex px-2 gap-2 pt-2 max-w-[300px] items-center justify-center"
       >

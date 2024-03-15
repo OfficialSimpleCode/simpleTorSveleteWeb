@@ -32,3 +32,5 @@ export const durationToNotifyOnLongTimeNoSee = { days: 10 };
 export const appCreation = new Date(2023, 0, 1);
 export const versionUpdate123Date = new Date(2024, 0, 9, 20, 0);
 export const productionVersionMessage = "PRODUCTION VERSION CANT RUN SCRIPTS";
+
+export const isProduction = false;

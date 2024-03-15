@@ -160,6 +160,11 @@ export default class Treatment {
     treatment.times.forEach((time, index) => {
       newTreatment.times.set(index, TreatmentTime.fromTreatmentTime(time));
     });
+    newTreatment.changedPrice = treatment.changedPrice;
+    newTreatment.changedTimes =
+      treatment.changedTimes != null
+        ? new Map(treatment.changedTimes)
+        : undefined;
 
     return newTreatment;
   }
@@ -172,10 +177,17 @@ export default class Treatment {
 
     Object.entries(treatments).forEach(([__, treatment]) => {
       for (let i = 0; i < treatment.count; i++) {
-        treatment.times.forEach((time, _) => {
-          newTreatment.times.set(index.toString(), time);
-          index++;
-        });
+        if (treatment.changedTimes) {
+          treatment.changedTimes.forEach((time, _) => {
+            newTreatment.times.set(index.toString(), time);
+            index++;
+          });
+        } else {
+          treatment.times.forEach((time, _) => {
+            newTreatment.times.set(index.toString(), time);
+            index++;
+          });
+        }
 
         if (treatment.price) {
           newTreatment.price!.amount += treatment.price.amount;
@@ -260,10 +272,17 @@ export default class Treatment {
   toJson(): { [key: string]: any } {
     const data: { [key: string]: any } = {};
 
-    data["times"] = {};
-    this.times.forEach((time, index) => {
-      data["times"][index] = time.toJson();
-    });
+    if (this.changedTimes != null) {
+      data["times"] = {};
+      this.changedTimes.forEach((time, index) => {
+        data["times"][index] = time.toJson();
+      });
+    } else {
+      data["times"] = {};
+      this.times.forEach((time, index) => {
+        data["times"][index] = time.toJson();
+      });
+    }
 
     data["name"] = this.name;
     if (this.note !== "") {
@@ -281,23 +300,31 @@ export default class Treatment {
     if (this.colorIndex !== -2) {
       data["colorIndex"] = this.colorIndex;
     }
-    if (this.priceChangingNote !== undefined) {
+    if (this.priceChangingNote != null) {
       data["priceChangingNote"] = this.priceChangingNote;
     }
-    data["price"] = this.price ? this.price.toJson() : undefined;
+
+    if (this.changedPrice != null) {
+      data["price"] = this.changedPrice
+        ? this.changedPrice.toJson()
+        : undefined;
+    } else {
+      data["price"] = this.price ? this.price.toJson() : undefined;
+    }
+
     if (this.amountInAdvance !== 0) {
       data["amountInAdvance"] = this.amountInAdvance;
     }
     if (
-      this.paymentType != undefined &&
-      paymentTypesToStr[this.paymentType] != undefined
+      this.paymentType != null &&
+      paymentTypesToStr[this.paymentType] != null
     ) {
       data["paymentType"] = paymentTypesToStr[this.paymentType];
     }
     if (this.isMulti) {
       data["isMulti"] = this.isMulti;
     }
-    if (this.tempMaxParticipants !== undefined) {
+    if (this.tempMaxParticipants != null) {
       data["tempMaxParticipants"] = this.tempMaxParticipants;
     }
     if (this.count !== 1) {
@@ -342,15 +369,15 @@ export default class Treatment {
       newObj.price = Price.fromJson(json["price"]);
     }
 
-    if (json["amountInAdvance"] !== undefined) {
+    if (json["amountInAdvance"] != null) {
       newObj.amountInAdvance =
         typeof json["amountInAdvance"] === "number"
           ? json["amountInAdvance"]
           : parseFloat(json["amountInAdvance"]);
     }
     newObj.paymentType = paymentTypesFromStr[json["paymentType"]];
-    newObj.showPrice = json["showPrice"] || false;
-    newObj.showTime = json["showTime"] || false;
+    newObj.showPrice = json["showPrice"] ?? false;
+    newObj.showTime = json["showTime"] ?? false;
 
     newObj.totalMinutes = newObj.totalTotalMinutes;
 

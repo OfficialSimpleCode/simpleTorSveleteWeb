@@ -1,2 +1,4 @@
 -check the default business is empty
 -check server vars
+-remove all console logs
+-isProduction set to true

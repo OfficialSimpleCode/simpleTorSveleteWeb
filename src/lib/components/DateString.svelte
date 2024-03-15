@@ -9,8 +9,8 @@
   export let dayVertical: boolean = true;
   export let showTodayAndTommrow: boolean = false;
 
-  const timeStr: string = dateToTimeStr(date);
-  const dayStr: string = dateToDateStr(date);
+  $: timeStr = dateToTimeStr(date);
+  $: dayStr = dateToDateStr(date);
 </script>
 
 <div

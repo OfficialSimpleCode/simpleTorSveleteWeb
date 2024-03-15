@@ -17,14 +17,7 @@
   import DownloadAppBanner from "$lib/components/app_banner/DownloadAppBanner.svelte";
   import "../app.css";
   let screenHeight: number;
-  const keywords: string[] = [
-    "ניהול תורים",
-    "ניהול עסק",
-    "קביעת תורים",
-    "זימון",
-    "תור",
-    "עסק",
-  ];
+  let keywords: string[] = [];
   let userAgent: string = "";
   onMount(() => {
     RemoteConfigHelper.GI().init();
@@ -58,15 +51,20 @@
       logger.debug("storyImagesHeigth", storyImagesHeigth);
       logger.debug(`h-[${storyImagesHeigth}px]`, `w-[${storyImagesWidth}px]`);
     });
+
+    keywords = [
+      translate("keyWord1", $_, false),
+      translate("keyWord2", $_, false),
+      translate("keyWord3", $_, false),
+      translate("keyWord4", $_, false),
+      translate("keyWord5", $_, false),
+      translate("keyWord6", $_, false),
+    ];
   });
 
   $: storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
   $: storyImagesWidth = Math.floor(
     storyImagesHeigth * (storyImagesRatioX / storyImagesRatioY)
-  );
-  console.log(
-    "ss",
-    `${$page.url.origin}${$page.url.pathname}`.replace("www.", "")
   );
 </script>
 

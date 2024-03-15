@@ -8,22 +8,23 @@
   import { imageByGender } from "$lib/utils/images_utils";
   import { formatedPhone } from "$lib/utils/string_utils";
   import { Tooltip } from "flowbite-svelte";
-  import { onMount } from "svelte";
 
   let loading: boolean = false;
 
   let isInstagramWebView = false;
 
-  onMount(() => {
-    isInstagramWebView =
-      navigator.userAgent.toLowerCase().includes("instagram") || true;
-  });
+  // onMount(() => {
+  //   isInstagramWebView =
+  //     navigator.userAgent.toLowerCase().includes("instagram") || true;
+  // });
 
   function onClick() {
-    if (isInstagramWebView) {
-      window.open(window.location.href, "_system");
-      return;
-    }
+    // console.log("22222222");
+    // if (isInstagramWebView) {
+    //   console.log("Wwwwwwwwwww");
+    //   window.open("http://instagram.com/?nibrowser=no", "_blank");
+    //   return;
+    // }
 
     if (true) {
       return;

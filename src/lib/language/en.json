@@ -3378,5 +3378,14 @@
   "messageNotValid": "Invalid message",
   "subjectNotValid": "Invalid subject",
   "phoneNotValid": "Invalid phone number",
-  "nameNotValid": "Invalid name"
+  "nameNotValid": "Invalid name",
+  "keyWord1": "Queue management",
+  "keyWord2": "Business management",
+  "keyWord3": "Set appointments",
+  "keyWord4": "Order",
+  "keyWord5": "Turn",
+  "keyWord6": "Business",
+  "priceAndDurationsChanged": "Attention! Price and duration are different than usual",
+  "priceEventChanged": "Attention! Price is different than usual",
+  "timesEventChanged": "Attention! Duration is different from usual"
 }
