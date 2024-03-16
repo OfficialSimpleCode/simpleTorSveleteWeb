@@ -16,26 +16,48 @@
     otp = "";
     dispatch("close");
   }
+
+  let intervalId: NodeJS.Timeout;
+
+  // function addClassToRecaptchaElements() {
+  //   const elements = document.querySelectorAll('[id*="recaptcha"]');
+  //   elements.forEach((element: any) => {
+  //     element.classList.add("z-[1000000000]");
+  //   });
+  // }
+
+  // onMount(() => {
+  //   intervalId = setInterval(addClassToRecaptchaElements, 2000);
+  // });
+
+  // onDestroy(() => {
+  //   clearInterval(intervalId);
+  // });
 </script>
 
 <RecaptchaDialog bind:recaptchaDialog />
 
 <DialogStrucher bind:dialog onlyMiddle={true} on:close={onClose}>
-  <div class="modal-box bg-base-200 pb-10 max-w-[400px]">
-    {#if !insideOtp}
-      <GetPhoneView
-        {dialog}
-        on:navigateOtp={(e) => {
-          insideOtp = true;
-        }}
-      />
-    {:else}
-      <GetOtpView {loginReason} {dialog} bind:otp {dispatch} />
-    {/if}
-  </div>
-
   <div
-    id="recaptcha-container"
-    class="absolute bottom-1 left-1 !z-[10000] w-20 h-20"
-  />
+    class="absolute flex items-center justify-center w-full h-full 1z-[10000000]"
+  >
+    <div
+      class="modal-box bg-base-200 pb-10 max-w-[400px] flex flex-col items-center justify-center"
+    >
+      {#if !insideOtp}
+        <GetPhoneView
+          {dialog}
+          on:navigateOtp={(e) => {
+            insideOtp = true;
+          }}
+        />
+      {:else}
+        <GetOtpView {loginReason} {dialog} bind:otp {dispatch} />
+      {/if}
+    </div>
+
+    <div class="absolute bottom-4 right-0 z-[10000]">
+      <div id="recaptcha-container"></div>
+    </div>
+  </div>
 </DialogStrucher>

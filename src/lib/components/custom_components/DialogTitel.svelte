@@ -7,7 +7,7 @@
   export let dialog: HTMLDialogElement;
 </script>
 
-<div class="flex justify-between items-center mb-[1rem]">
+<div class="flex justify-between items-center mb-[1rem] w-full">
   <button
     class=""
     on:click={() => {

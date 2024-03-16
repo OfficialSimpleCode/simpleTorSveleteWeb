@@ -44,9 +44,10 @@
   {#key currentIndex}
     <div class="absolute w-full bg-base-100">
       <img
-        class="relative top-0 h-[800px] w-full object-cover hidden md:block transition-opacity"
+        class="absolute top-0 h-[800px] w-full object-cover hidden md:block transition-opacity"
         src={useDefault ? defaultImage : changingImages[currentIndex]}
         alt={translate("bannerImage", $_)}
+        out:fade={{ delay: 0, duration: 1000 }}
         in:fade={{ delay: 0, duration: 1000 }}
       />
     </div>
@@ -66,9 +67,10 @@
   <div class="aspect-[5/4] w-full">
     {#key currentIndex}
       <img
-        class="w-full aspect-[5/4] object-cover transition-opacity"
+        class="absolute top-0 w-full aspect-[5/4] object-cover transition-opacity"
         src={useDefault ? defaultImage : changingImages[currentIndex]}
         alt={translate("bannerImage", $_)}
+        out:fade={{ delay: 0, duration: 1000 }}
         in:fade={{ delay: 0, duration: 1000 }}
       />
     {/key}
