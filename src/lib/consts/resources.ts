@@ -29,3 +29,6 @@ export const notFoundPageAnimation: string =
 
 export const generalErrorAnimation: string =
   "https://lottie.host/d2f3bec0-e343-4e85-9bcc-6b7af26e6dd1/8nfJfDphcm.json";
+
+export const appOpenGraphImage: string =
+  "https://firebasestorage.googleapis.com/v0/b/managementsystemapp-c1fda.appspot.com/o/general%2Fwebsite%2FAppOGImage.png?alt=media&token=83f6210c-7448-4819-929a-e74509e444d6";
