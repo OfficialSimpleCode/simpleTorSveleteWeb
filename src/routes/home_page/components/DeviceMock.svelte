@@ -14,7 +14,7 @@
       document
         .getElementById(`${uuid}Images`)
         ?.classList.remove(`rounded-[30px]`);
-      document.getElementById(`${uuid}Images`)?.classList.add(`rounded-[20px]`);
+      document.getElementById(`${uuid}Images`)?.classList.add(`rounded-[18px]`);
     }
   });
 
@@ -62,7 +62,6 @@
         autoplay
         muted
         loop
-        controls={false}
         playsinline
         class="object-cover"
         on:load={changeIsReady}
