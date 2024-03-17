@@ -91,7 +91,15 @@
             : translate("needConfirmationToDelete")}
         />{/if}
       {#if attentionText != null}
-        <AttentionText onSurface={true} text={attentionText} />
+        <AttentionText
+          onSurface={true}
+          text={attentionText.replaceAll(
+            "AMOUNT",
+            booking.isDepositTransaction
+              ? booking.transactionsTotalDepositPrice.toString()
+              : booking.transactionsTotalPaymentPrice.toString()
+          )}
+        />
       {/if}
       {#if booking.recurrenceRef != null || booking.recurrenceEvent != null}
         <AttentionText
