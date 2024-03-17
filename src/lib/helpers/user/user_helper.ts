@@ -263,7 +263,7 @@ export default class UserHelper {
     });
 
     if (
-      phoneData === undefined &&
+      phoneData == null &&
       AppErrorsHelper.GI().error === Errors.alreadyExistPhone
     ) {
       return undefined;

@@ -8,6 +8,7 @@ import UserInitializer from "$lib/initializers/user_initializer";
 import type { Errors } from "$lib/services/errors/messages";
 import type { ParsedToken, PhoneAuthCredential, User } from "firebase/auth";
 
+import { canUseOtpStore } from "$lib/controllers/verification_controller";
 import UserHelper from "../user/user_helper";
 import { VerificationRepo } from "./verification_repo";
 
@@ -54,6 +55,7 @@ export class VerificationHelper {
 
   public setupLoggin(): void {
     this.verificationID = "";
+    canUseOtpStore.set(false);
     this.currentAuthProvider = undefined;
     this.needToSignUp = false;
     this.currentCredential = undefined;

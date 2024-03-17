@@ -23,12 +23,11 @@ export async function handleLogin({
   otp = "",
   loginReason,
   dispatch = undefined,
-  phoneDialog = undefined,
 }: {
   provider: AuthProvider;
   loginReason: LoginReason;
   otp?: string;
-  phoneDialog?: HTMLDialogElement;
+
   dispatch?: EventDispatcher<any>;
 }): Promise<PhoneDataResult | undefined> {
   if (get(isConnectedStore) == null) {
@@ -56,7 +55,6 @@ export async function handleLogin({
   }
 
   if (loginReason === LoginReason.deleteUser) {
-    existPhoneDialog(provider, phoneDialog);
     if (dispatch != null) {
       dispatch("onDeleteUser");
     }
@@ -66,7 +64,6 @@ export async function handleLogin({
   if (loginReason === LoginReason.phoneUpdate) {
     const resp = await updatePhone({});
     if (resp != null) {
-      existPhoneDialog(provider, phoneDialog);
       if (dispatch != null) {
         dispatch("onUpdatePhone");
       }
@@ -78,7 +75,6 @@ export async function handleLogin({
   if (loginReason === LoginReason.linkProvider) {
     const resp = await addProvider(provider);
     if (resp != null) {
-      existPhoneDialog(provider, phoneDialog);
       //go to profile that we can see the new added provider
       await goto(`${base}/profile`);
     }
@@ -110,7 +106,6 @@ export async function handleLogin({
     }
 
     if (resp != null) {
-      existPhoneDialog(provider, phoneDialog);
       if (dispatch != null) {
         dispatch("onVerifyPhone");
       }
@@ -124,7 +119,6 @@ export async function handleLogin({
 
   //sign in page
   if (get(isConnectedStore) !== true) {
-    existPhoneDialog(provider, phoneDialog);
     //need to change this var to be allowed to get in to the setup page
     VerificationHelper.GI().needToSignUp = true;
     await goto(`${base}/login/account-setup`);
@@ -136,20 +130,8 @@ export async function handleLogin({
     return;
   }
 
-  existPhoneDialog(provider, phoneDialog);
-
   //go to the main page or to the loaded business if exist
   await comeBack();
-}
-
-function existPhoneDialog(
-  provider: AuthProvider,
-  phoneDialog: HTMLDialogElement | undefined
-) {
-  //need to exit from the phone dialog also
-  if (provider == AuthProvider.Phone && phoneDialog != null) {
-    phoneDialog.close();
-  }
 }
 
 async function comeBack() {

@@ -126,7 +126,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
         });
       }
 
-      throw new Error(`Server Error: ${e}`);
+      return false;
     }
   }
 
@@ -163,7 +163,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
         });
       }
 
-      throw new Error(`Server Error: ${e}`);
+      return false;
     }
   }
 

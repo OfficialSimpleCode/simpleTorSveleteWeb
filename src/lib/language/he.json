@@ -3372,8 +3372,20 @@
   "priceAndDurationsChanged": "שים לב! מחיר ומשך שונים מהרגיל",
   "priceEventChanged": "שים לב! מחיר שונה מהרגיל",
   "timesEventChanged": "שים לב! משך שונה מהרגיל",
+<<<<<<< HEAD
   "createAccountDesc": "מתחברים בקליק באמצעות גוגל, אפל, או מספר טלפון",
   "createBusinessDesc": "מזינים את פרטי העסק ומעצבים לפי הטעם והסטייל הייחודי שלכם",
   "shareBusinessDesc": "לוחצים על מסך השיתוף ושולחים ללקוחות את הלינק שלכם",
   "howItWorkSubTitle": "מערכת עוצמתית ופשוטה לשימוש שמעניקה לך שקט מהלקוחות בלי סיבוכים מיותרים"
+=======
+  "otpTitle": "קוד חד פעמי",
+  "otpSubTitle": "שלחנו לך למספר הפלאפון: NUMBER קוד חד פעמי אנא הקלד אותה למטה כדי להמשיך",
+  "returnToPhone": "חזור",
+  "phoneNumberVerification": "אימות מספר פלאפון",
+  "beforeYouContinueToOrderNeedTo": "לפני שממשיכים בהזמנה אנחנו צריכים לאמת אותך, שלחנו הודעה עם קוד חד פעמי למספר: NUMBER אנא הקלד אותה למטה",
+  "cantNavigateOnVerification": "לא ניתן לצאת באמצע תהליך אימות",
+  "needToVerifyFirstYouNotRobot": "ראשית אמת שאתה לא רובוט",
+  "alreadyVerifedPhone": "פלאפון כבר מאומת",
+  "loginFirst": "קודם התחבר למשתמש"
+>>>>>>> main
 }

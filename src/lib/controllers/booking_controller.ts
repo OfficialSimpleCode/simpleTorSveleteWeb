@@ -45,6 +45,7 @@ export interface BookingMaker {
   currentStep: number;
   isMultiEvent: boolean;
   note: string;
+  isOnVerification: boolean;
   timePickerObjects: Record<string, TimePickerObj[]>;
   timePickerDisplayDates: Date[];
   numberOfShownDays: number;
@@ -63,6 +64,7 @@ export default class BookingController {
       workerId: BookingController.bookingToUpdate?.workerId,
       showVerificationAlert: false,
       services: {},
+      isOnVerification: false,
       oldBooking: BookingController.bookingToUpdate,
       note: BookingController.bookingToUpdate?.note ?? "",
       date: BookingController.bookingToUpdate?.bookingDate,

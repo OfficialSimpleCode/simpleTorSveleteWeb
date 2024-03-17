@@ -7,6 +7,13 @@
 
   let steps: string[] = ["worker", "treatment", "time"];
   function clickedOnStep(stepNumber: number) {
+    if ($bookingMakerStore.isOnVerification) {
+      ShowToast({
+        text: translate("cantNavigateOnVerification", $_),
+        status: "warning",
+      });
+      return;
+    }
     if (stepNumber === $bookingMakerStore.currentStep) {
       return;
     }
@@ -60,7 +67,7 @@
     class="flex-1 btn bg-base-300 rounded-lg px-2 hover:text-base-content {$bookingMakerStore.currentStep ===
     0
       ? 'text-primary-content'
-      : ''}"
+      : ''} {$bookingMakerStore.isOnVerification ? 'opacity-70' : ''}"
     class:bg-primary={$bookingMakerStore.currentStep === 0}
     on:click={() => clickedOnStep(0)}
   >
@@ -79,7 +86,7 @@
     class="flex-1 btn bg-base-300 rounded-lg px-2 hover:text-base-content {$bookingMakerStore.currentStep ===
     1
       ? 'text-primary-content'
-      : ''}"
+      : ''} {$bookingMakerStore.isOnVerification ? 'opacity-70' : ''}"
     class:bg-primary={$bookingMakerStore.currentStep === 1}
     on:click={() => clickedOnStep(1)}
   >
@@ -95,7 +102,7 @@
     class=" flex-1 btn bg-base-300 rounded-lg px-2 hover:text-base-content {$bookingMakerStore.currentStep ===
     2
       ? 'text-primary-content'
-      : ''}"
+      : ''} {$bookingMakerStore.isOnVerification ? 'opacity-70' : ''}"
     class:bg-primary={$bookingMakerStore.currentStep === 2}
     on:click={() => clickedOnStep(2)}
   >
