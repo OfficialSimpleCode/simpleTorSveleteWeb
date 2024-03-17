@@ -3349,7 +3349,6 @@
   "goldenExplain7": "Branding the business at another level - design options at the highest level",
   "goldenExplain8": "Copying design from other businesses",
   "goldenExplain9": "Prevent copying of the business design",
-
   "goodToKnow": "Good to know",
   "goodToKnowSubtitle": "Comprehensive information about our packages without surprises",
   "infoItem1": "29.90 including VAT",
@@ -3371,8 +3370,8 @@
   "everythingInOtherSubs": "Everything SUB and also:",
   "inMonth": "Per month",
   "includeVAT": "Includes VAT",
-  "onBasicAndPremium": "On 'basic' and 'premium' subscriptions",
-  "onBasic": "on 'basic'",
+  "onBasicAndPremium": "on 'Basic' and 'Premium' subscriptions",
+  "onBasic": "on 'Basic'",
   "sending": "Send",
   "cantSendMoreContactUsPassTheLimit": "Can't send more messages - you've reached the limit",
   "messageNotValid": "Invalid message",
