@@ -6,7 +6,7 @@
   import { isConnectedStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
   import { onMount } from "svelte";
-  import LoginPage from "../components/login/LoginPage.svelte";
+  import LoginContainer from "../components/login/LoginContainer.svelte";
   onMount(() => {
     isConnectedStore.subscribe((value) => {
       if (value === false) {
@@ -41,4 +41,4 @@
   />
 </svelte:head>
 
-<LoginPage loginReason={LoginReason.linkProvider} />
+<LoginContainer loginReason={LoginReason.linkProvider} />

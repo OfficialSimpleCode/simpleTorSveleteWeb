@@ -1,3 +1,4 @@
+import { canUseOtpStore } from "$lib/controllers/verification_controller";
 import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
 import { ShowToast } from "$lib/stores/ToastManager";
 import { _, translate } from "$lib/utils/translate";
@@ -10,4 +11,6 @@ export function onCodeSent(verificationId: string): void {
   });
 
   VerificationHelper.GI().verificationID = verificationId;
+
+  canUseOtpStore.set(true);
 }

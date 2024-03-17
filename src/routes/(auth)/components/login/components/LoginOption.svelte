@@ -9,13 +9,13 @@
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { ShowToast } from "$lib/stores/ToastManager";
   import { _, translate } from "$lib/utils/translate";
-  import { createEventDispatcher } from "svelte";
+  import type { EventDispatcher } from "svelte";
   import { handleLogin } from "../helpers/handle_login";
   export let authProvider: AuthProvider;
   export let loading: boolean;
   export let loginReason: LoginReason;
   export let isActive: boolean;
-  const dispatch = createEventDispatcher();
+  export let dispatch: EventDispatcher<any>;
 
   async function handleClick(authProvider: AuthProvider) {
     if (loading) {

@@ -4,7 +4,7 @@
   import type { PhonePickerEvent } from "$lib/consts/text_fields";
   import { _, translate } from "$lib/utils/translate";
   import { createEventDispatcher } from "svelte";
-  import { sendSms } from "../helpers/send_sms";
+  import { sendSms } from "../../../../../routes/(auth)/components/login/components/otp_input_container/helpers/send_sms";
   const dispatch = createEventDispatcher();
   export let dialog: HTMLDialogElement;
 

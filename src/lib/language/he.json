@@ -3371,5 +3371,11 @@
   "keyWord6": "עסק",
   "priceAndDurationsChanged": "שים לב! מחיר ומשך שונים מהרגיל",
   "priceEventChanged": "שים לב! מחיר שונה מהרגיל",
-  "timesEventChanged": "שים לב! משך שונה מהרגיל"
+  "timesEventChanged": "שים לב! משך שונה מהרגיל",
+  "otpTitle": "קוד חד פעמי",
+  "otpSubTitle": "שלחנו לך למספר הפלאפון: NUMBER קוד חד פעמי אנא הקלד אותה למטה כדי להמשיך",
+  "returnToPhone": "חזור",
+  "phoneNumberVerification": "אימות מספר פלאפון",
+  "beforeYouContinueToOrderNeedTo": "לפני שממשיכים בהזמנה אנחנו צריכים לאמת אותך, שלחנו הודעה עם קוד חד פעמי למספר: NUMBER אנא הקלד אותה למטה",
+  "cantNavigateOnVerification": "לא ניתן לצאת באמצע תהליך אימות"
 }

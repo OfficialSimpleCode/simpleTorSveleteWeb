@@ -2,7 +2,7 @@
   import { page } from "$app/stores";
   import { LoginReason } from "$lib/consts/auth";
   import { _, translate } from "$lib/utils/translate";
-  import LoginPage from "../components/login/LoginPage.svelte";
+  import LoginContainer from "../components/login/LoginContainer.svelte";
 </script>
 
 <svelte:head>
@@ -30,4 +30,4 @@
   />
 </svelte:head>
 
-<LoginPage loginReason={LoginReason.deleteUser} />
+<LoginContainer loginReason={LoginReason.deleteUser} />

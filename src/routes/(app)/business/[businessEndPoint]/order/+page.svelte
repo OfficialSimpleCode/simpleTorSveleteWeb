@@ -1,8 +1,5 @@
 <script lang="ts">
   import { base } from "$app/paths";
-  import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
-
-  import { LoginReason } from "$lib/consts/auth";
 
   import { beforeNavigate } from "$app/navigation";
   import { page } from "$app/stores";
@@ -23,7 +20,7 @@
   import ServicePicker from "./steps/service_picker/ServicePicker.svelte";
   import TimePicker from "./steps/time_picker/TimePicker.svelte";
   import WorkerPicker from "./steps/worker_picker/WorkerPicker.svelte";
-  let verificationDialog: HTMLDialogElement;
+
   BookingController.initializeBookingMaker();
 
   onDestroy(() => {
@@ -49,12 +46,6 @@
 </script>
 
 <!-- Dialog -->
-
-<PhoneDialog
-  loginReason={LoginReason.phoneVerification}
-  insideOtp={true}
-  bind:dialog={verificationDialog}
-/>
 
 <svelte:head>
   <!-- business title -->
@@ -95,7 +86,7 @@
     {:else if $bookingMakerStore.currentStep === 2}
       <TimePicker />
     {:else if $bookingMakerStore.currentStep === 3}
-      <FinishScreen {verificationDialog} />
+      <FinishScreen />
     {/if}
 
     <!-- cancel button -->

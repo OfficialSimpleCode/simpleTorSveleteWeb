@@ -9,8 +9,8 @@
   import CustomTextFormField from "$lib/components/custom_components/CustomTextFormField.svelte";
   import DialogTitel from "$lib/components/custom_components/DialogTitel.svelte";
   import { InputOptions, type TextFieldEvent } from "$lib/consts/text_fields";
+  import { sendSms } from "../../../../../routes/(auth)/components/login/components/otp_input_container/helpers/send_sms";
   import { handleLogin } from "../../../../../routes/(auth)/components/login/helpers/handle_login";
-  import { sendSms } from "../helpers/send_sms";
   export let dialog: HTMLDialogElement;
   export let loginReason: LoginReason;
   export let dispatch: EventDispatcher<any>;

@@ -5,7 +5,6 @@
   import SettingsItem from "$lib/components/custom_components/SettingsItem.svelte";
   import VerifiedIcon from "$lib/components/custom_components/VerifiedIcon.svelte";
   import PhoneDialog from "$lib/components/dialogs/phone_dialog/PhoneDialog.svelte";
-  import { sendSms } from "$lib/components/dialogs/phone_dialog/helpers/send_sms";
   import { LoginReason } from "$lib/consts/auth";
   import { containerRadius } from "$lib/consts/sizes";
   import UserHelper from "$lib/helpers/user/user_helper";
@@ -18,6 +17,7 @@
   import { _, translate } from "$lib/utils/translate";
   import { emailValidation, nameValidation } from "$lib/utils/validation_utils";
   import clipboard from "clipboardy";
+  import { sendSms } from "../../../(auth)/components/login/components/otp_input_container/helpers/send_sms";
   import ChangeAtrributeDialog from "../components/ChangeAtrributeDialog.svelte";
   import ChangePhoneDialog from "../components/ChangePhoneDialog.svelte";
   export let shimmerEffect: boolean = false;

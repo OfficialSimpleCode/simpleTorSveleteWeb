@@ -346,7 +346,7 @@
   "wednesday": "wednesday",
   "tuesday": "tuesday",
   "monday": "monday",
-  "error": "error",
+  "error": "Error",
   "theError": "The error",
   "errorCode": "Error code",
   "errorDetails": "Error details",
@@ -3386,5 +3386,10 @@
   "keyWord6": "Business",
   "priceAndDurationsChanged": "Attention! Price and duration are different than usual",
   "priceEventChanged": "Attention! Price is different than usual",
-  "timesEventChanged": "Attention! Duration is different from usual"
+  "timesEventChanged": "Attention! Duration is different from usual",
+  "otpTitle": "One time code",
+  "otpSubTitle": "We have sent you to the phone number: NUMBER one time code please type it below to continue",
+  "returnToPhone": "Back",
+  "beforeYouContinueToOrderNeedTo": "Before continuing with the order we need to verify you, we have sent a message with a one-time code to the number: NUMBER Please type it below",
+  "cantNavigateOnVerification": "Can't exit mid verification flow"
 }

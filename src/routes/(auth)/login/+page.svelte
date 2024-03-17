@@ -1,8 +1,10 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import { LoginReason } from "$lib/consts/auth";
+  import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { _, translate } from "$lib/utils/translate";
-  import LoginPage from "../components/login/LoginPage.svelte";
+  import LoginContainer from "../components/login/LoginContainer.svelte";
+  VerificationHelper.GI().setupLoggin();
 </script>
 
 <svelte:head>
@@ -30,4 +32,4 @@
   />
 </svelte:head>
 
-<LoginPage loginReason={LoginReason.login} />
+<LoginContainer loginReason={LoginReason.login} />
