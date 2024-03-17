@@ -3377,5 +3377,8 @@
   "returnToPhone": "חזור",
   "phoneNumberVerification": "אימות מספר פלאפון",
   "beforeYouContinueToOrderNeedTo": "לפני שממשיכים בהזמנה אנחנו צריכים לאמת אותך, שלחנו הודעה עם קוד חד פעמי למספר: NUMBER אנא הקלד אותה למטה",
-  "cantNavigateOnVerification": "לא ניתן לצאת באמצע תהליך אימות"
+  "cantNavigateOnVerification": "לא ניתן לצאת באמצע תהליך אימות",
+  "needToVerifyFirstYouNotRobot": "ראשית אמת שאתה לא רובוט",
+  "alreadyVerifedPhone": "פלאפון כבר מאומת",
+  "loginFirst": "קודם התחבר למשתמש"
 }

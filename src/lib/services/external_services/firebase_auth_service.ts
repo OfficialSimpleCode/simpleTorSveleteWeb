@@ -260,13 +260,14 @@ export class FirebaseAuthService extends VerificationService {
     const html = document.getElementById("recaptcha-container")!;
 
     const recaptchaVerifier = new RecaptchaVerifier(this._auth, html, {
-      size: "normal",
+      size: "invisible",
       callback: (response: any) => {
         console.log(response);
       },
     });
 
-    await recaptchaVerifier.render();
+    //make the recaptcha pazzle more often
+    // await recaptchaVerifier.render();
     await signInWithPhoneNumber(this._auth, completePhone, recaptchaVerifier)
       .then((confirmationResult) => {
         onCodeSent(confirmationResult.verificationId);

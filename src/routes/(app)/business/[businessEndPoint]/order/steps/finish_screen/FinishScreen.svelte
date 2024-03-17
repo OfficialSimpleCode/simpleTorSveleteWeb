@@ -186,6 +186,6 @@
     />
   </section>
 {/if}
-<div class="absolute bottom-4 left-0 z-[10000]">
+<div class="absolute bottom-4 left-0 z-40">
   <div id="recaptcha-container"></div>
 </div>

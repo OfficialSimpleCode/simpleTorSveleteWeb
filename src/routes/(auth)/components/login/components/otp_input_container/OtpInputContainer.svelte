@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { AuthProvider, type LoginReason } from "$lib/consts/auth";
+  import { AuthProvider, LoginReason } from "$lib/consts/auth";
   import { maxButtonSize } from "$lib/consts/sizes";
   import { InputOptions, type TextFieldEvent } from "$lib/consts/text_fields";
   import { canUseOtpStore } from "$lib/controllers/verification_controller";
@@ -88,7 +88,7 @@
       isOTP={true}
     />
 
-    {#if VerificationHelper.GI().phoneVerificationWithFirebase && !loading}
+    {#if VerificationHelper.GI().phoneVerificationWithFirebase && !loading && loginReason === LoginReason.phoneVerification}
       <button
         class="text-me opacity-90 hover:opacity-100"
         on:click={tryOtherProvider}

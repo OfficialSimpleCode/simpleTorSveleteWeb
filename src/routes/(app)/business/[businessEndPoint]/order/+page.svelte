@@ -89,15 +89,17 @@
       <FinishScreen />
     {/if}
 
-    <!-- cancel button -->
-    <div class="pb-4 mt-6 max-w-[360px] w-[300px]">
-      <a
-        class="btn btn-outline sm:hidden w-full"
-        href={$businessStore != null
-          ? `${base}/business/${$businessStore.url}`
-          : base}
-        >{translate("cancel", $_)}
-      </a>
-    </div>
+    {#if !$bookingMakerStore.isOnVerification}
+      <!-- cancel button -->
+      <div class="pb-4 mt-6 max-w-[360px] w-[300px]">
+        <a
+          class="btn btn-outline sm:hidden w-full"
+          href={$businessStore != null
+            ? `${base}/business/${$businessStore.url}`
+            : base}
+          >{translate("cancel", $_)}
+        </a>
+      </div>
+    {/if}
   </div>
 </main>

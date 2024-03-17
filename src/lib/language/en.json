@@ -3391,5 +3391,8 @@
   "otpSubTitle": "We have sent you to the phone number: NUMBER one time code please type it below to continue",
   "returnToPhone": "Back",
   "beforeYouContinueToOrderNeedTo": "Before continuing with the order we need to verify you, we have sent a message with a one-time code to the number: NUMBER Please type it below",
-  "cantNavigateOnVerification": "Can't exit mid verification flow"
+  "cantNavigateOnVerification": "Can't exit mid verification flow",
+  "needToVerifyFirstYouNotRobot": "First verify that you are not a robot",
+  "alreadyVerifedPhone": "Phone already verified",
+  "loginFirst": "Login First"
 }
