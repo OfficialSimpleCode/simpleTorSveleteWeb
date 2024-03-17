@@ -1,18 +1,18 @@
 <script>
   import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
-  import topBarGif from "$lib/images/video example.mp4";
+  import { containerRadius } from "$lib/consts/sizes";
+  import bannerImage from "$lib/images/bannerImage.png";
   import { _, translate } from "$lib/utils/translate";
-  import DeviceMock from "../components/DeviceMock.svelte";
 </script>
 
 <section class="bg-base-100">
   <div
-    class="flex lg:flex-row flex-col items-center gap-y-16 text-center lg:text-start lg:justify-between px-10 max-w-[1500px] mx-auto lg:py-20 py-10"
+    class="flex lg:flex-row flex-col items-center gap-y-16 text-center lg:text-start lg:justify-between px-5 max-w-[1620px] mx-auto lg:py-20 py-10"
   >
     <!-- title  -->
     <div>
       <h1
-        class="max-w-2xl mb-4 font-extrabold tracking-tight leading-none text-3xl md:text-4xl xl:text-5xl"
+        class="max-w-2xl mb-4 font-extrabold sm:min-w-[500px] tracking-tight leading-none text-3xl md:text-4xl xl:text-5xl"
       >
         {translate("mainWebTitle", $_, false)}
       </h1>
@@ -33,12 +33,12 @@
 
     <!-- the banner images -->
 
-    <div class="lg:col-span-5 lg:flex sm:w-[260px] w-[230px]">
-      <DeviceMock mediaSrc={topBarGif} uuid="BannerPhone" />
-      <!-- <img
-        src="https://i.pinimg.com/originals/f3/b0/0f/f3b00f83a79c9648e01a45f4b76ea3a8.gif"
-        alt="mockup"
-      /> -->
+    <div
+      class="lg:col-span-5 lg:flex max-w-[600px] bg-base-200 {containerRadius} xs:mx-10 mx-0"
+    >
+      <!-- <DeviceMock mediaSrc={topBarGif} uuid="BannerPhone" /> -->
+
+      <img class="object-scale-down" src={bannerImage} alt="mockup" />
     </div>
   </div>
 </section>
