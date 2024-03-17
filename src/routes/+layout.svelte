@@ -15,6 +15,7 @@
 
   import Analytics from "$lib/components/analytics.svelte";
   import DownloadAppBanner from "$lib/components/app_banner/DownloadAppBanner.svelte";
+  import { appOpenGraphImage } from "$lib/consts/resources";
   import "../app.css";
   let screenHeight: number;
   let keywords: string[] = [];
@@ -82,13 +83,10 @@
     <!-- description -->
     <meta property="og:description" content={translate("simpleTorDesc", $_)} />
     <!-- image in the center of the link -->
-    <meta
-      property="og:image"
-      content="https://firebasestorage.googleapis.com/v0/b/managementsystemapp-c1fda.appspot.com/o/general%2Fsearch_page%2Fswords.png?alt=media&token=0f0e720f-871b-4c3f-adc3-eedd102da14b"
-    />
+    <meta property="og:image" content={appOpenGraphImage} />
 
     <!-- icon for iphones that saves the web -->
-    <link rel="apple-touch-icon" href="/AppIcon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/AppAppleIcon.png" />
   {/if}
   <!--  -->
 </svelte:head>

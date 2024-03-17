@@ -1,5 +1,6 @@
 <script lang="ts">
   import Navbar from "$lib/components/navbar/Navbar.svelte";
+  import { appOpenGraphImage } from "$lib/consts/resources";
   import { themeStore } from "$lib/controllers/theme_controller";
   import { onMount } from "svelte";
 
@@ -14,9 +15,11 @@
   <!-- icon -->
   <link rel="icon" href="/AppIcon.png" />
   <!-- icon for iphones that saves the web -->
-  <link rel="apple-touch-icon" href="/AppIcon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/AppAppleIcon.png" />
   <!-- autor -->
   <meta name="author" content="SA SIMPLE CODE LTD" />
+  <!-- image in the center of the link -->
+  <meta property="og:image" content={appOpenGraphImage} />
 </svelte:head>
 
 <div class="h-full w-full">
