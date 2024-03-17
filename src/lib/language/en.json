@@ -3394,5 +3394,9 @@
   "cantNavigateOnVerification": "Can't exit mid verification flow",
   "needToVerifyFirstYouNotRobot": "First verify that you are not a robot",
   "alreadyVerifedPhone": "Phone already verified",
-  "loginFirst": "Login First"
+  "loginFirst": "Login First",
+  "createAccountDesc": "Login with a click using Google, Apple, or a phone number",
+  "createBusinessDesc": "feed your private business and design according to your unique taste and style",
+  "shareBusinessDesc": "Click on the sharing screen and send your link",
+  "howItWorkSubTitle": "A powerful and easy-to-use system that gives you peace of mind from customers and unnecessary complications"
 }
