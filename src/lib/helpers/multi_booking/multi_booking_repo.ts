@@ -679,7 +679,7 @@ export default class MultiBookingRepo
         worker.multiEventsTimes.duringPaymentsTimes[
           dateToDateStr(multiBooking.bookingDate)
         ][dateToTimeStr(multiBooking.bookingDate)];
-      if (timeObj !== null && timeObj !== undefined) {
+      if (timeObj != null) {
         timeObj.currentParticipants -= 1;
       }
 
@@ -1010,13 +1010,13 @@ export default class MultiBookingRepo
       }
 
       if (
-        (time === null || time.treatmentId === "") &&
-        (recurrenceEvent === undefined || hasException !== false)
+        (time == null || time.treatmentId === "") &&
+        (recurrenceEvent == null || hasException !== false)
       ) {
         AppErrorsHelper.GI().error = Errors.workerDeleteEventMeanwhile;
         return false;
       }
-      if (time !== null && time.treatmentId !== "") {
+      if (time != null && time.treatmentId !== "") {
         saveAsRecurrence = false;
         const allow = hasPlaceInMultiBooking({
           worker,
@@ -1041,7 +1041,7 @@ export default class MultiBookingRepo
       ]![dateToTimeStr(multiBooking.bookingDate)] = duringPaymentJson;
 
       if (saveAsRecurrence) {
-        if (recurrenceFatherDate == null || recurrenceTimeId === null) {
+        if (recurrenceFatherDate == null || recurrenceTimeId == null) {
           return false;
         }
 

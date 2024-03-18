@@ -88,10 +88,14 @@ export default class NotificationHandler {
           ) {
             //if the booking is recurrence child need to change his id
             if (booking.recurrenceRef != null) {
+              console.log(
+                "333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333"
+              );
               booking.bookingId = `${booking.recurrenceRef}--${dateToDateStr(
                 booking.bookingDate
               )}`;
             }
+            console.log(booking.bookingId);
             // Delete the schedule message if it exists
             MessagesHelper.GI().cancelScheduleMessageToMultipleBookings({
               [booking.bookingId]: booking,
@@ -99,6 +103,7 @@ export default class NotificationHandler {
           }
         }
         if (booking.notificationType === NotificationType.push) {
+          console.log("wewwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
           // Delete the scheduled notification
           NotificationsHelper.GI().deleteAllScheduleBookingsNotifications([
             booking,

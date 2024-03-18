@@ -370,7 +370,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);
       const docRef = doc(collectionRef, docId);
       const setData = this.organizeData(data);
-
+      console.log(setData);
       transaction.set(docRef, setData, { merge: true });
     } catch (e) {
       logger.error("Error while setting document as map in transaction -->", e);

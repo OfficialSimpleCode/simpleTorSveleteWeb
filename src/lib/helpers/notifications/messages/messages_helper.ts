@@ -125,7 +125,7 @@ export default class MessagesHelper {
     if (Object.keys(bookings).length === 0) {
       return true;
     }
-    console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+
     const messages: Record<string, string> = {};
     const businessToIncrease: Record<string, number> = {};
     Object.entries(bookings).forEach(([_, booking]) => {
@@ -138,11 +138,12 @@ export default class MessagesHelper {
       businessToIncrease[booking.buisnessId] =
         businessToIncrease[booking.buisnessId]! + reminders.length;
     });
-    console.log(messages);
-    console.log("ddddddddddddddddddddddddddddddddddddddddddddddd");
+
     if (isEmpty(messages)) {
       return true;
     }
+
+    console.log(messages);
     return await this._cancelMultipleScheduleAccordingToPlatfrom({
       messages: messages,
     }).then((value) => {

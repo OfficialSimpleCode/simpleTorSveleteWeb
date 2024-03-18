@@ -763,7 +763,7 @@ export default class NotificationsHelper {
     for (const [dateStr, data] of Object.entries(notifications)) {
       const dateToNotify = isoToDate(dateStr);
 
-      const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${dateToNotify.getMonth()}/${dateToNotify.getDay()}/${dateToNotify.getHours()}`;
+      const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${dateToNotify.getMonth()}/${dateToNotify.getDate()}/${dateToNotify.getHours()}`;
 
       futures.push(
         this.generalRepo.setAsMapWithMergeRepo({
@@ -809,17 +809,24 @@ export default class NotificationsHelper {
     bookings.forEach((booking) => {
       const remindersOnBooking = booking.remindersOnBooking;
 
+      console.log("Eeeeeeeeeeee", remindersOnBooking);
+
       for (const [dateToNotify, data] of Object.entries(remindersOnBooking)) {
         datesToDelete[dateToNotify] = data;
       }
     });
-
+    console.log(
+      "Rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+    );
+    console.log(datesToDelete);
     const futures: Promise<boolean>[] = [];
     Object.entries(datesToDelete).forEach(([dateStr, data]) => {
+      console.log(dateStr);
       const dateToNotify = isoToDate(dateStr);
+      console.log(dateToNotify);
       const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${
         dateToNotify.getMonth() + 1
-      }/${dateToNotify.getDay()}/${dateToNotify.getHours()}`;
+      }/${dateToNotify.getDate()}/${dateToNotify.getHours()}`;
 
       futures.push(
         this.generalRepo.updateMultipleFieldsInsideDocAsMapRepo({

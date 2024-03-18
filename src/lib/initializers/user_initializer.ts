@@ -11,6 +11,7 @@ import DbPathesHelper from "$lib/helpers/db_paths_helper";
 import { GeneralData } from "$lib/helpers/general_data";
 import NotificationsHelper from "$lib/helpers/notifications/notifications/notification_helper";
 import UserRepo from "$lib/helpers/user/user_repo";
+import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
 import { VerificationRepo } from "$lib/helpers/verification/verification_repo";
 import BusinessInfo from "$lib/models/business/business_info";
 import type { Update } from "$lib/models/business/update_model";
@@ -78,6 +79,9 @@ export default class UserInitializer {
         console.log(
           "3333333333333333333333333333333333322222222222111111111111111111111111"
         );
+        if (this.isConnected) {
+          VerificationHelper.GI().logout();
+        }
         isConnectedStore.set(false);
 
         return true; // new user log-in and not registered yet -> leave him logged-in
