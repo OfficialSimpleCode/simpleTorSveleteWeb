@@ -224,6 +224,5 @@ async function setUpUser(): Promise<boolean> {
   */
   return await UserInitializer.GI().setupUser({
     newUserId: VerificationHelper.GI().userId,
-    logoutIfDosentExist: false,
   });
 }

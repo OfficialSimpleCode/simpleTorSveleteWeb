@@ -10,8 +10,9 @@ import {
   getStartOfWeek,
   setToMidNight,
 } from "$lib/utils/times_utils";
-import { translate } from "$lib/utils/translate";
+import { _, translate } from "$lib/utils/translate";
 import { addMonths, format } from "date-fns";
+import { get } from "svelte/store";
 import { Duration } from "../core/duration";
 
 export enum FreqRecurrence {
@@ -487,12 +488,12 @@ export default class RecurrenceEvent {
 
     switch (this.freqRecurrence) {
       case FreqRecurrence.years:
-        resp += translate("yearTamplate")
+        resp += translate("yearTamplate", get(_))
           .replaceAll("DURATION", durationToString(rangeBetween))
           .replaceAll("DATE", format(this.start!, "dd/MM"));
         break;
       case FreqRecurrence.months:
-        resp += translate("monthTemplate")
+        resp += translate("monthTemplate", get(_))
           .replaceAll("DURATION", durationToString(rangeBetween))
           .replaceAll("DATE", this.start!.getDate().toString());
         break;
@@ -502,18 +503,19 @@ export default class RecurrenceEvent {
           daysString += translate(synfuWeekDays[day]) + ", ";
         });
         daysString = daysString.substring(0, daysString.length - 2);
-        resp += translate("weekTemplate")
+        resp += translate("weekTemplate", get(_))
           .replaceAll("DURATION", durationToString(rangeBetween))
           .replaceAll("DAYS", daysString)
           .replaceAll(
             "AMOUNT",
             translate(
-              Object.keys(this.weekDays).length === 1 ? "onDay" : "onDays"
+              Object.keys(this.weekDays).length === 1 ? "onDay" : "onDays",
+              get(_)
             )
           );
         break;
       case FreqRecurrence.days:
-        resp += translate("dayTemplate").replaceAll(
+        resp += translate("dayTemplate", get(_)).replaceAll(
           "DURATION",
           durationToString(rangeBetween)
         );
@@ -521,7 +523,9 @@ export default class RecurrenceEvent {
     }
     const endOfEventTemp = this.endOfTheEvent;
     if (endOfEventTemp !== undefined) {
-      resp += ` ${translate("until")} ${dateToDateStr(endOfEventTemp!)}`;
+      resp += ` ${translate("until", get(_))} ${dateToDateStr(
+        endOfEventTemp!
+      )}`;
     }
     return resp;
   }

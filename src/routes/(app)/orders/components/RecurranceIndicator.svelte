@@ -56,7 +56,7 @@
         class="text-primary {showRecurranceLink ? '' : 'hidden'}"
         on:click={onWatchRecurrenceBooking}
       >
-        {translate("watchAllRecurrence")}
+        {translate("watchAllRecurrence", $_)}
       </button>
     </div>
   </div>

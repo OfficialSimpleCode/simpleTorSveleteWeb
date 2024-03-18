@@ -31,7 +31,6 @@ export async function signInAction(
         return null;
       }
       // loading the user
-      UserInitializer.GI().userDoc = undefined; // force db load user
       const setUpResp = await UserInitializer.GI().setupUser({
         newUserId: VerificationHelper.GI().userId,
       });

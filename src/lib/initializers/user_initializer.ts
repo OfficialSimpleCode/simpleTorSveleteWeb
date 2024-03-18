@@ -19,7 +19,6 @@ import UserModel from "$lib/models/user/user_model";
 import { isConnectedStore, userStore } from "$lib/stores/User";
 import { checkForReminders, sortMyBookings } from "$lib/utils/booking_utils";
 import { delay } from "$lib/utils/general_utils";
-import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
 import BusinessInitializer from "./business_initializer";
 
 export default class UserInitializer {
@@ -41,8 +40,6 @@ export default class UserInitializer {
 
   userRepo: UserRepo = new UserRepo();
 
-  userDoc: DocumentSnapshot<DocumentData, DocumentData> | undefined;
-
   isUserFirstEntrance: boolean = true;
 
   get getPermission(): number {
@@ -61,13 +58,7 @@ export default class UserInitializer {
     }
   }
 
-  async setupUser({
-    newUserId = "",
-    logoutIfDosentExist = false,
-  }: {
-    newUserId: string;
-    logoutIfDosentExist?: boolean;
-  }): Promise<boolean> {
+  async setupUser({ newUserId = "" }: { newUserId: string }): Promise<boolean> {
     try {
       console.log("User------------>>>>> ", UserInitializer.GI().userId);
       logger.info(`The user id is -> ${newUserId}`);
@@ -76,37 +67,28 @@ export default class UserInitializer {
         return true; // to not display an error
       }
       console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-      /*If user came from logging his doc already in the userDoc 
-      and there is no need to read again from the db*/
-      if (this.userDoc == null) {
-        console.log("rrrrrtttttttttttttttttttttttttt");
-        this.userDoc = await this.userRepo.getDocSRV({
-          path: usersCollection,
-          docId: newUserId,
-        });
-      }
-      console.log(this.userDoc);
-      console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwww");
-      if (
-        !logoutIfDosentExist &&
-        (this.userDoc == null || !this.userDoc.exists())
-      ) {
+      const userDoc = await this.userRepo.getDocSRV({
+        path: usersCollection,
+        docId: newUserId,
+      });
+
+      if (!userDoc.exists()) {
         console.log(
           "3333333333333333333333333333333333322222222222111111111111111111111111"
         );
         isConnectedStore.set(false);
-        this.userDoc = undefined;
+
         return true; // new user log-in and not registered yet -> leave him logged-in
       }
       console.log("111111111111111111111111111111111111");
-      this.user = UserModel.fromUserDocJson(this.userDoc?.data()!);
+      this.user = UserModel.fromUserDocJson(userDoc.data()!);
 
       /*No need to take the user public data the startListening 
         func will take it*/
       this.startPublicDataListening();
       userStore.set(this.user);
       isConnectedStore.set(true);
-      this.userDoc = undefined;
+
       console.log("333333333333333333333333333333333333333333333333");
 
       //actions that need to do if the user enter to business
@@ -115,7 +97,7 @@ export default class UserInitializer {
       return true;
     } catch (e) {
       /*initialize the user Doc*/
-      this.userDoc = undefined;
+
       if (e instanceof Error) {
         logger.error(`Error while setting up the user --> ${e}`);
         AppErrorsHelper.GI().addError({ details: e.toString() });
