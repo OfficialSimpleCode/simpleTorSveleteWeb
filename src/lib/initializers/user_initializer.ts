@@ -62,16 +62,18 @@ export default class UserInitializer {
     try {
       console.log("User------------>>>>> ", UserInitializer.GI().userId);
       logger.info(`The user id is -> ${newUserId}`);
+      // Iilegal id must be an error - log the user out
       if (newUserId.length < 5) {
         await this.verificationRepo.logout();
         return true; // to not display an error
       }
+      // try lo load the user doc from the db
       console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeee");
       const userDoc = await this.userRepo.getDocSRV({
         path: usersCollection,
         docId: newUserId,
       });
-
+      // the user isn't exist
       if (!userDoc.exists()) {
         console.log(
           "3333333333333333333333333333333333322222222222111111111111111111111111"
@@ -80,14 +82,17 @@ export default class UserInitializer {
 
         return true; // new user log-in and not registered yet -> leave him logged-in
       }
+      // user exist - parse the json into model
       console.log("111111111111111111111111111111111111");
       this.user = UserModel.fromUserDocJson(userDoc.data()!);
 
-      /*No need to take the user public data the startListening 
-        func will take it*/
+      // save the the user is connected
+      isConnectedStore.set(true);
+
+      // No need to take the user public data the startListening
+      // func will take it
       this.startPublicDataListening();
       userStore.set(this.user);
-      isConnectedStore.set(true);
 
       console.log("333333333333333333333333333333333333333333333333");
 

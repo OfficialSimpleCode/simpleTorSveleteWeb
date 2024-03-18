@@ -13,7 +13,7 @@
 
 <svelte:head>
   <!-- icon -->
-  <link rel="icon" href="/AppIcon.png" />
+  <link rel="icon" href="/AppIcon.ico" />
   <!-- icon for iphones that saves the web -->
   <link rel="apple-touch-icon" sizes="180x180" href="/AppAppleIcon.png" />
   <!-- autor -->

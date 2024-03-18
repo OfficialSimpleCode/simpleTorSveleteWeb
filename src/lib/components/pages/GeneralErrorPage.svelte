@@ -9,7 +9,7 @@
   <!-- Title -->
   <title>{translate("error", $_)}</title>
   <!-- icon im the window -->
-  <link rel="icon" href="/AppIcon.png" />
+  <link rel="icon" href="/AppIcon.ico" />
 </svelte:head>
 
 <div class="flex flex-col gap-4 items-center pt-14">

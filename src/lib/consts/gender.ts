@@ -1,6 +1,6 @@
-import ManProfile from "$lib/images/man_profile.png";
-import OtherProfile from "$lib/images/other_profile.png";
-import WomanProfile from "$lib/images/woman_profile.png";
+import ManProfile from "$lib/images/man_profile.webp";
+import OtherProfile from "$lib/images/other_profile.webp";
+import WomanProfile from "$lib/images/woman_profile.webp";
 
 export enum Gender {
   male,

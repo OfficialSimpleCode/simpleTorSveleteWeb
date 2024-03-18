@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Chip from "$lib/images/chip.png";
+  import Chip from "$lib/images/chip.webp";
   import PaymentCard from "$lib/models/payment_hyp/payment_card";
   import { _, translate } from "$lib/utils/translate";
   import { createEventDispatcher, type EventDispatcher } from "svelte";
@@ -57,7 +57,7 @@
   }
   .container {
     position: relative;
-    background-image: url("$lib/images/bg.png");
+    background-image: url("$lib/images/bg.webp");
     background-size: cover;
     padding: 25px;
     border-radius: 28px;

@@ -1,7 +1,7 @@
 <script>
   import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
   import { containerRadius } from "$lib/consts/sizes";
-  import bannerImage from "$lib/images/bannerImage.png";
+  import bannerImage from "$lib/images/bannerImage.webp";
   import { _, translate } from "$lib/utils/translate";
 </script>
 

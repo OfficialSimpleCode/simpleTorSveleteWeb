@@ -74,7 +74,7 @@
     <!-- descruption about the page -->
     <meta name="description" content={translate("simpleTorDesc", $_)} />
     <!-- icon im the window -->
-    <link rel="icon" href="/AppIcon.png" type="image/x-icon" />
+    <link rel="icon" href="/AppIcon.ico" type="image/x-icon" />
 
     <!-- site keywords -->
     <meta name="keywords" content={keywords.join(" ,")} />

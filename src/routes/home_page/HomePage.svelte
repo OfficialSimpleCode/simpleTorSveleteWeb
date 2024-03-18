@@ -77,7 +77,7 @@
         },
         "name": "Simple Tor",
         "downloadUrl": "${webLink}",
-        "image": "/AppIcon.png",    
+        "image": "/AppIcon.ico",    
         "applicationCategory": "BusinessApplication",
         "softwareVersion": "1.3.9",
         "aggregateRating": {

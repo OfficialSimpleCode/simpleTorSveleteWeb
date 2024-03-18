@@ -8,7 +8,7 @@
   <!-- Title -->
   <title>{translate("notFoundPage", $_)}</title>
   <!-- icon im the window -->
-  <link rel="icon" href="/AppIcon.png" />
+  <link rel="icon" href="/AppIcon.ico" />
 </svelte:head>
 <div class="flex flex-col gap-3 items-center pt-14">
   <LottieAnimation
