@@ -37,8 +37,6 @@
     // display error onlt if it isn't empty
     errorMessage = value === "" ? "" : validationResp ?? "";
 
-    console.log("ffffffffff", errorMessage);
-
     // prepearing the object
     const eventResp: TextFieldEvent = {
       value: value,

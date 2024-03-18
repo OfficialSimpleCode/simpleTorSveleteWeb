@@ -31,6 +31,9 @@
     if (loading) {
       return;
     }
+    if (!$canUseOtpStore) {
+      return;
+    }
     loading = true;
     try {
       const resp = await handleLogin({
@@ -83,7 +86,7 @@
     <CustomTextFormField
       on:valueChange={onChanged}
       type={InputOptions.number}
-      isActive={!loading && $canUseOtpStore}
+      isActive={!loading}
       value={otp}
       isOTP={true}
     />

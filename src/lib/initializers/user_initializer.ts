@@ -69,30 +69,36 @@ export default class UserInitializer {
     logoutIfDosentExist?: boolean;
   }): Promise<boolean> {
     try {
+      console.log("User------------>>>>> ", UserInitializer.GI().userId);
       logger.info(`The user id is -> ${newUserId}`);
       if (newUserId.length < 5) {
         await this.verificationRepo.logout();
         return true; // to not display an error
       }
-
+      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeee");
       /*If user came from logging his doc already in the userDoc 
       and there is no need to read again from the db*/
       if (this.userDoc == null) {
+        console.log("rrrrrtttttttttttttttttttttttttt");
         this.userDoc = await this.userRepo.getDocSRV({
           path: usersCollection,
           docId: newUserId,
         });
       }
-
+      console.log(this.userDoc);
+      console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwww");
       if (
         !logoutIfDosentExist &&
         (this.userDoc == null || !this.userDoc.exists())
       ) {
+        console.log(
+          "3333333333333333333333333333333333322222222222111111111111111111111111"
+        );
         isConnectedStore.set(false);
         this.userDoc = undefined;
         return true; // new user log-in and not registered yet -> leave him logged-in
       }
-
+      console.log("111111111111111111111111111111111111");
       this.user = UserModel.fromUserDocJson(this.userDoc?.data()!);
 
       /*No need to take the user public data the startListening 
@@ -101,6 +107,7 @@ export default class UserInitializer {
       userStore.set(this.user);
       isConnectedStore.set(true);
       this.userDoc = undefined;
+      console.log("333333333333333333333333333333333333333333333333");
 
       //actions that need to do if the user enter to business
       this.actionsOnBusiness();

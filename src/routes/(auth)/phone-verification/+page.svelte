@@ -11,7 +11,7 @@
   import { onMount } from "svelte";
   import LoginContainer from "../components/login/LoginContainer.svelte";
   import { sendSms } from "../components/login/components/otp_input_container/helpers/send_sms";
-
+  let alreadySent: boolean = false;
   onMount(() => {
     VerificationHelper.GI().setupLoggin();
     isConnectedStore.subscribe((value) => {
@@ -32,7 +32,13 @@
             status: "info",
           });
         } else {
-          setTimeout(() => sendSms($userStore.userPublicData.phoneNumber), 700);
+          if (!alreadySent) {
+            setTimeout(() => {
+              sendSms($userStore.userPublicData.phoneNumber);
+            }, 100);
+
+            alreadySent = true;
+          }
         }
       }
     });
@@ -68,10 +74,14 @@
   <LoginContainer
     loginReason={LoginReason.phoneVerification}
     isOtp={true}
+    needRecaptchaContainer={false}
     otpSubTitle={translate("otpSubTitle", $_).replaceAll(
       "NUMBER",
       formatedPhone($userStore.userPublicData.phoneNumber)
     )}
     canReturnToChooseProvider={false}
   />
+  <div class="absolute bottom-4 left-0 z-40">
+    <div id="recaptcha-container"></div>
+  </div>
 {/if}

@@ -38,8 +38,7 @@
         return;
       }
 
-      await goto(`${base}/business/${businessModel.url}/orders`);
-      location.reload();
+      await goto(`${base}/business/${businessModel!.url}/orders`);
     } finally {
       loading = false;
     }
