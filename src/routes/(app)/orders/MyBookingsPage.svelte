@@ -73,13 +73,13 @@
       <EmptyBookingPage />
     {:else}
       <!-- table object in widge screens -->
-      <div class="w-full hidden md:block min-h-[400px] mx-10">
+      <div class="w-full hidden lg:block min-h-[400px] mx-10">
         <BookingsTable forceOpenBookingSheet={true} shimmerEffect={loading} />
       </div>
 
       <!-- list of booking in small screens -->
       <div
-        class="flex flex-col md:hidden max-w-[95%] sm:max-w-[80%] w-full gap-3 pt-10"
+        class="flex flex-col lg:hidden max-w-[95%] sm:max-w-[80%] w-full gap-3 pt-10 md:max-w-[650px]"
       >
         <BookingList forceOpenBookingSheet={true} shimmerEffect={loading} />
       </div>
