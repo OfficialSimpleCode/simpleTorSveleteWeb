@@ -52,6 +52,7 @@ export default class BusinessModel {
   shopName: string = "";
   productId: string = "";
   businessId: string = "";
+  lastDateChangeBusinessDescription?: Date;
   createdAt: Date = new Date();
   blockedUsersTemp: Map<string, string> = new Map();
   lastTimeConnected: Date = new Date();
@@ -190,6 +191,10 @@ export default class BusinessModel {
         json["workersPermissions"]
       );
     }
+    if (json["lastDateChangeBusinessDescription"] != null) {
+      this.lastDateChangeBusinessDescription =
+        isoToDate(json["lastDateChangeBusinessDescription"]) ?? new Date();
+    }
 
     this.previewDoc = json["previewDoc"] ?? "";
     this.workersProductsId = json["workersProductsId"] ?? "";
@@ -235,8 +240,6 @@ export default class BusinessModel {
     if (this.workersIds[ownerId.replaceAll("+", "")] == null) {
       this.workersIds[ownerId.replaceAll("+", "")] = "";
     }
-
-    console.log(this.workersIds);
 
     this.dynamicLink = json["dynamicLink"] ?? "";
     this.masofNumber = json["masofNumber"] ?? "";
@@ -334,6 +337,12 @@ export default class BusinessModel {
     if (this.urlEndPoint != null) {
       data.urlEndPoint = this.urlEndPoint;
     }
+    if (this.lastDateChangeBusinessDescription != null) {
+      data.lastDateChangeBusinessDescription = dateIsoStr(
+        this.lastDateChangeBusinessDescription
+      );
+    }
+
     data.workersIds = this.workersIds;
     data.createdAt = dateIsoStr(this.createdAt);
     data.lastTimeConnected = dateIsoStr(this.lastTimeConnected);

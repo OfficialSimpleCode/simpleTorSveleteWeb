@@ -33,7 +33,7 @@
     <div
       class="mask mask-squircle w-[70px] h-[70px] rounded-full {shimmerEffect
         ? 'me-1 bg-base-content opacity-10 '
-        : ''}"
+        : ''} "
     >
       <img
         class={shimmerEffect ? "hidden" : ""}
@@ -47,9 +47,9 @@
   </div>
 
   <div
-    class="avatar relative top-[42px] end-[26px] {shimmerEffect
+    class="avatar relative top-[42px] end-[20px] {shimmerEffect
       ? 'hidden'
-      : ''}"
+      : ''} "
   >
     <div
       class="mask mask-squircle w-[30px] h-[30px] rounded-full border-[1px] border-opacity-70"

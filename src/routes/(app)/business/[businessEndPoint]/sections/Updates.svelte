@@ -6,6 +6,7 @@
   import { Update } from "$lib/models/business/update_model";
   import { businessStore, businessSubStore } from "$lib/stores/Business";
   import { isNotEmpty, length } from "$lib/utils/core_utils";
+  import { dateToDateStr } from "$lib/utils/times_utils";
   import { _, translate } from "$lib/utils/translate";
   let businessUpdates: Update[] = [];
 
@@ -16,9 +17,12 @@
         ? new Update(
             translate("onBusiness"),
             $businessStore?.businessDescription,
-            "0",
-            "",
-            ""
+            "aboutBusiness",
+            dateToDateStr(
+              $businessStore.lastDateChangeBusinessDescription ??
+                $businessStore.createdAt
+            ),
+            "0"
           )
         : undefined;
     if (value != null && value != SubType.basic) {
