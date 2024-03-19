@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
+  import ExitFromInstagramExplain from "$lib/components/ExitFromInstagramExplain.svelte";
   import { LoginReason } from "$lib/consts/auth";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { businessStore } from "$lib/stores/Business";
@@ -61,7 +62,9 @@
   }
 </script>
 
-{#if isInstagramWebView}{:else}
+{#if isInstagramWebView}
+  <ExitFromInstagramExplain />
+{:else}
   <!-- Dialog -->
 
   <DeleteUserDialog
