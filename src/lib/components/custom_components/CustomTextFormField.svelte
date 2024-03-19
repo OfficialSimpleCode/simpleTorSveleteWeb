@@ -13,6 +13,7 @@
   export let validationFunc: ((value: string) => string | null) | undefined =
     undefined;
   export let isRequired: boolean = false;
+  export let mark: boolean = false;
   export let lableTranslateKey: string = "";
   export let type: InputOptions = InputOptions.text;
   export let withErrorSpacing: boolean = false;
@@ -63,7 +64,9 @@
   <!-- text -->
 
   <input
-    class="input input-bordered {bgColor} w-full {validationResp
+    class="input input-bordered {bgColor} w-full {mark
+      ? 'border-primary'
+      : ''} {validationResp
       ? 'border-red-700'
       : ''} [&::-webkit-inner-spin-button]:appearance-none"
     autocomplete={isOTP ? "one-time-code" : undefined}

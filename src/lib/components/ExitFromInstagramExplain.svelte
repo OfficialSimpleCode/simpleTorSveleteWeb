@@ -10,7 +10,7 @@
   let moreIcon: string = "ri:more-fill";
   let externalBrowserText = "Open in external browser";
   onMount(() => {
-    if (!isAppleUser) {
+    if (!isAppleUser()) {
       imgSrc = androidImg;
       moreIcon = "ic:baseline-more-vert";
       externalBrowserText = translate("externalBrowserTextAndroid", $_);
@@ -19,7 +19,7 @@
 </script>
 
 <main>
-  <div class="flex flex-col justify-center items-center py-4 px-2">
+  <div class="flex flex-col justify-center items-center pt-4 px-2 pb-[300px]">
     <!-- Title -->
     <h1 class="text-xl text-center">{translate("inInstagramBrowser", $_)}</h1>
     <p class="text-md text-red-500 opacity-70 text-center max-w-[300px] pt-3">

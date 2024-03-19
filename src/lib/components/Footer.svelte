@@ -25,7 +25,7 @@
         {translate("treatments", $_).toLocaleUpperCase()}
       </header>
       <a class="link link-hover" href="/">{translate("queueSystem", $_)}</a>
-      <p class="link link-hover">{translate("systemsDevelopment", $_)}</p>
+      <!-- <p class="link link-hover">{translate("systemsDevelopment", $_)}</p> -->
       <button class="link link-hover" on:click={openContactUs}
         >{translate("ContactUs", $_)}</button
       >
