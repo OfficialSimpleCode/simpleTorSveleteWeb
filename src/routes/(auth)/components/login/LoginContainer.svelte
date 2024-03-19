@@ -22,11 +22,21 @@
   const dispatch = createEventDispatcher();
   let deleteUserDialog: HTMLDialogElement;
   let loading: boolean = false;
-
+  let userAgent: string = "";
+  let isIn: boolean | null = null;
   let isInstagramWebView: boolean = false;
 
   onMount(() => {
-    const userAgent: string = window.navigator.userAgent.toLowerCase();
+    const isInstagramBrowser = /Instagram/.test(navigator.userAgent);
+
+    if (isInstagramBrowser) {
+      isIn = true;
+      // Handle the Instagram browser here
+    } else {
+      isIn = false;
+      // Continue with Google authentication
+    }
+    userAgent = window.navigator.userAgent.toLowerCase();
     isInstagramWebView = userAgent.includes("instagram");
   });
 
@@ -104,3 +114,7 @@
     {/if}
   </main>
 {/if}
+{userAgent}
+
+""""""
+{isIn}
