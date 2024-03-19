@@ -1,5 +1,6 @@
 <script lang="ts">
   import { base } from "$app/paths";
+  import { page } from "$app/stores";
   import Logo from "$lib/components/Logo.svelte";
   import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
   import ContactUsDialog from "$lib/components/dialogs/ContactUsDialog.svelte";
@@ -9,7 +10,6 @@
   import FooterSocialIcons from "../../routes/(app)/business/[businessEndPoint]/components/FooterSocialIcons.svelte";
   let contactUsDialog: HTMLDialogElement;
 
-  export let generatedPage: boolean = true;
   function openContactUs() {
     pushDialog(contactUsDialog);
   }
@@ -65,13 +65,18 @@
   <!-- bottom footer -->
   <div class="footer px-10 py-4 text-base-content border-base-300">
     <!-- logo and company details -->
-    <aside class="items-center grid-flow-col {generatedPage ? '' : 'hidden'}">
+    <aside class="items-center grid-flow-col">
       <Logo />
+
       <p>
-        {translate("ourCompanyName", $_)}<br />{translate(
-          "createdBySimpleTor",
-          $_
-        )}
+        {"SA SIMPLE CODE LTD"}<br />
+        <span
+          class="{$page.url.pathname.includes('business')
+            ? ''
+            : 'hidden'} opacity-70"
+        >
+          {translate("createdBySimpleTor", $_)}
+        </span>
       </p>
     </aside>
 

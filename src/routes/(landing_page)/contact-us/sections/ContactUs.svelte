@@ -1,11 +1,12 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import { contactUsSubjectStore } from "$lib/controllers/home_page_controller";
   import { _, translate } from "$lib/utils/translate";
   import FormContainer from "../components/FormContainer.svelte";
   import TextChip from "../components/TextChip.svelte";
 
   const urlParams = $page.url.searchParams;
-  let subject: string = urlParams.get("subject") ?? "";
+  contactUsSubjectStore.set(urlParams.get("subject") ?? "");
 </script>
 
 <section class="bg-base-300">
@@ -27,19 +28,19 @@
         <div
           class="flex flex-wrap gap-2 py-8 max-w-[550px] justify-center lg:justify-start"
         >
-          <TextChip textTransKey="textChip2" bind:subject />
-          <TextChip textTransKey="textChip3" bind:subject />
-          <TextChip textTransKey="textChip6" bind:subject />
+          <TextChip textTransKey="textChip2" />
+          <TextChip textTransKey="textChip3" />
+          <TextChip textTransKey="textChip6" />
 
-          <TextChip textTransKey="textChip4" bind:subject />
-          <TextChip textTransKey="textChip1" bind:subject />
-          <TextChip textTransKey="textChip5" bind:subject />
+          <TextChip textTransKey="textChip4" />
+          <TextChip textTransKey="textChip1" />
+          <TextChip textTransKey="textChip5" />
 
-          <TextChip textTransKey="textChip7" bind:subject />
+          <TextChip textTransKey="textChip7" />
         </div>
       </div>
       <!-- form side -->
-      <FormContainer bind:subject />
+      <FormContainer />
     </div>
   </div>
 </section>

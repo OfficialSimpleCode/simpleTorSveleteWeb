@@ -1,11 +1,11 @@
 <script lang="ts">
+  import { contactUsSubjectStore } from "$lib/controllers/home_page_controller";
   import { _, translate } from "$lib/utils/translate";
 
   export let textTransKey: string;
-  export let subject: string;
 
   function onTap() {
-    subject = translate(textTransKey, $_);
+    contactUsSubjectStore.set(translate(textTransKey, $_));
   }
 </script>
 
