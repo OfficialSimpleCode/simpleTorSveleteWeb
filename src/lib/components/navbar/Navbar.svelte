@@ -10,6 +10,7 @@
 </script>
 
 <div
+  id="navbar"
   class="navbar bg-base-100 z-20 gap-8 justify-between items-center"
   style="direction: ltr;"
 >

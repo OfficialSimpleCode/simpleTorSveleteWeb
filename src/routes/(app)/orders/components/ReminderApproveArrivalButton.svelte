@@ -41,7 +41,7 @@
       ? translate("ConfirmedArrival", $_)
       : translate("ConfirmArrival", $_)}
     icon={booking.confirmedArrival && booking.recurrenceEvent == null
-      ? "mdi:check-circle-outline"
+      ? "ep:success-filled"
       : "mdi:checkbox-blank-circle-outline"}
     onClick={onclick}
     {bgColor}
