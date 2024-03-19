@@ -122,7 +122,7 @@ export default class MessagesHelper {
     bookings: Record<string, Booking>
   ): Promise<boolean> {
     console.log("cccccccccccccccccccccccccccccccccccccccccccccccc");
-    if (Object.keys(bookings).length === 0) {
+    if (isEmpty(bookings)) {
       return true;
     }
 
@@ -130,6 +130,7 @@ export default class MessagesHelper {
     const businessToIncrease: Record<string, number> = {};
     Object.entries(bookings).forEach(([_, booking]) => {
       const reminders = booking.messageRemindersOnBooking;
+      console.log("wwwwwwwwwqqqqqqq");
       console.log(reminders);
       reminders.forEach((reminderId) => {
         messages[reminderId] = removePhoneNumberPrefix(booking.customerPhone);
@@ -138,7 +139,8 @@ export default class MessagesHelper {
       businessToIncrease[booking.buisnessId] =
         businessToIncrease[booking.buisnessId]! + reminders.length;
     });
-
+    console.log("wwwwwwww");
+    console.log(messages);
     if (isEmpty(messages)) {
       return true;
     }

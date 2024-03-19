@@ -237,9 +237,7 @@ export default class Treatment {
       isMulti: json["isMulti"] || false,
       note: json["note"] || "",
       count: json["count"] || 1,
-
       price: json["price"] ? Price.fromJson(json["price"]) : undefined,
-
       amountInAdvance:
         json["amountInAdvance"] !== undefined
           ? typeof json["amountInAdvance"] === "number"

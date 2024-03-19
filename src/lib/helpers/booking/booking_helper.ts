@@ -230,6 +230,10 @@ export default class BookingHelper {
       );
       return true;
     }
+    console.log("1111111111");
+    console.log("dd", oldBooking.recurrenceEvent);
+    console.log("2", oldBookingDateForReccurence);
+    console.log("22", newBooking.recurrenceEvent);
 
     newBooking.updateBookingByBooking({
       oldBooking: oldBooking,
@@ -589,7 +593,10 @@ export default class BookingHelper {
       workerAction,
     });
 
-    if (worker && recurrenceBooking.recurrenceNotificationsLastDate) {
+    if (
+      recurrenceBooking.recurrenceNotificationsLastDate &&
+      date <= recurrenceBooking.recurrenceNotificationsLastDate!
+    ) {
       // Make a booking for the notification deletion
       const bookingTemp = Booking.fromBooking(recurrenceBooking);
       bookingTemp.recurrenceEvent = undefined;

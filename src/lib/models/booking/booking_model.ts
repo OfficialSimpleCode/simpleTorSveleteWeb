@@ -168,6 +168,7 @@ export default class Booking extends ScheduleItem {
     newBooking.buisnessId = booking.buisnessId;
     newBooking.bookingId = booking.bookingId;
     newBooking.workerGender = booking.workerGender;
+    newBooking.recurrenceChildDate = booking.recurrenceChildDate;
     newBooking.shopIcon = booking.shopIcon;
     newBooking.workerId = booking.workerId;
     newBooking.recurrenceTimeId = booking.recurrenceTimeId;
@@ -181,6 +182,7 @@ export default class Booking extends ScheduleItem {
     newBooking.isVerifiedPhone = booking.isVerifiedPhone;
     newBooking.workerDeleted = booking.workerDeleted;
     newBooking.finishInvoices = booking.finishInvoices;
+
     newBooking.adress = booking.adress;
     newBooking.addToClientAt = booking.addToClientAt;
     newBooking.showAdressAlert = booking.showAdressAlert;
@@ -1079,7 +1081,10 @@ export default class Booking extends ScheduleItem {
     }
     this.debts = new Map(oldBooking.debts);
     this.isUserExist = oldBooking.isUserExist;
-    this.createdAt = oldBooking.createdAt;
+    //if the old booking is recurrence need to create new booking from it
+    //and because of that set created at to now
+    this.createdAt =
+      oldBooking.recurrenceEvent != null ? new Date() : oldBooking.createdAt;
     this.lastTimeNotifyOnDebt = oldBooking.lastTimeNotifyOnDebt;
     this.cancelDate = oldBooking.cancelDate;
     this.wasWaiting = oldBooking.wasWaiting;

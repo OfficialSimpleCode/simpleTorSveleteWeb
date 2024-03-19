@@ -9,7 +9,7 @@ import { get } from "svelte/store";
 
 export async function updateBooking() {
   const newWorker = BookingController.worker;
-  if (newWorker === undefined) {
+  if (newWorker == null) {
     return;
   }
   const bookingMakerData = get(bookingMakerStore);
@@ -18,10 +18,16 @@ export async function updateBooking() {
 
   const booking = BookingController.bookingFromValues;
 
+  console.log("eeeeeeeeeeeeee");
+  console.log("dd", bookingMakerData.oldBooking!.recurrenceEvent);
+  console.log("2", bookingMakerData.oldBooking!.recurrenceChildDate);
+
   const result = await BookingHelper.GI().updateBooking({
     oldBooking: bookingMakerData.oldBooking!,
     newBooking: booking,
     oldWorker: oldWorker,
+    oldBookingDateForReccurence:
+      bookingMakerData.oldBooking!.recurrenceChildDate,
     newWorker: newWorker,
     newClientNote: bookingMakerData.note,
   });

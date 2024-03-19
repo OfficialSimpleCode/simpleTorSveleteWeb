@@ -36,6 +36,7 @@ export interface BookingMaker {
   services: Record<string, Treatment>;
   oldBooking: Booking | undefined;
   date?: Date;
+
   isUpdate: boolean;
   pickMultipleServices: boolean;
   currentCurrencyCode?: string;
@@ -50,6 +51,7 @@ export interface BookingMaker {
   timePickerDisplayDates: Date[];
   numberOfShownDays: number;
   finish: boolean;
+  notifyUserAboutRecurrenceChange: boolean;
 }
 export const bookingMakerStore = writable<BookingMaker>();
 
@@ -64,10 +66,11 @@ export default class BookingController {
       workerId: BookingController.bookingToUpdate?.workerId,
       showVerificationAlert: false,
       services: {},
+      notifyUserAboutRecurrenceChange: false,
       isOnVerification: false,
       oldBooking: BookingController.bookingToUpdate,
       note: BookingController.bookingToUpdate?.note ?? "",
-      date: BookingController.bookingToUpdate?.bookingDate,
+      date: BookingController.bookingToUpdate?.currentDisplayDate,
       isUpdate: BookingController.bookingToUpdate != null,
       currentPaymentType: PaymentTypes.payment,
       currentCurrencyCode: BookingController.bookingToUpdate?.currency.code,
@@ -78,12 +81,13 @@ export default class BookingController {
       currentStep: 0,
       isMultiEvent: false,
       timePickerObjects: {},
+
       finish: false,
 
       numberOfShownDays:
         get(screenSizeStore).width > maxWidthToShow5Days ? 7 : 5,
       timePickerDisplayDates: getForwardDays(
-        new Date(),
+        BookingController.bookingToUpdate?.currentDisplayDate ?? new Date(),
         get(screenSizeStore).width > maxWidthToShow5Days ? 7 : 5
       ),
     };
@@ -278,6 +282,7 @@ export default class BookingController {
       if (treatment.isMulti) {
         this.addMultiService(bookingMaker, treatment);
       } else {
+        console.log("wwwwwww");
         this.addService(bookingMaker, treatment);
       }
     } else {
@@ -404,7 +409,7 @@ export default class BookingController {
     }
     bookingMaker.services[treatment.id] = treatment;
     bookingMaker.isMultiEvent = false;
-
+    console.log(bookingMaker.services);
     bookingMakerStore.set(bookingMaker);
   }
 

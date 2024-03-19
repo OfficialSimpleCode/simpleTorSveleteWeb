@@ -28,6 +28,7 @@
   let termDialog: HTMLDialogElement;
   let downloadAppDialog: HTMLDialogElement;
   let needVerificationForReminderDialog: HTMLDialogElement;
+  let recurrenceUpdateDialog: HTMLDialogElement;
   let isLoading: boolean = false;
 
   const worker = BookingController.worker;
@@ -44,6 +45,7 @@
 
     isLoading = true;
     console.log(publicCustomer);
+
     try {
       await onFinishNavigator({
         downloadAppDialog,
@@ -65,6 +67,15 @@
     }
 
     if (!handleApproveTerm(termDialog)) {
+      return;
+    }
+
+    //if it is a recurrence update let the user know that the booking will sperate from the original booksing
+    if (
+      $bookingMakerStore.oldBooking?.recurrenceEvent != null &&
+      !$bookingMakerStore.notifyUserAboutRecurrenceChange
+    ) {
+      pushDialog(recurrenceUpdateDialog);
       return;
     }
     if ($bookingMakerStore.showVerificationAlert) {
@@ -134,6 +145,23 @@
   maxWidth="max-w-[400px]"
   saveTranslateKey={"verify"}
   cancelTranslateKey={"skip"}
+/>
+
+<GeneralDialog
+  bind:dialog={recurrenceUpdateDialog}
+  titleTransKey={"recurrrenceChange"}
+  content={translate("recurrrenceChangeExplain")}
+  onSave={async () => {
+    //change the make booking store for the dialog not pop again
+    bookingMakerStore.update((value) => {
+      value.notifyUserAboutRecurrenceChange = true;
+      return value;
+    });
+    handleClick();
+  }}
+  maxWidth="max-w-[400px]"
+  saveTranslateKey={"confirmNow"}
+  cancelTranslateKey={"cancel"}
 />
 
 {#if $bookingMakerStore.isOnVerification}

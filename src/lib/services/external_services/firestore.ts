@@ -681,7 +681,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     Object.entries(data).forEach(([fieldName, value]) => {
       let organizedValue: any = value;
 
-      if (organizedValue == undefined) {
+      if (organizedValue == null) {
         organizedValue = deleteField();
       }
 

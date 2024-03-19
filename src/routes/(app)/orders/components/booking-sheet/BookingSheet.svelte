@@ -17,10 +17,12 @@
   export let booking: Booking;
 
   export let forceOpenBookingSheet: boolean;
+
   let downloadAppDialog: HTMLDialogElement;
   console.log(
     "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
-    booking.notificationType
+    booking.notificationType,
+    booking.recurrenceChildDate
   );
 </script>
 
