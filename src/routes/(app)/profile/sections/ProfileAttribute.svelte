@@ -71,7 +71,6 @@
 
   async function onUpdatePhone(phone: string) {
     if ($userStore.isVerifiedPhone) {
-      console.log(phone);
       sendSms(phone);
       pushDialog(verificationDialog);
       return true;

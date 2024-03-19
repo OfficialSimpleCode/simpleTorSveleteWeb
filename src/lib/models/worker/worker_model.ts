@@ -223,7 +223,6 @@ export default class WorkerModel {
   hasTreatemnt(treatmentId: string): boolean {
     for (const [index, subject] of Object.entries(this.treatmentsSubjects)) {
       if (subject.containTreatment(treatmentId)) {
-        console.log("Eeeeeeeeeeeeeeeeeeeee");
         return true;
       }
     }
@@ -422,20 +421,13 @@ export default class WorkerModel {
 
     this.specificRangeChanges = {};
     if (workerJson["specificRangeChanges"]) {
-      console.log(this.id);
-      console.log(
-        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-      );
       Object.entries<Record<string, any>>(
         workerJson["specificRangeChanges"]
       ).forEach(([key, val]) => {
-        console.log("55555555555555555555555555555");
-
         const shiftRange = ShiftChangeRange.fromJson(val, key);
-        console.log(shiftRange);
+
         // the specific range dosen't over
         if (shiftRange.end >= setToMidNight(new Date())) {
-          console.log("33333333333333333333333333333");
           this.specificRangeChanges[key] = shiftRange;
         }
       });

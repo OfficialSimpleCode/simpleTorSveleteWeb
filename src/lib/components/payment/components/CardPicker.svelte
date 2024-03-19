@@ -8,8 +8,6 @@
   export let businessId: string | undefined = undefined;
   const dispatch = createEventDispatcher();
 
-  console.log("rrrrrrrrrrrrrrrrrr");
-  console.log($userStore);
   function getAllBusinessCards(user: UserModel): Record<string, PaymentCard> {
     if (businessId) {
       return user.paymentCards[businessId];
@@ -27,7 +25,6 @@
   userStore.subscribe((v) => {
     cards = getAllBusinessCards(v);
   });
-  console.log(cards);
 </script>
 
 {#each Object.entries(cards) as [cardId, card]}

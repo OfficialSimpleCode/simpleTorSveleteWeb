@@ -87,7 +87,6 @@ export default class BookingHelper {
         customerData: newCustomerData,
       })
       .then(async (value) => {
-        console.log(value);
         if (needPayInAdvance) {
           return value;
         }
@@ -230,10 +229,6 @@ export default class BookingHelper {
       );
       return true;
     }
-    console.log("1111111111");
-    console.log("dd", oldBooking.recurrenceEvent);
-    console.log("2", oldBookingDateForReccurence);
-    console.log("22", newBooking.recurrenceEvent);
 
     newBooking.updateBookingByBooking({
       oldBooking: oldBooking,
@@ -296,6 +291,7 @@ export default class BookingHelper {
             worker: newWorker,
             needPayInAdvance: false,
           });
+
           NotificationHandler.GI().afterUpdateBooking({
             newBooking,
             oldBooking,

@@ -47,18 +47,15 @@ export default class NotificationHandler {
   }): Promise<void> {
     // Notify the worker that the user ordered a booking for him
     await NotificationsHelper.GI().notifyWorkerAboutOrder(worker, booking);
-    console.log("ddddddddddddd");
+
     if (booking.status === BookingStatuses.approved) {
-      console.log(booking.notificationType);
       // Make scheduled notifications/messages
       if (booking.notificationType === NotificationType.message) {
-        console.log("1111111111111111111");
         // Make the scheduled notification and save the message ID in the booking
         MessagesHelper.GI().scheduleMessageToMultipleBookings({
           [booking.bookingId]: booking,
         });
       } else if (booking.notificationType === NotificationType.push) {
-        console.log("333333333333333333");
         // Make a scheduled push notification
         NotificationsHelper.GI().makeScheduleBookingNotification({ booking });
       }
@@ -88,14 +85,10 @@ export default class NotificationHandler {
           ) {
             //if the booking is recurrence child need to change his id
             if (booking.recurrenceRef != null) {
-              console.log(
-                "333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333"
-              );
               booking.bookingId = `${booking.recurrenceRef}--${dateToDateStr(
                 booking.bookingDate
               )}`;
             }
-            console.log(booking.bookingId);
             // Delete the schedule message if it exists
             MessagesHelper.GI().cancelScheduleMessageToMultipleBookings({
               [booking.bookingId]: booking,
@@ -103,7 +96,6 @@ export default class NotificationHandler {
           }
         }
         if (booking.notificationType === NotificationType.push) {
-          console.log("wewwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
           // Delete the scheduled notification
           NotificationsHelper.GI().deleteAllScheduleBookingsNotifications([
             booking,
@@ -392,25 +384,22 @@ export default class NotificationHandler {
     minutesBeforeAlert: number;
     hasConfirmArrivalReminder: boolean;
   }): Promise<void> {
-    console.log("fffffffffffffffffff");
-
     // Notify worker that user confirmed arrival
     await NotificationsHelper.GI().notifyWorkerThatClientConfirmArrival({
       worker,
       booking,
     });
-    console.log("wwwwwwwwwwwwwwwwwwww");
+
     if (!hasConfirmArrivalReminder) {
       return;
     }
-    console.log("333333333333333333");
+
     if (booking.notificationType === NotificationType.message) {
       await MessagesHelper.GI().cancelSpecificScheduleMessageOnBooking(
         booking,
         BookingReminderType.confirmArrival
       );
     } else if (booking.notificationType === NotificationType.push) {
-      console.log("11111111111111111111111111");
       await NotificationsHelper.GI().cancelSpecificScheduleNotificationOnBooking(
         {
           booking: booking,

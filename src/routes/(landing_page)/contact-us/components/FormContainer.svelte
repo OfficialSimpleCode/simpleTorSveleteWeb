@@ -45,10 +45,9 @@
       phone = $userStore.phoneNumber;
       isValid.name = true;
       isValid.phone = true;
-      console.log("dd", isValid);
     }
   });
-  console.log(isValid);
+
   async function onSendMessage() {
     if (loading) {
       return;
@@ -62,7 +61,7 @@
       });
       return;
     }
-    console.log(isValid);
+
     if (Object.values(isValid).includes(false)) {
       if (!isValid.name) {
         ShowToast({
@@ -123,8 +122,6 @@
   }
 
   function onChangePhone(event: CustomEvent<PhonePickerEvent>) {
-    console.log("Ddddddddddddddddddddd");
-    console.log(event.detail.value, event.detail.isValid);
     message.phone = event.detail.value ?? "";
     isValid.phone = event.detail.isValid;
     phone = event.detail.value ?? "";

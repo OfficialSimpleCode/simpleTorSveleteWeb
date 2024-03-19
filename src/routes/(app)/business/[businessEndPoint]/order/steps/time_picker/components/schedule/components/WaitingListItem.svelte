@@ -24,8 +24,7 @@
       : "");
 
   const day = weekDays[timeObj.from.getDay()];
-  // console.log(timeObj.from.getDay(), day);
-  // console.log(BookingController.worker!.waitingListExceptionDays);
+
   // $: showButton =
   //   timeObj.isMulti ||
   //   !BookingController.worker!.waitingListExceptionDays.has(day);

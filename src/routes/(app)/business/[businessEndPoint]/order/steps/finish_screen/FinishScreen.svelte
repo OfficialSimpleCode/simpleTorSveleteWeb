@@ -44,7 +44,6 @@
     }
 
     isLoading = true;
-    console.log(publicCustomer);
 
     try {
       await onFinishNavigator({
@@ -101,7 +100,6 @@
   }
 
   async function onVerifiedPhone() {
-    console.log("3333333333333333333333333333333333333333333333333333");
     //update the boooking maker store that no need to show the phone verification anymore
     bookingMakerStore.update((val) => {
       val.showVerificationAlert = showPhoneVerificationAlert(

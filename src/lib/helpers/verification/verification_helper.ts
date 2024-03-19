@@ -205,8 +205,6 @@ export class VerificationHelper {
   }: {
     otp: string;
   }): Promise<boolean> {
-    console.log("ttttttttttttttttttttttttttttttttttttttttttttttttttt");
-
     return await this.verificationRepo.verifyOTPWithExternalProvider({
       verificationId: this.verificationID,
       otp,

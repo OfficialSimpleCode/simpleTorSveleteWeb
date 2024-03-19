@@ -141,7 +141,6 @@ export function sendMessageForMulti(
   multiBookingUser: MultiBookingUser,
   worker: WorkerModel
 ): NotificationType {
-  console.log(worker.notifications.notificationOption);
   const hasEnoughMessages =
     BusinessInitializer.GI().business.businessData.hasMessages;
   switch (worker.notifications.notificationOption) {

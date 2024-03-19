@@ -86,7 +86,6 @@ export class LoadAppHelper {
   }
 
   private async loadUser(): Promise<void> {
-    console.log(`user -> ${UserInitializer.GI().userId}`);
     if (!UserInitializer.GI().isConnected) {
       isConnectedStore.set(false);
       return;

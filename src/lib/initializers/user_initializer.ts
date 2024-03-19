@@ -74,6 +74,7 @@ export default class UserInitializer {
         path: usersCollection,
         docId: newUserId,
       });
+      console.log("userDoc.exists()", userDoc.exists());
       // the user isn't exist
       if (!userDoc.exists()) {
         console.log(
@@ -97,8 +98,6 @@ export default class UserInitializer {
       // func will take it
       this.startPublicDataListening();
       userStore.set(this.user);
-
-      console.log("333333333333333333333333333333333333333333333333");
 
       //actions that need to do if the user enter to business
       this.actionsOnBusiness();
@@ -176,7 +175,6 @@ export default class UserInitializer {
     oldBusinessId: string,
     newBusinessId: string
   ): Promise<void> {
-    console.log("replaceVisitedBusiness");
     if (
       this.user.lastVisitedBuisnesses.includes(newBusinessId) &&
       this.user.lastVisitedBuisnesses[
@@ -191,10 +189,7 @@ export default class UserInitializer {
       (businessId) => businessId != oldBusinessId
     );
     this.user.lastVisitedBuisnesses.push(newBusinessId);
-    console.log(
-      "replaceVisitedBusiness lastVisitedBuisnesses-> ",
-      this.user.lastVisitedBuisnesses
-    );
+
     await this.userRepo.updateFieldInsideDocAsMapRepo({
       path: usersCollection,
       docId: this.user.id,
@@ -204,7 +199,6 @@ export default class UserInitializer {
   }
 
   async addVisitedBusiness(businessId: string): Promise<void> {
-    console.log("addVisitedBusiness");
     if (this.user.lastVisitedBuisnessesRemoved.includes(businessId)) {
       //remove from lastVisitedBuisnessesRemoved
       this.user.lastVisitedBuisnessesRemoved =
@@ -213,11 +207,6 @@ export default class UserInitializer {
         );
       //add to the lastVisitedBuisnesses
       this.user.lastVisitedBuisnesses.push(businessId);
-
-      console.log(
-        "1addVisitedBusiness lastVisitedBuisnesses-> ",
-        this.user.lastVisitedBuisnesses
-      );
 
       await this.userRepo.updateMultipleFieldsInsideDocAsMapRepo({
         path: usersCollection,
@@ -230,10 +219,6 @@ export default class UserInitializer {
       });
     } else {
       this.user.lastVisitedBuisnesses.push(businessId);
-      console.log(
-        "2addVisitedBusiness lastVisitedBuisnesses-> ",
-        this.user.lastVisitedBuisnesses
-      );
 
       await this.userRepo.updateFieldInsideDocAsMapRepo({
         path: usersCollection,
@@ -354,8 +339,6 @@ export default class UserInitializer {
               this.user.userPublicData.reminders = await checkForReminders();
             }
 
-            console.log("dfdddddddddddddddddeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-            console.log("rrrrrrrrrrrrrr", this.user.bookingsToShow);
             userStore.set(this.user);
           }
         } catch (error) {
@@ -373,9 +356,9 @@ export default class UserInitializer {
         user.userPublicDataListener = undefined;
       }
 
-      console.log("User Listening canceled");
+      logger.info("User Listening canceled");
     } catch (e) {
-      console.log("Error while pausing the user listener -->", e);
+      logger.info("Error while pausing the user listener -->", e);
     }
   }
 

@@ -84,17 +84,12 @@ export function minutesToJumpOverForbbiden(
   timeSegments: Map<string, TimeSegment>,
   forbiddenTimes: Date[]
 ): number {
-  console.log("aaaaa start");
   const segments: TimeSegment[] = Array.from(timeSegments.values());
 
   let minutesToJump: number = 0; // 0 represents allowed time
   let segmentIndex: number = 0;
 
   forbiddenTimesPointers.forEach((pointer) => {
-    console.log(
-      "xsabicsdiauvsiduvhiusdahviuhsadfiuvhsiufhvuisdfhviushduivhuisdfhviudsfhviudsfh"
-    );
-
     const startSegment: Date = segments[segmentIndex].start;
     const endSegment: Date = addDuration(
       startSegment,
@@ -127,7 +122,6 @@ export function minutesToJumpOverForbbiden(
     // Passing to the next time segment
     segmentIndex += 1;
   });
-  console.log("aaaaaaa finish");
 
   return minutesToJump;
 }

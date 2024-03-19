@@ -79,10 +79,7 @@ export function relevantHoures({
   work.sort();
 
   const treatment = Treatment.fromTreatmentsMap(booking.treatments);
-  console.log(booking.treatments);
-  console.log("work", work);
-  console.log("forbbidenTimes", forbbidenTimes);
-  console.log("treatment", treatment);
+
   // Call the reverse algorithm if specified
   if (reverse) {
     return reverseRelevantHoures({
@@ -102,21 +99,14 @@ export function relevantHoures({
     () => 0
   );
 
-  console.log("forbiddenTimesPointers", forbiddenTimesPointers);
-
   // Calculate the current legal time (end with 0 or 5)
   let currentTime = getTimeDevideByFive(new Date(), true);
-
-  console.log("currentTime", currentTime);
 
   // Iterate over the work times
   let i = 0;
   for (let j = 0; j < work.length; j += 2) {
     let pointerWork = work[j];
     const endWork = work[j + 1];
-
-    console.log("pointerWork", pointerWork);
-    console.log("endWork", endWork);
 
     // Skipping to the current time
     if (shouldSkip(pointerWork, bookingDate)) {
@@ -147,11 +137,6 @@ export function relevantHoures({
     const lastTimeSegment = valuesArr[valuesArr.length - 1];
     const firstTimeSegment = valuesArr[0];
 
-    console.log("valuesArr", valuesArr);
-    console.log("valuesArr", valuesArr);
-    console.log("lastTimeSegment", lastTimeSegment);
-    console.log("firstTimeSegment", firstTimeSegment);
-
     // Pass over the current time stamp
     while (
       addDuration(lastTimeSegment.start, lastTimeSegment.duration) <= endWork
@@ -179,9 +164,7 @@ export function relevantHoures({
 
       // If the jump is set to 0, no need to jump - allowed time
       const allowedTime = minutesToJump === 0;
-      console.log("pointerWork", pointerWork);
-      console.log("minutesToJump", minutesToJump);
-      console.log("jump", jump);
+
       // Add the time and save place for short bookings
       if (allowedTime) {
         const timeToAdd = firstTimeSegment.start;
@@ -192,11 +175,6 @@ export function relevantHoures({
           timeToAdd.getHours(),
           timeToAdd.getMinutes()
         );
-
-        console.log("allowedTime", allowedTime);
-
-        console.log("timeToAdd", timeToAdd);
-        console.log("timeToAdd", timeToAdd);
 
         // Adding only the first time (start of the treatment)
         finalTimes.push(new TimePickerObj({ displayDate: dateToAdd }));
@@ -212,19 +190,7 @@ export function relevantHoures({
         if (workerSheet) {
           addMinutesToAllSegments(timeSegments, 5);
         } else {
-          console.log("BEFORE");
-          timeSegments.forEach((val, _) => {
-            console.log("Values for key", _);
-            console.log(val.start);
-            console.log(val.duration);
-          });
           addMinutesToAllSegments(timeSegments, jump);
-          console.log("AFTER");
-          timeSegments.forEach((val, _) => {
-            console.log("Values for key", _);
-            console.log(val.start);
-            console.log(val.duration);
-          });
         }
       } else {
         // Finish passing all over the forbidden times

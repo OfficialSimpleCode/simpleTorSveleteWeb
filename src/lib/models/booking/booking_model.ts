@@ -712,7 +712,6 @@ export default class Booking extends ScheduleItem {
     if (this.notificationType === NotificationType.message) {
       return {};
     }
-    console.log("22222222222");
 
     this.remindersTypes.forEach((minutes, type) => {
       if (minutes <= 0) {
@@ -721,7 +720,6 @@ export default class Booking extends ScheduleItem {
 
       const dateToNotify = dateToRemindBooking(this, minutes);
       if (dateToNotify >= dateToUtc(new Date())) {
-        console.log("11111111111111111");
         reminders[dateIsoStr(dateToNotify)] ??= {};
         reminders[dateIsoStr(dateToNotify)] = {
           [this.reminderId(type)]: null,
@@ -802,16 +800,10 @@ export default class Booking extends ScheduleItem {
     let totalEventsOnBooking = this.totalEventsCount;
     let eventIndex = 0;
     const hasInvoice = this.invoicesCoverPrice;
-    console.log("Wwwwwww");
-    console.log(Object.values(this.treatments).length);
 
     Object.entries(this.treatments).forEach(([treatmentIndex, treatment]) => {
-      console.log("2222222");
-      console.log(treatment.count);
       // Generate the treatment as time as the counter
       Array.from({ length: treatment.count }).forEach(() => {
-        console.log("22222222333333333");
-        console.log(treatment.times);
         treatment.times.forEach((timeData, timeIndex) => {
           // Adding the break before the segment
           lastTime = addDuration(
@@ -1241,7 +1233,6 @@ export default class Booking extends ScheduleItem {
       currency: this.totalPrice.currency,
     });
     this.transactions.forEach((transaction, transactionId) => {
-      console.log(transactionId);
       if (transaction.type === PaymentTypes.payment && !transaction.canceled) {
         totalTransactionsPrice.amount +=
           transaction.amount * (transaction.refund ? -1 : 1);

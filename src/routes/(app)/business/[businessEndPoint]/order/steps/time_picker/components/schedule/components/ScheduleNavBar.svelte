@@ -36,7 +36,7 @@
     if (!canForwards) {
       return;
     }
-    console.log("ssssssssssssss");
+
     let newDate = new Date();
 
     if ($bookingMakerStore.timePickerDisplayDates.length > 0) {

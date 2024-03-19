@@ -12,9 +12,7 @@
   let phoneNumber: string = "";
 
   function onContinue() {
-    console.log(phoneNumber);
     if (!validPhone) {
-      console.log("e");
       return;
     }
 

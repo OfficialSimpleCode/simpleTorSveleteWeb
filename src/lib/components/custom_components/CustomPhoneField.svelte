@@ -38,7 +38,6 @@
   }
 
   if (dialCode != "") {
-    console.log("eeeeeeeeeeeeeeee", dialCode);
     for (const c of normalizedCountries) {
       if (`+${c.dialCode}` === dialCode) {
         selectedCountry = c.iso2;

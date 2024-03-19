@@ -552,29 +552,21 @@ export default class RecurrenceEvent {
         freqRecurrenceToDuration[this.freqRecurrence].inMinutes * this.interval,
     });
     const intervalFromStart = diffDuration(date, setToMidNight(this.start!));
-    console.log("intervalFromStart", intervalFromStart);
+
     const startWeekDay = this.start!.getDay();
-    console.log("startWeekDay", startWeekDay);
 
     const dateWeekDay = date.getDay();
-    console.log("dateWeekDay", dateWeekDay);
+
     if (this.freqRecurrence === FreqRecurrence.weeks) {
       // days to finish this week
       const maxDelta = 6 - startWeekDay;
-      console.log("maxDelta", maxDelta);
+
       // days from start of this week
       const minDelta = rangeBetween.inDays - startWeekDay;
-      console.log("minDelta", minDelta);
+
       const restOFdays =
         (intervalFromStart.inDays + rangeBetween.inDays) % rangeBetween.inDays;
-      console.log("restOFdays", restOFdays);
-      console.log(
-        restOFdays < maxDelta || restOFdays >= minDelta,
-        this.weekDays.has(dateWeekDay)
-      );
 
-      console.log(dateWeekDay);
-      console.log(this.weekDays);
       return (
         (restOFdays < maxDelta || restOFdays >= minDelta) &&
         this.weekDays.has(dateWeekDay)

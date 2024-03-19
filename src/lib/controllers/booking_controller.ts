@@ -120,8 +120,6 @@ export default class BookingController {
       }
       this.setWorkerId(workerId);
     }
-
-    console.log(get(bookingMakerStore));
   }
 
   static get worker(): WorkerModel {
@@ -163,7 +161,7 @@ export default class BookingController {
     }
 
     logger.debug("Getting new data for the worker");
-    console.log(workerObj);
+
     // If treatments had changed
     const servicesCopy = { ...bookingMaker.services };
     Object.keys(servicesCopy).forEach((serviceId) => {
@@ -282,7 +280,6 @@ export default class BookingController {
       if (treatment.isMulti) {
         this.addMultiService(bookingMaker, treatment);
       } else {
-        console.log("wwwwwww");
         this.addService(bookingMaker, treatment);
       }
     } else {
@@ -342,7 +339,6 @@ export default class BookingController {
   }
 
   static addService(bookingMaker: BookingMaker, treatment: Treatment) {
-    console.log("addService");
     let treatmentsAmount = 0;
     Object.values(bookingMaker.services).forEach((treatment) => {
       treatmentsAmount += treatment.count;
@@ -409,7 +405,7 @@ export default class BookingController {
     }
     bookingMaker.services[treatment.id] = treatment;
     bookingMaker.isMultiEvent = false;
-    console.log(bookingMaker.services);
+
     bookingMakerStore.set(bookingMaker);
   }
 

@@ -201,19 +201,12 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         if (firestoreDataBaseWorker == null) {
           return false;
         }
-        console.log(
-          "444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444"
-        );
-        console.log(firestoreDataBaseWorker.workerPublicData.bookingsTimes);
-        console.log(firestoreDataBaseWorker.recurrence.recurrenceEvents);
 
         allowedTime = isOptionalTimeForBooking({
           worker: firestoreDataBaseWorker,
           booking: booking,
           timeToOrderOn1970Format: setTo1970(booking.bookingDate),
         });
-        console.log("rrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-        console.log(allowedTime);
 
         if (!allowedTime) {
           if (AppErrorsHelper.GI().error === Errors.currentlyOrderingForTime) {
@@ -287,7 +280,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           data: { [customerData.customerUuid]: customerDataJson },
         },
       });
-      console.log("rr");
+
       return true;
     };
 
@@ -465,10 +458,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
   }): Promise<boolean> {
     const oldBookingDateStr = dateToDateStr(oldBooking.bookingDate);
     const newBookingDateStr = dateToDateStr(newBooking.bookingDate);
-    console.log("eeeeeeeeeeeeee");
-    console.log("dd", oldBooking.recurrenceEvent);
-    console.log("2", oldBookingDateForReccurence);
-    console.log("22", newBooking.recurrenceEvent);
+
     const transacionCommands = async (transaction: any): Promise<any> => {
       const updatedBooking = await this.getUpdatedBookingDate({
         transaction: transaction,
@@ -513,10 +503,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         }
         return false;
       }
-      console.log("eeeeeeeeeeeeee");
-      console.log("dd", oldBooking.recurrenceEvent);
-      console.log("2", oldBookingDateForReccurence);
-      console.log("22", newBooking.recurrenceEvent);
+
       this.updateBookingsEvents(
         transaction,
         oldBooking,
@@ -667,7 +654,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         `data.${newBookingCustomerData.customerUuid}.userFirstBookingsDate`
       ] = dateIsoStr(newBookingCustomerData.userFirstBookingsDate);
     }
-    console.log(formatedNewCustomrsData);
+
     this.transactionUpdateMultipleFieldsAsMap({
       transaction: transaction,
       path: `${buisnessCollection}/${newBooking.buisnessId}/${workersCollection}/${newBooking.workerId}/${dataCollection}`,
@@ -700,7 +687,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           )}.${timeId}.RE.EDA.${dateToDateStr(oldBookingDateForReccurence)}`
         ] = "";
       });
-      console.log("recurrenceData", recurrenceData);
+
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
         path: `${path}/${oldBooking.workerId}/${dataCollection}`,
@@ -713,7 +700,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         }
         newBookingsEventsData[newBookingDay][timeId] = event;
       });
-      console.log("newBookingsEventsData", newBookingsEventsData);
+
       this.transactionSetAsMap({
         transaction: transaction,
         path: `${path}/${newBooking.workerId}/${dataCollection}/${dataDoc}/${bookingsEventsCollection}`,
@@ -730,7 +717,6 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       oldBooking.workerId !== newBooking.workerId ||
       oldBookingMonth !== newBookingMonth
     ) {
-      console.log("oldBookingsEventsData", oldBookingsEventsData);
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
         path: `${path}/${oldBooking.workerId}/${dataCollection}/${dataDoc}/${bookingsEventsCollection}`,
@@ -745,7 +731,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           newBookingsEventsData[newBookingDay] = { [time]: event };
         }
       });
-      console.log("newBookingsEventsData", newBookingsEventsData);
+
       this.transactionSetAsMap({
         transaction: transaction,
         path: `${path}/${newBooking.workerId}/${dataCollection}/${dataDoc}/${bookingsEventsCollection}`,
@@ -760,7 +746,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         ...oldBookingsEventsData,
         ...newBookingsEventsData,
       };
-      console.log("4444444444", oldBookingsEventsData);
+
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
         path: `${path}/${oldBooking.workerId}/${dataCollection}/${dataDoc}/${bookingsEventsCollection}`,
@@ -784,12 +770,11 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       newTreatmentsData[`bookingsTimes.${newBookingDateStr}.${time}`] =
         duration;
     });
-    console.log("newTreatmentsData", newTreatmentsData);
+
     if (
       oldBooking.recurrenceEvent != null &&
       oldBookingDateForReccurence != null
     ) {
-      console.log("2222222222");
       //add the new booking to the boookings times regular
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
@@ -806,10 +791,9 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     oldBooking.bookingWorkTimes.forEach((_, time) => {
       oldTreatmentsData[`bookingsTimes.${oldBookingDateStr}.${time}`] = null;
     });
-    console.log("oldTreatmentsData", oldTreatmentsData);
+
     //case that the new and the old are not in the same doc
     if (oldBooking.workerId !== newBooking.workerId) {
-      console.log("eeeeeeeeeeee");
       //delete the old bookingsTImes
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
@@ -828,7 +812,6 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
       //case that the new and the old are in the same doc
       oldTreatmentsData = { ...oldTreatmentsData, ...newTreatmentsData };
 
-      console.log("55555555", oldTreatmentsData);
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
         path: `${buisnessCollection}/${newBooking.buisnessId}/${workersCollection}/${newBooking.workerId}/${dataCollection}`,
@@ -1108,10 +1091,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           bookingsEventsData[`${bookingDay}.${time}.${eventFieldName}`] =
             eventValue;
         });
-        console.log(
-          `${path}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsEventsCollection}`
-        );
-        console.log(bookingsEventsData);
+
         // Put the booking event in the doc and create one if it doesn't exist
         this.transactionUpdateMultipleFieldsAsMap({
           transaction,
@@ -1132,10 +1112,6 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
             : `${booking.bookingId}.${fieldName}`
         ] = value;
       });
-      console.log(
-        `${path}/${booking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`
-      );
-      console.log(dataForWorker);
 
       this.transactionUpdateMultipleFieldsAsMap({
         transaction,
@@ -1362,9 +1338,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
     let path = DbPathesHelper.GI().userBookingsPathByBooking(booking);
 
     if (transaction != undefined) {
-      console.log(data);
       if (isSetMerge) {
-        console.log("isSetMerge", path, docId);
         this.transactionSetAsMap({
           transaction: transaction,
           path: path,
@@ -1372,7 +1346,6 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           data: data,
         });
       } else {
-        console.log("eeeeeeee", path, docId);
         this.transactionUpdateMultipleFieldsAsMap({
           transaction: transaction,
           path: path,
@@ -1380,8 +1353,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           data: data,
         });
       }
-      console.log(`${usersCollection}/${booking.customerId}/${dataCollection}`);
-      console.log(previewData);
+
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
         path: `${usersCollection}/${booking.customerId}/${dataCollection}`,
@@ -1459,19 +1431,15 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
           data: formatedCustomrsData,
         });
       }
-      console.log("111111111111111");
+
       const reccurenceEventsData: Record<string, any> = {};
-      console.log(recurrenceBooking.bookingsEventsAsJson);
 
       recurrenceBooking.bookingsEventsAsJson.forEach((event, time) => {
         reccurenceEventsData[
           `${bookingDateStr}.${time}.RE.EDA.${dateToDateStr(exceptionDate)}`
         ] = "";
       });
-      console.log("222222222222222222222");
-      console.log(`${path}/${recurrenceBooking.workerId}/${dataCollection}`);
-      console.log(reccurenceEventsData);
-      console.log(recurrenceEventsDoc);
+
       // Put the booking event in the doc and create one if doesn't exist
       this.transactionUpdateMultipleFieldsAsMap({
         transaction,
@@ -1479,14 +1447,7 @@ export class BookingRepo extends GeneralRepo implements BookingApi {
         docId: recurrenceEventsDoc,
         data: reccurenceEventsData,
       });
-      console.log("2222223333333333333333333333333333333333x");
-      console.log(
-        `${path}/${recurrenceBooking.workerId}/${dataCollection}/${dataDoc}/${bookingsObjectsCollection}`
-      );
-      console.log(dateToDateStr(recurrenceBooking.bookingDate));
-      console.log(
-        `${recurrenceBooking.bookingId}.RE.EDA.${dateToDateStr(exceptionDate)}`
-      );
+
       // Update the worker booking
       this.transactionUpdateAsMap({
         transaction,

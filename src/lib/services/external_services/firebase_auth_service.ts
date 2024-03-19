@@ -261,9 +261,7 @@ export class FirebaseAuthService extends VerificationService {
 
     const recaptchaVerifier = new RecaptchaVerifier(this._auth, html, {
       size: "invisible",
-      callback: (response: any) => {
-        console.log(response);
-      },
+      callback: (response: any) => {},
     });
 
     //make the recaptcha pazzle more often
@@ -291,15 +289,12 @@ export class FirebaseAuthService extends VerificationService {
   }
 
   get userIdSRV(): string {
-    console.log("ssssssssssssssssssssssssssssssssssssssssssss");
     if (this._auth.currentUser !== null) {
       const name = this._auth.currentUser.displayName;
 
       if (name !== null && name.includes("&&") && name.includes("+")) {
-        console.log(this.userPhoneSRV);
         return this.userPhoneSRV;
       } else {
-        console.log(this._auth.currentUser.uid);
         return this._auth.currentUser.uid;
       }
     }

@@ -42,7 +42,6 @@ export default class MakeRequest {
         headers: headers,
         body: body,
       });
-      console.log(`request resp body -->\n${response.status}`);
 
       logger.info(`request resp body -->\n${response}`);
 
@@ -70,14 +69,12 @@ export default class MakeRequest {
   }): Promise<Response> {
     switch (method) {
       case "post":
-        console.log("post", url);
         return await fetch(url, {
           method: "POST",
           body: body,
           headers: headers,
         });
       case "get":
-        console.log("get", url);
         return await fetch(url, { method: "GET", headers: headers });
       default:
         throw new Error(`Unsupported HTTP method: ${method}`);

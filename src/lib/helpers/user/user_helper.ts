@@ -196,7 +196,6 @@ export default class UserHelper {
 
     return await this.verificationRepo.deleteUser().then(async (value) => {
       if (value) {
-        console.log(value);
         UserInitializer.GI().user = new UserModel({
           name: "guest",
         });
@@ -483,7 +482,7 @@ export default class UserHelper {
           }
           await Promise.all(futures);
         }
-        console.log(value);
+
         return value;
       });
   }

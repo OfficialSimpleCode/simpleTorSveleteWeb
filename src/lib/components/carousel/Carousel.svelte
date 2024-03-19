@@ -21,7 +21,6 @@
   function runAutoScroll() {
     let loop = setInterval(() => {
       if (carousel === null) {
-        console.log("stoping auto scroll");
         clearInterval(loop);
       }
 

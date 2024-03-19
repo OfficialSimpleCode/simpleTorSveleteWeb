@@ -41,7 +41,6 @@ export default class MessagesHelper {
       return true;
     }
 
-    console.log("2222222222222222222222222222222222");
     const messages: ScheduleMessage[] = [];
     const businessToDecrease: Record<string, number> = {};
     Object.entries(bookings).forEach(([bookingId, booking]) => {
@@ -52,7 +51,7 @@ export default class MessagesHelper {
       businessToDecrease[booking.buisnessId] =
         businessToDecrease[booking.buisnessId]! + reminders.length;
     });
-    console.log(messages);
+
     // no possibility to Non-valid data
     return await this.sendMultipleScheduleAccordingToPlatfrom({
       messages: messages,
@@ -121,7 +120,6 @@ export default class MessagesHelper {
   async cancelScheduleMessageToMultipleBookings(
     bookings: Record<string, Booking>
   ): Promise<boolean> {
-    console.log("cccccccccccccccccccccccccccccccccccccccccccccccc");
     if (isEmpty(bookings)) {
       return true;
     }
@@ -130,8 +128,7 @@ export default class MessagesHelper {
     const businessToIncrease: Record<string, number> = {};
     Object.entries(bookings).forEach(([_, booking]) => {
       const reminders = booking.messageRemindersOnBooking;
-      console.log("wwwwwwwwwqqqqqqq");
-      console.log(reminders);
+
       reminders.forEach((reminderId) => {
         messages[reminderId] = removePhoneNumberPrefix(booking.customerPhone);
       });
@@ -139,13 +136,11 @@ export default class MessagesHelper {
       businessToIncrease[booking.buisnessId] =
         businessToIncrease[booking.buisnessId]! + reminders.length;
     });
-    console.log("wwwwwwww");
-    console.log(messages);
+
     if (isEmpty(messages)) {
       return true;
     }
 
-    console.log(messages);
     return await this._cancelMultipleScheduleAccordingToPlatfrom({
       messages: messages,
     }).then((value) => {
@@ -171,15 +166,15 @@ export default class MessagesHelper {
     const messages: ScheduleMessage[] = [];
     const businessToDecrease: Record<string, number> = {};
     const existNumbers: Set<string> = new Set();
-    console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+
     Object.entries(multiBookingUsers).forEach(([_, multiBookingUser]) => {
       if (existNumbers.has(multiBookingUser.customerPhone)) {
         return;
       }
-      console.log("222222222222");
+
       const reminders =
         multiBooking.remindersToScheduleMessages(multiBookingUser);
-      console.log(reminders);
+
       messages.push(...reminders);
       if (reminders.length > 0) {
         existNumbers.add(multiBookingUser.customerPhone);
@@ -188,9 +183,8 @@ export default class MessagesHelper {
       businessToDecrease[multiBooking.buisnessId] ??= 0;
       businessToDecrease[multiBooking.buisnessId] =
         businessToDecrease[multiBooking.buisnessId] + reminders.length;
-      console.log("777777777777777777777777777777777");
     });
-    console.log(messages);
+
     // no possibility to Non-valid data
     const value = await this.sendMultipleScheduleAccordingToPlatfrom({
       messages,
@@ -223,7 +217,7 @@ export default class MessagesHelper {
           return;
         }
         const reminders = multiBooking.messageRemindersOnUser(multiBookingUser);
-        console.log("reminders", reminders);
+
         reminders.forEach((reminderId) => {
           messages[reminderId] = removePhoneNumberPrefix(
             multiBookingUser.customerPhone
@@ -239,7 +233,7 @@ export default class MessagesHelper {
           businessToIncrease[multiBooking.buisnessId] + reminders.length;
       }
     );
-    console.log("messages", messages);
+
     const result = await this._cancelMultipleScheduleAccordingToPlatfrom({
       messages,
     });

@@ -29,7 +29,6 @@ export class VerificationService {
     userId: string;
   }) {
     try {
-      console.log(phoneToDocId(phoneNumber));
       const resp: Record<string, any> = await this.makeRequest.performRequst({
         endpoint: VERIFY_OTP_END_POINT,
         onFail: {},
@@ -43,7 +42,7 @@ export class VerificationService {
           ["VI"]: verificationId,
         },
       });
-      console.log("555555555555555555555555555", resp);
+
       if (resp.error) {
         AppErrorsHelper.GI().error =
           verificationErrors[resp.error] || Errors.unknown;
@@ -85,7 +84,7 @@ export class VerificationService {
           ["phoneNumber"]: phoneNumber.replace("-", ""),
         },
       });
-      console.log("4444444444", resp);
+
       if (resp.error) {
         AppErrorsHelper.GI().error =
           verificationErrors[resp.error] || Errors.unknown;
@@ -135,7 +134,6 @@ export class VerificationService {
         },
       });
 
-      console.log("ffffffffff", resp);
       if (resp.error) {
         AppErrorsHelper.GI().error =
           verificationErrors[resp.error] || Errors.unknown;

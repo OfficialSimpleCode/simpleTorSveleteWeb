@@ -119,8 +119,6 @@ export default class NotificationsHelper {
       }
     }
 
-    console.log(content);
-
     // finally activate the notification
     await this.notificationRepo.notifyMultipleUsers({
       fcms: worker.fcmsTokens,
@@ -809,21 +807,14 @@ export default class NotificationsHelper {
     bookings.forEach((booking) => {
       const remindersOnBooking = booking.remindersOnBooking;
 
-      console.log("Eeeeeeeeeeee", remindersOnBooking);
-
       for (const [dateToNotify, data] of Object.entries(remindersOnBooking)) {
         datesToDelete[dateToNotify] = data;
       }
     });
-    console.log(
-      "Rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
-    );
-    console.log(datesToDelete);
+
     const futures: Promise<boolean>[] = [];
     Object.entries(datesToDelete).forEach(([dateStr, data]) => {
-      console.log(dateStr);
       const dateToNotify = isoToDate(dateStr);
-      console.log(dateToNotify);
       const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${
         dateToNotify.getMonth() + 1
       }/${dateToNotify.getDate()}/${dateToNotify.getHours()}`;
@@ -851,26 +842,23 @@ export default class NotificationsHelper {
     reminderType: BookingReminderType;
     minutesBefore: number;
   }): Promise<boolean> {
-    console.log("33333333333333333333332222222222222222222");
     if (minutesBefore === 0) {
       return true;
     }
-    console.log("4444444444444");
+
     const dateToNotify = dateToRemindBooking(booking, minutesBefore);
 
     if (dateToNotify < new Date()) {
       return true;
     }
-    console.log("4444444444444444eeeeeeeeeeeee");
+
     // No possibility for non-valid data
     const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${
       dateToNotify.getMonth() + 1
     }/${dateToNotify.getDate()}/${dateToNotify.getHours()}`;
     const docId = dateToNotify.getMinutes().toString();
     const fieldName = booking.reminderId(reminderType);
-    console.log(path);
-    console.log(fieldName);
-    console.log(docId);
+
     return this.generalRepo.updateFieldInsideDocAsMapRepo({
       insideEnviroments: false,
       path,
@@ -1011,13 +999,10 @@ export default class NotificationsHelper {
     worker?: WorkerModel,
     bookingStatus?: BookingStatuses
   ): boolean {
-    console.log("qqqqqqqqqqqqq");
     if (worker == null) {
-      console.log("4444444");
       return false;
     }
     if (worker.id === customerId) {
-      console.log("3333333333");
       return false; // worker order to himself
     }
     if (
@@ -1025,15 +1010,13 @@ export default class NotificationsHelper {
       (bookingStatus != BookingStatuses.waiting ||
         !worker.notifications.notifyAboutOrderNearDeadline)
     ) {
-      console.log("444444444444444");
       return false; // the worker dosen't allow notifications while ordering
     }
 
     if (worker.fcmsTokens.size === 0) {
-      console.log("6666666");
       return false; // imposible to notify there isn't fcm
     }
-    console.log("44444444444444444444444444444444444");
+
     return true;
   }
 }

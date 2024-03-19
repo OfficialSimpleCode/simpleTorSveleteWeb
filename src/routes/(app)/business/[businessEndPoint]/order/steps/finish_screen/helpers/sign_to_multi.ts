@@ -37,7 +37,7 @@ export async function signToMulti({
   //make a copy of the multi booking cant access to the original multi booking because its held on the worker
   //so make oone from the details we had on the time picker obj
   const multiBooking = BookingController.multiBookingFromValues;
-  console.log("signToMulti", multiBooking.treatment);
+
   const allow = hasPlaceInMultiBooking({
     worker: worker,
     date: multiBooking.bookingDate,
@@ -98,7 +98,6 @@ async function handleSinging({
   fromPaymentHandler?: boolean;
   paymentResp?: PaymentResp | undefined;
 }): Promise<boolean> {
-  console.log("handleSinging", multiBooking.treatment);
   //   // In case the user needs to pay before and failed
   //   if ((paymentResp === null || paymentResp.transaction === null) && fromPaymentHandler) {
   //     return await handleFailedPayment({ multiBooking, userMultiBooking, worker });
@@ -170,7 +169,7 @@ async function handleSinging({
     });
   } else {
     const updatedMultiBooking = MultiBooking.fromMultiBooking(multiBooking);
-    console.log("44", updatedMultiBooking.treatment);
+
     updatedMultiBooking.copyDataToOrder({
       worker,
       customers: undefined,
@@ -178,7 +177,7 @@ async function handleSinging({
       business: BusinessInitializer.GI().business,
       user: UserInitializer.GI().user,
     });
-    console.log("handle1111111111Singing", updatedMultiBooking.treatment);
+
     resp = await MultiBookingHelper.GI().signUsers({
       multiBooking: updatedMultiBooking,
       multiBookingsPerCustomer: {
