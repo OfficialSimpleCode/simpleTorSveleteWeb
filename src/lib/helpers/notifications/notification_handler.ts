@@ -177,7 +177,7 @@ export default class NotificationHandler {
 
     this._handleCustomerAlert({
       newBooking,
-      oldBooking, //send oldBooking on puporse
+      oldBooking: oldBookingTemp,
       newWorker,
       oldWorker,
       keepRecurrence,
@@ -218,6 +218,7 @@ export default class NotificationHandler {
     keepRecurrence: boolean;
     treatmentsChange: boolean;
   }): void {
+    console.log("2222221111111111111");
     if (
       !treatmentsChange &&
       !dateChange &&
@@ -226,6 +227,13 @@ export default class NotificationHandler {
     ) {
       return;
     }
+    console.log("33333333333333");
+    console.log(
+      oldBooking.notificationType === NotificationType.message,
+      oldBooking.status === BookingStatuses.approved,
+      newBooking.status === BookingStatuses.approved,
+      newBooking.notificationType === NotificationType.message
+    );
 
     //can update the message reminder - two of the bookings are approved and there are both with message reminder
     if (
@@ -242,7 +250,9 @@ export default class NotificationHandler {
         oldBookingTemp.bookingId = `${oldBooking.bookingId}--${dateToDateStr(
           oldBookingDateForReccurence
         )}`;
+        oldBookingTemp.bookingDate = oldBookingDateForReccurence;
       }
+      console.log("ffffffffffffffffffff");
       MessagesHelper.GI().updateBookingScheduleMessage(
         oldBookingTemp,
         newBooking

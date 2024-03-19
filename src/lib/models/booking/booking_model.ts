@@ -1284,6 +1284,11 @@ export default class Booking extends ScheduleItem {
 
   get messageRemindersOnBooking(): string[] {
     const reminders: string[] = [];
+    console.log("$44444444444444444444444444444444");
+    console.log(
+      this.cancelDate != null,
+      this.notificationType === NotificationType.push
+    );
 
     if (
       this.cancelDate != null ||
@@ -1298,7 +1303,7 @@ export default class Booking extends ScheduleItem {
       }
 
       const dateToNotify = dateToRemindBooking(this, minutes);
-
+      console.log(dateToNotify);
       if (dateToNotify >= dateToUtc(new Date())) {
         reminders.push(this.reminderId(type));
       }

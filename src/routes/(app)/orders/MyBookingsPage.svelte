@@ -66,7 +66,7 @@
 </script>
 
 <main class=" h-full">
-  <div class="md:pt-10 pt-2 flex flex-col gap-8 items-center h-full">
+  <div class="md:pt-8 pt-2 flex flex-col gap-8 items-center h-full">
     <!-- title -->
 
     {#if showEmpty}
@@ -79,7 +79,7 @@
 
       <!-- list of booking in small screens -->
       <div
-        class="flex flex-col lg:hidden max-w-[95%] sm:max-w-[80%] w-full gap-3 pt-10 md:max-w-[650px]"
+        class="flex flex-col lg:hidden max-w-[95%] sm:max-w-[80%] w-full gap-3 pt-6 md:max-w-[650px]"
       >
         <BookingList forceOpenBookingSheet={true} shimmerEffect={loading} />
       </div>
