@@ -23,21 +23,19 @@
   let deleteUserDialog: HTMLDialogElement;
   let loading: boolean = false;
   let userAgent: string = "";
-  let isIn: boolean | null = null;
+
   let isInstagramWebView: boolean = false;
 
   onMount(() => {
-    const isInstagramBrowser = /Instagram/.test(navigator.userAgent);
+    //check the user agent - method 1
+    const method1Resp = /Instagram/.test(navigator.userAgent);
 
-    if (isInstagramBrowser) {
-      isIn = true;
-      // Handle the Instagram browser here
-    } else {
-      isIn = false;
-      // Continue with Google authentication
-    }
+    //check the user agent - method 2
     userAgent = window.navigator.userAgent.toLowerCase();
-    isInstagramWebView = userAgent.includes("instagram");
+    const method2Resp = userAgent.includes("instagram");
+
+    //check the two methods for insurance
+    isInstagramWebView = method2Resp || method1Resp;
   });
 
   async function onFinishLogin() {
@@ -114,7 +112,3 @@
     {/if}
   </main>
 {/if}
-{userAgent}
-
-""""""
-{isIn}
