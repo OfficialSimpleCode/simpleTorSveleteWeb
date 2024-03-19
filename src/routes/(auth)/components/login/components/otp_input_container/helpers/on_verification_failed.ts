@@ -1,5 +1,6 @@
 import { ErrorsTypeLog } from "$lib/consts/application_general";
 import { ErrorsController } from "$lib/controllers/errors_controller";
+import { canUseOtpStore } from "$lib/controllers/verification_controller";
 import DeveloperHelper from "$lib/helpers/developer_helper";
 import type { Errors } from "$lib/services/errors/messages";
 import { dateIsoStr } from "$lib/utils/times_utils";
@@ -10,6 +11,7 @@ export async function onVerificationFailed(
   codeSentTime: Date | undefined,
   beforeSendTime: Date
 ): Promise<void> {
+  canUseOtpStore.set(false);
   await DeveloperHelper.GI().logErrorToDb({
     userId: phoneNumber,
     errorType: ErrorsTypeLog.login,
@@ -29,6 +31,7 @@ export async function onExternalProviderVerificationFailed(
   codeSentTime: Date | undefined,
   beforeSendTime: Date
 ): Promise<void> {
+  canUseOtpStore.set(false);
   await DeveloperHelper.GI().logErrorToDb({
     userId: phoneNumber,
     errorType: ErrorsTypeLog.login,

@@ -2187,7 +2187,7 @@
   "newReportContent": "New report on the login from USER",
   "newReport": "New report",
   "repostSeccussed": "The report was sent successfully",
-  "alreadyInUse": "Already in use",
+  "alreadyInUse": "The provider already in use",
   "thereIsProblemWithAddingProvider": "Is there a problem adding a connection source?",
   "addProviderWith": "Adding source with PROVIDER",
   "addAuthProvider": "Add a login source in just a few minutes",
@@ -3400,5 +3400,7 @@
   "shareBusinessDesc": "Click on the sharing screen and start sharing your business to your customers",
   "howItWorkSubTitle": "A powerful and easy-to-use system that gives you peace of mind from customers and unnecessary complications",
   "hadAllTheProviders": "All sources are already connected",
-  "phoneAlreadyVerified": "The phone number is already verified"
+  "phoneAlreadyVerified": "The phone number is already verified",
+  "weWillSendYouMessage": "We will send you a message with the code...",
+  "theMessageFailed": "Sending the message failed"
 }

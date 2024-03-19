@@ -2207,7 +2207,7 @@
   "communicationWay": "פלאפון/אימייל",
   "newReport": "דיווח חדש",
   "repostSeccussed": "הדיווח נשלח בהצלחה",
-  "alreadyInUse": "כבר בשימוש",
+  "alreadyInUse": "המקור כבר בשימוש",
   "thereIsProblemWithAddingProvider": "יש בעיה בהוספת מקור התחברות?",
   "addProviderWith": "הוספת מקור עם PROVIDER",
   "addAuthProvider": "הוסף מקור התחברות",
@@ -3386,5 +3386,7 @@
   "alreadyVerifedPhone": "פלאפון כבר מאומת",
   "loginFirst": "קודם התחבר למשתמש",
   "hadAllTheProviders": "כל המקורות כבר מחוברים",
-  "phoneAlreadyVerified": "מספר הפלאפון כבר מאומת"
+  "phoneAlreadyVerified": "מספר הפלאפון כבר מאומת",
+  "weWillSendYouMessage": "אנחנו שולחים לך הודעה עם הקוד...",
+  "theMessageFailed": "שליחת ההודעה נכשלה"
 }
