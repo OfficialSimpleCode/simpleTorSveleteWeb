@@ -19,9 +19,8 @@
   // });
 
   function onClick() {
-    // console.log("22222222");
     // if (isInstagramWebView) {
-    //   console.log("Wwwwwwwwwww");
+
     //   window.open("http://instagram.com/?nibrowser=no", "_blank");
     //   return;
     // }

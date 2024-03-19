@@ -68,10 +68,6 @@ export async function checkTime(lookupAddress: string): Promise<Error | null> {
     // const ntpTime = new Date(myTime.getTime() + offset);
 
     // const difference = myTime.getTime() - ntpTime.getTime();
-    // console.log(`==== ${lookupAddress} ====`);
-    // console.log(`My time: ${myTime}`);
-    // console.log(`NTP time: ${ntpTime}`);
-    // console.log(`Difference: ${difference}ms`);
 
     // return Math.abs(difference) < 300000 ? null : new Error(`Time is not correct, diff: ${difference}`);
   } catch (error) {

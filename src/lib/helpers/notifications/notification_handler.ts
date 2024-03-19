@@ -47,18 +47,15 @@ export default class NotificationHandler {
   }): Promise<void> {
     // Notify the worker that the user ordered a booking for him
     await NotificationsHelper.GI().notifyWorkerAboutOrder(worker, booking);
-    console.log("ddddddddddddd");
+
     if (booking.status === BookingStatuses.approved) {
-      console.log(booking.notificationType);
       // Make scheduled notifications/messages
       if (booking.notificationType === NotificationType.message) {
-        console.log("1111111111111111111");
         // Make the scheduled notification and save the message ID in the booking
         MessagesHelper.GI().scheduleMessageToMultipleBookings({
           [booking.bookingId]: booking,
         });
       } else if (booking.notificationType === NotificationType.push) {
-        console.log("333333333333333333");
         // Make a scheduled push notification
         NotificationsHelper.GI().makeScheduleBookingNotification({ booking });
       }
@@ -88,14 +85,10 @@ export default class NotificationHandler {
           ) {
             //if the booking is recurrence child need to change his id
             if (booking.recurrenceRef != null) {
-              console.log(
-                "333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333"
-              );
               booking.bookingId = `${booking.recurrenceRef}--${dateToDateStr(
                 booking.bookingDate
               )}`;
             }
-            console.log(booking.bookingId);
             // Delete the schedule message if it exists
             MessagesHelper.GI().cancelScheduleMessageToMultipleBookings({
               [booking.bookingId]: booking,
@@ -103,7 +96,6 @@ export default class NotificationHandler {
           }
         }
         if (booking.notificationType === NotificationType.push) {
-          console.log("wewwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
           // Delete the scheduled notification
           NotificationsHelper.GI().deleteAllScheduleBookingsNotifications([
             booking,
@@ -151,12 +143,16 @@ export default class NotificationHandler {
     isOldBoookingPassed: boolean;
     oldBookingDateForReccurence?: Date;
   }): Promise<void> {
-    let oldBookingTemp = oldBooking;
+    console.log("ddddddddddddd", oldBooking.recurrenceEvent);
+    console.log("333333", oldBookingDateForReccurence);
+    let oldBookingTemp: Booking = oldBooking;
     if (
       oldBooking.recurrenceEvent != null &&
       oldBookingDateForReccurence != null
     ) {
-      const oldBookingTemp = Booking.fromBooking(oldBooking);
+      console.log("dddddddddddddwwwwwwwwwwwwwwwwwww");
+
+      oldBookingTemp = Booking.fromBooking(oldBooking);
 
       oldBookingTemp.bookingDate = oldBookingDateForReccurence;
     }
@@ -181,7 +177,7 @@ export default class NotificationHandler {
 
     this._handleCustomerAlert({
       newBooking,
-      oldBooking, //send oldBooking on puporse
+      oldBooking: oldBookingTemp,
       newWorker,
       oldWorker,
       keepRecurrence,
@@ -222,6 +218,7 @@ export default class NotificationHandler {
     keepRecurrence: boolean;
     treatmentsChange: boolean;
   }): void {
+    console.log("2222221111111111111");
     if (
       !treatmentsChange &&
       !dateChange &&
@@ -230,6 +227,15 @@ export default class NotificationHandler {
     ) {
       return;
     }
+    console.log("33333333333333");
+    console.log(
+      oldBooking.notificationType === NotificationType.message,
+      oldBooking.status === BookingStatuses.approved,
+      newBooking.status === BookingStatuses.approved,
+      newBooking.notificationType === NotificationType.message
+    );
+
+    //can update the message reminder - two of the bookings are approved and there are both with message reminder
     if (
       oldBooking.notificationType === NotificationType.message &&
       oldBooking.status === BookingStatuses.approved &&
@@ -244,24 +250,32 @@ export default class NotificationHandler {
         oldBookingTemp.bookingId = `${oldBooking.bookingId}--${dateToDateStr(
           oldBookingDateForReccurence
         )}`;
+        oldBookingTemp.bookingDate = oldBookingDateForReccurence;
       }
+
       MessagesHelper.GI().updateBookingScheduleMessage(
         oldBookingTemp,
         newBooking
       );
       return;
-    } else if (
+    }
+    //can update the push notification - two of the bookings are approved and there are both with push notification reminder
+    else if (
       oldBooking.notificationType === NotificationType.push &&
       oldBooking.status === BookingStatuses.approved &&
       newBooking.status === BookingStatuses.approved &&
       newBooking.notificationType === NotificationType.push
     ) {
+      console.log("Eeeeeeeeeee");
       NotificationsHelper.GI().updateScheduleBookingNotification({
         oldBooking,
         newBooking,
       });
       return;
-    } else {
+    }
+    //cant update the notification or the message need to delete the message/notification and create new one
+    else {
+      //if the old booking not approved no need to delete the reminder - not approved bookings have no reminders
       if (oldBooking.status === BookingStatuses.approved) {
         if (oldBooking.notificationType === NotificationType.message) {
           const oldBookingTemp = Booking.fromBooking(oldBooking);
@@ -282,6 +296,7 @@ export default class NotificationHandler {
           ]);
         }
       }
+      //if the new booking not approved no need to make reminder for it - not approved bookings have no reminders
       if (newBooking.status === BookingStatuses.approved) {
         if (newBooking.notificationType === NotificationType.message) {
           MessagesHelper.GI().scheduleMessageToMultipleBookings({
@@ -319,6 +334,8 @@ export default class NotificationHandler {
     dateChange: boolean;
     treatmentsChange: boolean;
   }): void {
+    console.log("111111111111111", oldBooking);
+
     if (workerChange) {
       if (workerAction) {
         // if (oldWorker.id != UserInitializer.GI().user.id) {
@@ -392,25 +409,22 @@ export default class NotificationHandler {
     minutesBeforeAlert: number;
     hasConfirmArrivalReminder: boolean;
   }): Promise<void> {
-    console.log("fffffffffffffffffff");
-
     // Notify worker that user confirmed arrival
     await NotificationsHelper.GI().notifyWorkerThatClientConfirmArrival({
       worker,
       booking,
     });
-    console.log("wwwwwwwwwwwwwwwwwwww");
+
     if (!hasConfirmArrivalReminder) {
       return;
     }
-    console.log("333333333333333333");
+
     if (booking.notificationType === NotificationType.message) {
       await MessagesHelper.GI().cancelSpecificScheduleMessageOnBooking(
         booking,
         BookingReminderType.confirmArrival
       );
     } else if (booking.notificationType === NotificationType.push) {
-      console.log("11111111111111111111111111");
       await NotificationsHelper.GI().cancelSpecificScheduleNotificationOnBooking(
         {
           booking: booking,

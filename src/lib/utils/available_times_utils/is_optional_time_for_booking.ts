@@ -83,12 +83,6 @@ export function isOptionalTimeForBooking({
   const bookingDate = dateToDateStr(booking.bookingDate);
 
   // Relevant times to calculate
-  console.log("defaultWork", defaultWork);
-  console.log(
-    "shifts",
-    convertStringToTime(worker.shiftsFor({ day: booking.bookingDate }))
-  );
-  console.log(worker.shiftsFor({ day: booking.bookingDate }));
   const work =
     defaultWork ??
     convertStringToTime(worker.shiftsFor({ day: booking.bookingDate }));
@@ -115,19 +109,16 @@ export function isOptionalTimeForBooking({
 
   // Get rid of earlier times - not necessary
   forbbidenTimes = getOnlyEqualOrAfter(forbbidenTimes, timeToOrderOn1970Format);
-  console.log("forbbidenTimes", forbbidenTimes);
+
   // Fill this list with 0, those will be the pointers on each time segment
   const treatment = Treatment.fromTreatmentsMap(booking.treatments);
   const forbiddenTimesPointers = Array.from(
     { length: treatment.times.size },
     () => 0
   );
-  console.log("forbiddenTimesPointers", forbiddenTimesPointers);
-  console.log(treatment);
-  console.log("work", work);
+
   // Pass over the work times
   for (let j = 0; j < work.length; j += 2) {
-    console.log("Inside for");
     let pointerWork = work[j];
     const endWork = work[j + 1];
 
@@ -168,8 +159,7 @@ export function isOptionalTimeForBooking({
       forbbidenTimes
     );
     const allowedTime = minutesToJump === 0;
-    console.log("timeSegments", timeSegments);
-    console.log("minutesToJump", minutesToJump);
+
     // The restrict of set booking is because the user is just paying
     if (
       !allowedTime &&

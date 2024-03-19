@@ -71,7 +71,7 @@
     {#if (document.dir === "rtl" && !isFirst(storyId)) || (document.dir === "ltr" && !isLast(storyId))}
       <button
         id={document.dir === "ltr" ? "right" : "left"}
-        class="absolute top-[50%] right-3 text-white"
+        class="absolute top-[50%] right-3 text-base-content"
         on:click={() =>
           document.dir === "rtl" ? getBefore(storyId) : getNext(storyId)}
       >
@@ -83,7 +83,7 @@
     {#if (document.dir === "rtl" && !isLast(storyId)) || (document.dir === "ltr" && !isFirst(storyId))}
       <button
         id={document.dir === "rtl" ? "left" : "right"}
-        class="absolute top-[50%] left-3 text-white"
+        class="absolute top-[50%] left-3 text-base-content"
         on:click={() =>
           document.dir === "rtl" ? getNext(storyId) : getBefore(storyId)}
       >

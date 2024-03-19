@@ -31,7 +31,7 @@
     if (loading) {
       return;
     }
-    if (!$canUseOtpStore) {
+    if ($canUseOtpStore !== true) {
       return;
     }
     loading = true;
@@ -90,6 +90,23 @@
       value={otp}
       isOTP={true}
     />
+    {#if $canUseOtpStore == null}
+      <div
+        class="flex flex-row items-center justify-center gap-2 pb-3 transition-transform duration-300"
+      >
+        <p class="text-sm">{translate("weWillSendYouMessage", $_, false)}</p>
+        <div class="loading loading-spinner" />
+      </div>
+    {/if}
+
+    {#if $canUseOtpStore === false}
+      <div
+        class="flex flex-row items-center justify-center gap-2 pb-3 transition-transform duration-300"
+      >
+        <p class="text-sm">{translate("theMessageFailed", $_, false)}</p>
+        <GeneralIcon icon="mdi:alert" />
+      </div>
+    {/if}
 
     {#if VerificationHelper.GI().phoneVerificationWithFirebase && !loading && loginReason === LoginReason.phoneVerification}
       <button

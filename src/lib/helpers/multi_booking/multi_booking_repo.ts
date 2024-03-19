@@ -269,8 +269,6 @@ export default class MultiBookingRepo
         }
       }
 
-      console.log("ddddddddd");
-
       if (Object.keys(customersJson).length > 0) {
         //put the new customer data
         this.transactionUpdateMultipleFieldsAsMap({
@@ -280,7 +278,7 @@ export default class MultiBookingRepo
           data: customersJson,
         });
       }
-      console.log("ddddddddd");
+
       // put the boooking object in the worker collection
       this.transactionSetAsMap({
         transaction: transaction,
@@ -288,7 +286,7 @@ export default class MultiBookingRepo
         docId: dateToDateStr(newMultiBooking.bookingDate),
         data: { [newMultiBooking.bookingId]: newMultiBooking.toJson() },
       });
-      console.log("ddddddddd");
+
       // add the new booking date as an exception date
       // the recurrence obj of the father boooking
       this.transactionUpdateAsMap({
@@ -298,7 +296,7 @@ export default class MultiBookingRepo
         fieldName: `${recurrenceMultiBooking.bookingId}.RE.EDA.${bookingDate}`,
         value: "",
       });
-      console.log("ddddddddd");
+
       //put in the multi events time doc
       this.transactionSetAsMap({
         transaction: transaction,
@@ -306,7 +304,7 @@ export default class MultiBookingRepo
         docId: multiEventsTimesDoc,
         data: eventsTimesData,
       });
-      console.log("ddddddddd");
+
       //put in the booking times doc
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
@@ -321,7 +319,7 @@ export default class MultiBookingRepo
         docId: bookingMonth,
         data: bookingsEventsData,
       });
-      console.log("ddddddddd");
+
       //put the new booking as exception date
       this.transactionUpdateMultipleFieldsAsMap({
         transaction: transaction,
@@ -411,7 +409,6 @@ export default class MultiBookingRepo
     needToCheckMultiEventsTimes?: boolean;
     sendCommends?: boolean;
   }): Promise<any> {
-    console.log("signUsersToMultiBooking", multiBooking.treatment);
     const path = `${buisnessCollection}/${GeneralData.currentBusinesssId}/${workersCollection}`;
     const signingDay = dateToDayStr(multiBooking.bookingDate);
     const signingMonth = dateToMonthStr(multiBooking.bookingDate);
@@ -523,7 +520,6 @@ export default class MultiBookingRepo
               data: { [bookingId]: booking.toJson() },
             });
           } else {
-            console.log(booking.treatments);
             this.updateUserAsRegularBooking({
               transaction: transaction,
               booking: booking,

@@ -26,7 +26,7 @@
       {#if loading}
         <div class="loading loading-spinner"></div>
       {:else}
-        <GeneralIcon {icon} />
+        <GeneralIcon {icon} size={24} />
       {/if}
 
       <p class="text-center text-wrap">{text}</p>
@@ -42,7 +42,7 @@
       {#if loading}
         <div class="loading loading-spinner"></div>
       {:else}
-        <GeneralIcon {icon} />
+        <GeneralIcon {icon} size={24} />
       {/if}
 
       <p class="text-center text-wrap">{text}</p>

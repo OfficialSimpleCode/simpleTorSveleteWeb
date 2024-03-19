@@ -6,7 +6,7 @@
   import { businessStore } from "$lib/stores/Business";
   import { pushDialog } from "$lib/utils/general_utils";
   import { _, translate } from "$lib/utils/translate";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import ChooseProviderContainer from "./components/ChooseProviderContainer.svelte";
   import DeleteUserDialog from "./components/DeleteUserDialog.svelte";
   import OtpInputContainer from "./components/otp_input_container/OtpInputContainer.svelte";
@@ -21,6 +21,13 @@
   const dispatch = createEventDispatcher();
   let deleteUserDialog: HTMLDialogElement;
   let loading: boolean = false;
+
+  let isInstagramWebView: boolean = false;
+
+  onMount(() => {
+    const userAgent: string = window.navigator.userAgent.toLowerCase();
+    isInstagramWebView = userAgent.includes("instagram");
+  });
 
   async function onFinishLogin() {
     dispatch("onFinishLogin");
@@ -54,38 +61,43 @@
   }
 </script>
 
-<!-- Dialog -->
+{#if isInstagramWebView}{:else}
+  <!-- Dialog -->
 
-<DeleteUserDialog bind:dialog={deleteUserDialog} bind:loadingLogin={loading} />
+  <DeleteUserDialog
+    bind:dialog={deleteUserDialog}
+    bind:loadingLogin={loading}
+  />
 
-<main class="flex w-full h-full">
-  <div
-    class="flex flex-col items-center justify-center w-full pb-20 transition ease-in-out delay-150"
-  >
-    {#if isOtp}
-      <OtpInputContainer
-        {loginReason}
-        bind:isOtp
-        {otpTitle}
-        {otpSubTitle}
-        {canReturnToChooseProvider}
-        on:onVerifyPhone={onVerifyPhone}
-        on:onDeleteUser={onDeleteUser}
-        on:onFinishLogin={onFinishLogin}
-      />
-    {:else}
-      <ChooseProviderContainer
-        {loginReason}
-        {loading}
-        on:onDeleteUser={onDeleteUser}
-        on:onFinishLogin={onFinishLogin}
-        bind:isOtp
-      />
-    {/if}
-  </div>
-  {#if needRecaptchaContainer}
-    <div class="absolute bottom-4 left-0 z-40">
-      <div id="recaptcha-container"></div>
+  <main class="flex w-full h-full">
+    <div
+      class="flex flex-col items-center justify-center w-full pb-20 transition ease-in-out delay-150"
+    >
+      {#if isOtp}
+        <OtpInputContainer
+          {loginReason}
+          bind:isOtp
+          {otpTitle}
+          {otpSubTitle}
+          {canReturnToChooseProvider}
+          on:onVerifyPhone={onVerifyPhone}
+          on:onDeleteUser={onDeleteUser}
+          on:onFinishLogin={onFinishLogin}
+        />
+      {:else}
+        <ChooseProviderContainer
+          {loginReason}
+          {loading}
+          on:onDeleteUser={onDeleteUser}
+          on:onFinishLogin={onFinishLogin}
+          bind:isOtp
+        />
+      {/if}
     </div>
-  {/if}
-</main>
+    {#if needRecaptchaContainer}
+      <div class="absolute bottom-4 left-0 z-40">
+        <div id="recaptcha-container"></div>
+      </div>
+    {/if}
+  </main>
+{/if}

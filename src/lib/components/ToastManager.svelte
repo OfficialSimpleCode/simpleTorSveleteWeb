@@ -1,97 +1,41 @@
 <script lang="ts">
   import type { Toast } from "$lib/stores/ToastManager";
   import { currentToast } from "$lib/stores/ToastManager";
+  import GeneralIcon from "./custom_components/GeneralIcon.svelte";
 
   let toast: Toast;
   currentToast.subscribe((t) => (toast = t as Toast));
+  const toastIcons = {
+    success: "ep:success-filled",
+    fail: "mdi:close-circle",
+    info: "material-symbols:info",
+    warning: "mdi:alert",
+  };
+
+  const toastColors = {
+    success: "bg-green-500",
+    fail: "bg-red-500",
+    info: "bg-blue-500",
+    warning: "bg-yellow-500",
+  };
 </script>
 
-<div
-  id="toast"
-  class="fixed bottom-8 w-full z-50 flex items-center justify-center"
->
-  <div class="min-w-[250px]">
-    {#if toast !== null}
-      {#if toast.status == "info"}
-        <div
-          role="alert"
-          class="alert border-[.5px] bg-blue-500 bg-opacity-50 backdrop-blur-lg justify-center items-center grid-flow-col"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            class="stroke-current shrink-0 w-6 h-6"
-            ><path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path></svg
-          >
-          <span>{toast.text}</span>
-        </div>
-      {/if}
-      {#if toast.status == "success"}
-        <div
-          role="alert"
-          class="alert border-[.5px] bg-green-500 bg-opacity-50 backdrop-blur-lg justify-center items-center grid-flow-col"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="stroke-current shrink-0 h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            ><path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            /></svg
-          >
-          <span>{toast.text}</span>
-        </div>
-      {/if}
-      {#if toast.status == "fail"}
-        <div
-          role="alert"
-          class="alert border-[.5px] bg-red-500 bg-opacity-50 backdrop-blur-lg justify-center items-center grid-flow-col"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="stroke-current shrink-0 h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            ><path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-            /></svg
-          >
-          <span>{toast.text}</span>
-        </div>
-      {/if}
-      {#if toast.status == "warning"}
-        <div
-          role="alert"
-          class="alert border-[.5px] bg-yellow-500 bg-opacity-50 backdrop-blur-lg justify-center items-center grid-flow-col"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="stroke-current shrink-0 h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            ><path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            /></svg
-          >
-          <span>{toast.text}</span>
-        </div>
-      {/if}
-    {/if}
+{#if toast != null}
+  <div
+    id="toast"
+    class="fixed bottom-8 w-full z-50 flex items-center justify-center"
+  >
+    <div class="min-w-[250px]">
+      <div
+        role="alert"
+        class="alert border-[.5px] {toastColors[
+          toast.status
+        ]}  bg-opacity-50 backdrop-blur-lg text-base-content"
+      >
+        <GeneralIcon icon={toastIcons[toast.status]} />
+
+        <span class="text-sm">{toast.text}</span>
+      </div>
+    </div>
   </div>
-</div>
+{/if}

@@ -48,7 +48,6 @@ export default class UserRepo extends GeneralRepo implements UserApi {
     cangeUserDoc?: boolean;
     value: any;
   }): Promise<boolean> {
-    console.log(value);
     const batch = this.getBatch;
 
     if (cangeUserDoc) {

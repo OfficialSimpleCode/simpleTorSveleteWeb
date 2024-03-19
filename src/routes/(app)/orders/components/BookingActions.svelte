@@ -18,7 +18,7 @@
 
 {#if shimmerEffect}
   <div
-    class="bg-base-content opacity-10 rounded-lg min-w-[90px] min-h-[70px]"
+    class="bg-base-content opacity-10 rounded-lg min-w-[90px] min-h-[70px] max-w-[130px]"
   />
 {:else}
   <!-- the business isn't loaded -->

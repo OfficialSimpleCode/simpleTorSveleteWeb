@@ -6,7 +6,6 @@
   onMount(() => {
     const dynamicDiv = document.getElementById(uuid);
     const width = dynamicDiv?.offsetWidth;
-    console.log("offset is", width);
 
     if (width !== null && width! < 250) {
       dynamicDiv?.classList.remove(`rounded-[39px]`);

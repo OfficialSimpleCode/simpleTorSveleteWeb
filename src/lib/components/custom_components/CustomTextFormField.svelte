@@ -19,10 +19,8 @@
   export let isActive: boolean = true;
   export let isOTP: boolean = false;
   export let hint: string = "";
-
+  export let validationResp: string | null = "";
   export let value = "";
-  let errorMessage = "";
-  let validationResp: string | null = "";
 
   const dispatch = createEventDispatcher();
   function handleInput(
@@ -33,9 +31,6 @@
 
     // resp from the validation
     validationResp = validationFunc ? validationFunc(value) : null;
-
-    // display error onlt if it isn't empty
-    errorMessage = value === "" ? "" : validationResp ?? "";
 
     // prepearing the object
     const eventResp: TextFieldEvent = {
@@ -86,6 +81,6 @@
   <p
     class="flex items-center {withErrorSpacing ? 'h-5' : ''} mt-2 text-red-500"
   >
-    {errorMessage}
+    {value === "" ? "" : validationResp ?? ""}
   </p>
 </div>

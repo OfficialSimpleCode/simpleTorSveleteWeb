@@ -26,7 +26,7 @@
   function openImageDisplayDialog(imageId: string) {
     BusinessInitializer.GI().loadLikes(workersStories);
     selectedStoryId = imageId;
-    console.log(selectedStoryId);
+
     pushState("", {
       showModal: true,
     });

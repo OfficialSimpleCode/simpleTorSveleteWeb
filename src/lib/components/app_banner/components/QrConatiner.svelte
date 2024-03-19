@@ -10,7 +10,6 @@
   onMount(() => {
     businessStore.subscribe((value) => {
       downloadLink = getDownloadingAppLink(value?.dynamicLink ?? "");
-      console.log(downloadLink);
     });
   });
 </script>

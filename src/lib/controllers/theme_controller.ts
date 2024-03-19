@@ -43,49 +43,40 @@ export async function initialTheme(localStorage: Storage, document: Document) {
 
 export function deployTheme(theme: BusinessTheme, document: Document) {
   try {
-    console.log(theme);
-    console.log("7777777777777");
-    console.log(loadColorFromTheme("primary", theme));
     document.documentElement.style.setProperty(
       "--p",
       getOklachValues(loadColorFromTheme("primary", theme))
     );
-    console.log("6666666666666");
-    console.log(loadColorFromTheme("background", theme));
 
     document.documentElement.style.setProperty(
       "--b1",
       getOklachValues(loadColorFromTheme("background", theme))
-    );
-    console.log(
-      "5555555555",
-      getOklachValues(theme.brightness == 0 ? "#fff" : "#000")
     );
 
     document.documentElement.style.setProperty(
       "--bc",
       getOklachValues(theme.brightness == 0 ? "#fff" : "#000")
     );
-    console.log("4444444444");
+
     document.documentElement.style.setProperty(
       "--pc",
       getOklachValues(computeLuminance(theme.primary) > 0.5 ? "#000" : "#fff")
     );
-    console.log("11111111111111");
+
     document.documentElement.style.setProperty(
       "--b2",
       getOklachValues(loadColorFromTheme("surface", theme))
     );
-    console.log("22222222222");
+
     document.documentElement.style.setProperty(
       "--b3",
       getOklachValues(loadColorFromTheme("tertiary", theme))
     );
-    console.log("333333333");
+
     let html: HTMLHtmlElement = document.getElementsByTagName("html")[0];
     html.setAttribute("data-theme", theme.brightness == 0 ? "dark" : "light");
     html.style.setProperty("font-family", theme.fontName);
-    console.log(document.documentElement.style);
+
     // Load theme font
     let head: HTMLHeadElement = document.getElementsByTagName("head")[0];
     let fontLinkElement: HTMLLinkElement = document.createElement("link");

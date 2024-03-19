@@ -370,7 +370,7 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);
       const docRef = doc(collectionRef, docId);
       const setData = this.organizeData(data);
-      console.log(setData);
+
       transaction.set(docRef, setData, { merge: true });
     } catch (e) {
       logger.error("Error while setting document as map in transaction -->", e);
@@ -565,13 +565,13 @@ export default class FirestoreDataBase extends RealTimeDatabase {
       Object.entries(data).forEach(([fieldName, valueData]) => {
         const command = valueData.command;
         const value = valueData.value;
-        console.log([value]);
+
         organizedData[fieldName] =
           command === ArrayCommands.remove
             ? arrayRemove(value)
             : arrayUnion(value);
       });
-      console.log(organizedData);
+
       const collectionRef = collection(this._firestore, `${envKey}/${path}`);
       const docRef = doc(collectionRef, docId);
       batch.update(docRef, organizedData);
@@ -610,7 +610,6 @@ export default class FirestoreDataBase extends RealTimeDatabase {
           ? arrayRemove(value)
           : arrayUnion(value);
 
-      console.log(data);
       batch.update(docRef, data);
     } catch (e) {
       if (e instanceof Error) {

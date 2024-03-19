@@ -2207,7 +2207,7 @@
   "communicationWay": "פלאפון/אימייל",
   "newReport": "דיווח חדש",
   "repostSeccussed": "הדיווח נשלח בהצלחה",
-  "alreadyInUse": "כבר בשימוש",
+  "alreadyInUse": "המקור כבר בשימוש",
   "thereIsProblemWithAddingProvider": "יש בעיה בהוספת מקור התחברות?",
   "addProviderWith": "הוספת מקור עם PROVIDER",
   "addAuthProvider": "הוסף מקור התחברות",
@@ -3374,7 +3374,7 @@
   "timesEventChanged": "שים לב! משך שונה מהרגיל",
   "createAccountDesc": "מתחברים בקליק באמצעות גוגל, אפל, או מספר טלפון",
   "createBusinessDesc": "מזינים את פרטי העסק ומעצבים לפי הטעם והסטייל הייחודי שלכם",
-  "shareBusinessDesc": "לוחצים על מסך השיתוף ושולחים ללקוחות את הלינק שלכם",
+  "shareBusinessDesc": "לוחצים על מסך השיתוף ומתחילים לשתף את העסק ללקוחות",
   "howItWorkSubTitle": "מערכת עוצמתית ופשוטה לשימוש שמעניקה לך שקט מהלקוחות בלי סיבוכים מיותרים",
   "otpTitle": "קוד חד פעמי",
   "otpSubTitle": "שלחנו לך למספר הפלאפון: NUMBER קוד חד פעמי אנא הקלד אותה למטה כדי להמשיך",
@@ -3389,5 +3389,9 @@
   "inInstagramBrowserDesc": "דפדפן זה לא מאובטח עליך לפתוח את האתר בדפדפן הרגיל של הטלפון שלך",
   "howToExitInstagramExplain1": "1. לחץ על שלוש הנקודות למעלה",
   "externalBrowserTextAndroid": "פתיחה ב-Chrome",
-  "clickOpenIn": "2. לחץ על"
+  "clickOpenIn": "2. לחץ על",
+  "hadAllTheProviders": "כל המקורות כבר מחוברים",
+  "phoneAlreadyVerified": "מספר הפלאפון כבר מאומת",
+  "weWillSendYouMessage": "אנחנו שולחים לך הודעה עם הקוד...",
+  "theMessageFailed": "שליחת ההודעה נכשלה"
 }

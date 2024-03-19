@@ -3,7 +3,6 @@ import * as crypto from "crypto";
 export function encrypt1(data: string, password: string): string {
   const salt = crypto.randomBytes(16);
   const key = crypto.scryptSync(password, salt, 32);
-  console.log("aaaaa  ", key.buffer);
 
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);

@@ -29,11 +29,11 @@ export function generateKey(password: string): CryptoJS.lib.WordArray {
     .replaceAll("[", "")
     .replaceAll("]", "")
     .substring(0, 32);
-  console.log(preKey);
+
   // preKey = SHA256(password + preKey)
   //   .toString(enc.Hex)
   //   .substring(0, 32);
-  console.log(enc.Base64.parse(enc.Utf8.parse(preKey).toString()));
+
   return enc.Utf8.parse(preKey);
 }
 

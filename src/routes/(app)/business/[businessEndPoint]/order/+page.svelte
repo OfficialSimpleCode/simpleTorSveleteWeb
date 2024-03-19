@@ -22,10 +22,6 @@
   import WorkerPicker from "./steps/worker_picker/WorkerPicker.svelte";
 
   BookingController.initializeBookingMaker();
-  console.log(
-    "sssssssssssssssssssss",
-    $bookingMakerStore.oldBooking?.recurrenceChildDate
-  );
 
   onDestroy(() => {
     BusinessInitializer.GI().cancelAllWorkersRegularListenings();

@@ -12,7 +12,7 @@
 </script>
 
 <DialogStrucher bind:dialog onlyMiddle={true}>
-  <div class="modal-box bg-base-200 items-center max-w-[300px]">
+  <div class="modal-box bg-base-200 items-center max-w-[400px]">
     <!-- title and top buttons -->
     <DialogTitel {dialog} />
 
@@ -20,7 +20,7 @@
     <div class="flex flex-col gap-4 items-center justify-center">
       <div class="flex flex-col gap-1">
         <div class="avatar">
-          <div class="w-20 sm:w-28 rounded-full">
+          <div class="w-20 rounded-full">
             <img
               src={worker.profileImg || imageByGender(worker.gender)}
               alt={translate("theProfileOfTemplate", $_).replace(

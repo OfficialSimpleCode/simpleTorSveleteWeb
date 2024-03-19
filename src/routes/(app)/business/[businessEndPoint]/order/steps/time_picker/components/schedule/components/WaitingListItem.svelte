@@ -5,7 +5,6 @@
     bookingMakerButton,
     scheuleItemWidthClass,
   } from "$lib/consts/css_classes";
-  import { weekDays } from "$lib/consts/worker_schedule";
   import type TimePickerObj from "$lib/models/ui/booking/time_picker_obj";
   import { pushDialog } from "$lib/utils/general_utils";
   import { dateToTimeStr } from "$lib/utils/times_utils";
@@ -22,13 +21,6 @@
     (timeObj.displayDate != null
       ? `\n${translate("in")}${dateToTimeStr(timeObj.displayDate!)}`
       : "");
-
-  const day = weekDays[timeObj.from.getDay()];
-  // console.log(timeObj.from.getDay(), day);
-  // console.log(BookingController.worker!.waitingListExceptionDays);
-  // $: showButton =
-  //   timeObj.isMulti ||
-  //   !BookingController.worker!.waitingListExceptionDays.has(day);
 </script>
 
 <!-- Dialog -->

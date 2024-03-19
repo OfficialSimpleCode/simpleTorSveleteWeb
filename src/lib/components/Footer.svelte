@@ -1,26 +1,18 @@
 <script lang="ts">
   import { base } from "$app/paths";
+  import { page } from "$app/stores";
   import Logo from "$lib/components/Logo.svelte";
   import DownloadAppButton from "$lib/components/custom_components/DownloadAppButton.svelte";
   import ContactUsDialog from "$lib/components/dialogs/ContactUsDialog.svelte";
   import { simpleCodeWebUrl } from "$lib/consts/app_external_links";
-  import { businessStore } from "$lib/stores/Business";
   import { pushDialog } from "$lib/utils/general_utils";
-  import { getDownloadingAppLink } from "$lib/utils/links_utils";
   import { _, translate } from "$lib/utils/translate";
-  import { onMount } from "svelte";
   import FooterSocialIcons from "../../routes/(app)/business/[businessEndPoint]/components/FooterSocialIcons.svelte";
   let contactUsDialog: HTMLDialogElement;
-  let downloadLink = "";
-  export let generatedPage: boolean = true;
+
   function openContactUs() {
     pushDialog(contactUsDialog);
   }
-
-  // After the ui is loaded
-  onMount(() => {
-    downloadLink = getDownloadingAppLink($businessStore?.dynamicLink ?? "");
-  });
 </script>
 
 <ContactUsDialog bind:dialog={contactUsDialog} />
@@ -32,9 +24,7 @@
       <header class="footer-title">
         {translate("treatments", $_).toLocaleUpperCase()}
       </header>
-      <a target="_blank" href={downloadLink} class="link link-hover"
-        >{translate("queueSystem", $_)}</a
-      >
+      <a class="link link-hover" href="/">{translate("queueSystem", $_)}</a>
       <p class="link link-hover">{translate("systemsDevelopment", $_)}</p>
       <button class="link link-hover" on:click={openContactUs}
         >{translate("ContactUs", $_)}</button
@@ -75,13 +65,18 @@
   <!-- bottom footer -->
   <div class="footer px-10 py-4 text-base-content border-base-300">
     <!-- logo and company details -->
-    <aside class="items-center grid-flow-col {generatedPage ? '' : 'hidden'}">
+    <aside class="items-center grid-flow-col">
       <Logo />
+
       <p>
-        {translate("ourCompanyName", $_)}<br />{translate(
-          "createdBySimpleTor",
-          $_
-        )}
+        {"SA SIMPLE CODE LTD"}<br />
+        <span
+          class="{$page.url.pathname.includes('business')
+            ? ''
+            : 'hidden'} opacity-70"
+        >
+          {translate("createdBySimpleTor", $_)}
+        </span>
       </p>
     </aside>
 

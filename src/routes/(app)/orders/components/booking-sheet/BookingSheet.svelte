@@ -19,11 +19,6 @@
   export let forceOpenBookingSheet: boolean;
 
   let downloadAppDialog: HTMLDialogElement;
-  console.log(
-    "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
-    booking.notificationType,
-    booking.recurrenceChildDate
-  );
 </script>
 
 <!-- booking shhet and dialog -->

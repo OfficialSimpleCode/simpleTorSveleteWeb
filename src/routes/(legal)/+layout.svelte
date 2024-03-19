@@ -1,7 +1,9 @@
 <script lang="ts">
+  import Footer from "$lib/components/Footer.svelte";
   import Navbar from "$lib/components/navbar/Navbar.svelte";
   import { appOpenGraphImage } from "$lib/consts/resources";
   import { themeStore } from "$lib/controllers/theme_controller";
+
   import { onMount } from "svelte";
 
   onMount(() => {
@@ -22,7 +24,6 @@
   <meta property="og:image" content={appOpenGraphImage} />
 </svelte:head>
 
-<div class="h-full w-full">
-  <Navbar />
-  <slot />
-</div>
+<Navbar />
+<slot />
+<Footer />

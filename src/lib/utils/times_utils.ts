@@ -197,10 +197,6 @@ export function partOfDay(date: Date): string {
   return translate("noon");
 }
 
-export function isWeekend(date: Date): boolean {
-  return date.getDay() === 6 || date.getDay() === 0; // Saturday or Sunday
-}
-
 export function setToStartOfYear(date: Date): Date {
   return new Date(date.getFullYear(), 0, 1);
 }
@@ -241,7 +237,6 @@ export function fixDateMonth(date: Date): Date {
 export function isHoliday(worker: WorkerModel, date: Date): boolean {
   let isHoliday = false;
   worker.religions.forEach((religion) => {
-    console.log(date);
     let dateString = dateToDateStr(date);
     switch (religion) {
       case Religion.christian:
@@ -272,44 +267,3 @@ export function isoToDate(dateStr: string): Date {
 export function dateToUtc(date: Date) {
   return isoToDate(date.toISOString());
 }
-
-// export function testDateFunctions() {
-//   const currentDate = new Date();
-//   const formattedTime = dateToTimeStr(currentDate);
-//   console.log("Formatted Time (HH:mm):", formattedTime);
-
-//   const formattedDate = dateToStrAccoridngToFormat(currentDate, "yyyy-MM-dd");
-//   console.log("Formatted Date (yyyy-MM-dd):", formattedDate);
-
-//   const dayStr = dateToDayStr(currentDate);
-//   console.log("Day String (dd):", dayStr);
-
-//   const monthStr = dateToMonthStr(currentDate);
-//   console.log("Month String (MM-yyyy):", monthStr);
-
-//   const customDayAndMonthStr = dateToCustomDayAndMonthStr(currentDate);
-//   console.log("Custom Day and Month String (dd/M):", customDayAndMonthStr);
-
-//   const customDayAndMonthAndHourStr = dateToCustomDayAndMonthAndHourStr(
-//     currentDate,
-//     true
-//   );
-//   console.log(
-//     "Custom Day, Month, and Hour String (dd/M H:mm):",
-//     customDayAndMonthAndHourStr
-//   );
-
-//   const customYearAndDayAndMonthAndHourStr =
-//     dateToCustomYearAndDayAndMonthAndHourStr(currentDate);
-//   console.log(
-//     "Custom Year, Day, Month, and Hour String (dd/M/yy H:mm):",
-//     customYearAndDayAndMonthAndHourStr
-//   );
-
-//   const dateStr = dateToDateStr(currentDate);
-//   console.log("Date String (dd-MM-yyyy):", dateStr);
-
-//   const monthStrToTest = "10-2020"; // Replace with your own month string
-//   const parsedMonthDate = monthStrToDate(monthStrToTest);
-//   console.log("Parsed Month Date (MM-yyyy):", parsedMonthDate);
-// }

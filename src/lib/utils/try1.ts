@@ -9,7 +9,6 @@ export function hashText1(text: string, salt: string): string {
 export function encrypt(data: string, key: string): string {
   const salt = "salt";
   const derivedKey = PBKDF2(key, salt, { keySize: 256 / 32 });
-  console.log("derive key ", derivedKey);
 
   const iv = lib.WordArray.create(derivedKey.words.slice(0, 4)); // Convert to WordArray
   const encrypted = AES.encrypt(data, derivedKey, {

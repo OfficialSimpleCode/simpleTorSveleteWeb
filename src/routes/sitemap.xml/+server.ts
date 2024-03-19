@@ -29,7 +29,7 @@ async function getBusinessesFromDB(): Promise<businessSiteMap[]> {
     path: "WebData",
     docId: "businessesSiteMap",
   });
-  console.log("resp -> ", resp);
+
   // error occured
   if (!resp.exists()) {
     return businessesList;

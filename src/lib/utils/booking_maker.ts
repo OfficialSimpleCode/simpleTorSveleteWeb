@@ -28,7 +28,7 @@ export function loadBookingMakerTimeData(): void {
   if (worker == null) {
     return;
   }
-  console.log(worker.specificRangeChanges);
+
   // empty the current events
   bookingMaker.timePickerObjects = {};
   //remember the first date that user saw in the screen

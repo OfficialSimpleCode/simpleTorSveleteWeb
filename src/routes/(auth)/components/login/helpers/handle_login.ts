@@ -114,15 +114,11 @@ export async function handleLogin({
     }
     return resp;
   }
-  console.log(
-    "ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
-  );
 
   await setUpUser();
 
   //sign in page
   if (get(isConnectedStore) !== true) {
-    console.log("wwwwwwwwwwwwww");
     //need to change this var to be allowed to get in to the setup page
     VerificationHelper.GI().needToSignUp = true;
     await goto(`${base}/login/account-setup`);

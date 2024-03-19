@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import { base } from "$app/paths";
 
   import BusinessInitializer from "$lib/initializers/business_initializer";
@@ -37,8 +36,8 @@
 
         return;
       }
-
-      await goto(`${base}/business/${businessModel!.url}/orders`);
+      //not with goto in purpose  - goto not working with the same url end point
+      document.location = `${base}/business/${businessModel!.url}/orders`;
     } finally {
       loading = false;
     }

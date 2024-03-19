@@ -10,10 +10,11 @@
   import { maxButtonSize } from "$lib/consts/sizes";
   import type { PhonePickerEvent } from "$lib/consts/text_fields";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
-  import { isConnectedStore } from "$lib/stores/User";
+  import { isConnectedStore, userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
   import { sendSms } from "./otp_input_container/helpers/send_sms";
 
+  import { ShowToast } from "$lib/stores/ToastManager";
   import { createEventDispatcher } from "svelte";
   import LoginOption from "./LoginOption.svelte";
   import LoginTitle from "./LoginTitle.svelte";
@@ -63,9 +64,46 @@
   });
 
   async function handleClick(authProvider: AuthProvider) {
+    if (
+      loginReason === LoginReason.linkProvider &&
+      VerificationHelper.GI().existsLoginProviders.has(
+        authProviderToProviderId[authProvider]
+      )
+    ) {
+      ShowToast({
+        text: translate("alreadyInUse", $_),
+        status: "info",
+      });
+      return;
+    }
+
+    if (
+      loginReason === LoginReason.linkProvider &&
+      $userStore.isVerifiedPhone
+    ) {
+      ShowToast({
+        text: translate("phoneAlreadyVerified", $_),
+        status: "info",
+      });
+      return;
+    }
+
+    if (
+      loginReason === LoginReason.deleteUser &&
+      !VerificationHelper.GI().existsLoginProviders.has(
+        authProviderToProviderId[authProvider]
+      )
+    ) {
+      ShowToast({
+        text: translate("canVerifyOnlyWithExistProviders", $_),
+        status: "info",
+      });
+      return;
+    }
     if (loading || !validPhone) {
       return;
     }
+
     if (AuthProvider.Phone !== authProvider) {
       return;
     }
@@ -119,7 +157,8 @@
 
   <!-- End Button -->
   <button
-    class="btn btn-md sm:text-md btn-primary w-[80%] {loading
+    class="btn btn-md sm:text-md btn-primary w-[80%] {loading ||
+    !Object.values(isActive).includes(true)
       ? 'opacity-55'
       : ''} {maxButtonSize} hover:outline"
     on:click={() => handleClick(AuthProvider.Phone)}
@@ -128,11 +167,13 @@
       <div class="loading loading-spinner" />
     {:else}
       {translate(
-        loginReason === LoginReason.linkProvider
-          ? "addAuthProvider"
-          : loginReason === LoginReason.deleteUser
-            ? "deleteUser"
-            : "login",
+        !Object.values(isActive).includes(true)
+          ? "hadAllTheProviders"
+          : loginReason === LoginReason.linkProvider
+            ? "addAuthProvider"
+            : loginReason === LoginReason.deleteUser
+              ? "deleteUser"
+              : "login",
         $_
       )}
     {/if}

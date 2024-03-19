@@ -1,3 +1,4 @@
+import { canUseOtpStore } from "$lib/controllers/verification_controller";
 import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
 import { ShowToast } from "$lib/stores/ToastManager";
 import { translate } from "$lib/utils/translate";
@@ -16,6 +17,8 @@ export function sendSms(phone: string): void {
     status: "info",
     text: translate("theCodeIsSending"),
   });
+
+  canUseOtpStore.set(undefined);
 
   // Saving the time of the clicking
   VerificationHelper.GI().lastVerificationUnix = Math.ceil(Date.now() / 1000);

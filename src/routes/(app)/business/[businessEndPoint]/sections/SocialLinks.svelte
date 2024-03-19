@@ -55,13 +55,13 @@
     {
       name: "instagram",
       href:
-        $businessStore?.instagramAccount ?? "" !== ""
+        ($businessStore?.instagramAccount ?? "") !== ""
           ? `https://www.instagram.com/${
               $businessStore?.instagramAccount ?? ""
             }`
           : undefined,
       func:
-        $businessStore?.instagramAccount ?? "" === ""
+        ($businessStore?.instagramAccount ?? "") === ""
           ? () => error("noInstagram")
           : undefined,
       icon: "mdi:instagram",
@@ -70,12 +70,12 @@
     {
       name: "call",
       href:
-        $businessStore?.shopPhone ?? "" !== ""
+        ($businessStore?.shopPhone ?? "") !== ""
           ? `tel:${$businessStore?.shopPhone}`
           : undefined,
       icon: "mdi:phone",
       func:
-        $businessStore?.shopPhone ?? "" === ""
+        ($businessStore?.shopPhone ?? "") === ""
           ? () => error("noShopPhoneNumber")
           : undefined,
       errorMsg: "noShopPhoneNumber",
@@ -89,14 +89,14 @@
     {
       name: "whatsapp",
       href:
-        $businessStore?.shopPhone ?? "" !== ""
+        ($businessStore?.shopPhone ?? "") !== ""
           ? `whatsapp://send?phone=${$businessStore?.shopPhone
               .replaceAll("+", "")
               .replaceAll("-", "")}`
           : undefined,
       icon: "mdi:whatsapp",
       func:
-        $businessStore?.shopPhone ?? "" === ""
+        ($businessStore?.shopPhone ?? "") === ""
           ? () => error("noShopPhoneNumber")
           : undefined,
       errorMsg: "noShopPhoneNumber",

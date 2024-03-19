@@ -9,7 +9,10 @@
     TextFieldEvent,
   } from "$lib/consts/text_fields";
   import { ErrorsController } from "$lib/controllers/errors_controller";
-  import { HomePageController } from "$lib/controllers/home_page_controller";
+  import {
+    HomePageController,
+    contactUsSubjectStore,
+  } from "$lib/controllers/home_page_controller";
   import DeveloperHelper from "$lib/helpers/developer_helper";
   import { ShowToast } from "$lib/stores/ToastManager";
   import { isConnectedStore, userStore } from "$lib/stores/User";
@@ -19,23 +22,24 @@
     contactUsSubjectValidation,
     nameValidation,
   } from "$lib/utils/validation_utils";
-  export let subject: string;
+
   let content: string = "";
-  let name: string = $isConnectedStore ? $userStore.name : "";
-  let phone: string = $isConnectedStore ? $userStore.phoneNumber : "";
+  $: name = $isConnectedStore ? $userStore.name : "";
+  $: phone = $isConnectedStore ? $userStore.phoneNumber : "";
   let loading: boolean = false;
+  let subjectValidationResp: string | null = null;
 
   $: message = {
     message: content,
     phone: phone,
-    subject: subject,
+    subject: $contactUsSubjectStore,
     name: name,
   };
 
   let isValid = {
     message: contactUsMessageValidation(content) == null,
     phone: phone != "",
-    subject: subject != "",
+    subject: $contactUsSubjectStore != "",
     name: name != "",
   };
 
@@ -45,10 +49,15 @@
       phone = $userStore.phoneNumber;
       isValid.name = true;
       isValid.phone = true;
-      console.log("dd", isValid);
     }
   });
-  console.log(isValid);
+
+  contactUsSubjectStore.subscribe((value) => {
+    isValid.subject = contactUsSubjectValidation(value) == null;
+    subjectValidationResp =
+      value !== "" ? contactUsSubjectValidation(value) : null;
+  });
+
   async function onSendMessage() {
     if (loading) {
       return;
@@ -62,7 +71,7 @@
       });
       return;
     }
-    console.log(isValid);
+
     if (Object.values(isValid).includes(false)) {
       if (!isValid.name) {
         ShowToast({
@@ -101,7 +110,7 @@
       if (resp) {
         ShowToast({ text: translate("contactSuccess"), status: "success" });
         content = "";
-        subject = "";
+        $contactUsSubjectStore = "";
         HomePageController.messageContactUsCounter += 1;
       } else {
         ErrorsController.displayError();
@@ -120,11 +129,10 @@
   function onChangeSubject(event: CustomEvent<TextFieldEvent>) {
     message.subject = event.detail.value;
     isValid.subject = event.detail.isValid;
+    contactUsSubjectStore.set(event.detail.value);
   }
 
   function onChangePhone(event: CustomEvent<PhonePickerEvent>) {
-    console.log("Ddddddddddddddddddddd");
-    console.log(event.detail.value, event.detail.isValid);
     message.phone = event.detail.value ?? "";
     isValid.phone = event.detail.isValid;
     phone = event.detail.value ?? "";
@@ -145,14 +153,14 @@
       <CustomTextFormField
         lableTranslateKey="name"
         validationFunc={nameValidation}
-        value={message.name}
+        value={name}
         on:valueChange={onChangeName}
       />
 
       {#if $isConnectedStore != null}
         <CustomPhoneField
           titleTransKey="phoneNumber"
-          value={message.phone}
+          value={phone}
           on:phoneChange={onChangePhone}
         />
       {:else}
@@ -166,7 +174,8 @@
 
       <CustomTextFormField
         lableTranslateKey="subject"
-        bind:value={subject}
+        bind:value={$contactUsSubjectStore}
+        bind:validationResp={subjectValidationResp}
         validationFunc={contactUsSubjectValidation}
         on:valueChange={onChangeSubject}
       />

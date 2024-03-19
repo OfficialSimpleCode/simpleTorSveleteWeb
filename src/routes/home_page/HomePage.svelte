@@ -225,6 +225,6 @@
     <Data />
     <Testimonials />
     <Faq />
-    <Footer generatedPage={false} />
+    <Footer />
   </div>
 </main>

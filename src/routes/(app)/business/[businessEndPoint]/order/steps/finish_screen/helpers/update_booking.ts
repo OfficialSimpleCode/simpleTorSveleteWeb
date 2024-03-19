@@ -18,10 +18,6 @@ export async function updateBooking() {
 
   const booking = BookingController.bookingFromValues;
 
-  console.log("eeeeeeeeeeeeee");
-  console.log("dd", bookingMakerData.oldBooking!.recurrenceEvent);
-  console.log("2", bookingMakerData.oldBooking!.recurrenceChildDate);
-
   const result = await BookingHelper.GI().updateBooking({
     oldBooking: bookingMakerData.oldBooking!,
     newBooking: booking,

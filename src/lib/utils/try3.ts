@@ -22,9 +22,7 @@ export function decrypt2(encryptedData: string, password: string): string {
   const iv = Buffer.from(parts.shift()!, "hex");
   const salt = Buffer.from(parts.shift()!, "hex");
   const encrypted = parts.join(":");
-  console.log("qqqqqqqqq ", encryptedData);
-  console.log("qqqqqqqqq ", parts);
-  console.log("qqqqqqqqq ", encrypted);
+
   const key = pbkdf2Sync(password, salt, 1000, 32, "sha256");
   const decipher = createDecipheriv("aes-256-cbc", key, iv);
   let decrypted = decipher.update(encrypted, "hex", "utf8");
