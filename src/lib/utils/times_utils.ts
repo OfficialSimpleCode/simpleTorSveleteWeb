@@ -197,10 +197,6 @@ export function partOfDay(date: Date): string {
   return translate("noon");
 }
 
-export function isWeekend(date: Date): boolean {
-  return date.getDay() === 6 || date.getDay() === 0; // Saturday or Sunday
-}
-
 export function setToStartOfYear(date: Date): Date {
   return new Date(date.getFullYear(), 0, 1);
 }

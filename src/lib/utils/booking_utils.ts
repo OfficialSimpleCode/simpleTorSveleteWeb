@@ -63,7 +63,7 @@ export async function checkForReminders(): Promise<{
     let start = new Date(
       new Date().getFullYear(),
       new Date().getMonth(),
-      new Date().getDay(),
+      new Date().getDate(),
       booking.bookingDate.getHours(),
       booking.bookingDate.getMinutes()
     );

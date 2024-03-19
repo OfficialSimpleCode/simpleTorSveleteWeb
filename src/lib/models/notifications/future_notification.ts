@@ -103,7 +103,9 @@ export default class FutureNotification {
   }
 
   get dbPath(): string {
-    return `/${notifcationsCollection}/${scheduleNotificationDoc}/1/${this.dateToNotify.getFullYear()}/${this.dateToNotify.getMonth()}/${this.dateToNotify.getDay()}/${this.dateToNotify.getHours()}`;
+    return `/${notifcationsCollection}/${scheduleNotificationDoc}/1/${this.dateToNotify.getFullYear()}/${
+      this.dateToNotify.getMonth() + 1
+    }/${this.dateToNotify.getDate()}/${this.dateToNotify.getHours()}`;
   }
 
   toJson(): any {

@@ -749,7 +749,7 @@ export default class NotificationsHelper {
   }): Promise<boolean> {
     const notifications: Record<string, Record<string, any>> = {};
     const reminders = booking.remindersToFutureNotifications;
-
+    console.log(reminders);
     reminders.forEach((reminder) => {
       notifications[dateIsoStr(reminder.dateToNotify)] ??= {};
       notifications[dateIsoStr(reminder.dateToNotify)]![reminder.id] =
@@ -760,9 +760,11 @@ export default class NotificationsHelper {
 
     for (const [dateStr, data] of Object.entries(notifications)) {
       const dateToNotify = isoToDate(dateStr);
-
-      const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${dateToNotify.getMonth()}/${dateToNotify.getDate()}/${dateToNotify.getHours()}`;
-
+      console.log(dateToNotify);
+      const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${
+        dateToNotify.getMonth() + 1
+      }/${dateToNotify.getDate()}/${dateToNotify.getHours()}`;
+      console.log(path);
       futures.push(
         this.generalRepo.setAsMapWithMergeRepo({
           insideEnviroments: false,
@@ -794,7 +796,7 @@ export default class NotificationsHelper {
     if (!deleteResp) {
       return false;
     }
-
+    console.log("eeeeeeeeeeeeeee22222222222");
     return await this.makeScheduleBookingNotification({ booking: newBooking });
   }
 
@@ -805,8 +807,9 @@ export default class NotificationsHelper {
     const datesToDelete: Record<string, Record<string, any>> = {};
 
     bookings.forEach((booking) => {
+      console.log(booking);
       const remindersOnBooking = booking.remindersOnBooking;
-
+      console.log(remindersOnBooking);
       for (const [dateToNotify, data] of Object.entries(remindersOnBooking)) {
         datesToDelete[dateToNotify] = data;
       }
@@ -815,10 +818,12 @@ export default class NotificationsHelper {
     const futures: Promise<boolean>[] = [];
     Object.entries(datesToDelete).forEach(([dateStr, data]) => {
       const dateToNotify = isoToDate(dateStr);
+
+      console.log(dateToNotify);
       const path = `${notifcationsCollection}/${scheduleNotificationDoc}/1/${dateToNotify.getFullYear()}/${
         dateToNotify.getMonth() + 1
       }/${dateToNotify.getDate()}/${dateToNotify.getHours()}`;
-
+      console.log(path);
       futures.push(
         this.generalRepo.updateMultipleFieldsInsideDocAsMapRepo({
           insideEnviroments: false,

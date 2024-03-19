@@ -700,25 +700,26 @@ export default class Booking extends ScheduleItem {
 
   get remindersOnBooking(): Record<string, Record<string, any>> {
     const reminders: Record<string, Record<string, any>> = {};
-
+    console.log("22222222222");
     if (this.cancelDate != null) {
       return {};
     }
-
+    console.log("111111111");
     if (this.userFcms.size === 0) {
       return {};
     }
-
+    console.log("1111222222222");
     if (this.notificationType === NotificationType.message) {
       return {};
     }
-
+    console.log("wweeeeeeeeee");
     this.remindersTypes.forEach((minutes, type) => {
       if (minutes <= 0) {
         return;
       }
 
       const dateToNotify = dateToRemindBooking(this, minutes);
+      console.log(dateToNotify);
       if (dateToNotify >= dateToUtc(new Date())) {
         reminders[dateIsoStr(dateToNotify)] ??= {};
         reminders[dateIsoStr(dateToNotify)] = {

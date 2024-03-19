@@ -252,7 +252,7 @@ export default class NotificationHandler {
         )}`;
         oldBookingTemp.bookingDate = oldBookingDateForReccurence;
       }
-      console.log("ffffffffffffffffffff");
+
       MessagesHelper.GI().updateBookingScheduleMessage(
         oldBookingTemp,
         newBooking
@@ -266,6 +266,7 @@ export default class NotificationHandler {
       newBooking.status === BookingStatuses.approved &&
       newBooking.notificationType === NotificationType.push
     ) {
+      console.log("Eeeeeeeeeee");
       NotificationsHelper.GI().updateScheduleBookingNotification({
         oldBooking,
         newBooking,
