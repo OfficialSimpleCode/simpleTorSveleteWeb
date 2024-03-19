@@ -3351,14 +3351,14 @@
   "goldenExplain9": "Prevent copying of the business design",
   "goodToKnow": "Good to know",
   "goodToKnowSubtitle": "Comprehensive information about our packages without surprises",
-  "infoItem1": "29.90 including VAT",
+  "infoItem1": "24.90 excluding VAT",
   "infoItemExplain1": "For every additional employee you want to add to the business in addition to the diary that comes free with every package you buy",
   "infoItem2": "Payments and Receipts",
   "infoItemExplain2": "You can join receipts and payments from any subscription you purchase",
   "infoItem3": "Independent Payment",
   "infoItemExplain3": "The purchase is made automatically like a purchase in the app and can be canceled whenever you want",
   "infoItem4": "VAT included",
-  "infoItemExplain4": "All of our prices are after VAT and without surprises at the time of payment",
+  "infoItemExplain4": "All the prices in our app are after VAT and without surprises in the time of the payment",
   "infoItem5": "Gift period",
   "infoItemExplain5": "You can start using the application with a premium subscription for a free month without making a purchase",
   "infoItem6": "Subscription trial",
@@ -3407,5 +3407,6 @@
   "hadAllTheProviders": "All sources are already connected",
   "phoneAlreadyVerified": "The phone number is already verified",
   "weWillSendYouMessage": "We will send you a message with the code...",
-  "theMessageFailed": "Sending the message failed"
+  "theMessageFailed": "Sending the message failed",
+  "notIncludeVAT": "Excluding VAT"
 }

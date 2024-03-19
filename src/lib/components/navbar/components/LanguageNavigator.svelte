@@ -9,9 +9,18 @@
 </script>
 
 <LanguageDialog bind:dialog={langDialog} />
+<div class="">
+  <CustomCircleIcon
+    icon="mdi:language"
+    handleClick={openLangDialog}
+    bgColor="bg-base-200"
+  />
+</div>
 
-<CustomCircleIcon
-  icon="mdi:language"
-  handleClick={openLangDialog}
-  bgColor="bg-base-200"
-/>
+<!-- <div class=" hidden lg:block">
+  <NavberItem
+    icon="mdi:language"
+    transKey="language"
+    handleClick={openLangDialog}
+  />
+</div> -->

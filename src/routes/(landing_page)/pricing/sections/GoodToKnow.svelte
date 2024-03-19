@@ -21,12 +21,6 @@
       class="grid grid-cols-1 xs:gap-8 gap-6 mt-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
     >
       <InfoItem
-        title={translate("infoItem4", $_, false)}
-        subTitle={translate("infoItemExplain4", $_, false)}
-        icon="mdi:book-multiple"
-        bg="bg-blue-500"
-      />
-      <InfoItem
         title={translate("infoItem5", $_, false)}
         subTitle={translate("infoItemExplain5", $_, false)}
         icon="f7:gift-fill"
@@ -68,6 +62,12 @@
         subTitle={translate("infoItemExplain8", $_, false)}
         icon="material-symbols:request-quote-outline"
         bg="bg-orange-400"
+      />
+      <InfoItem
+        title={translate("infoItem4", $_, false)}
+        subTitle={translate("infoItemExplain4", $_, false)}
+        icon="mdi:book-multiple"
+        bg="bg-blue-500"
       />
     </div>
   </div>

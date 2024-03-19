@@ -15,7 +15,7 @@
   export let isActive: boolean = true;
 
   export let hint: string = "";
-
+  export let mark: boolean = false;
   export let value = "";
   let errorMessage = "";
   let validationResp: string | null = "";
@@ -64,7 +64,9 @@
   <!-- text -->
 
   <textarea
-    class="block w-full h-32 px-5 py-2 input input-bordered placeholder-opacity-70 {containerRadius} md:h-48 {bgColor} w-full {validationResp
+    class="block w-full h-32 px-5 py-2 input input-bordered placeholder-opacity-70 {containerRadius} md:h-48 {bgColor} w-full {mark
+      ? 'border-primary'
+      : ''} {validationResp
       ? 'border-red-700'
       : ''} [&::-webkit-inner-spin-button]:appearance-none"
     placeholder={hint}

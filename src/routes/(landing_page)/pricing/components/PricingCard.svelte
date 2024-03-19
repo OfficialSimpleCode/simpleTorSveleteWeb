@@ -31,7 +31,7 @@
     <span class="opacity-70">/{translate("inMonth", $_, false)}</span>
   </div>
   <span class="opacity-70 text-sm px-1 mb-6"
-    >({translate("includeVAT", $_, false)})</span
+    >({translate("notIncludeVAT", $_, false)})</span
   >
   <!-- download the app button -->
   <DownloadAppButton textTransKey={"start"} />

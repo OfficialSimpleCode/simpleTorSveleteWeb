@@ -24,7 +24,7 @@
       <PricingCard
         title={translate("basic", $_, false)}
         sunTitle={translate("basicSubtitle", $_, false)}
-        price={59.9}
+        price={50.5}
         includesList={[
           "basicExplain1",
           "basicExplain2",
@@ -43,7 +43,7 @@
       <PricingCard
         title={translate("premium", $_, false)}
         sunTitle={translate("premiumSubtitle", $_, false)}
-        price={79.9}
+        price={68.9}
         bestSeller
         extraOverSub={translate("onBasic", $_, false)}
         includesList={[
@@ -62,7 +62,7 @@
       <PricingCard
         title={translate("golden", $_, false)}
         sunTitle={translate("goldenSubtitle", $_, false)}
-        price={239.9}
+        price={205.9}
         extraOverSub={translate("onBasicAndPremium", $_, false)}
         includesList={[
           "goldenExplain1",

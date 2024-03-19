@@ -13,10 +13,18 @@
   $: onBusiness = $page.url.pathname.includes("business");
 </script>
 
-<div class="indicator {onBusiness ? 'hidden' : ''}">
+<div class=" {onBusiness ? 'hidden' : ''}">
   <CustomCircleIcon
     icon={$themeStore?.id === "lightIos" ? "ph:sun-fill" : "ph:moon-fill"}
     bgColor="bg-base-200"
     handleClick={onClick}
   />
 </div>
+
+<!-- <div class=" hidden lg:block {onBusiness ? 'hidden' : ''}">
+  <NavberItem
+    icon={$themeStore?.id === "lightIos" ? "ph:sun-fill" : "ph:moon-fill"}
+    transKey="theme"
+    handleClick={onClick}
+  />
+</div> -->
