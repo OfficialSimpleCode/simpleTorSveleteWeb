@@ -68,7 +68,9 @@
   }
 </script>
 
-<div class="flex flex-row gap-[6px] opacity-70 text-nowrap truncate">
+<div
+  class="flex flex-wrap gap-[5px] opacity-70 text-nowrap truncate text-xs xs:text-sm"
+>
   <!-- price indicator -->
   <div class="flex flex-row gap-[4px]">
     {#if priceText != ""}
