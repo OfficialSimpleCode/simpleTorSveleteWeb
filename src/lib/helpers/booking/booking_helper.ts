@@ -278,6 +278,8 @@ export default class BookingHelper {
       })
       .then(async (value) => {
         if (value) {
+          console.log("ddddddddddddd", oldBooking.recurrenceEvent);
+          console.log("333333", oldBookingDateForReccurence);
           const oldBookingForCustomerData = Booking.fromBooking(oldBooking);
           oldBookingForCustomerData.recurrenceEvent = undefined;
           this._deleteBookingLocally({
@@ -292,6 +294,8 @@ export default class BookingHelper {
             needPayInAdvance: false,
           });
 
+          console.log("ddddddddddddd", oldBooking.recurrenceEvent);
+          console.log("333333", oldBookingDateForReccurence);
           NotificationHandler.GI().afterUpdateBooking({
             newBooking,
             oldBooking,

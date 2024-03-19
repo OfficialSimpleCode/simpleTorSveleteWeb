@@ -143,12 +143,16 @@ export default class NotificationHandler {
     isOldBoookingPassed: boolean;
     oldBookingDateForReccurence?: Date;
   }): Promise<void> {
-    let oldBookingTemp = oldBooking;
+    console.log("ddddddddddddd", oldBooking.recurrenceEvent);
+    console.log("333333", oldBookingDateForReccurence);
+    let oldBookingTemp: Booking = oldBooking;
     if (
       oldBooking.recurrenceEvent != null &&
       oldBookingDateForReccurence != null
     ) {
-      const oldBookingTemp = Booking.fromBooking(oldBooking);
+      console.log("dddddddddddddwwwwwwwwwwwwwwwwwww");
+
+      oldBookingTemp = Booking.fromBooking(oldBooking);
 
       oldBookingTemp.bookingDate = oldBookingDateForReccurence;
     }
@@ -222,6 +226,8 @@ export default class NotificationHandler {
     ) {
       return;
     }
+
+    //can update the message reminder - two of the bookings are approved and there are both with message reminder
     if (
       oldBooking.notificationType === NotificationType.message &&
       oldBooking.status === BookingStatuses.approved &&
@@ -242,7 +248,9 @@ export default class NotificationHandler {
         newBooking
       );
       return;
-    } else if (
+    }
+    //can update the push notification - two of the bookings are approved and there are both with push notification reminder
+    else if (
       oldBooking.notificationType === NotificationType.push &&
       oldBooking.status === BookingStatuses.approved &&
       newBooking.status === BookingStatuses.approved &&
@@ -253,7 +261,10 @@ export default class NotificationHandler {
         newBooking,
       });
       return;
-    } else {
+    }
+    //cant update the notification or the message need to delete the message/notification and create new one
+    else {
+      //if the old booking not approved no need to delete the reminder - not approved bookings have no reminders
       if (oldBooking.status === BookingStatuses.approved) {
         if (oldBooking.notificationType === NotificationType.message) {
           const oldBookingTemp = Booking.fromBooking(oldBooking);
@@ -274,6 +285,7 @@ export default class NotificationHandler {
           ]);
         }
       }
+      //if the new booking not approved no need to make reminder for it - not approved bookings have no reminders
       if (newBooking.status === BookingStatuses.approved) {
         if (newBooking.notificationType === NotificationType.message) {
           MessagesHelper.GI().scheduleMessageToMultipleBookings({
@@ -311,6 +323,8 @@ export default class NotificationHandler {
     dateChange: boolean;
     treatmentsChange: boolean;
   }): void {
+    console.log("111111111111111", oldBooking);
+
     if (workerChange) {
       if (workerAction) {
         // if (oldWorker.id != UserInitializer.GI().user.id) {
