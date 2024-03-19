@@ -3384,5 +3384,10 @@
   "cantNavigateOnVerification": "לא ניתן לצאת באמצע תהליך אימות",
   "needToVerifyFirstYouNotRobot": "ראשית אמת שאתה לא רובוט",
   "alreadyVerifedPhone": "פלאפון כבר מאומת",
-  "loginFirst": "קודם התחבר למשתמש"
+  "loginFirst": "קודם התחבר למשתמש",
+  "inInstagramBrowser": "נראה שאתה בדפדפן של אינסטגרם",
+  "inInstagramBrowserDesc": "דפדפן זה לא מאובטח עליך לפתוח את האתר בדפדפן הרגיל של הטלפון שלך",
+  "howToExitInstagramExplain1": "1. לחץ על שלוש הנקודות למעלה",
+  "externalBrowserTextAndroid": "פתיחה ב-Chrome",
+  "clickOpenIn": "2. לחץ על"
 }
