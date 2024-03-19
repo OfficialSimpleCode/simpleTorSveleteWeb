@@ -47,7 +47,7 @@
       <GeneralIcon icon="mdi:hammer-wrench"></GeneralIcon>
 
       <!-- name price and time -->
-      <div class="flex flex-col items-start justify-between gap-2">
+      <div class="flex flex-col items-start justify-between gap-1">
         <h3 class="font-semibold text-lg xs:text-xl">
           {treatmentAmount === 1
             ? Object.values($bookingMakerStore.services)[0].name
