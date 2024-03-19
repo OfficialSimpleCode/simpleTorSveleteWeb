@@ -11,7 +11,6 @@
     XCircle,
   } from "svelte-hero-icons";
 
-  import { base } from "$app/paths";
   import Avatar from "$lib/components/Avatar.svelte";
   import DialogStrucher from "$lib/components/dialogs/DialogStrucher.svelte";
   import NavigationDialog from "$lib/components/dialogs/NavigationDialog.svelte";
@@ -27,9 +26,11 @@
   let copied: Boolean = false;
   let businessLink = $businessStore?.dynamicLink ?? "";
   if (businessLink === "") {
-    businessLink = `https://${base}/business/${$businessStore?.url}`;
+    businessLink = `${$page.url.origin}/business/${$businessStore?.url}`;
   }
   function copyToClipboard() {
+    console.log("businessLink --> ", businessLink);
+
     clipboard.write(businessLink);
     copied = true;
     setTimeout(() => (copied = false), 1500);

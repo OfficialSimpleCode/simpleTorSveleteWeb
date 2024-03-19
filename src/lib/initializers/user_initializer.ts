@@ -11,12 +11,12 @@ import DbPathesHelper from "$lib/helpers/db_paths_helper";
 import { GeneralData } from "$lib/helpers/general_data";
 import NotificationsHelper from "$lib/helpers/notifications/notifications/notification_helper";
 import UserRepo from "$lib/helpers/user/user_repo";
-import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
 import { VerificationRepo } from "$lib/helpers/verification/verification_repo";
 import BusinessInfo from "$lib/models/business/business_info";
 import type { Update } from "$lib/models/business/update_model";
 import LocalDocReference from "$lib/models/general/local_doc_reference";
 import UserModel from "$lib/models/user/user_model";
+import { Errors } from "$lib/services/errors/messages";
 import { isConnectedStore, userStore } from "$lib/stores/User";
 import { checkForReminders, sortMyBookings } from "$lib/utils/booking_utils";
 import { delay } from "$lib/utils/general_utils";
@@ -65,8 +65,9 @@ export default class UserInitializer {
       logger.info(`The user id is -> ${newUserId}`);
       // Iilegal id must be an error - log the user out
       if (newUserId.length < 5) {
+        AppErrorsHelper.GI().error = Errors.invalidId;
         await this.verificationRepo.logout();
-        return true; // to not display an error
+        return false; // to not display an error
       }
       // try lo load the user doc from the db
       console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeee");
@@ -75,43 +76,40 @@ export default class UserInitializer {
         docId: newUserId,
       });
       console.log("userDoc.exists()", userDoc.exists());
-      // the user isn't exist
+      // the user isn't exist - send him the continue the flow
       if (!userDoc.exists()) {
-        console.log(
-          "3333333333333333333333333333333333322222222222111111111111111111111111"
-        );
-        if (this.isConnected) {
-          VerificationHelper.GI().logout();
-        }
+        console.log("continue to register");
         isConnectedStore.set(false);
-
         return true; // new user log-in and not registered yet -> leave him logged-in
       }
       // user exist - parse the json into model
-      console.log("111111111111111111111111111111111111");
+      console.log("User exist parse the json");
       this.user = UserModel.fromUserDocJson(userDoc.data()!);
+      console.log(`The user is ${this.user}`);
 
-      // save the the user is connected
+      // Save the user is connected and we do have the user doc data
       isConnectedStore.set(true);
 
-      // No need to take the user public data the startListening
-      // func will take it
+      // No need to take the user public data the startListening handle it
       this.startPublicDataListening();
       userStore.set(this.user);
 
-      //actions that need to do if the user enter to business
+      // Actions that need to do if the user enter to business
       this.actionsOnBusiness();
 
       return true;
     } catch (e) {
-      /*initialize the user Doc*/
-
       if (e instanceof Error) {
         logger.error(`Error while setting up the user --> ${e}`);
-        AppErrorsHelper.GI().addError({ details: e.toString() });
+        AppErrorsHelper.GI().error = Errors.serverError;
       }
+      // Log the user out
+      await this.verificationRepo.logout();
+
+      // Save the user is not connected and we don't have the user doc data
       isConnectedStore.set(false);
 
+      // Returning "False" error in this func stop the flow (to not go to sign-up)
       return false;
     }
   }
