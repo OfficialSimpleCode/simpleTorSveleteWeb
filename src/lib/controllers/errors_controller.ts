@@ -7,7 +7,10 @@ export class ErrorsController {
   static displayError() {
     ShowToast({
       status: "fail",
-      text: translate(errorMessageToStr[AppErrorsHelper.GI().error]),
+      text:
+        AppErrorsHelper.GI().details +
+        " " +
+        translate(errorMessageToStr[AppErrorsHelper.GI().error]),
     });
   }
 }
