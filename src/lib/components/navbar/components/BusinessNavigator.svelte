@@ -7,20 +7,11 @@
 </script>
 
 {#if $businessStore != null}
-  <a href={`${base}/business/${$businessStore.url}`}>
+  <a href={`${base}/business/${$businessStore.url}`} class="">
     <div
       class="{ngClass} flex flex-row h-[34px] sm:h-[40px] px-2 gap-1 max-w-[100px] xs:max-w-[150px] sm:max-w-[190px]"
     >
       <BusinessNavigatorContent />
     </div>
   </a>
-
-  <!-- <a
-    href={`${base}/business/${$businessStore.url}`}
-    class="btn btn-sm btn-ghost hidden md:block items-center gap-2 justify-center hover:bg-primary hover:bg-opacity-10 hover:text-primary"
-  >
-    <div class="flex flex-row">
-      <BusinessNavigatorContent />
-    </div>
-  </a> -->
 {/if}

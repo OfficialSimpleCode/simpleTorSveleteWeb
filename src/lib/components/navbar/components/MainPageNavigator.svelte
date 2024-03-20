@@ -21,5 +21,7 @@
   on:load={onLoad}
   on:click={onClick}
   href={loading ? undefined : `${base}/`}
-  class=" text-xl hover:opacity-70 {loading ? 'opacity-70' : ''}">Simple Tor</a
+  class="btn btn-ghost btn-sm text-xl hover:text-primary hover:bg-primary hover:bg-opacity-10 {loading
+    ? 'opacity-70'
+    : ''}">Simple Tor</a
 >

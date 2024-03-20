@@ -213,6 +213,7 @@
 </svelte:head>
 <main class="w-full h-full bg-base-200">
   <Navbar />
+
   <Banner />
   <HowItWorks />
   <Features />

@@ -5,7 +5,7 @@
   import { _, translate } from "$lib/utils/translate";
 </script>
 
-<section class="bg-base-100">
+<section class="bg-base-100 pt-20">
   <div
     class="flex lg:flex-row flex-col items-center gap-y-16 text-center lg:text-start lg:justify-between px-5 max-w-[1620px] mx-auto lg:py-20 py-10"
   >

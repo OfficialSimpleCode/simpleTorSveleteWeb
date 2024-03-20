@@ -1,8 +1,9 @@
-<script>
+<script lang="ts">
   import { page } from "$app/stores";
-  import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import { defaultThemes } from "$lib/consts/business_design";
   import { themeStore } from "$lib/controllers/theme_controller";
+  import NavberItem from "./NavberItem.svelte";
+  export let fromMenu: boolean = false;
   function onClick() {
     themeStore.set(
       $themeStore?.id === "lightIos"
@@ -13,18 +14,19 @@
   $: onBusiness = $page.url.pathname.includes("business");
 </script>
 
-<div class=" {onBusiness ? 'hidden' : ''}">
+<!-- <div class="block lg:hidden {onBusiness ? 'hidden' : ''}">
   <CustomCircleIcon
     icon={$themeStore?.id === "lightIos" ? "ph:sun-fill" : "ph:moon-fill"}
     bgColor="bg-base-200"
     handleClick={onClick}
   />
-</div>
+</div> -->
 
-<!-- <div class=" hidden lg:block {onBusiness ? 'hidden' : ''}">
+<div class="{fromMenu ? '' : 'hidden lg:block'} {onBusiness ? 'hidden' : ''}">
   <NavberItem
     icon={$themeStore?.id === "lightIos" ? "ph:sun-fill" : "ph:moon-fill"}
     transKey="theme"
+    {fromMenu}
     handleClick={onClick}
   />
-</div> -->
+</div>

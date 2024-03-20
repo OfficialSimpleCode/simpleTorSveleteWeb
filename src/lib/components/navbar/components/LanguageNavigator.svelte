@@ -1,7 +1,8 @@
 <script lang="ts">
-  import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import { pushDialog } from "$lib/utils/general_utils";
   import LanguageDialog from "./LanguageDialog.svelte";
+  import NavberItem from "./NavberItem.svelte";
+  export let fromMenu: boolean = false;
   let langDialog: HTMLDialogElement;
   function openLangDialog() {
     pushDialog(langDialog);
@@ -9,18 +10,19 @@
 </script>
 
 <LanguageDialog bind:dialog={langDialog} />
-<div class="">
+<!-- <div class="block lg:hidden">
   <CustomCircleIcon
     icon="mdi:language"
     handleClick={openLangDialog}
     bgColor="bg-base-200"
   />
-</div>
+</div> -->
 
-<!-- <div class=" hidden lg:block">
+<div class={fromMenu ? "" : "hidden lg:block"}>
   <NavberItem
     icon="mdi:language"
+    {fromMenu}
     transKey="language"
     handleClick={openLangDialog}
   />
-</div> -->
+</div>

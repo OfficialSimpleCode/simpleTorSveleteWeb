@@ -13,8 +13,10 @@
 </script>
 
 <Navbar />
-{#if isNotFound}
-  <NotFoundPage />
-{:else}
-  <GeneralErrorPage />
-{/if}
+<div class="pt-20">
+  {#if isNotFound}
+    <NotFoundPage />
+  {:else}
+    <GeneralErrorPage />
+  {/if}
+</div>

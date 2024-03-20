@@ -6,6 +6,7 @@
   export let icon: string;
   export let href: string | undefined = undefined;
   export let active: boolean = true;
+  export let fromMenu: boolean = false;
   export let handleClick: () => void = () => {};
 </script>
 
@@ -16,10 +17,14 @@
       : 'opacity-60'}"
     {href}
   >
-    <p class="capilize text-sm">{translate(transKey, $_)}</p>
-    <div class="text-base-content">
-      <GeneralIcon {icon} size={20} />
-    </div>
+    <p class="capilize {fromMenu ? 'text-md' : 'text-sm'}">
+      {translate(transKey, $_)}
+    </p>
+    {#if fromMenu}
+      <div class="text-base-content">
+        <GeneralIcon {icon} size={20} />
+      </div>
+    {/if}
   </a>
 {:else}
   <button
@@ -28,11 +33,13 @@
       : 'opacity-60'}"
     on:click={handleClick}
   >
-    <p class="capilize text-sm">
+    <p class="capilize {fromMenu ? 'text-md' : 'text-sm'}">
       {translate(transKey, $_)}
     </p>
-    <div class="text-base-content">
-      <GeneralIcon {icon} size={20} />
-    </div>
+    {#if fromMenu}
+      <div class="text-base-content">
+        <GeneralIcon {icon} size={20} />
+      </div>
+    {/if}
   </button>
 {/if}
