@@ -120,4 +120,5 @@
     {/if}
   </main>
 {/if}
+<!-- write the var on the screen to force the var to update -->
 <p class="text-base-100 opacity-0">{userAgent}</p>
