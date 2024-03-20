@@ -92,7 +92,6 @@ export class FirebaseAuthService extends VerificationService {
     } catch (e) {
       if (e instanceof FirebaseError) {
         logger.error(`it was an error the error is --> ${e}`);
-
         const newCode = e.code.replace("auth/", "");
         logger.error(newCode);
         AppErrorsHelper.GI().details = newCode;
