@@ -66,7 +66,10 @@
       <LanguageNavigator />
     </div>
     <div class="flex flex-row items-center gap-2 px-1">
-      <DownloadAppNavigator />
+      <div class="hidden lg:block">
+        <DownloadAppNavigator />
+      </div>
+
       <BusinessNavigator />
       <!-- orders icon -->
 
