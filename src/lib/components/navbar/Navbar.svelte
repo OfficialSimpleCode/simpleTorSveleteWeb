@@ -49,7 +49,7 @@
 
 <div
   id="navbar"
-  class="flex flex-col fixed bg-base-100 z-20 justify-between items-center gap-0 px-1 sm:px-4 py-3 w-full {showNavbarMenu ||
+  class=" flex flex-col fixed bg-base-100 z-20 justify-between items-center gap-0 px-1 sm:px-4 py-3 w-full {showNavbarMenu ||
   scrolled
     ? `shadow-md ${scrolled ? '' : 'lg:shadow-none'}`
     : ''} "

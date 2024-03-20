@@ -3411,5 +3411,8 @@
   "notIncludeVAT": "Excluding VAT",
   "startNow": "Start Now",
   "cantLoginUnScuredWebView": "Can't to login - you are in an unsecured browser",
-  "downloadApp": "Download the app"
+  "downloadApp": "Download the app",
+  "poorInternetConnection": "There is no Internet connection",
+  "loadUserError": "There was a problem loading the user",
+  "itsTakeTooMuchTime": "Oops, it's taking too much time - refresh the site"
 }

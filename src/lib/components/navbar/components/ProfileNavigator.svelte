@@ -39,59 +39,30 @@
 <!-- prevent from the tool tip overiden by other elements -->
 <div class="z-50">
   {#if $isConnectedStore == null}
-    <div class="">
-      <CustomCircleIcon
-        icon="iconamoon:profile-fill"
-        active={false}
-        bgColor="bg-base-200"
-      />
-    </div>
-
-    <!-- <div class="hidden lg:block">
-      <NavberItem
-        icon="iconamoon:profile-fill"
-        transKey="profile"
-        active={false}
-      />
-    </div> -->
+    <CustomCircleIcon
+      icon="iconamoon:profile-fill"
+      active={false}
+      bgColor="bg-base-200"
+    />
   {:else}
-    <div class="">
-      <CustomCircleIcon
-        icon={loading
-          ? ""
+    <CustomCircleIcon
+      icon={loading
+        ? ""
+        : $isConnectedStore
+          ? "iconamoon:profile-fill"
+          : "ic:baseline-login"}
+      href={isInstagramWebView
+        ? `${$page.url.pathname}`
+        : loading
+          ? undefined
           : $isConnectedStore
-            ? "iconamoon:profile-fill"
-            : "ic:baseline-login"}
-        href={isInstagramWebView
-          ? `${$page.url.pathname}`
-          : loading
-            ? undefined
-            : $isConnectedStore
-              ? `${base}/profile`
-              : `${base}/login`}
-        {loading}
-        on:click={onClick}
-        on:load={onLoad}
-        bgColor="bg-base-200"
-      />
-    </div>
-    <!-- <div class="hidden lg:block">
-      <NavberItem
-        icon={loading
-          ? ""
-          : $isConnectedStore
-            ? "iconamoon:profile-fill"
-            : "ic:baseline-login"}
-        href={isInstagramWebView
-          ? `${$page.url.pathname}`
-          : loading
-            ? undefined
-            : $isConnectedStore
-              ? `${base}/profile`
-              : `${base}/login`}
-        transKey={$isConnectedStore ? "profile" : "login"}
-      />
-    </div> -->
+            ? `${base}/profile`
+            : `${base}/login`}
+      {loading}
+      on:click={onClick}
+      on:load={onLoad}
+      bgColor="bg-base-200"
+    />
     {#if $isConnectedStore}
       <Tooltip
         ><section class="bg-base-300 {containerRadius}">

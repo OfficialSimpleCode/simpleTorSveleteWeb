@@ -6,8 +6,6 @@ import { maxAttemptsPassword } from "$lib/consts/hyp";
 export class GeneralData {
   static currentBusinesssId: string = "";
 
-  static hasPaddingFromTop: boolean = false;
-  static paddingFromTop: number = 0.0;
   static attemptsLeftForCardPassword: number = maxAttemptsPassword;
 
   //declare that the code run on the application store version and cant

@@ -16,7 +16,6 @@ export default class ThemeHelper {
 
   public defaultTheme: string = "darkIos";
   public currentKeyTheme: string | null = null;
-  public themeCauseMainBuilt: boolean = false; // main rebuild because theme changed
   public currentThemes: Record<string, BusinessTheme> = { ...defaultThemes };
 
   public currentBusinessTheme: BusinessTheme | null = null;
@@ -52,8 +51,6 @@ export default class ThemeHelper {
           BusinessInitializer.GI().businessIcon = "lightShopIcon";
           break;
       }
-
-      this.themeCauseMainBuilt = true;
 
       this.currentKeyTheme = theme;
       if (this.currentThemes.hasOwnProperty(theme)) {

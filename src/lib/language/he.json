@@ -3397,5 +3397,8 @@
   "notIncludeVAT": "לא כולל מע״מ",
   "startNow": "התחל עכשיו",
   "cantLoginUnScuredWebView": "אין אפשרות להתחבר - אתה נמצא בדפדפן לא מאובטח",
-  "downloadApp": "הורד את האפליקציה"
+  "downloadApp": "הורד את האפליקציה",
+  "poorInternetConnection": "אין חיבור לאינטרנט",
+  "loadUserError": "חלה בעיה בטעינת המשתמש",
+  "itsTakeTooMuchTime": "אופס, זה לוקח יותר מידי זמן - רענן את האתר"
 }
