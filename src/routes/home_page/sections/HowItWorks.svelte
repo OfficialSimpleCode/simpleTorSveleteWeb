@@ -27,7 +27,7 @@
           class="absolute inset-x-0 hidden xl:px-44 top-10 md:block md:px-20 lg:px-28"
         >
           <img
-            alt=""
+            alt="white Dots"
             loading="lazy"
             width="1000"
             height="500"
