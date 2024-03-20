@@ -38,7 +38,11 @@
     >
       <!-- <DeviceMock mediaSrc={topBarGif} uuid="BannerPhone" /> -->
 
-      <img class="object-scale-down" src={bannerImage} alt="mockup" />
+      <img
+        class="object-scale-down"
+        src={bannerImage}
+        alt="Banner of the application"
+      />
     </div>
   </div>
 </section>
