@@ -17,4 +17,5 @@ export const verificationErrors: Record<string, Errors> = {
   "expired-code": Errors.expiredCode,
   "account-exists-with-different-credential": Errors.credentialAlreadyInUse,
   "invalid-phone-number": Errors.invalidPhoneNumber,
+  "popup-blocked": Errors.cantLoginUnScuredWebView,
 };

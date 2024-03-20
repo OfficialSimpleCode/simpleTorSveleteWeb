@@ -8,10 +8,13 @@ import {
 } from "$lib/consts/auth";
 
 import { ErrorsController } from "$lib/controllers/errors_controller";
+import { onUnScuredWebViewStore } from "$lib/controllers/verification_controller";
+import AppErrorsHelper from "$lib/helpers/app_errors";
 import UserHelper from "$lib/helpers/user/user_helper";
 import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
 import UserInitializer from "$lib/initializers/user_initializer";
 import PhoneDataResult from "$lib/models/resps/phone_data_result";
+import { Errors } from "$lib/services/errors/messages";
 import { businessStore } from "$lib/stores/Business";
 import { isConnectedStore } from "$lib/stores/User";
 import type { EventDispatcher } from "svelte";
@@ -51,6 +54,11 @@ export async function handleLogin({
 
   if (!resp) {
     ErrorsController.displayError();
+    //if the error that come from the login process is un scured web view change the store to
+    //let the user know he need to get out to diffrent browser
+    if (AppErrorsHelper.GI().error === Errors.cantLoginUnScuredWebView) {
+      onUnScuredWebViewStore.set(true);
+    }
     return;
   }
 

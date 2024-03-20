@@ -3,6 +3,7 @@
   import { base } from "$app/paths";
   import ExitFromInstagramExplain from "$lib/components/ExitFromInstagramExplain.svelte";
   import { LoginReason } from "$lib/consts/auth";
+  import { onUnScuredWebViewStore } from "$lib/controllers/verification_controller";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
   import { businessStore } from "$lib/stores/Business";
   import { pushDialog } from "$lib/utils/general_utils";
@@ -78,7 +79,7 @@
   }
 </script>
 
-{#if isInstagramWebView}
+{#if isInstagramWebView || $onUnScuredWebViewStore}
   <ExitFromInstagramExplain />
 {:else}
   <!-- Dialog -->

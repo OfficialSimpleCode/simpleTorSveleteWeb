@@ -101,6 +101,7 @@ export enum Errors {
   encryptionFailed,
   bookingFailedAfterTransaction,
   otpSessionExpired,
+  cantLoginUnScuredWebView,
 }
 
 export const errorMessageToStr: { [key in Errors]: string } = {
@@ -217,4 +218,5 @@ export const errorMessageToStr: { [key in Errors]: string } = {
   [Errors.bookingFailedAfterTransaction]: "bookingFailedAfterTransaction",
   [Errors.otpSessionExpired]: "otpSessionExpired",
   [Errors.encryptionFailed]: "encryptionFailed",
+  [Errors.cantLoginUnScuredWebView]: "cantLoginUnScuredWebView",
 };

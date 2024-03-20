@@ -3408,5 +3408,7 @@
   "phoneAlreadyVerified": "The phone number is already verified",
   "weWillSendYouMessage": "We will send you a message with the code...",
   "theMessageFailed": "Sending the message failed",
-  "notIncludeVAT": "Excluding VAT"
+  "notIncludeVAT": "Excluding VAT",
+  "startNow": "Start Now",
+  "cantLoginUnScuredWebView": "Can't to login - you are in an unsecured browser"
 }

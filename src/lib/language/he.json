@@ -3394,5 +3394,7 @@
   "phoneAlreadyVerified": "מספר הפלאפון כבר מאומת",
   "weWillSendYouMessage": "אנחנו שולחים לך הודעה עם הקוד...",
   "theMessageFailed": "שליחת ההודעה נכשלה",
-  "notIncludeVAT": "לא כולל מע״מ"
+  "notIncludeVAT": "לא כולל מע״מ",
+  "startNow": "התחל עכשיו",
+  "cantLoginUnScuredWebView": "אין אפשרות להתחבר - אתה נמצא בדפדפן לא מאובטח"
 }

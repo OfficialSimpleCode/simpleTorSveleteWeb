@@ -18,7 +18,7 @@
   />
 </div> -->
 
-<div class={fromMenu ? "" : "hidden lg:block"}>
+<div class="{fromMenu ? '' : 'hidden lg:block'} ">
   <NavberItem
     icon="mdi:language"
     {fromMenu}

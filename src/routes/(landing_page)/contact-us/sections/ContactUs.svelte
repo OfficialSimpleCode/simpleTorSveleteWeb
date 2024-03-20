@@ -9,7 +9,7 @@
   contactUsSubjectStore.set(urlParams.get("subject") ?? "");
 </script>
 
-<section class="bg-base-300">
+<section class="bg-base-300 pt-10">
   <div class="container px-2 py-12 mx-auto">
     <div class="lg:flex lg:items-center lg:mx-6">
       <!-- text side -->

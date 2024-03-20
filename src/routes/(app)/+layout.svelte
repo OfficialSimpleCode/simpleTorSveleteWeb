@@ -4,7 +4,7 @@
 
 <div class="h-full w-full">
   <Navbar />
-  <div class="pt-20">
+  <div class="pt-10">
     <slot />
   </div>
 </div>

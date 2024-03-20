@@ -3,7 +3,7 @@
   import PricingCard from "../components/PricingCard.svelte";
 </script>
 
-<section class="bg-base-200">
+<section class="bg-base-200 pt-10">
   <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
     <!-- title and sub title -->
     <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">

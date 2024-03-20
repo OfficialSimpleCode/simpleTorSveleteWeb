@@ -22,7 +22,11 @@
   />
 </div> -->
 
-<div class="{fromMenu ? '' : 'hidden lg:block'} {onBusiness ? 'hidden' : ''}">
+<div
+  class="{fromMenu || onBusiness ? '' : 'hidden lg:block'} {onBusiness
+    ? 'hidden'
+    : ''}"
+>
   <NavberItem
     icon={$themeStore?.id === "lightIos" ? "ph:sun-fill" : "ph:moon-fill"}
     transKey="theme"

@@ -11,5 +11,5 @@ export function ShowToast(toast: Toast) {
   currentToast.set(toast);
   setTimeout(() => {
     currentToast.set(null);
-  }, 20000);
+  }, 2000);
 }
