@@ -12,7 +12,7 @@
     : 'hidden lg:block'} "
 >
   <NavberItem
-    icon="solar:tag-price-bold"
+    icon="grommet-icons:money"
     transKey="pricing"
     {fromMenu}
     href={`${base}/pricing`}
