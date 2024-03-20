@@ -18,6 +18,20 @@
   let scrolled = false;
 
   onMount(() => {
+    document.addEventListener("click", function (event) {
+      if (event == null) {
+        return;
+      }
+      const myDiv = document.getElementById("navbar");
+      if (myDiv == null) {
+        return;
+      }
+      const isClickedOutside = !myDiv!.contains(event.target as Node);
+
+      if (isClickedOutside) {
+        showNavbarMenu = false;
+      }
+    });
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
