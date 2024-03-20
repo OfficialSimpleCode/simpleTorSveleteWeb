@@ -115,7 +115,12 @@ export async function handleLogin({
     return resp;
   }
 
-  await setUpUser();
+  const setupResp: boolean = await setUpUser();
+  // error in log - stop the flow
+  if (!setupResp) {
+    ErrorsController.displayError();
+    return;
+  }
 
   //sign in page
   if (get(isConnectedStore) !== true) {
