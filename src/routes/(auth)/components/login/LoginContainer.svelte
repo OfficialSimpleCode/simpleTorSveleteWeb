@@ -112,3 +112,4 @@
     {/if}
   </main>
 {/if}
+<p class="text-base-100 opacity-0">{userAgent}</p>
