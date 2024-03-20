@@ -26,7 +26,7 @@
 
   let isInstagramWebView: boolean = false;
 
-  onMount(() => {
+  function checInInstagram() {
     //check the user agent - method 1
     const method1Resp = /Instagram/.test(navigator.userAgent);
 
@@ -36,6 +36,14 @@
 
     //check the two methods for insurance
     isInstagramWebView = method2Resp || method1Resp;
+  }
+  onMount(() => {
+    checInInstagram();
+
+    // check again the make sure no mistake made
+    setInterval(() => {
+      checInInstagram();
+    }, 1000);
   });
 
   async function onFinishLogin() {
