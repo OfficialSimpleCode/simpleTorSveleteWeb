@@ -7,6 +7,7 @@
   export let href: string | undefined = undefined;
   export let active: boolean = true;
   export let fromMenu: boolean = false;
+  export let target: string | undefined = undefined;
   export let handleClick: () => void = () => {};
 </script>
 
@@ -16,6 +17,7 @@
       ? ''
       : 'opacity-60'}"
     {href}
+    {target}
   >
     <p class="capilize {fromMenu ? 'text-md' : 'text-sm'}">
       {translate(transKey, $_)}

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { businessStore } from "$lib/stores/Business";
   import { getDownloadingAppLink } from "$lib/utils/links_utils";
   import { _, translate } from "$lib/utils/translate";
   import { onMount } from "svelte";
@@ -8,7 +7,7 @@
   let downloadLink = "";
   // After the ui is loaded
   onMount(() => {
-    downloadLink = getDownloadingAppLink($businessStore?.dynamicLink ?? "");
+    downloadLink = getDownloadingAppLink();
   });
 </script>
 
