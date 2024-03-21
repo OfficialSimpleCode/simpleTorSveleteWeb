@@ -39,7 +39,7 @@
     <!-- side buttons and image -->
     <div
       id="images"
-      class="flex xl:flex-row flex-col-reverse items-center xl:justify-between justify-center max-w-[1700px] w-full mx-auto bg-base-100 xl:py-0 sm:py-10 py-3 sm:px-[50px] px-[10px] {containerRadius}"
+      class="flex xl:flex-row flex-col-reverse items-center pt-10 xl:justify-between justify-center max-w-[1700px] w-full mx-auto bg-base-100 xl:py-0 sm:py-10 py-3 sm:px-[50px] px-[10px] {containerRadius}"
     >
       <!-- buttons -->
       <div class="flex flex-col xl:gap-y-8 gap-y-5 xl:w-[700px]">

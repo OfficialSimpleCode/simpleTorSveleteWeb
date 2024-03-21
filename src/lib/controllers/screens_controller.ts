@@ -4,6 +4,8 @@ export let downloadAppBanner = writable<boolean>(false);
 
 export let pressExistBanner: boolean = false;
 
+export let popReloadDialogStore = writable<boolean>(false);
+
 export class ScreenController {
   static pressExistBanner: boolean = false;
 

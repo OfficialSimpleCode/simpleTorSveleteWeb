@@ -71,7 +71,7 @@ export default class UserInitializer {
       }
       // try lo load the user doc from the db
       console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-      const userDoc = await this.userRepo.getDocSRV({
+      const userDoc = await this.userRepo.getDocRepo({
         path: usersCollection,
         docId: newUserId,
       });

@@ -15,11 +15,16 @@
 
   import Analytics from "$lib/components/analytics.svelte";
   import DownloadAppBanner from "$lib/components/app_banner/DownloadAppBanner.svelte";
+  import ReloadAppDialog from "$lib/components/dialogs/ReloadAppDialog.svelte";
   import { appOpenGraphImage } from "$lib/consts/resources";
+  import { popReloadDialogStore } from "$lib/controllers/screens_controller";
+  import { pushDialog } from "$lib/utils/general_utils";
   import "../app.css";
   let screenHeight: number;
   let keywords: string[] = [];
   let userAgent: string = "";
+  let needToReloadDialog: HTMLDialogElement;
+
   onMount(() => {
     RemoteConfigHelper.GI().init();
 
@@ -61,6 +66,12 @@
       translate("keyWord5", $_, false),
       translate("keyWord6", $_, false),
     ];
+
+    popReloadDialogStore.subscribe((value) => {
+      if (value) {
+        pushDialog(needToReloadDialog);
+      }
+    });
   });
 
   $: storyImagesHeigth = Math.floor(Math.max(screenHeight * 0.4, 320));
@@ -90,6 +101,8 @@
   {/if}
   <!--  -->
 </svelte:head>
+
+<ReloadAppDialog bind:dialog={needToReloadDialog} />
 
 <!-- google analytics -->
 <Analytics />

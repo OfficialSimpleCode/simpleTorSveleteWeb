@@ -37,7 +37,8 @@ export class FirebaseAuthService extends VerificationService {
   constructor() {
     super();
 
-    getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+    const firebaseApp =
+      getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
     this._auth = getAuth();
   }
 

@@ -3414,5 +3414,8 @@
   "downloadApp": "Download the app",
   "poorInternetConnection": "There is no Internet connection",
   "loadUserError": "There was a problem loading the user",
-  "itsTakeTooMuchTime": "Oops, it's taking too much time - refresh the site"
+  "itsTakeTooMuchTime": "Oops, it's taking too much time",
+  "needToReloadTheApp": "Oops there is an error please reload the site",
+  "reloadApp": "Reload",
+  "refreh": "Refresh"
 }

@@ -32,3 +32,6 @@ export const generalErrorAnimation: string =
 
 export const appOpenGraphImage: string =
   "https://firebasestorage.googleapis.com/v0/b/managementsystemapp-c1fda.appspot.com/o/general%2Fwebsite%2FAppOGImage.png?alt=media&token=83f6210c-7448-4819-929a-e74509e444d6";
+
+export const reloadAnimation: string =
+  "https://lottie.host/a555851f-8c9a-423e-a283-96c85f6560c9/TPyldMN3eG.json";

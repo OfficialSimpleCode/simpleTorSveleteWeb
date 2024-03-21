@@ -3400,5 +3400,8 @@
   "downloadApp": "הורד את האפליקציה",
   "poorInternetConnection": "אין חיבור לאינטרנט",
   "loadUserError": "חלה בעיה בטעינת המשתמש",
-  "itsTakeTooMuchTime": "אופס, זה לוקח יותר מידי זמן - רענן את האתר"
+  "itsTakeTooMuchTime": "אופס, זה לוקח יותר מידי זמן",
+  "needToReloadTheApp": "אופס נראה שיש שגיאה",
+  "reloadApp": "טעינה מחדש",
+  "refreh": "טען מחדש"
 }

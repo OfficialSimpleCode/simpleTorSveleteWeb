@@ -18,8 +18,8 @@ import {
   doc,
   getDoc,
   getDocs,
-  getFirestore,
   increment,
+  initializeFirestore,
   limit,
   onSnapshot,
   query,
@@ -31,14 +31,27 @@ import {
 } from "firebase/firestore";
 import { Errors } from "../errors/messages";
 import RealTimeDatabase from "./real_time_data_base";
-
+let firestoreInitilized = false;
+let firestore2: Firestore;
 export default class FirestoreDataBase extends RealTimeDatabase {
   _firestore: Firestore;
   constructor() {
+    super();
+    if (firestoreInitilized) {
+      console.log("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
+      this._firestore = firestore2;
+      return;
+    }
+    console.log("Eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
     const firebaseApp =
       getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-    super();
-    this._firestore = getFirestore();
+
+    this._firestore = initializeFirestore(firebaseApp, {
+      experimentalAutoDetectLongPolling: true,
+    });
+    firestore2 = this._firestore;
+
+    firestoreInitilized = true;
   }
 
   get getBatch(): WriteBatch {
@@ -55,6 +68,8 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     insideEnviroments?: boolean;
   }): Promise<DocumentSnapshot<DocumentData, DocumentData>> {
     try {
+      console.log(insideEnviroments ? `${envKey}/${path}` : path);
+      console.log(docId);
       const collectionRef = collection(
         this._firestore,
         insideEnviroments ? `${envKey}/${path}` : path

@@ -5,10 +5,9 @@ import AppErrorsHelper from "./app_errors";
 // import LinksHelper from "./links_helper";
 import { logger } from "$lib/consts/application_general";
 import { ErrorsController } from "$lib/controllers/errors_controller";
+import { popReloadDialogStore } from "$lib/controllers/screens_controller";
 import { Errors } from "$lib/services/errors/messages";
-import { ShowToast } from "$lib/stores/ToastManager";
 import { isConnectedStore } from "$lib/stores/User";
-import { translate } from "$lib/utils/translate";
 import { get } from "svelte/store";
 import { VerificationHelper } from "./verification/verification_helper";
 
@@ -44,12 +43,9 @@ export class LoadAppHelper {
       //set up a time out for him to notify the user that the auth obj take time to load
       setTimeout(() => {
         if (get(isConnectedStore) == null) {
-          ShowToast({
-            text: translate("itsTakeTooMuchTime"),
-            status: "warning",
-          });
+          popReloadDialogStore.set(true);
         }
-      }, 4000);
+      }, 5000);
 
       //wait for the firebase to initial
       await VerificationHelper.GI()
@@ -77,6 +73,7 @@ export class LoadAppHelper {
 
     if (!resp) {
       logger.error("setupUser return false");
+
       AppErrorsHelper.GI().error = Errors.loadUserError;
       ErrorsController.displayError();
     }
