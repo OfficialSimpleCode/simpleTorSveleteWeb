@@ -9,14 +9,6 @@ import WorkerModel from "$lib/models/worker/worker_model";
 import { ShowToast } from "$lib/stores/ToastManager";
 import { sendMessage } from "$lib/utils/notifications_utils";
 import { translate } from "$lib/utils/translate";
-import "@syncfusion/ej2-base/styles/material.css";
-import "@syncfusion/ej2-buttons/styles/material.css";
-import "@syncfusion/ej2-calendars/styles/material.css";
-import "@syncfusion/ej2-dropdowns/styles/material.css";
-import "@syncfusion/ej2-inputs/styles/material.css";
-import "@syncfusion/ej2-lists/styles/material.css";
-import "@syncfusion/ej2-navigations/styles/material.css";
-import "@syncfusion/ej2-popups/styles/material.css";
 
 import { maxWidthToShow5Days } from "$lib/consts/booking_maker";
 import MultiBooking from "$lib/models/multi_booking/multi_booking";

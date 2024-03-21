@@ -15,6 +15,7 @@
   import { businessStore } from "$lib/stores/Business";
   import { _, translate } from "$lib/utils/translate";
   import { onDestroy } from "svelte";
+  import OrderStepper from "./components/OrderStepper.svelte";
   import FinishScreen from "./steps/finish_screen/FinishScreen.svelte";
   import ServicePicker from "./steps/service_picker/ServicePicker.svelte";
   import TimePicker from "./steps/time_picker/TimePicker.svelte";
@@ -74,7 +75,7 @@
 
 <main class="h-full w-full flex flex-col items-center gap-2 bg-base-100">
   <!-- stepper -->
-  <!-- <OrderStepper /> -->
+  <OrderStepper />
 
   <!-- steps -->
   <div class="flex flex-col w-full lg:max-w-[1000px] items-center">
