@@ -3,11 +3,14 @@
 
   import { onMount } from "svelte";
   import BrightnessNavigator from "./components/BrightnessNavigator.svelte";
+  import BusinessNavigator from "./components/BusinessNavigator.svelte";
   import ContactUsNavigator from "./components/ContactUsNavigator.svelte";
+  import DownloadAppNavigator from "./components/DownloadAppNavigator.svelte";
   import LanguageNavigator from "./components/LanguageNavigator.svelte";
   import MainPageNavigator from "./components/MainPageNavigator.svelte";
   import MoreNavigator from "./components/MoreNavigator.svelte";
   import NavbarMenu from "./components/NavbarMenu.svelte";
+  import OrdersNavigator from "./components/OrdersNavigator.svelte";
   import PricingNavigator from "./components/PricingNavigator.svelte";
   import ProfileNavigator from "./components/ProfileNavigator.svelte";
   let showNavbarMenu: boolean = false;
@@ -63,11 +66,11 @@
       <LanguageNavigator />
     </div>
     <div class="flex flex-row items-center gap-[7px] px-1">
-      <!-- <div class="hidden lg:block">
+      <div class="hidden lg:block">
         <DownloadAppNavigator />
       </div>
-      <BusinessNavigator /> -->
-      <!-- <OrdersNavigator /> -->
+      <BusinessNavigator />
+      <OrdersNavigator />
       <ProfileNavigator />
     </div>
   </div>
