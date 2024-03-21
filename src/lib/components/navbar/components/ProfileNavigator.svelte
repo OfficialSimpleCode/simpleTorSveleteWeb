@@ -2,19 +2,6 @@
   import { base } from "$app/paths";
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import { isConnectedStore } from "$lib/stores/User";
-
-  let loading: boolean = false;
-
-  function onClick() {
-    if (true) {
-      return;
-    }
-    setTimeout(() => (loading = true), 50);
-  }
-
-  function onLoad() {
-    loading = false;
-  }
 </script>
 
 <!-- prevent from the tool tip overiden by other elements -->
@@ -29,19 +16,10 @@
     </div>
   {:else}
     <CustomCircleIcon
-      icon={loading
-        ? ""
-        : $isConnectedStore === true
-          ? "iconamoon:profile-fill"
-          : "ic:baseline-login"}
-      href={loading
-        ? undefined
-        : $isConnectedStore
-          ? `${base}/profile`
-          : `${base}/login`}
-      {loading}
-      on:click={onClick}
-      on:load={onLoad}
+      icon={$isConnectedStore === true
+        ? "iconamoon:profile-fill"
+        : "ic:baseline-login"}
+      href={$isConnectedStore ? `${base}/profile` : `${base}/login`}
       bgColor="bg-base-200"
     />
     {#if $isConnectedStore}

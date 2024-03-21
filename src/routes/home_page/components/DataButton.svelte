@@ -10,13 +10,27 @@
   function changeSelection() {
     dispatch("changeSelection", { value: currentIndex });
   }
+
+  function onClick() {
+    scrollToDiv();
+    changeSelection();
+  }
+
+  function scrollToDiv() {
+    const targetDiv = document.getElementById("images");
+    const offset = 50;
+    if (targetDiv) {
+      const topOffset =
+        targetDiv.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ behavior: "smooth", top: topOffset });
+    }
+  }
 </script>
 
-<a
-  on:click={changeSelection}
+<button
+  on:click={onClick}
   on:mouseover={changeSelection}
   on:focus={changeSelection}
-  href="#images"
   class="flex bg-base-200 border rounded-[30px] px-4 sm:py-5 py-4 text-start {selected ===
   currentIndex
     ? 'border-primary'
@@ -38,4 +52,4 @@
       {subTitleTransKey}
     </p>
   </div>
-</a>
+</button>
