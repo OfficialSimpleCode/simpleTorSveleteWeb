@@ -8,7 +8,6 @@
   import MainPageNavigator from "./components/MainPageNavigator.svelte";
   import MoreNavigator from "./components/MoreNavigator.svelte";
   import NavbarMenu from "./components/NavbarMenu.svelte";
-  import OrdersNavigator from "./components/OrdersNavigator.svelte";
   import PricingNavigator from "./components/PricingNavigator.svelte";
   import ProfileNavigator from "./components/ProfileNavigator.svelte";
   let showNavbarMenu: boolean = false;
@@ -68,7 +67,7 @@
         <DownloadAppNavigator />
       </div>
       <BusinessNavigator /> -->
-      <OrdersNavigator />
+      <!-- <OrdersNavigator /> -->
       <ProfileNavigator />
     </div>
   </div>

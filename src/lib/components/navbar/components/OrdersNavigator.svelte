@@ -4,7 +4,6 @@
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import { businessStore } from "$lib/stores/Business";
   import { userStore } from "$lib/stores/User";
-  import { get } from "svelte/store";
 </script>
 
 <div class="indicator">
@@ -12,7 +11,7 @@
     icon="lets-icons:order-fill"
     bgColor="bg-base-200"
     href={$businessStore != null
-      ? `${base}/business/${get(businessStore)?.url}/orders`
+      ? `${base}/business/${$businessStore?.url}/orders`
       : `${base}/orders`}
   />
   {#if $userStore.bookingsToShow != null && Object.values($userStore.bookingsToShow).length > 0}
@@ -23,13 +22,3 @@
     >
   {/if}
 </div>
-
-<!-- <div class="hidden lg:block">
-  <NavberItem
-    icon="lets-icons:order-fill"
-    transKey="myBookings"
-    href={$businessStore != null
-      ? `${base}/business/${$businessStore?.url}/orders`
-      : `${base}/orders`}
-  />
-</div> -->

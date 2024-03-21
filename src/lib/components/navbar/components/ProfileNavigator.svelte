@@ -20,12 +20,6 @@
   function onLoad() {
     loading = false;
   }
-
-  console.log($isConnectedStore);
-  isConnectedStore.subscribe((value) => {
-    console.log("3333333333333333333333333333");
-    console.log(value);
-  });
 </script>
 
 <!-- prevent from the tool tip overiden by other elements -->
