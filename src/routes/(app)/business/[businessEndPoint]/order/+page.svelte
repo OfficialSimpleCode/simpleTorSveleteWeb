@@ -17,6 +17,7 @@
   import { onDestroy } from "svelte";
   import FinishScreen from "./steps/finish_screen/FinishScreen.svelte";
   import ServicePicker from "./steps/service_picker/ServicePicker.svelte";
+  import TimePicker from "./steps/time_picker/TimePicker.svelte";
   import WorkerPicker from "./steps/worker_picker/WorkerPicker.svelte";
 
   BookingController.initializeBookingMaker();
@@ -81,8 +82,8 @@
       <WorkerPicker />
     {:else if $bookingMakerStore.currentStep === 1}
       <ServicePicker />
-      <!-- {:else if $bookingMakerStore.currentStep === 2}
-      <TimePicker /> -->
+    {:else if $bookingMakerStore.currentStep === 2}
+      <TimePicker />
     {:else if $bookingMakerStore.currentStep === 3}
       <FinishScreen />
     {/if}
