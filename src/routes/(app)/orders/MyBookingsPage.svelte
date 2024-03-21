@@ -11,7 +11,6 @@
   } from "$lib/stores/Business";
   import { isConnectedStore, userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
-  import { onMount } from "svelte";
   import BookingList from "./pages/BookingList.svelte";
   import BookingsTable from "./pages/BookingsTable.svelte";
   import EmptyBookingPage from "./pages/EmptyBookingPage.svelte";
@@ -50,8 +49,6 @@
     ($isConnectedStore != null &&
       $userStore.bookingsToShow != null &&
       $userStore.bookingsToShow.length === 0);
-
-  onMount(() => {});
 </script>
 
 <main class=" h-full">
