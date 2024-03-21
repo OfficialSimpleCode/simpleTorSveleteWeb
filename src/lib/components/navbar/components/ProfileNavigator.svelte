@@ -1,12 +1,7 @@
 <script lang="ts">
   import { base } from "$app/paths";
-  import Avatar from "$lib/components/Avatar.svelte";
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
-  import { containerRadius } from "$lib/consts/sizes";
-  import { isConnectedStore, userStore } from "$lib/stores/User";
-  import { imageByGender } from "$lib/utils/images_utils";
-  import { formatedPhone } from "$lib/utils/string_utils";
-  import { Tooltip } from "flowbite-svelte";
+  import { isConnectedStore } from "$lib/stores/User";
 
   let loading: boolean = false;
 
@@ -58,7 +53,7 @@
       bgColor="bg-base-200"
     />
     {#if $isConnectedStore}
-      <Tooltip
+      <!-- <Tooltip
         ><section class="bg-base-300 {containerRadius}">
           <div
             class="flex flex-row gap-2 py-3 px-5 items-center justify-center"
@@ -80,7 +75,7 @@
             </div>
           </div>
         </section></Tooltip
-      >
+      > -->
     {/if}
   {/if}
 </div>
