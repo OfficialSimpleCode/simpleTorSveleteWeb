@@ -79,14 +79,15 @@ export default class UserInitializer {
       // the user isn't exist - send him the continue the flow
       if (!userDoc.exists()) {
         console.log("continue to register");
+
         isConnectedStore.set(false);
         return true; // new user log-in and not registered yet -> leave him logged-in
       }
       // user exist - parse the json into model
       console.log("User exist parse the json");
       this.user = UserModel.fromUserDocJson(userDoc.data()!);
-      console.log(`The user is ${this.user}`);
 
+      console.log("````````````5555555555````````````");
       // Save the user is connected and we do have the user doc data
       isConnectedStore.set(true);
 
@@ -103,9 +104,7 @@ export default class UserInitializer {
         logger.error(`Error while setting up the user --> ${e}`);
         AppErrorsHelper.GI().error = Errors.serverError;
       }
-      // Log the user out
-      await this.verificationRepo.logout();
-
+      console.log("````````````````11111111111111111````````````````");
       // Save the user is not connected and we don't have the user doc data
       isConnectedStore.set(false);
 

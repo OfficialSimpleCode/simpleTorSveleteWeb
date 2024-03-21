@@ -1,6 +1,5 @@
 <script lang="ts">
   import { base } from "$app/paths";
-  import { page } from "$app/stores";
   import Avatar from "$lib/components/Avatar.svelte";
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
   import { containerRadius } from "$lib/consts/sizes";
@@ -11,20 +10,7 @@
 
   let loading: boolean = false;
 
-  let isInstagramWebView = false;
-
-  // onMount(() => {
-  //   isInstagramWebView =
-  //     navigator.userAgent.toLowerCase().includes("instagram") || true;
-  // });
-
   function onClick() {
-    // if (isInstagramWebView) {
-
-    //   window.open("http://instagram.com/?nibrowser=no", "_blank");
-    //   return;
-    // }
-
     if (true) {
       return;
     }
@@ -34,30 +20,38 @@
   function onLoad() {
     loading = false;
   }
+
+  console.log($isConnectedStore);
+  isConnectedStore.subscribe((value) => {
+    console.log("3333333333333333333333333333");
+    console.log(value);
+  });
 </script>
 
 <!-- prevent from the tool tip overiden by other elements -->
 <div class="z-50">
   {#if $isConnectedStore == null}
-    <CustomCircleIcon
-      icon="iconamoon:profile-fill"
-      active={false}
-      bgColor="bg-base-200"
-    />
+    <div class="animate-pulse">
+      <CustomCircleIcon
+        icon="iconamoon:profile-fill"
+        active={false}
+        bgColor="bg-base-200"
+      />
+    </div>
   {:else}
     <CustomCircleIcon
       icon={loading
         ? ""
-        : $isConnectedStore
+        : $isConnectedStore === true
           ? "iconamoon:profile-fill"
-          : "ic:baseline-login"}
-      href={isInstagramWebView
-        ? `${$page.url.pathname}`
-        : loading
-          ? undefined
-          : $isConnectedStore
-            ? `${base}/profile`
-            : `${base}/login`}
+          : $isConnectedStore === false
+            ? "ic:baseline-login"
+            : ""}
+      href={loading
+        ? undefined
+        : $isConnectedStore
+          ? `${base}/profile`
+          : `${base}/login`}
       {loading}
       on:click={onClick}
       on:load={onLoad}

@@ -1,6 +1,5 @@
 <script>
   import { page } from "$app/stores";
-  import { businessStore } from "$lib/stores/Business";
   import { _, translate } from "$lib/utils/translate";
   import MyBookingsPage from "./MyBookingsPage.svelte";
 </script>
@@ -30,6 +29,4 @@
   />
 </svelte:head>
 
-{#key $businessStore?.businessId}
-  <MyBookingsPage />
-{/key}
+<MyBookingsPage />

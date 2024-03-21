@@ -1,13 +1,21 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
+  import { base } from "$app/paths";
   import { page } from "$app/stores";
   import { LoginReason } from "$lib/consts/auth";
   import { VerificationHelper } from "$lib/helpers/verification/verification_helper";
+  import { isConnectedStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
   import { onMount } from "svelte";
   import LoginContainer from "../components/login/LoginContainer.svelte";
 
   onMount(() => {
     VerificationHelper.GI().setupLoggin();
+    isConnectedStore.subscribe((value) => {
+      if (value === true) {
+        goto(`${base}/profile`);
+      }
+    });
   });
 </script>
 

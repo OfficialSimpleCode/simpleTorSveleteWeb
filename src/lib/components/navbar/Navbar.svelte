@@ -18,6 +18,7 @@
   let scrolled = false;
 
   onMount(() => {
+    //click listener
     document.addEventListener("click", function (event) {
       if (event == null) {
         return;
@@ -32,6 +33,7 @@
         showNavbarMenu = false;
       }
     });
+    //scroll listener
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -65,7 +67,7 @@
       <!-- lang icon -->
       <LanguageNavigator />
     </div>
-    <div class="flex flex-row items-center gap-2 px-1">
+    <div class="flex flex-row items-center gap-[7px] px-1">
       <div class="hidden lg:block">
         <DownloadAppNavigator />
       </div>

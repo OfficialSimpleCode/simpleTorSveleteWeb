@@ -1,6 +1,5 @@
 <script lang="ts">
   import { base } from "$app/paths";
-  import { page } from "$app/stores";
   import GeneralIcon from "$lib/components/custom_components/GeneralIcon.svelte";
   import { SubType } from "$lib/consts/purchases";
   import { maxButtonSize } from "$lib/consts/sizes";
@@ -27,13 +26,7 @@
     !$businessStore.isLandingPageMode &&
     $activeBusiness !== false;
 
-  let isInstagramWebView = false;
-
   function onMakeBooking() {
-    // if (isInstagramWebView) {
-    //   window.open(window.location.href, "_system");
-    //   return;
-    // }
     if (loadingBookingButton || $isConnectedStore == null) {
       return;
     }
@@ -58,11 +51,7 @@
       $userStore.bookingsToShow != null &&
       $userStore.bookingsToShow.length === 0);
 
-  onMount(() => {
-    // isInstagramWebView = navigator.userAgent
-    //   .toLowerCase()
-    //   .includes("instagram");
-  });
+  onMount(() => {});
 </script>
 
 <main class=" h-full">
@@ -92,13 +81,11 @@
             class="btn w-full btn-primary max-w-[450px]"
             on:click={onMakeBooking}
             on:load={onFinishLoad}
-            href={isInstagramWebView
-              ? `${$page.url.pathname}`
-              : loadingBookingButton
-                ? undefined
-                : $isConnectedStore === true
-                  ? `${base}/business/${$businessStore?.url ?? ""}/order`
-                  : `${base}/login`}
+            href={loadingBookingButton
+              ? undefined
+              : $isConnectedStore === true
+                ? `${base}/business/${$businessStore?.url ?? ""}/order`
+                : `${base}/login`}
           >
             {#if $activeBusiness === true && !loadingBookingButton}
               <div class="flex flex-row gap-1 items-center">
