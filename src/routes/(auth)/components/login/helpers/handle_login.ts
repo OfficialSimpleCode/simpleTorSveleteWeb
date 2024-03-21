@@ -134,7 +134,7 @@ export async function handleLogin({
   if (get(isConnectedStore) !== true) {
     //need to change this var to be allowed to get in to the setup page
     VerificationHelper.GI().needToSignUp = true;
-    await goto(`${base}/login/account-setup`);
+    await goto(`${base}/account-setup`);
     return;
   }
 

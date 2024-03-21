@@ -7,13 +7,13 @@
 <!-- prevent from the tool tip overiden by other elements -->
 <div class="z-50">
   {#if $isConnectedStore == null}
-    <div class="animate-pulse">
+    <!-- <div class="animate-pulse">
       <CustomCircleIcon
         icon="iconamoon:profile-fill"
         active={false}
         bgColor="bg-base-200"
       />
-    </div>
+    </div> -->
   {:else}
     <CustomCircleIcon
       icon={$isConnectedStore === true

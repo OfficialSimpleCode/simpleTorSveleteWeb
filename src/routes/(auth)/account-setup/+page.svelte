@@ -117,7 +117,7 @@
   >
 
   <!-- the url for search to display for this site -->
-  <link rel="canonical" href={`${$page.url.origin}/login/account-setup`} />
+  <link rel="canonical" href={`${$page.url.origin}/account-setup`} />
 
   <!-- Open Graphes links -->
   <!-- title  -->

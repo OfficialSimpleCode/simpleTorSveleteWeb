@@ -15,6 +15,10 @@
   import { businessStore } from "$lib/stores/Business";
   import { _, translate } from "$lib/utils/translate";
   import { onDestroy } from "svelte";
+  import FinishScreen from "./steps/finish_screen/FinishScreen.svelte";
+  import ServicePicker from "./steps/service_picker/ServicePicker.svelte";
+  import TimePicker from "./steps/time_picker/TimePicker.svelte";
+  import WorkerPicker from "./steps/worker_picker/WorkerPicker.svelte";
 
   BookingController.initializeBookingMaker();
 
@@ -74,7 +78,7 @@
 
   <!-- steps -->
   <div class="flex flex-col w-full lg:max-w-[1000px] items-center">
-    <!-- {#if $bookingMakerStore.currentStep === 0}
+    {#if $bookingMakerStore.currentStep === 0}
       <WorkerPicker />
     {:else if $bookingMakerStore.currentStep === 1}
       <ServicePicker />
@@ -82,7 +86,7 @@
       <TimePicker />
     {:else if $bookingMakerStore.currentStep === 3}
       <FinishScreen />
-    {/if} -->
+    {/if}
 
     {#if !$bookingMakerStore.isOnVerification}
       <!-- cancel button -->
