@@ -12,6 +12,7 @@
   import NavbarMenu from "./components/NavbarMenu.svelte";
   import OrdersNavigator from "./components/OrdersNavigator.svelte";
   import PricingNavigator from "./components/PricingNavigator.svelte";
+  import ProfileNavigator from "./components/ProfileNavigator.svelte";
   let showNavbarMenu: boolean = false;
 
   let scrolled = false;
@@ -70,7 +71,7 @@
       </div>
       <BusinessNavigator />
       <OrdersNavigator />
-      <!-- <ProfileNavigator /> -->
+      <ProfileNavigator />
     </div>
   </div>
 

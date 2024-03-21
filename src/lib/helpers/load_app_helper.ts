@@ -45,7 +45,7 @@ export class LoadAppHelper {
         if (get(isConnectedStore) == null) {
           popReloadDialogStore.set(true);
         }
-      }, 5000);
+      }, 6000);
 
       //wait for the firebase to initial
       await VerificationHelper.GI()
