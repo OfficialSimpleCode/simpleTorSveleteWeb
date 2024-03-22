@@ -1,6 +1,6 @@
-import { pushState } from "$app/navigation";
 import BusinessInitializer from "$lib/initializers/business_initializer";
 import UserInitializer from "$lib/initializers/user_initializer";
+import { pushDialog } from "$lib/utils/general_utils";
 
 export function handleApproveTerm(termDialog: HTMLDialogElement) {
   const dateToApprove =
@@ -17,10 +17,7 @@ export function handleApproveTerm(termDialog: HTMLDialogElement) {
     BusinessInitializer.GI().business.design.term != "" &&
     BusinessInitializer.GI().business.design.mustConfirmTerm
   ) {
-    pushState("", {
-      showModal: true,
-    });
-    setTimeout(() => termDialog.showModal(), 200);
+    pushDialog(termDialog);
     return false;
   }
   return true;

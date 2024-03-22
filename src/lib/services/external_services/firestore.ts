@@ -38,11 +38,10 @@ export default class FirestoreDataBase extends RealTimeDatabase {
   constructor() {
     super();
     if (firestoreInitilized) {
-      console.log("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
       this._firestore = firestore2;
       return;
     }
-    console.log("Eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+
     const firebaseApp =
       getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
@@ -68,8 +67,6 @@ export default class FirestoreDataBase extends RealTimeDatabase {
     insideEnviroments?: boolean;
   }): Promise<DocumentSnapshot<DocumentData, DocumentData>> {
     try {
-      console.log(insideEnviroments ? `${envKey}/${path}` : path);
-      console.log(docId);
       const collectionRef = collection(
         this._firestore,
         insideEnviroments ? `${envKey}/${path}` : path

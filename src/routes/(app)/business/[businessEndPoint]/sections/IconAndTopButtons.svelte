@@ -153,7 +153,9 @@
               ? ""
               : $isConnectedStore
                 ? `${base}/business/${$businessStore?.url ?? ""}/order`
-                : `${base}/login`}
+                : $businessStore != null
+                  ? `${base}/business/${$businessStore.url}/login`
+                  : `${base}/login`}
           class="btn btn-primary xs:px-10 px-6 md:px-20"
         >
           {#if $isConnectedStore == null || loadingBookingButton}

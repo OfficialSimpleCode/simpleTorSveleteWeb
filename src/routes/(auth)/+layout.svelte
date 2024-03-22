@@ -6,7 +6,7 @@
 
 <div class="h-screen w-full">
   <Navbar />
-  <div class="pt-20 h-full">
+  <div class="pt-10 h-full">
     <slot />
   </div>
 </div>

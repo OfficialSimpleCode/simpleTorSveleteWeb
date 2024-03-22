@@ -6,6 +6,5 @@
 </script>
 
 {#each Object.entries(booking.treatments) as [index, treatment]}
-  <TreatmentContainer {treatment} {booking} treatmentIndex={index}
-  ></TreatmentContainer>
+  <TreatmentContainer {treatment} {booking} treatmentIndex={index} />
 {/each}

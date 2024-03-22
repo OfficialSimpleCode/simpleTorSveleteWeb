@@ -25,7 +25,6 @@ export async function updateBooking() {
     oldBookingDateForReccurence:
       bookingMakerData.oldBooking!.recurrenceChildDate,
     newWorker: newWorker,
-    newClientNote: bookingMakerData.note,
   });
   if (result) {
     //update the finish prperty

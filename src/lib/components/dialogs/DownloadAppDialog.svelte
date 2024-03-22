@@ -20,7 +20,7 @@
         {translate(explainTranslateKey ?? "downloadTheAppExplain")}
       </h3>
       <LottieAnimation animationFile={phoneAnimation} loop={true} size="xl3" />
-      <DownloadAppButton />
+      <DownloadAppButton useDeepLink={true} />
     </div>
   </div>
 </DialogStrucher>

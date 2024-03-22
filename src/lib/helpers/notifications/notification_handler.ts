@@ -143,15 +143,11 @@ export default class NotificationHandler {
     isOldBoookingPassed: boolean;
     oldBookingDateForReccurence?: Date;
   }): Promise<void> {
-    console.log("ddddddddddddd", oldBooking.recurrenceEvent);
-    console.log("333333", oldBookingDateForReccurence);
     let oldBookingTemp: Booking = oldBooking;
     if (
       oldBooking.recurrenceEvent != null &&
       oldBookingDateForReccurence != null
     ) {
-      console.log("dddddddddddddwwwwwwwwwwwwwwwwwww");
-
       oldBookingTemp = Booking.fromBooking(oldBooking);
 
       oldBookingTemp.bookingDate = oldBookingDateForReccurence;
@@ -218,7 +214,6 @@ export default class NotificationHandler {
     keepRecurrence: boolean;
     treatmentsChange: boolean;
   }): void {
-    console.log("2222221111111111111");
     if (
       !treatmentsChange &&
       !dateChange &&
@@ -227,13 +222,6 @@ export default class NotificationHandler {
     ) {
       return;
     }
-    console.log("33333333333333");
-    console.log(
-      oldBooking.notificationType === NotificationType.message,
-      oldBooking.status === BookingStatuses.approved,
-      newBooking.status === BookingStatuses.approved,
-      newBooking.notificationType === NotificationType.message
-    );
 
     //can update the message reminder - two of the bookings are approved and there are both with message reminder
     if (
@@ -266,7 +254,6 @@ export default class NotificationHandler {
       newBooking.status === BookingStatuses.approved &&
       newBooking.notificationType === NotificationType.push
     ) {
-      console.log("Eeeeeeeeeee");
       NotificationsHelper.GI().updateScheduleBookingNotification({
         oldBooking,
         newBooking,
@@ -334,8 +321,6 @@ export default class NotificationHandler {
     dateChange: boolean;
     treatmentsChange: boolean;
   }): void {
-    console.log("111111111111111", oldBooking);
-
     if (workerChange) {
       if (workerAction) {
         // if (oldWorker.id != UserInitializer.GI().user.id) {

@@ -51,7 +51,6 @@ export class LoadAppHelper {
       await VerificationHelper.GI()
         .canUseUser()
         .then(async () => {
-          console.log("start use the auth obj");
           await this.setUpUser();
         });
     } else {
@@ -62,7 +61,6 @@ export class LoadAppHelper {
   private async setUpUser(): Promise<void> {
     //if the user is not connected no need isConnectedStore set to false
     if (!UserInitializer.GI().isConnected) {
-      console.log("rrrrrrrrrrrrr");
       isConnectedStore.set(false);
       return;
     }

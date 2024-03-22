@@ -100,7 +100,11 @@
             class="btn w-full btn-primary {maxButtonSize}"
             on:click={onLogin}
             on:load={onFinishLoad}
-            href={loadingBookingButton ? undefined : `${base}/login`}
+            href={loadingBookingButton
+              ? undefined
+              : $businessStore != null
+                ? `${base}/business/${$businessStore.url}/login`
+                : `${base}/login`}
             >{#if loadingBookingButton}
               <div class="loading loading-spinner bg-primary-content" />
             {:else}

@@ -199,7 +199,7 @@ export default class BookingHelper {
     forceUpdate = false,
     oldBookingDateForReccurence,
     noteText,
-    newClientNote = "",
+
     keepRecurrence = false,
     workerAction = false,
   }: {
@@ -211,7 +211,6 @@ export default class BookingHelper {
     isChangeDuration?: boolean;
     oldBookingDateForReccurence?: Date;
     noteText?: string;
-    newClientNote?: string;
 
     keepRecurrence?: boolean;
     workerAction?: boolean;
@@ -236,7 +235,6 @@ export default class BookingHelper {
       user: UserInitializer.GI().user,
       needToHoldOn: needToHoldOn(newBooking.bookingDate, newWorker),
       business: BusinessInitializer.GI().business,
-      newClientNote: newClientNote,
       keepRecurrence: keepRecurrence,
     });
 
@@ -278,8 +276,6 @@ export default class BookingHelper {
       })
       .then(async (value) => {
         if (value) {
-          console.log("ddddddddddddd", oldBooking.recurrenceEvent);
-          console.log("333333", oldBookingDateForReccurence);
           const oldBookingForCustomerData = Booking.fromBooking(oldBooking);
           oldBookingForCustomerData.recurrenceEvent = undefined;
           this._deleteBookingLocally({
@@ -294,8 +290,6 @@ export default class BookingHelper {
             needPayInAdvance: false,
           });
 
-          console.log("ddddddddddddd", oldBooking.recurrenceEvent);
-          console.log("333333", oldBookingDateForReccurence);
           NotificationHandler.GI().afterUpdateBooking({
             newBooking,
             oldBooking,

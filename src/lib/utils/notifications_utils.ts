@@ -27,7 +27,7 @@ export function sendMessage({
     BusinessInitializer.GI().business.businessData.hasMessages;
   switch (notificationOption) {
     case NotificationOption.OnlyPush:
-      if (Object.values(booking.userFcms).length === 0) {
+      if (booking.userFcms.size === 0) {
         return NotificationType.none;
       }
       return NotificationType.push;
@@ -42,7 +42,7 @@ export function sendMessage({
       }
       return NotificationType.whatsapp;
     case NotificationOption.PushOrSMS:
-      if (Object.values(booking.userFcms).length > 0) {
+      if (booking.userFcms.size > 0) {
         return NotificationType.push;
       }
       if (!booking.canSendMessage || !hasEnoughMessages) {
@@ -50,7 +50,7 @@ export function sendMessage({
       }
       return NotificationType.message;
     case NotificationOption.PushOrWhatsApp:
-      if (Object.values(booking.userFcms).length > 0) {
+      if (booking.userFcms.size > 0) {
         return NotificationType.push;
       }
       if (!booking.canSendMessage || !hasEnoughMessages) {
@@ -61,7 +61,7 @@ export function sendMessage({
       if (booking.canSendMessage && hasEnoughMessages) {
         return NotificationType.message;
       }
-      if (Object.values(booking.userFcms).length > 0) {
+      if (booking.userFcms.size > 0) {
         return NotificationType.push;
       }
       return NotificationType.none;
@@ -69,7 +69,7 @@ export function sendMessage({
       if (booking.canSendMessage && hasEnoughMessages) {
         return NotificationType.whatsapp;
       }
-      if (Object.values(booking.userFcms).length > 0) {
+      if (booking.userFcms.size > 0) {
         return NotificationType.push;
       }
       return NotificationType.none;
@@ -86,7 +86,7 @@ export function sendMessagePaymentRequest(
     BusinessInitializer.GI().business.businessData.hasMessages;
   switch (worker.notifications.notificationOption) {
     case NotificationOption.OnlyPush:
-      if (!user.fcmTokens || Object.keys(user.fcmTokens).length === 0) {
+      if (!user.fcmTokens || user.fcmTokens.size === 0) {
         return NotificationType.none;
       }
       return NotificationType.push;
@@ -101,7 +101,7 @@ export function sendMessagePaymentRequest(
       }
       return NotificationType.whatsapp;
     case NotificationOption.PushOrSMS:
-      if (user.fcmTokens && Object.values(user.fcmTokens).length > 0) {
+      if (user.fcmTokens && user.fcmTokens.size > 0) {
         return NotificationType.push;
       }
       if (!hasEnoughMessages) {
@@ -109,7 +109,7 @@ export function sendMessagePaymentRequest(
       }
       return NotificationType.message;
     case NotificationOption.PushOrWhatsApp:
-      if (user.fcmTokens && Object.values(user.fcmTokens).length > 0) {
+      if (user.fcmTokens && user.fcmTokens.size > 0) {
         return NotificationType.push;
       }
       if (!hasEnoughMessages) {
@@ -120,7 +120,7 @@ export function sendMessagePaymentRequest(
       if (hasEnoughMessages) {
         return NotificationType.message;
       }
-      if (user.fcmTokens && Object.values(user.fcmTokens).length > 0) {
+      if (user.fcmTokens && user.fcmTokens.size > 0) {
         return NotificationType.push;
       }
       return NotificationType.none;
@@ -128,7 +128,7 @@ export function sendMessagePaymentRequest(
       if (hasEnoughMessages) {
         return NotificationType.whatsapp;
       }
-      if (user.fcmTokens && Object.values(user.fcmTokens).length > 0) {
+      if (user.fcmTokens && user.fcmTokens.size > 0) {
         return NotificationType.push;
       }
       return NotificationType.none;
@@ -145,7 +145,7 @@ export function sendMessageForMulti(
     BusinessInitializer.GI().business.businessData.hasMessages;
   switch (worker.notifications.notificationOption) {
     case NotificationOption.OnlyPush:
-      if (Object.keys(multiBookingUser.userFcms).length === 0) {
+      if (multiBookingUser.userFcms.size === 0) {
         return NotificationType.none;
       }
       return NotificationType.push;
@@ -168,7 +168,7 @@ export function sendMessageForMulti(
       }
       return NotificationType.message;
     case NotificationOption.PushOrWhatsApp:
-      if (Object.values(multiBookingUser.userFcms).length > 0) {
+      if (multiBookingUser.userFcms.size > 0) {
         return NotificationType.push;
       }
       if (!multiBookingUser.canSendMessage || !hasEnoughMessages) {
@@ -179,7 +179,7 @@ export function sendMessageForMulti(
       if (multiBookingUser.canSendMessage && hasEnoughMessages) {
         return NotificationType.message;
       }
-      if (Object.values(multiBookingUser.userFcms).length > 0) {
+      if (multiBookingUser.userFcms.size > 0) {
         return NotificationType.push;
       }
       return NotificationType.none;
@@ -187,7 +187,7 @@ export function sendMessageForMulti(
       if (multiBookingUser.canSendMessage && hasEnoughMessages) {
         return NotificationType.whatsapp;
       }
-      if (Object.values(multiBookingUser.userFcms).length > 0) {
+      if (multiBookingUser.userFcms.size > 0) {
         return NotificationType.push;
       }
       return NotificationType.none;

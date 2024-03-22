@@ -43,11 +43,11 @@ export default class MessagesHelper {
 
     const messages: ScheduleMessage[] = [];
     const businessToDecrease: Record<string, number> = {};
-    console.log("make");
+
     Object.entries(bookings).forEach(([bookingId, booking]) => {
       // seconds from now to the time that need to notify
       const reminders = booking.remindersToScheduleMessages;
-      console.log(reminders);
+
       messages.push(...reminders);
       businessToDecrease[booking.buisnessId] ??= 0;
       businessToDecrease[booking.buisnessId] =
@@ -76,7 +76,6 @@ export default class MessagesHelper {
     ) {
       return false;
     }
-    console.log("44444444444444444444444444");
 
     const cancelResp = await this.cancelScheduleMessageToMultipleBookings({
       [oldBooking.bookingId]: oldBooking,
@@ -85,7 +84,6 @@ export default class MessagesHelper {
     if (!cancelResp) {
       return false;
     }
-    console.log("4444444444322222222222");
 
     return await this.scheduleMessageToMultipleBookings({
       [newBooking.bookingId]: newBooking,
@@ -127,12 +125,12 @@ export default class MessagesHelper {
     if (isEmpty(bookings)) {
       return true;
     }
-    console.log("cancel");
+
     const messages: Record<string, string> = {};
     const businessToIncrease: Record<string, number> = {};
     Object.entries(bookings).forEach(([_, booking]) => {
       const reminders = booking.messageRemindersOnBooking;
-      console.log(reminders);
+
       reminders.forEach((reminderId) => {
         messages[reminderId] = removePhoneNumberPrefix(booking.customerPhone);
       });

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { base } from "$app/paths";
   import CustomCircleIcon from "$lib/components/custom_components/CustomCircleIcon.svelte";
+  import { businessStore } from "$lib/stores/Business";
   import { isConnectedStore } from "$lib/stores/User";
 </script>
 
@@ -19,7 +20,11 @@
       icon={$isConnectedStore === true
         ? "iconamoon:profile-fill"
         : "ic:baseline-login"}
-      href={$isConnectedStore ? `${base}/profile` : `${base}/login`}
+      href={$isConnectedStore
+        ? `${base}/profile`
+        : $businessStore != null
+          ? `${base}/business/${$businessStore.url}/login`
+          : `${base}/login`}
       bgColor="bg-base-200"
     />
     {#if $isConnectedStore}

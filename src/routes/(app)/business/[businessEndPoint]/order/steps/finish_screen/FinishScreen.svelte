@@ -30,6 +30,7 @@
   let needVerificationForReminderDialog: HTMLDialogElement;
   let recurrenceUpdateDialog: HTMLDialogElement;
   let isLoading: boolean = false;
+  let approvedTermNow: boolean = false; // if the user press on the comfirm term on this time
 
   const worker = BookingController.worker;
   $: publicCustomer = getPublicCustomer($userStore);
@@ -65,7 +66,7 @@
       return;
     }
 
-    if (!handleApproveTerm(termDialog)) {
+    if (!approvedTermNow && !handleApproveTerm(termDialog)) {
       return;
     }
 
@@ -116,6 +117,7 @@
 
 <TermDialog
   on:onConfirmTerm={() => {
+    approvedTermNow = true;
     termDialog.close();
     handleClick();
   }}

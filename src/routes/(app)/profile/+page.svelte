@@ -2,12 +2,12 @@
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
 
+  import { page } from "$app/stores";
   import GenderPicker from "$lib/components/pickers/gender_picker/GenderPicker.svelte";
   import type { Gender } from "$lib/consts/gender";
-
-  import { page } from "$app/stores";
   import { ErrorsController } from "$lib/controllers/errors_controller";
   import UserHelper from "$lib/helpers/user/user_helper";
+  import { businessStore } from "$lib/stores/Business";
   import { isConnectedStore, userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
   import { onMount } from "svelte";
@@ -22,7 +22,11 @@
       //redirect to the login page if the user is not connected
 
       if (value === false) {
-        goto(`${base}/login`);
+        goto(
+          $businessStore != null
+            ? `${base}/business/${$businessStore.url}/login`
+            : `${base}/login`
+        );
       }
     });
   });

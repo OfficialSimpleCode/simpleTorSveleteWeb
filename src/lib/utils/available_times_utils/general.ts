@@ -331,7 +331,7 @@ export function alreadyTakenHoures({
   isUpdate: boolean;
   workerAction: boolean;
 }): Date[] {
-  const taken: Date[] = [];
+  let taken: Date[] = [];
   const dateToBook = dateStrToDate(bookingDate);
 
   // Adding all the "booking times" to the "taken hours" list
@@ -448,7 +448,7 @@ export function alreadyTakenHoures({
     // Make sure to remove the old times only if it is the same day
     const oldDate = setToMidNight(oldBooking.bookingDate);
 
-    if (dateToBook.getTime() / 1000 - oldDate.getTime() / 1000 === 0) {
+    if (dateToBook.getTime() === oldDate.getTime()) {
       // To make it in 1970 - date
       let startTime = setTo1970(oldBooking.bookingDate);
 
@@ -465,8 +465,13 @@ export function alreadyTakenHoures({
           new Duration({ minutes: timeData.workMinutes })
         );
 
-        taken.splice(taken.indexOf(startTime), 2);
-        taken.splice(taken.indexOf(endTime), 2);
+        taken = taken.filter((date) => {
+          return (
+            date.getTime() !== startTime.getTime() &&
+            date.getTime() !== endTime.getTime()
+          );
+        });
+
         startTime = endTime;
       });
     }

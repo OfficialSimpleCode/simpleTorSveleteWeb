@@ -200,7 +200,7 @@ export default class UserHelper {
           name: "guest",
         });
         userStore.set(UserInitializer.GI().user);
-        console.log("5555555555");
+
         isConnectedStore.set(false);
       }
       return value;
@@ -216,7 +216,7 @@ export default class UserHelper {
           name: "guest",
         });
         userStore.set(UserInitializer.GI().user);
-        console.log("11111111111111111111111");
+
         isConnectedStore.set(false);
       }
       return value;

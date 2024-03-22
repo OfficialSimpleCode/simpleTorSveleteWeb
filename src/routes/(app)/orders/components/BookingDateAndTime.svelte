@@ -18,9 +18,7 @@
   </div>
 {:else}
   <!-- date and time of the booking -->
-  <div
-    class="flex flex-col text-start max-w-[70%] text-nowrap text-sm sm:text-md"
-  >
+  <div class="flex flex-col text-start w-[10%] text-nowrap text-sm sm:text-md">
     <div class="flex flex-row gap-1">
       <p>
         {getDayString(booking.currentDisplayDate, translate("onDay", $_) + " ")}

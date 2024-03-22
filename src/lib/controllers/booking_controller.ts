@@ -61,7 +61,7 @@ export default class BookingController {
       notifyUserAboutRecurrenceChange: false,
       isOnVerification: false,
       oldBooking: BookingController.bookingToUpdate,
-      note: BookingController.bookingToUpdate?.note ?? "",
+      note: BookingController.bookingToUpdate?.clientNote ?? "",
       date: BookingController.bookingToUpdate?.currentDisplayDate,
       isUpdate: BookingController.bookingToUpdate != null,
       currentPaymentType: PaymentTypes.payment,
@@ -213,6 +213,8 @@ export default class BookingController {
       index += 1;
     });
     booking.treatments = services;
+
+    booking.clientNote = bookingMaker.note;
     return booking;
   }
   static get multiBookingFromValues(): MultiBooking {

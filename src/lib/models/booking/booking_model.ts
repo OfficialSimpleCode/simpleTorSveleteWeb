@@ -700,26 +700,26 @@ export default class Booking extends ScheduleItem {
 
   get remindersOnBooking(): Record<string, Record<string, any>> {
     const reminders: Record<string, Record<string, any>> = {};
-    console.log("22222222222");
+
     if (this.cancelDate != null) {
       return {};
     }
-    console.log("111111111");
+
     if (this.userFcms.size === 0) {
       return {};
     }
-    console.log("1111222222222");
+
     if (this.notificationType === NotificationType.message) {
       return {};
     }
-    console.log("wweeeeeeeeee");
+
     this.remindersTypes.forEach((minutes, type) => {
       if (minutes <= 0) {
         return;
       }
 
       const dateToNotify = dateToRemindBooking(this, minutes);
-      console.log(dateToNotify);
+
       if (dateToNotify >= dateToUtc(new Date())) {
         reminders[dateIsoStr(dateToNotify)] ??= {};
         reminders[dateIsoStr(dateToNotify)] = {
@@ -972,7 +972,6 @@ export default class Booking extends ScheduleItem {
     worker,
     needToHoldOn,
     business,
-    newClientNote,
     keepRecurrence = false,
     user,
   }: {
@@ -982,7 +981,6 @@ export default class Booking extends ScheduleItem {
     needToHoldOn: boolean;
     business: BusinessModel;
 
-    newClientNote?: string;
     keepRecurrence: boolean;
   }): void {
     this.customerName = oldBooking.customerName;
@@ -991,6 +989,7 @@ export default class Booking extends ScheduleItem {
     this.clientMail = oldBooking.clientMail;
     this.customerId = oldBooking.customerId;
     this.note = oldBooking.note;
+
     this.userFcms = user.fcmsTokens;
 
     if (length(oldBooking.treatments) > length(this.treatments)) {
@@ -1017,11 +1016,6 @@ export default class Booking extends ScheduleItem {
       this.orderingOptions = OrderingOptions.byWorker;
     } else {
       this.orderingOptions = oldBooking.orderingOptions;
-    }
-    if (newClientNote != undefined) {
-      this.clientNote = newClientNote;
-    } else {
-      this.clientNote = oldBooking.clientNote;
     }
 
     //add the booking history item for that update
@@ -1285,11 +1279,6 @@ export default class Booking extends ScheduleItem {
 
   get messageRemindersOnBooking(): string[] {
     const reminders: string[] = [];
-    console.log("$44444444444444444444444444444444");
-    console.log(
-      this.cancelDate != null,
-      this.notificationType === NotificationType.push
-    );
 
     if (
       this.cancelDate != null ||
@@ -1304,7 +1293,7 @@ export default class Booking extends ScheduleItem {
       }
 
       const dateToNotify = dateToRemindBooking(this, minutes);
-      console.log(dateToNotify);
+
       if (dateToNotify >= dateToUtc(new Date())) {
         reminders.push(this.reminderId(type));
       }

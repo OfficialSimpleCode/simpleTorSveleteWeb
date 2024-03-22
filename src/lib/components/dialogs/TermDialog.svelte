@@ -2,7 +2,7 @@
   import UserHelper from "$lib/helpers/user/user_helper";
   import BusinessInitializer from "$lib/initializers/business_initializer";
   import { businessStore } from "$lib/stores/Business";
-  import { isConnectedStore, userStore } from "$lib/stores/User";
+  import { userStore } from "$lib/stores/User";
   import { _, translate } from "$lib/utils/translate";
   import { createEventDispatcher } from "svelte";
   import DialogTitel from "../custom_components/DialogTitel.svelte";
@@ -13,20 +13,14 @@
 
   const dispatcher = createEventDispatcher();
 
-  let isConfirmed = false;
   let loading = false;
 
-  isConnectedStore.subscribe((value) => {
-    if (value !== true) {
-      return;
-    }
-    const dateToApprove =
-      $userStore.termsApprovals[BusinessInitializer.GI().business.businessId];
-    isConfirmed =
-      dateToApprove != null &&
-      dateToApprove >
-        BusinessInitializer.GI().business.design.lastTimeToUpdateTerm;
-  });
+  $: dateToApprove =
+    $userStore.termsApprovals[BusinessInitializer.GI().business.businessId];
+  $: isConfirmed =
+    dateToApprove != null &&
+    dateToApprove >
+      BusinessInitializer.GI().business.design.lastTimeToUpdateTerm;
 
   async function onConfirmTerm() {
     if (loading) {
@@ -38,21 +32,20 @@
     loading = true;
 
     try {
+      dispatcher("onConfirmTerm");
       isConfirmed = await UserHelper.GI().addTermApproval(
         BusinessInitializer.GI().business.businessId
       );
     } finally {
       loading = false;
-
-      if (isConfirmed) {
-        dispatcher("onConfirmTerm");
-      }
     }
   }
 </script>
 
 <DialogStrucher bind:dialog>
-  <div class="modal-box bg-base-200 pb-10 flex flex-col justify-center gap-6">
+  <div
+    class="modal-box bg-base-200 pb-10 flex flex-col justify-center gap-6 max-h-[570px]"
+  >
     <DialogTitel titleTransKey={"term"} {dialog} />
     <div class="flex flex-col gap-3 items-center h-full">
       <!-- term text -->

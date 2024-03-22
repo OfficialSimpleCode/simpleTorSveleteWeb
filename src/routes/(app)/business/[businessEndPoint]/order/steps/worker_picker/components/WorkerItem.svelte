@@ -76,7 +76,7 @@
             pushDialog(aboutDialog);
           }}
         >
-          <p class="xs:text-md text-sm hover:opacity-70 px-4 py-2 z-100">
+          <p class="xs:text-md text-sm hover:opacity-70 px-1 py-1 z-100">
             {translate("MoreText", $_)}
           </p>
         </button>

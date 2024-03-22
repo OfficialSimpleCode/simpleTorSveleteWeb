@@ -52,7 +52,7 @@
   let priceText: string = "";
   if (notShownPrice > 0) {
     if (notShownPrice >= length($bookingMakerStore.services)) {
-      priceText = translate("notKnown");
+      priceText = translate("price", $_) + " " + translate("notKnown");
     } else if (notShownPrice > 0) {
       priceText = translate("moreThen", $_, false);
     }
@@ -61,7 +61,7 @@
   let timeText: string = "";
   if (notShownTime > 0) {
     if (notShownTime >= length($bookingMakerStore.services)) {
-      timeText = translate("notKnown");
+      timeText = translate("duration", $_) + " " + translate("notKnown", $_);
     } else if (notShownTime > 0) {
       timeText = translate("moreThen", undefined, false);
     }
@@ -76,7 +76,7 @@
     {#if priceText != ""}
       <p>{priceText}</p>
     {/if}
-    {#if priceText != translate("notKnown")}
+    {#if notShownPrice < length($bookingMakerStore.services)}
       {new Price({
         amount: totalPrices.toString(),
         currency: treatmentCurrency,
@@ -89,7 +89,7 @@
     {#if timeText != ""}
       <p>{timeText}</p>
     {/if}
-    {#if timeText != translate("notKnown")}
+    {#if notShownTime < length($bookingMakerStore.services)}
       <div class="flex flex-row gap-2">
         <p>
           {printDuration(new Duration({ minutes: totalMinutes }))}

@@ -29,8 +29,6 @@
     businessLink = `${$page.url.origin}/business/${$businessStore?.url}`;
   }
   function copyToClipboard() {
-    console.log("businessLink --> ", businessLink);
-
     clipboard.write(businessLink);
     copied = true;
     setTimeout(() => (copied = false), 1500);

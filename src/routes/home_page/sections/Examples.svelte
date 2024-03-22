@@ -74,7 +74,6 @@
           titleTransKey={translate("placingAnEvent", $_, false)}
           subTitleTransKey={translate("placingEventDesc", $_, false)}
         />
-        <!-- <DownloadAppButton /> -->
       </div>
 
       <!-- changin images -->

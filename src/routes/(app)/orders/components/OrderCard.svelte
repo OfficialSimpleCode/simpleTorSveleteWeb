@@ -38,7 +38,9 @@
   on:click={openBookingSheet}
   class="card bg-base-200 w-full hover:bg-base-300 hover:bg-opacity-20 px-3 py-3 relative {shimmerEffect
     ? 'animate-pulse'
-    : ''} {booking.isRightNow ? 'border border-base-300' : ''}
+    : ''} {booking.isRightNow
+    ? 'border border-base-content border-opacity-30'
+    : ''} 
     {booking.recurrenceEvent ?? booking.recurrenceEventRefInfo ? 'pt-2' : ''}"
 >
   {#if !shimmerEffect}
